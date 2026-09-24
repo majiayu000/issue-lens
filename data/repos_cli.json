@@ -1,0 +1,947 @@
+[
+  {
+    "full_name": "n8n-io/n8n",
+    "stars": 205738,
+    "language": "TypeScript",
+    "description": "Fair-code workflow automation platform with native AI capabilities. Combine visual building with custom code, self-host or cloud, 400+ integrations.",
+    "topics": [
+      "ai",
+      "apis",
+      "automation",
+      "cli",
+      "data-flow",
+      "development",
+      "integration-framework",
+      "integrations",
+      "ipaas",
+      "low-code",
+      "low-code-platform",
+      "mcp",
+      "mcp-client",
+      "mcp-server",
+      "n8n",
+      "no-code",
+      "self-hosted",
+      "typescript",
+      "workflow",
+      "workflow-automation"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "yt-dlp/yt-dlp",
+    "stars": 193032,
+    "language": "Python",
+    "description": "A feature-rich command-line audio/video downloader",
+    "topics": [
+      "cli",
+      "downloader",
+      "python",
+      "sponsorblock",
+      "youtube-dl",
+      "youtube-downloader",
+      "yt-dlp"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "ohmyzsh/ohmyzsh",
+    "stars": 189889,
+    "language": "Shell",
+    "description": "🙃   A delightful community-driven (with 2,500+ contributors) framework for managing your zsh configuration. Includes 300+ optional plugins (rails, git, macOS, hub, docker, homebrew, node, php, python, etc), 140+ themes to spice up your morning, and an auto-update tool that makes it easy to keep up with the latest updates from the community.",
+    "topics": [
+      "cli",
+      "cli-app",
+      "oh-my-zsh",
+      "oh-my-zsh-plugin",
+      "oh-my-zsh-theme",
+      "ohmyzsh",
+      "plugin-framework",
+      "plugins",
+      "productivity",
+      "shell",
+      "terminal",
+      "theme",
+      "themes",
+      "zsh",
+      "zsh-configuration"
+    ],
+    "matched_topics": [
+      "cli",
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "nextlevelbuilder/ui-ux-pro-max-skill",
+    "stars": 129951,
+    "language": "Python",
+    "description": "An AI skill that provides design intelligence for building professional UI/UX across multiple platforms.",
+    "topics": [
+      "ai-skills",
+      "antigravity",
+      "claude",
+      "claude-code",
+      "codex",
+      "command-line",
+      "copilot",
+      "cursor-ai",
+      "html5",
+      "kiro",
+      "landing-page",
+      "mobile-ui",
+      "qoder",
+      "react",
+      "tailwindcss",
+      "trae",
+      "ui-design",
+      "uikit",
+      "windsurf-ai"
+    ],
+    "matched_topics": [
+      "command-line"
+    ]
+  },
+  {
+    "full_name": "google-gemini/gemini-cli",
+    "stars": 107131,
+    "language": "TypeScript",
+    "description": "An open-source AI agent that brings the power of Gemini directly into your terminal.",
+    "topics": [
+      "ai",
+      "ai-agents",
+      "cli",
+      "gemini",
+      "gemini-api",
+      "mcp-client",
+      "mcp-server"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "microsoft/terminal",
+    "stars": 104967,
+    "language": "C++",
+    "description": "The new Windows Terminal and the original Windows console host, all in the same place!",
+    "topics": [
+      "cmd",
+      "command-line",
+      "console",
+      "contributions-welcome",
+      "good-first-issue",
+      "hacktoberfest",
+      "terminal",
+      "windows",
+      "windows-console",
+      "windows-terminal",
+      "wsl"
+    ],
+    "matched_topics": [
+      "command-line",
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "sherlock-project/sherlock",
+    "stars": 92511,
+    "language": "Python",
+    "description": "Hunt down social media accounts by username across social networks",
+    "topics": [
+      "cli",
+      "cti",
+      "cybersecurity",
+      "forensics",
+      "hacktoberfest",
+      "information-gathering",
+      "infosec",
+      "linux",
+      "osint",
+      "pentesting",
+      "python",
+      "python3",
+      "reconnaissance",
+      "redteam",
+      "sherlock",
+      "tools"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "OpenHands/OpenHands",
+    "stars": 88920,
+    "language": "TypeScript",
+    "description": "🙌 OpenHands: AI-Driven Development",
+    "topics": [
+      "agent",
+      "artificial-intelligence",
+      "chatgpt",
+      "claude-ai",
+      "cli",
+      "developer-tools",
+      "gpt",
+      "llm",
+      "openai"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "Panniantong/Agent-Reach",
+    "stars": 84918,
+    "language": "Python",
+    "description": "Give your AI agent eyes to see the entire internet. Read & search Twitter, Reddit, YouTube, GitHub, Bilibili, XiaoHongShu — one CLI, zero API fees.",
+    "topics": [
+      "agent-infrastructure",
+      "ai-agent",
+      "ai-search",
+      "automation",
+      "bilibili",
+      "claude-code",
+      "cli",
+      "cursor",
+      "free-api",
+      "llm-tools",
+      "mcp",
+      "python",
+      "reddit-scraper",
+      "twitter-scraper",
+      "web-scraper",
+      "xiaohongshu",
+      "youtube-transcript"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "junegunn/fzf",
+    "stars": 83205,
+    "language": "Go",
+    "description": ":cherry_blossom: A command-line fuzzy finder",
+    "topics": [
+      "bash",
+      "cli",
+      "fish",
+      "fzf",
+      "go",
+      "neovim",
+      "tmux",
+      "unix",
+      "vim",
+      "zsh"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "jesseduffield/lazygit",
+    "stars": 82586,
+    "language": "Go",
+    "description": "simple terminal UI for git commands",
+    "topics": [
+      "cli",
+      "git",
+      "terminal"
+    ],
+    "matched_topics": [
+      "cli",
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "rtk-ai/rtk",
+    "stars": 81475,
+    "language": "Rust",
+    "description": "CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies",
+    "topics": [
+      "agentic-coding",
+      "ai-coding",
+      "anthropic",
+      "claude-code",
+      "cli",
+      "command-line-tool",
+      "cost-reduction",
+      "developer-tools",
+      "llm",
+      "open-source",
+      "productivity",
+      "rust",
+      "token-optimization"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "stablyai/orca",
+    "stars": 75887,
+    "language": "TypeScript",
+    "description": "Orca is the ADE for working with a fleet of parallel agents. Run any coding agent with your own subscription. Available on desktop, mobile and remote runtime.",
+    "topics": [
+      "ade",
+      "agent-ide",
+      "ai-agents",
+      "claude-code",
+      "cli",
+      "codex",
+      "cursor-agent",
+      "devtools",
+      "ghostty",
+      "ide",
+      "mobile-app",
+      "opencode",
+      "orchestration",
+      "parallel-agents",
+      "pi",
+      "terminal",
+      "worktrees",
+      "yc-backed"
+    ],
+    "matched_topics": [
+      "cli",
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "Eugeny/tabby",
+    "stars": 74648,
+    "language": "TypeScript",
+    "description": "A terminal for a more modern age",
+    "topics": [
+      "serial",
+      "ssh-client",
+      "telnet-client",
+      "terminal",
+      "terminal-emulators"
+    ],
+    "matched_topics": [
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "career-ops-hq/career-ops",
+    "stars": 72461,
+    "language": "JavaScript",
+    "description": "Open-source AI job search: scan job portals, evaluate listings into a structured A-H report with a global 1-5 score, tailor your CV, track applications — runs locally in your AI coding CLI (Claude Code, Codex, OpenCode, Antigravity…)",
+    "topics": [
+      "ai-agent",
+      "ai-job-search",
+      "ats",
+      "career",
+      "careerops",
+      "claude-code",
+      "cli",
+      "cover-letter",
+      "cv",
+      "interview-prep",
+      "job-application",
+      "job-hunting",
+      "job-search",
+      "job-tracker",
+      "jobsearch",
+      "jobseekers",
+      "local-first",
+      "open-source",
+      "resume",
+      "resume-builder"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "BurntSushi/ripgrep",
+    "stars": 68520,
+    "language": "Rust",
+    "description": "ripgrep recursively searches directories for a regex pattern while respecting your gitignore",
+    "topics": [
+      "cli",
+      "command-line",
+      "command-line-tool",
+      "gitignore",
+      "grep",
+      "recursively-search",
+      "regex",
+      "ripgrep",
+      "rust",
+      "search"
+    ],
+    "matched_topics": [
+      "cli",
+      "command-line"
+    ]
+  },
+  {
+    "full_name": "tw93/Mole",
+    "stars": 68132,
+    "language": "Shell",
+    "description": "🐹 Clean, uninstall, analyze, optimize, and monitor your Mac. Free open-source CLI, plus a native Mac app.",
+    "topics": [
+      "analyzer",
+      "appcleaner",
+      "clean",
+      "cleaner",
+      "cleanmymac",
+      "command-line",
+      "daisydisk",
+      "istat",
+      "mac",
+      "macos",
+      "macos-app",
+      "native",
+      "optimize",
+      "pearcleaner",
+      "sensei",
+      "shell",
+      "swift",
+      "swiftui",
+      "uninstall"
+    ],
+    "matched_topics": [
+      "command-line"
+    ]
+  },
+  {
+    "full_name": "alacritty/alacritty",
+    "stars": 65791,
+    "language": "Rust",
+    "description": "A cross-platform, OpenGL terminal emulator.",
+    "topics": [
+      "bsd",
+      "gpu",
+      "linux",
+      "macos",
+      "opengl",
+      "rust",
+      "terminal",
+      "terminal-emulators",
+      "vte",
+      "windows"
+    ],
+    "matched_topics": [
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "warpdotdev/warp",
+    "stars": 65134,
+    "language": "Rust",
+    "description": "Warp is an agentic development environment, born out of the terminal.",
+    "topics": [
+      "bash",
+      "linux",
+      "macos",
+      "rust",
+      "shell",
+      "terminal",
+      "wasm",
+      "zsh"
+    ],
+    "matched_topics": [
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "tldr-pages/tldr",
+    "stars": 63720,
+    "language": "Markdown",
+    "description": "Collaborative cheatsheets for console commands 📚.",
+    "topics": [
+      "android",
+      "bsd",
+      "cheatsheet",
+      "cheatsheets",
+      "cli",
+      "command-line",
+      "console",
+      "documentation",
+      "examples",
+      "hacktoberfest",
+      "help",
+      "linux",
+      "macos",
+      "man-page",
+      "manual",
+      "osx",
+      "shell",
+      "terminal",
+      "tldr",
+      "windows"
+    ],
+    "matched_topics": [
+      "cli",
+      "command-line",
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "termux/termux-app",
+    "stars": 61270,
+    "language": "Java",
+    "description": "Termux - a terminal emulator application for Android OS extendible by variety of packages.",
+    "topics": [
+      "android",
+      "hacktoberfest",
+      "linux",
+      "terminal",
+      "termux"
+    ],
+    "matched_topics": [
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "sharkdp/bat",
+    "stars": 60548,
+    "language": "Rust",
+    "description": "A cat(1) clone with wings.",
+    "topics": [
+      "cli",
+      "command-line",
+      "git",
+      "hacktoberfest",
+      "rust",
+      "syntax-highlighting",
+      "terminal",
+      "tool"
+    ],
+    "matched_topics": [
+      "cli",
+      "command-line",
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "Raphire/Win11Debloat",
+    "stars": 57499,
+    "language": "PowerShell",
+    "description": "A simple, lightweight PowerShell script that allows you to remove pre-installed apps, disable telemetry, as well as perform various other changes to declutter and customize your Windows experience. Win11Debloat works for both Windows 10 and Windows 11.",
+    "topics": [
+      "automated",
+      "bloatware",
+      "bloatware-removal",
+      "cleanup",
+      "cli",
+      "debloat",
+      "debloater",
+      "interactive",
+      "optimize",
+      "powershell",
+      "powershell-script",
+      "privacy",
+      "ps1",
+      "registry-tweaks",
+      "tweaks",
+      "windows",
+      "windows-10",
+      "windows-11",
+      "windows10",
+      "windows11"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "Textualize/rich",
+    "stars": 57419,
+    "language": "Python",
+    "description": "Rich is a Python library for rich text and beautiful formatting in the terminal.",
+    "topics": [
+      "ansi-colors",
+      "emoji",
+      "markdown",
+      "progress-bar",
+      "progress-bar-python",
+      "python",
+      "python-library",
+      "python3",
+      "rich",
+      "syntax-highlighting",
+      "tables",
+      "terminal",
+      "terminal-color",
+      "traceback",
+      "tracebacks-rich",
+      "tui"
+    ],
+    "matched_topics": [
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "PowerShell/PowerShell",
+    "stars": 55495,
+    "language": "C#",
+    "description": "PowerShell for every system!",
+    "topics": [
+      "command-line",
+      "hacktoberfest",
+      "linux",
+      "macos",
+      "netcore",
+      "powershell",
+      "shell",
+      "windows"
+    ],
+    "matched_topics": [
+      "command-line"
+    ]
+  },
+  {
+    "full_name": "wagoodman/dive",
+    "stars": 54595,
+    "language": "Go",
+    "description": "A tool for exploring each layer in a docker image",
+    "topics": [
+      "cli",
+      "docker",
+      "docker-image",
+      "explorer",
+      "inspector",
+      "tui"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "Aider-AI/aider",
+    "stars": 49122,
+    "language": "Python",
+    "description": "aider is AI pair programming in your terminal",
+    "topics": [
+      "anthropic",
+      "chatgpt",
+      "claude-3",
+      "cli",
+      "command-line",
+      "gemini",
+      "gpt-3",
+      "gpt-35-turbo",
+      "gpt-4",
+      "gpt-4o",
+      "llama",
+      "openai",
+      "sonnet"
+    ],
+    "matched_topics": [
+      "cli",
+      "command-line"
+    ]
+  },
+  {
+    "full_name": "kepano/obsidian-skills",
+    "stars": 48769,
+    "language": null,
+    "description": "Agent skills for Obsidian. Teach your agent to use Obsidian CLI and open formats including Markdown, Bases, JSON Canvas.",
+    "topics": [
+      "agents",
+      "agentskills",
+      "bases",
+      "claude",
+      "clawdbot",
+      "cli",
+      "codex",
+      "defuddle",
+      "hermes",
+      "jsoncanvas",
+      "knap",
+      "markdown",
+      "md",
+      "obsidian",
+      "openclaw",
+      "opencode",
+      "skills"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "jeecgboot/JeecgBoot",
+    "stars": 47949,
+    "language": "Java",
+    "description": "【低代码v2.0，一句话即可生成整个系统】企业级AI低代码平台，一键生成前后端代码甚至整个系统。 AI Skills 一句话画流程、设计表单、生成报表、大屏。内置 AI应用平台涵盖：AI聊天、知识库、流程编排、MCP插件等，兼容主流大模型。引领AI低代码「Skills 生成 → 在线配置 → 代码生成 → 手工合并->AI修改」开发模式，解决 Java 项目 90% 重复工作，提高效率又不失灵活。",
+    "topics": [
+      "activiti",
+      "agent",
+      "ai",
+      "antd",
+      "claude-code",
+      "cli",
+      "codegenerator",
+      "codex",
+      "flowable",
+      "langchain4j",
+      "llm",
+      "low-code",
+      "mcp",
+      "mybatis-plus",
+      "rag",
+      "skills",
+      "spring-ai",
+      "springboot",
+      "springcloud",
+      "vue3"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "cli/cli",
+    "stars": 46376,
+    "language": "Go",
+    "description": "GitHub’s official command line tool",
+    "topics": [
+      "cli",
+      "git",
+      "github-api-v4",
+      "golang"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "google/zx",
+    "stars": 45763,
+    "language": "JavaScript",
+    "description": "A tool for writing better scripts",
+    "topics": [
+      "bash",
+      "child-process",
+      "cli",
+      "exec",
+      "javascript",
+      "nodejs",
+      "pipe",
+      "shell",
+      "spawn"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "charmbracelet/bubbletea",
+    "stars": 45091,
+    "language": "Go",
+    "description": "A powerful little TUI framework 🏗",
+    "topics": [
+      "cli",
+      "elm-architecture",
+      "framework",
+      "functional",
+      "go",
+      "golang",
+      "hacktoberfest",
+      "tui"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  },
+  {
+    "full_name": "GitSquared/edex-ui",
+    "stars": 45052,
+    "language": "JavaScript",
+    "description": "A cross-platform, customizable science fiction terminal emulator with advanced monitoring & touchscreen support.",
+    "topics": [
+      "desktop",
+      "edex-ui",
+      "electron",
+      "linux",
+      "macos",
+      "nodejs",
+      "science-fiction",
+      "shell",
+      "terminal",
+      "touchscreen",
+      "tron",
+      "unixporn",
+      "windows"
+    ],
+    "matched_topics": [
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "vercel/hyper",
+    "stars": 44741,
+    "language": "TypeScript",
+    "description": "A terminal built on web technologies",
+    "topics": [
+      "css",
+      "html",
+      "hyper",
+      "javascript",
+      "linux",
+      "macos",
+      "react",
+      "terminal",
+      "terminal-emulators"
+    ],
+    "matched_topics": [
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "spf13/cobra",
+    "stars": 44634,
+    "language": "Go",
+    "description": "A Commander for modern Go CLI interactions",
+    "topics": [
+      "cli",
+      "cli-app",
+      "cobra",
+      "cobra-generator",
+      "cobra-library",
+      "command",
+      "command-cobra",
+      "command-line",
+      "commandline",
+      "go",
+      "golang",
+      "golang-application",
+      "golang-library",
+      "posix",
+      "posix-compliant-flags",
+      "subcommands"
+    ],
+    "matched_topics": [
+      "cli",
+      "command-line"
+    ]
+  },
+  {
+    "full_name": "sharkdp/fd",
+    "stars": 44517,
+    "language": "Rust",
+    "description": "A simple, fast and user-friendly alternative to 'find'",
+    "topics": [
+      "cli",
+      "command-line",
+      "filesystem",
+      "hacktoberfest",
+      "regex",
+      "rust",
+      "search",
+      "terminal",
+      "tool"
+    ],
+    "matched_topics": [
+      "cli",
+      "command-line",
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "Unitech/pm2",
+    "stars": 43294,
+    "language": "JavaScript",
+    "description": "Node.js/Typescript/Bun Production Process Manager with a built-in Load Balancer.",
+    "topics": [
+      "command-line",
+      "command-line-tool",
+      "deploy",
+      "load-balancer",
+      "monitoring",
+      "node",
+      "nodejs",
+      "pm2",
+      "process-manager",
+      "production"
+    ],
+    "matched_topics": [
+      "command-line"
+    ]
+  },
+  {
+    "full_name": "sxyazi/yazi",
+    "stars": 42366,
+    "language": "Rust",
+    "description": "💥 Blazing fast terminal file manager written in Rust, based on async I/O.",
+    "topics": [
+      "android",
+      "asyncio",
+      "cli",
+      "command-line",
+      "concurrency",
+      "cross-platform",
+      "developer-tools",
+      "file-explorer",
+      "file-manager",
+      "filesystem",
+      "linux",
+      "macos",
+      "neovim",
+      "productivity",
+      "rust",
+      "terminal",
+      "tui",
+      "vim",
+      "windows"
+    ],
+    "matched_topics": [
+      "cli",
+      "command-line",
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "chubin/cheat.sh",
+    "stars": 41769,
+    "language": "Python",
+    "description": "the only cheat sheet you need",
+    "topics": [
+      "cheatsheet",
+      "cli",
+      "command-line",
+      "curl",
+      "documentation",
+      "examples",
+      "hacktoberfest2021",
+      "help",
+      "terminal",
+      "tldr"
+    ],
+    "matched_topics": [
+      "cli",
+      "command-line",
+      "terminal"
+    ]
+  },
+  {
+    "full_name": "Hmbown/Codewhale",
+    "stars": 41031,
+    "language": "Rust",
+    "description": "Open-source coding agent for your terminal, built in Rust and on a journey of continuous community improvement. Issues and PRs welcome.",
+    "topics": [
+      "agent-orchestration",
+      "ai-agent",
+      "cli",
+      "coding-agent",
+      "local-first",
+      "mcp",
+      "multi-agent",
+      "multi-model",
+      "open-source",
+      "rust",
+      "tui"
+    ],
+    "matched_topics": [
+      "cli"
+    ]
+  }
+]

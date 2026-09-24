@@ -1,0 +1,950 @@
+[
+  {
+    "full_name": "microsoft/vscode",
+    "stars": 192810,
+    "language": "TypeScript",
+    "description": "Visual Studio Code",
+    "topics": [
+      "editor",
+      "electron",
+      "microsoft",
+      "typescript",
+      "visual-studio-code"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "farion1231/cc-switch",
+    "stars": 134930,
+    "language": "Rust",
+    "description": "A cross-platform desktop All-in-One assistant for Claude Code, Codex, OpenCode, OpenClaw, Grok Build & Hermes Agent. Only official website: ccswitch.io",
+    "topics": [
+      "ai-tools",
+      "claude-code",
+      "codex",
+      "desktop-app",
+      "grok",
+      "grokbuild",
+      "hermes",
+      "hermes-agent",
+      "mcp",
+      "open-source",
+      "openclaw",
+      "openclaw-ui",
+      "opencode",
+      "pi",
+      "provider-management",
+      "rust",
+      "skills",
+      "skills-management",
+      "tauri",
+      "wsl-support"
+    ],
+    "matched_topics": [
+      "desktop-app",
+      "tauri"
+    ]
+  },
+  {
+    "full_name": "electron/electron",
+    "stars": 123202,
+    "language": "C++",
+    "description": ":electron: Build cross-platform desktop apps with JavaScript, HTML, and CSS",
+    "topics": [
+      "c-plus-plus",
+      "chrome",
+      "css",
+      "electron",
+      "html",
+      "javascript",
+      "nodejs",
+      "v8",
+      "works-with-codespaces"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "jaywcjlove/awesome-mac",
+    "stars": 114517,
+    "language": "Swift",
+    "description": " This project is dedicated to collecting high-quality macOS software and organizing them systematically by different categories for easy search and use.",
+    "topics": [
+      "app",
+      "apple",
+      "application",
+      "apps",
+      "awesome",
+      "awesome-list",
+      "awesome-mac",
+      "desktop-app",
+      "desktop-application",
+      "desktop-apps",
+      "list",
+      "mac",
+      "mac-osx",
+      "macos",
+      "macos-app",
+      "macos-apps",
+      "macosx",
+      "software",
+      "swift",
+      "swiftui"
+    ],
+    "matched_topics": [
+      "desktop-app"
+    ]
+  },
+  {
+    "full_name": "tauri-apps/tauri",
+    "stars": 111279,
+    "language": "Rust",
+    "description": "Build smaller, faster, and more secure desktop and mobile applications with a web frontend.",
+    "topics": [
+      "desktop-app",
+      "high-performance",
+      "mobile-app",
+      "native-app",
+      "rust",
+      "web-frontend",
+      "webview"
+    ],
+    "matched_topics": [
+      "desktop-app"
+    ]
+  },
+  {
+    "full_name": "nexu-io/open-design",
+    "stars": 97696,
+    "language": "TypeScript",
+    "description": "🎨 Best DeepSeek Harness Design Plugin. The open-source Claude Design alternative. 🖥️ Local-first desktop app. 🖼️ Your coding agent becomes the design engine: prototypes, landing pages, dashboards, slides, images & video — real files, HTML/PDF/PPTX/MP4 export. 🤖 Claude Code / Codex / Cursor / DeepSeek Harness / OpenCode & 20+ CLIs via BYOK.",
+    "topics": [
+      "agent-skills",
+      "ai-design",
+      "byok",
+      "claude-code-for-design",
+      "claude-design",
+      "codex-design",
+      "coding-agents",
+      "cursor-design",
+      "deepseek",
+      "deepseek-harness",
+      "design-systems",
+      "desktop-app",
+      "dsh",
+      "dsh-plugin",
+      "figma-alternative",
+      "hermes-agent",
+      "local-first",
+      "prototyping",
+      "ui-generator",
+      "vibe-coding"
+    ],
+    "matched_topics": [
+      "desktop-app"
+    ]
+  },
+  {
+    "full_name": "microsoft/playwright",
+    "stars": 96541,
+    "language": "TypeScript",
+    "description": "Playwright is a framework for Web Testing and Automation. It allows testing Chromium, Firefox and WebKit with a single API. ",
+    "topics": [
+      "automation",
+      "chrome",
+      "chromium",
+      "e2e-testing",
+      "electron",
+      "end-to-end-testing",
+      "firefox",
+      "javascript",
+      "playwright",
+      "test",
+      "test-automation",
+      "testing",
+      "testing-tools",
+      "web",
+      "webkit"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "ChatGPTNextWeb/NextChat",
+    "stars": 88805,
+    "language": "TypeScript",
+    "description": "✨ Zero-config AI chat assistant. No API key needed — sign up and instantly chat with GPT-5, Claude 4, Gemini 2.5, DeepSeek & 100+ top models. Pay-as-you-go saves you more. Available on Web, iOS, macOS, Android, Linux, Windows.",
+    "topics": [
+      "calclaude",
+      "chatgpt",
+      "claude",
+      "cross-platform",
+      "desktop",
+      "fe",
+      "gemini",
+      "gemini-pro",
+      "gemini-server",
+      "gemini-ultra",
+      "gpt-4o",
+      "groq",
+      "nextjs",
+      "ollama",
+      "react",
+      "tauri",
+      "tauri-app",
+      "vercel",
+      "webui"
+    ],
+    "matched_topics": [
+      "tauri"
+    ]
+  },
+  {
+    "full_name": "toeverything/AFFiNE",
+    "stars": 72869,
+    "language": "TypeScript",
+    "description": "There can be more than Notion and Miro. AFFiNE(pronounced [ə‘fain]) is a next-gen knowledge base that brings planning, sorting and creating all together. Privacy first, open-source, customizable and ready to use. ",
+    "topics": [
+      "app",
+      "crdt",
+      "editor",
+      "electron",
+      "knowledge-base",
+      "markdown",
+      "miro",
+      "notes",
+      "notion",
+      "notion-alternative",
+      "rust",
+      "rust-lang",
+      "rust-language",
+      "table",
+      "tableview",
+      "whiteboard",
+      "wiki",
+      "workspace"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "marktext/marktext",
+    "stars": 61753,
+    "language": "TypeScript",
+    "description": "📝A simple and elegant markdown editor, available for Linux, macOS and Windows.",
+    "topics": [
+      "dark-mode",
+      "editor",
+      "electron",
+      "focus-mode",
+      "latex",
+      "linux",
+      "mac",
+      "macos",
+      "markdown",
+      "marktext",
+      "source-code",
+      "typewriter-mode",
+      "vue",
+      "windows"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "tw93/Pake",
+    "stars": 61642,
+    "language": "Rust",
+    "description": "🤱🏻 Turn any webpage into a desktop app with one command.",
+    "topics": [
+      "chatgpt",
+      "claude",
+      "desktop",
+      "gemini",
+      "hight-performance",
+      "linux",
+      "macos",
+      "no-electron",
+      "package",
+      "rust",
+      "tauri",
+      "windows",
+      "youtube"
+    ],
+    "matched_topics": [
+      "tauri"
+    ]
+  },
+  {
+    "full_name": "atom/atom",
+    "stars": 60735,
+    "language": "JavaScript",
+    "description": ":atom: The hackable text editor",
+    "topics": [
+      "atom",
+      "editor",
+      "electron",
+      "javascript",
+      "linux",
+      "macos",
+      "windows"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "laurent22/joplin",
+    "stars": 56477,
+    "language": "TypeScript",
+    "description": "Joplin - the privacy-focused note taking app with sync capabilities for Windows, macOS, Linux, Android and iOS.",
+    "topics": [
+      "android",
+      "dropbox",
+      "electron",
+      "enex-files",
+      "evernote",
+      "javascript",
+      "joplin",
+      "nextcloud",
+      "nodejs",
+      "note-taking",
+      "notesnook",
+      "obsidian",
+      "onedrive",
+      "react-native",
+      "standardnotes",
+      "synchronisation",
+      "web-clipper",
+      "webdav"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "agalwood/Motrix",
+    "stars": 55785,
+    "language": "TypeScript",
+    "description": "A full-featured download manager.",
+    "topics": [
+      "aria2",
+      "bt",
+      "download",
+      "electron",
+      "linux",
+      "mac",
+      "macos",
+      "magnet",
+      "motrix",
+      "torrent",
+      "windows"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "lencx/ChatGPT",
+    "stars": 54558,
+    "language": "Rust",
+    "description": "❄️ ChatGPT Desktop Application (Mac, Windows and Linux)",
+    "topics": [
+      "ai",
+      "app",
+      "application",
+      "chatgpt",
+      "desktop-app",
+      "gpt",
+      "gpt-3",
+      "linux",
+      "macos",
+      "notes-app",
+      "openai",
+      "rust",
+      "tauri",
+      "webview",
+      "windows"
+    ],
+    "matched_topics": [
+      "desktop-app",
+      "tauri"
+    ]
+  },
+  {
+    "full_name": "lyswhut/lx-music-desktop",
+    "stars": 53855,
+    "language": "TypeScript",
+    "description": "一个基于 Electron 的音乐软件",
+    "topics": [
+      "electron",
+      "javascript",
+      "music-player",
+      "vue"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "upscayl/upscayl",
+    "stars": 49807,
+    "language": "TypeScript",
+    "description": "🆙 Upscayl - #1 Free and Open Source AI Image Upscaler for Linux, MacOS and Windows.",
+    "topics": [
+      "ai",
+      "electron",
+      "esrgan",
+      "gigapixel",
+      "gigapixel-images",
+      "image",
+      "image-upscaling",
+      "topaz",
+      "upscale",
+      "upscalerimage",
+      "upscayl"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "GitSquared/edex-ui",
+    "stars": 45052,
+    "language": "JavaScript",
+    "description": "A cross-platform, customizable science fiction terminal emulator with advanced monitoring & touchscreen support.",
+    "topics": [
+      "desktop",
+      "edex-ui",
+      "electron",
+      "linux",
+      "macos",
+      "nodejs",
+      "science-fiction",
+      "shell",
+      "terminal",
+      "touchscreen",
+      "tron",
+      "unixporn",
+      "windows"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "janhq/jan",
+    "stars": 44614,
+    "language": "Rust",
+    "description": "Jan is an open source alternative to ChatGPT that runs 100% offline on your computer.",
+    "topics": [
+      "chatgpt",
+      "gpt",
+      "llamacpp",
+      "llm",
+      "localai",
+      "open-source",
+      "self-hosted",
+      "tauri"
+    ],
+    "matched_topics": [
+      "tauri"
+    ]
+  },
+  {
+    "full_name": "tinyhumansai/openhuman",
+    "stars": 40048,
+    "language": "Rust",
+    "description": "OpenHuman is an open source agent harness with local-first memory, agent orchestration, and workflows",
+    "topics": [
+      "agent-orchestration",
+      "ai-agents",
+      "ai-assistant",
+      "desktop",
+      "llm",
+      "local-first",
+      "mcp",
+      "personal-ai",
+      "privacy",
+      "rust",
+      "second-brain",
+      "tauri"
+    ],
+    "matched_topics": [
+      "tauri"
+    ]
+  },
+  {
+    "full_name": "siddharthvaddem/openscreen",
+    "stars": 39960,
+    "language": "TypeScript",
+    "description": "Create stunning demos for free. Open-source, no subscriptions, no watermarks, and free for commercial use. An alternative to Screen Studio.",
+    "topics": [
+      "electron",
+      "open-source",
+      "pixijs",
+      "screen-capture",
+      "screen-recorder"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "TriliumNext/Trilium",
+    "stars": 37945,
+    "language": "TypeScript",
+    "description": "Build your personal knowledge base with Trilium Notes",
+    "topics": [
+      "electron",
+      "electron-app",
+      "knowledge-base",
+      "knowledge-graph",
+      "knowledge-management",
+      "knowledge-management-graph",
+      "local-first",
+      "note-managment",
+      "note-taker",
+      "note-taking",
+      "notebook",
+      "notes",
+      "notes-app",
+      "personal-knowledge-base",
+      "personal-wiki",
+      "scriptable",
+      "self-hosted",
+      "self-hosting",
+      "wiki"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "nativefier/nativefier",
+    "stars": 35263,
+    "language": "TypeScript",
+    "description": "Make any web page a desktop application",
+    "topics": [
+      "desktop-application",
+      "electron",
+      "linux",
+      "macos",
+      "nodejs",
+      "windows"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "debpalash/VoiceStudio",
+    "stars": 34570,
+    "language": "Python",
+    "description": "VoiceStudio is the open-source, fully-local ElevenLabs alternative — voice cloning, voice design, video dubbing, dictation, transcription & audiobook creation in 646 languages.",
+    "topics": [
+      "ai",
+      "audiobook",
+      "cuda",
+      "dubbing",
+      "elevenlabs-alternative",
+      "huggingface",
+      "local-first",
+      "mlx",
+      "omnivoice-studio",
+      "speech-to-text",
+      "tauri",
+      "text-to-speech",
+      "transcription",
+      "translate",
+      "tts",
+      "voice-ai",
+      "voice-cloning",
+      "voice-generation",
+      "voicestudio",
+      "workflow"
+    ],
+    "matched_topics": [
+      "tauri"
+    ]
+  },
+  {
+    "full_name": "pear-devs/pear-desktop",
+    "stars": 33562,
+    "language": "TypeScript",
+    "description": "Pear 🍐 is extension for music player",
+    "topics": [
+      "desktop-app",
+      "electron",
+      "linux",
+      "mac",
+      "macosx",
+      "music",
+      "music-player",
+      "music-player-application",
+      "music-player-extension",
+      "node",
+      "windows"
+    ],
+    "matched_topics": [
+      "desktop-app",
+      "electron"
+    ]
+  },
+  {
+    "full_name": "qier222/YesPlayMusic",
+    "stars": 33311,
+    "language": "Vue",
+    "description": "高颜值的第三方网易云播放器，支持 Windows / macOS / Linux :electron: ",
+    "topics": [
+      "electron",
+      "javascript",
+      "linux",
+      "mac",
+      "macos",
+      "music",
+      "music-player",
+      "netease-music",
+      "player",
+      "progressive-web-app",
+      "pwa",
+      "pwa-apps",
+      "vue",
+      "vue-cli",
+      "vue-router",
+      "vuex",
+      "web-music-player",
+      "windows"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "DevToys-app/DevToys",
+    "stars": 32024,
+    "language": "C#",
+    "description": "A Swiss Army knife for developers.",
+    "topics": [
+      "blazor",
+      "cross-platform",
+      "csharp",
+      "desktop",
+      "desktop-app",
+      "desktop-application",
+      "developer-tools",
+      "extensible",
+      "fluent",
+      "fluent-design",
+      "linux",
+      "macos",
+      "mica",
+      "syntax-highlighting",
+      "typescript",
+      "windows",
+      "windows-10",
+      "windows-11",
+      "winui"
+    ],
+    "matched_topics": [
+      "desktop-app"
+    ]
+  },
+  {
+    "full_name": "webadderallorg/Recordly",
+    "stars": 30812,
+    "language": "TypeScript",
+    "description": "Create polished demo videos without editing skills. Mac/Windows/Linux",
+    "topics": [
+      "electron",
+      "free",
+      "linux",
+      "macos",
+      "open-source",
+      "screen-recorder",
+      "screen-studio",
+      "windows"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "sindresorhus/awesome-electron",
+    "stars": 27290,
+    "language": null,
+    "description": "Useful resources for creating apps with Electron [SUBMISSIONS ARE TEMPORARILY PAUSED BECAUSE I'M TIRED OF REVIEWING LOW-QUALITY STUFF]",
+    "topics": [
+      "awesome",
+      "awesome-list",
+      "electron",
+      "list"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "Molunerfinn/PicGo",
+    "stars": 27235,
+    "language": "TypeScript",
+    "description": ":rocket: The Ultimate Image Uploader for Efficient Creators. Supports Obsidian, Typora, VS Code etc. and 60+ image hosting services  (S3, GitHub, Cloudflare R2, Imgur, Aliyun OSS...). Paste, upload, done.",
+    "topics": [
+      "aliyun-oss",
+      "cloudflare-r2",
+      "dsh-plugin",
+      "electron",
+      "electron-app",
+      "electron-vue",
+      "github",
+      "image",
+      "imageuploader",
+      "imgur",
+      "imgur-uploader",
+      "qiniu",
+      "s3-uploader",
+      "smms",
+      "tencent-cos",
+      "upyun",
+      "vue",
+      "weibo"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "quasarframework/quasar",
+    "stars": 27218,
+    "language": "JavaScript",
+    "description": "Quasar Framework - Build high-performance VueJS user interfaces in record time",
+    "topics": [
+      "android",
+      "browser-extension",
+      "electron",
+      "ios",
+      "javascript",
+      "material",
+      "material-components",
+      "material-design",
+      "material-theme",
+      "pwa",
+      "quasar-framework",
+      "server-side-rendering",
+      "ssr",
+      "vue",
+      "vue-component",
+      "vue-components",
+      "vue3",
+      "vuejs",
+      "vuejs3"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "oldj/SwitchHosts",
+    "stars": 27214,
+    "language": "Rust",
+    "description": "Switch hosts quickly!",
+    "topics": [
+      "electron",
+      "hosts",
+      "hostseditor",
+      "hostsfile",
+      "switch-hosts",
+      "switchhosts"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "mihomo-party-org/clash-party",
+    "stars": 26538,
+    "language": "TypeScript",
+    "description": ":electron: Another Mihomo GUI. ",
+    "topics": [
+      "clash",
+      "clash-meta",
+      "electron",
+      "mihomo"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "zulip/zulip",
+    "stars": 25938,
+    "language": "Python",
+    "description": "Zulip server and web application. Open-source team chat that helps teams stay productive and focused.",
+    "topics": [
+      "apache",
+      "chat",
+      "collaboration",
+      "electron",
+      "foss",
+      "free",
+      "javascript",
+      "python",
+      "python3",
+      "react-native",
+      "slack",
+      "zulip"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "responsively-org/responsively-app",
+    "stars": 25196,
+    "language": "TypeScript",
+    "description": "A modified web browser that helps in responsive web development. A web developer's must have dev-tool.",
+    "topics": [
+      "contributions-welcome",
+      "desktop-app",
+      "developer-tools",
+      "electron",
+      "good-first-issue",
+      "hacktoberfest",
+      "javascript",
+      "opensource-alternative",
+      "react",
+      "redux",
+      "responsive",
+      "responsive-web-design",
+      "web-development"
+    ],
+    "matched_topics": [
+      "desktop-app",
+      "electron"
+    ]
+  },
+  {
+    "full_name": "nylas/nylas-mail",
+    "stars": 24732,
+    "language": "JavaScript",
+    "description": ":love_letter: An extensible desktop mail app built on the modern web.  Forks welcome!",
+    "topics": [
+      "babel",
+      "electron",
+      "email",
+      "flux",
+      "javascript",
+      "linux",
+      "macos",
+      "nylas-mail",
+      "productivity",
+      "react",
+      "windows"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "readest/readest",
+    "stars": 24546,
+    "language": "TypeScript",
+    "description": "Readest is a modern, feature-rich ebook reader designed for avid readers offering seamless cross-platform access, powerful tools, and an intuitive interface to elevate your reading experience.",
+    "topics": [
+      "calibre",
+      "cross-platform",
+      "ebook",
+      "ebook-reader",
+      "epub",
+      "foliate",
+      "kindle",
+      "koreader",
+      "koreader-plugin",
+      "mobi",
+      "nextjs",
+      "opds",
+      "pdf",
+      "reader",
+      "sync",
+      "tauri",
+      "tts",
+      "webdav"
+    ],
+    "matched_topics": [
+      "tauri"
+    ]
+  },
+  {
+    "full_name": "electron-react-boilerplate/electron-react-boilerplate",
+    "stars": 24252,
+    "language": "TypeScript",
+    "description": "A Foundation for Scalable Cross-Platform Apps",
+    "topics": [
+      "babel",
+      "boilerplate",
+      "electron",
+      "eslint",
+      "javascript",
+      "react",
+      "typescript",
+      "webpack"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "docmirror/dev-sidecar",
+    "stars": 24173,
+    "language": "JavaScript",
+    "description": "开发者边车，github打不开，github加速，git clone加速，git release下载加速，stackoverflow加速",
+    "topics": [
+      "dev-sidecar",
+      "dns-ip",
+      "electron",
+      "fastgit",
+      "fastgithub",
+      "gfw",
+      "internet",
+      "mitmproxy",
+      "pnpm",
+      "proxy"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  },
+  {
+    "full_name": "beekeeper-studio/beekeeper-studio",
+    "stars": 23650,
+    "language": "TypeScript",
+    "description": "Modern and easy to use SQL client for MySQL, Postgres, SQLite, SQL Server, and more. Linux, MacOS, and Windows.",
+    "topics": [
+      "bigquery",
+      "cassandra",
+      "cockroachdb",
+      "database",
+      "electron",
+      "firebird",
+      "linux-app",
+      "mac-app",
+      "mariadb",
+      "mssql",
+      "mysql",
+      "postgresql",
+      "sql",
+      "sql-server",
+      "sqlite",
+      "windows-app"
+    ],
+    "matched_topics": [
+      "electron"
+    ]
+  }
+]
