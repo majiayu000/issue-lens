@@ -7,6 +7,14 @@ Mine **real-world GitHub issues** from peer products — indexed by **product fo
 
 Design rationale and the full feasibility research (data sources, prior art, academic evidence) live in [docs/research.md](docs/research.md) (Chinese).
 
+## Try the reports before rebuilding
+
+Start with the committed [desktop report](out/report_desktop.md) or
+[CLI report](out/report_cli.md), then follow the
+[worked issue-to-test-charter example](docs/issue-to-test-charter.md).
+Reading these files needs no credentials or local database. Fetching a new corpus
+is a separate step, and automatic LLM extraction is not implemented yet.
+
 ## How it works
 
 ```
@@ -30,6 +38,8 @@ Current corpus snapshot (2026-09-23): **79 repos, 30,784 issues** — desktop: 4
 Zero third-party dependencies: Python 3.12 standard library + an authenticated `gh` CLI (or `GITHUB_TOKEN`).
 
 ```bash
+git clone https://github.com/majiayu000/issue-lens.git
+cd issue-lens
 gh auth login                          # or: export GITHUB_TOKEN=...
 python3 s01_pick_repos.py              # 1. pick repos for every form in config.py
 python3 s02_fetch_issues.py            # 2. fetch issues (~80 repos, throttled by Search API 30 req/min)
