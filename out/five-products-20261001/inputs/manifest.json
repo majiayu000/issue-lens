@@ -1,0 +1,69 @@
+[
+  {
+    "product": "rekey",
+    "form": "cli",
+    "repository": "https://github.com/majiayu000/rekey",
+    "source_path": "/Users/lifcc/Desktop/code/AI/tools/rekey/README.md",
+    "source_revision": "e7b50943c1540f328675adc69dcc8074368cc9ac",
+    "source_dirty": false,
+    "input": "inputs/rekey.md",
+    "sha256": "d169b8a425e0c87f70f2c17863d1e688c0e8b06c8e1264dc44e2867fad3abf9e",
+    "characters": 15274
+  },
+  {
+    "product": "remem",
+    "form": "cli",
+    "repository": "https://github.com/majiayu000/remem",
+    "source_path": "/Users/lifcc/Desktop/code/AI/tools/remem/README.md",
+    "source_revision": "a3481d7d1c8c7e0f817fed07ff600165cb2226c1",
+    "source_dirty": false,
+    "input": "inputs/remem.md",
+    "sha256": "bde1e3b4a03b48c096ddb2105c9521a2af7a0b624526d397e51eef2c242dcd55",
+    "characters": 49930,
+    "source_sha256": "5362e28a5c9006ba206541041bf5b61efdafe08e1ae28a6b75ee571dae62ec32",
+    "sections": [
+      "Commands",
+      "How It Works",
+      "Install",
+      "REST API",
+      "Search Architecture",
+      "Security",
+      "Success Check",
+      "Uninstall",
+      "What You Get"
+    ]
+  },
+  {
+    "product": "rclean",
+    "form": "cli",
+    "repository": "https://github.com/majiayu000/rclean",
+    "source_path": "/Users/lifcc/Desktop/code/AI/tools/rclean/README.md",
+    "source_revision": "05fec46f0713f83175a82e9a5f21d1d751155ac0",
+    "source_dirty": false,
+    "input": "inputs/rclean.md",
+    "sha256": "bea362dbc2b6edca917e1de67015dfdbd7e881a17bc6d63134e4adc00eec122e",
+    "characters": 33478
+  },
+  {
+    "product": "quotabar",
+    "form": "desktop",
+    "repository": "https://github.com/majiayu000/quotabar",
+    "source_path": "/Users/lifcc/Desktop/code/AI/tools/quotabar/README.md",
+    "source_revision": "be367544f4b99ba62bc70e397aa0279b925741d6",
+    "source_dirty": false,
+    "input": "inputs/quotabar.md",
+    "sha256": "b1d2b520b7aa42e719bf14a3b37044b40a8c74657cbe545a190eb7a3b6b6f33a",
+    "characters": 16937
+  },
+  {
+    "product": "dsh-desk",
+    "form": "desktop",
+    "repository": "https://github.com/majiayu000/dsh-desk",
+    "source_path": "/Users/lifcc/Desktop/code/AI/tools/dsh-desk/README.md",
+    "source_revision": "99f0bdb7b2176297ff6625f73cded3e9cbf31326",
+    "source_dirty": false,
+    "input": "inputs/dsh-desk.md",
+    "sha256": "ea7ca5a70fde39a0f0425692faf41cd3f11c8d9ea3a24bab08ea33861d1c5cc8",
+    "characters": 7826
+  }
+]

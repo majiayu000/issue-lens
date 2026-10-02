@@ -1,0 +1,851 @@
+{
+  "status": "draft_not_executed",
+  "form": "desktop",
+  "generated_at": "2026-09-30T20:38:33.285194+00:00",
+  "prd_sha256": "b1d2b520b7aa42e719bf14a3b37044b40a8c74657cbe545a190eb7a3b6b6f33a",
+  "corpus_issue_count": 14730,
+  "source_limit": 12,
+  "requirements": [
+    {
+      "title": "多服务额度展示：统一显示剩余额度，隐藏周详情仍参与最紧张窗口判断",
+      "quote": "All quota numbers, rings, and bars consistently display remaining quota. Hiding weekly detail does not remove a weekly limit from headline selection. Low remaining quota retains warning and critical colors.",
+      "terms": [
+        "remaining quota",
+        "quota window selection",
+        "weekly limit",
+        "warning colors"
+      ],
+      "id": "R1",
+      "retrieved_source_ids": [
+        4578489177
+      ]
+    },
+    {
+      "title": "服务切换与账户可见性：最多三个收藏，支持搜索与连接状态；Antigravity 额度暂不纳入",
+      "quote": "Provider switcher: overview, up to three saved favorites, and an All picker with search and connection/usage status. The picker follows account visibility settings; Antigravity quota integration remains pending.",
+      "terms": [
+        "provider switcher",
+        "saved favorites",
+        "account visibility",
+        "connection status"
+      ],
+      "id": "R2",
+      "retrieved_source_ids": [
+        4673937693,
+        4306798485,
+        4743855182,
+        1967028957
+      ]
+    },
+    {
+      "title": "托盘与桌面工作区生命周期：默认仅托盘，关闭工作区继续监控，退出则结束应用",
+      "quote": "QuotaBar starts as a menu bar app. Click a tray icon for the quota popover.\nA resizable desktop workspace (Overview, Quota, Usage, History, Sources, and\nSettings) is optional: open it from the tray menu. It does not open on launch. Closing the workspace keeps tray\nmonitoring running; Quit exits the application.",
+      "terms": [
+        "system tray",
+        "desktop workspace",
+        "close to tray",
+        "application quit"
+      ],
+      "id": "R3",
+      "retrieved_source_ids": [
+        1630928101,
+        4424596465,
+        1874064152
+      ]
+    },
+    {
+      "title": "后台轮询与凭据安全：退避重试、Claude OAuth 只读、Grok 委托官方 CLI 续期",
+      "quote": "- Background polling: refreshes every 60 seconds, backs off to 5 minutes on 429, and backs off to 1 hour on Claude auth failures.\n- Read-only Claude OAuth: reads Claude Code credentials from the correct source, but never refreshes or writes OAuth tokens.\n- Grok auth: checks `~/.grok/auth.json` on each polling cycle. When an expired credential has a refresh token, runs the installed official `grok models` command to let Grok renew and save its own credentials, then rereads them before requesting quota. This does not start a conversation. The helper has a 20-second timeout; unsuccessful automatic renewal retries after 5 minutes, while manual refresh can retry immediately. QuotaBar never writes tokens itself or logs CLI output. If renewal remains unavailable, open `grok` and sign in only if prompted.\n- Hidden-window polling: disables macOS webview throttling so menubar mode keeps working.",
+      "terms": [
+        "background polling",
+        "rate limit backoff",
+        "read-only OAuth",
+        "credential renewal"
+      ],
+      "id": "R4",
+      "retrieved_source_ids": [
+        4545732800
+      ]
+    },
+    {
+      "title": "界面缩放与中英语言切换：双窗口同步、偏好持久化、保持额度数据与轮询",
+      "quote": "Settings → Display → Interface size offers **100%**, **125%**, and **150%**. It scales text and controls in both windows and is remembered across restarts. The tray resizes and stays anchored to its icon; content scrolls when screen space is limited.\n\nSettings → Display → Language offers **Follow system**, **简体中文**, and **English**.\nBoth the menu bar panel and desktop workspace update immediately and share the\nsaved preference. Chinese system locales use Simplified Chinese; other system\nlocales use English. Quota data, current navigation and provider polling survive\nlanguage changes.",
+      "terms": [
+        "interface scaling",
+        "language switching",
+        "preference persistence",
+        "tray anchoring"
+      ],
+      "id": "R5",
+      "retrieved_source_ids": [
+        1895986627,
+        5199085774,
+        4389332279
+      ]
+    },
+    {
+      "title": "本地用量分析与导出：统一筛选报告、明确缺失数据和定价、导出排除会话标题与路径",
+      "quote": "Local analytics use one filtered ccstats report for summaries, projects,\nsessions, daily/hourly history, activity, and period comparisons. Missing source\ndata and incomplete pricing are shown explicitly. API-equivalent estimates are\nnot subscription bills. Session titles come from existing source metadata or\nlocal manual names, with no model summarization. JSON/SVG summary exports omit\nsession titles and paths.",
+      "terms": [
+        "local usage analytics",
+        "missing pricing",
+        "API-equivalent cost",
+        "summary export privacy"
+      ],
+      "id": "R6",
+      "retrieved_source_ids": []
+    },
+    {
+      "title": "周 token 容量估算：仅 Astra 与 GPT-5.6 Sol，本地与社区来源切换不影响官方额度",
+      "quote": "Weekly token capacity shows only **Astra** and **GPT-5.6 Sol**. It defaults to\nthe local estimate when available. Click the source badge to switch between\nlocal and community values; the badge flips horizontally and respects reduced\nmotion. Switching does not refetch usage or change the official quota percentage.",
+      "terms": [
+        "weekly token capacity",
+        "local estimate",
+        "community reference",
+        "quota percentage"
+      ],
+      "id": "R7",
+      "retrieved_source_ids": []
+    },
+    {
+      "title": "额度阈值与奖励提醒：80%、95%、100%、未使用奖励重置及奖励到期",
+      "quote": "Notifications: 80%, 95%, 100%, unused bonus reset, and bonus-expiry alerts.",
+      "terms": [
+        "quota threshold notification",
+        "bonus reset",
+        "bonus expiry"
+      ],
+      "id": "R8",
+      "retrieved_source_ids": []
+    }
+  ],
+  "sources": [
+    {
+      "id": 4578489177,
+      "title": "Codex free accounts do not show remaining quota or refresh time in CC Switch",
+      "url": "https://github.com/farion1231/cc-switch/issues/3651",
+      "repo": "farion1231/cc-switch",
+      "extraction": {
+        "id": 4578489177,
+        "issue_kind": "bug",
+        "symptom": "CC Switch 中免费 Codex 账户不显示剩余额度和重置时间，而付费账户正常显示。",
+        "root_cause": null,
+        "root_cause_category": "账户额度查询与状态展示",
+        "environment": [
+          "CC Switch 3.16.1",
+          "Windows",
+          "Codex/OpenAI Official 账户",
+          "同时包含免费与付费账户"
+        ],
+        "evidence_quote": "For Codex free accounts, CC Switch does not show the remaining quota or the refresh/reset time.",
+        "test_ideas": [
+          "在同一账户列表添加免费和付费 Codex 账户，分别核对剩余额度与重置时间是否与查询结果一致。",
+          "模拟额度查询未返回额度或重置时间，检查界面是否明确说明信息不可用，避免无解释的空白。",
+          "切换账户并刷新额度，检查是否误用其他账户的额度或重置时间。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19096,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1093,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f406-b12e-76a2-809e-56050d398d5d"
+        }
+      }
+    },
+    {
+      "id": 4673937693,
+      "title": "[Bug] Telegram and Discord messaging channels broken — show connected but messages not sending/receiving",
+      "url": "https://github.com/tinyhumansai/openhuman/issues/3712",
+      "repo": "tinyhumansai/openhuman",
+      "extraction": {
+        "id": 4673937693,
+        "issue_kind": "bug",
+        "symptom": "OpenHuman 的 Telegram 和 Discord 渠道无法正常收发消息，界面仍显示连接或可用状态且没有可见错误。",
+        "root_cause": null,
+        "root_cause_category": "消息收发与连接状态一致性",
+        "environment": [
+          "macOS",
+          "OpenHuman desktop",
+          "Messaging 中的 Telegram 与 Discord"
+        ],
+        "evidence_quote": "Both channels fail silently with no visible error",
+        "test_ideas": [
+          "分别通过 Telegram 和 Discord 双向发送带唯一标识的消息，核对外部客户端与 OpenHuman 实际收件结果。",
+          "模拟会话失效或连接中断，检查状态是否及时更新并展示可见错误。",
+          "连接中断后恢复网络，检查是否能重新连接并继续双向收发消息。",
+          "切换默认消息渠道，检查新消息是否发送到选定渠道，且发送失败时不会显示成功。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19096,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1093,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f406-b12e-76a2-809e-56050d398d5d"
+        }
+      }
+    },
+    {
+      "id": 1630928101,
+      "title": "(Feature request) Minimize/close to tray icon",
+      "url": "https://github.com/TriliumNext/Trilium/issues/3743",
+      "repo": "TriliumNext/Trilium",
+      "extraction": {
+        "id": 1630928101,
+        "issue_kind": "feature",
+        "symptom": "Trilium 已有托盘图标，但缺少最小化或关闭到托盘的选项，窗口仍占用任务栏空间。",
+        "root_cause": null,
+        "root_cause_category": "窗口管理(多窗口/托盘/全屏)",
+        "environment": [
+          "Trilium",
+          "Windows；其他平台仅为作者推测"
+        ],
+        "evidence_quote": "While Trilium can display a tray icon, it cannot be used \"persistently\".",
+        "test_ideas": [
+          "若实现该功能，分别开启“最小化到托盘”和“关闭到托盘”，验证对应按钮隐藏窗口并移除任务栏入口，同时保留托盘图标。",
+          "覆盖两个选项独立开关的四种组合，检查最小化与关闭行为分别遵循各自设置。",
+          "窗口隐藏后点击托盘图标或使用配置的快捷键，验证窗口恢复且内容保留。",
+          "通过托盘菜单退出，验证应用进程结束且托盘图标消失。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19096,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1093,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f406-b12e-76a2-809e-56050d398d5d"
+        }
+      }
+    },
+    {
+      "id": 4545732800,
+      "title": "Embedding API 429 floods Sentry with 31K events — no rate limit backoff",
+      "url": "https://github.com/tinyhumansai/openhuman/issues/2898",
+      "repo": "tinyhumansai/openhuman",
+      "extraction": {
+        "id": 4545732800,
+        "issue_kind": "bug",
+        "symptom": "Embedding API 返回 429 时产生大量 Sentry 错误事件，消耗监控配额并淹没其他问题。",
+        "root_cause": "正文明确称 embedding API 客户端在收到 429 时缺少限流或退避；对事件洪泛的具体路径，正文仅给出立即重试或每次重试均上报错误两种可能。",
+        "root_cause_category": "请求限流、重试退避与监控噪声",
+        "environment": [
+          "OpenHuman 0.54.0 至 0.56.0",
+          "所有平台（正文声明）",
+          "Embedding API 返回 HTTP 429",
+          "Sentry"
+        ],
+        "evidence_quote": "This generates 31,328 Sentry error events — the single noisiest issue in the project.",
+        "test_ideas": [
+          "使用模拟服务持续返回 429，并以可控时钟记录请求间隔，验证重试采用退避而非立即连续请求。",
+          "分别返回带与不带 Retry-After 的 429，检查重试时间遵循响应头或预定退避策略。",
+          "连续触发多次 429，统计 Sentry 错误事件和本地警告日志，检查是否避免逐次上报造成洪泛。",
+          "先返回 429 再返回成功，检查请求能够恢复完成；另返回非限流错误，检查真实错误仍按既定契约报告。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19096,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1093,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f406-b12e-76a2-809e-56050d398d5d"
+        }
+      }
+    },
+    {
+      "id": 1895986627,
+      "title": "The language switching menu does not pop up correctly",
+      "url": "https://github.com/toeverything/AFFiNE/issues/4362",
+      "repo": "toeverything/AFFiNE",
+      "extraction": {
+        "id": 1895986627,
+        "issue_kind": "bug",
+        "symptom": "语言切换菜单未能正确弹出，具体表现未在文字中说明。",
+        "root_cause": null,
+        "root_cause_category": "渲染与 UI 布局",
+        "environment": [],
+        "evidence_quote": "The language switching menu does not pop up correctly",
+        "test_ideas": [
+          "点击语言切换入口，检查菜单是否出现、可见且可选择语言。",
+          "在不同窗口尺寸下打开菜单，检查是否超出窗口边界、被裁剪或被其他界面元素遮挡。",
+          "连续打开、关闭菜单并选择语言，检查菜单交互是否正常、界面语言是否更新。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19096,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1093,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f406-b12e-76a2-809e-56050d398d5d"
+        }
+      }
+    },
+    {
+      "id": 4306798485,
+      "title": "Fix Windows tool sync mismatch: connected in UI but unavailable in chat skills",
+      "url": "https://github.com/tinyhumansai/openhuman/issues/749",
+      "repo": "tinyhumansai/openhuman",
+      "extraction": {
+        "id": 4306798485,
+        "issue_kind": "bug",
+        "symptom": "Windows 设置界面显示集成已连接，但聊天中对应技能不可用或被报告为未连接。",
+        "root_cause": null,
+        "root_cause_category": "连接状态与运行时能力同步",
+        "environment": [
+          "Windows",
+          "设置界面中的集成连接",
+          "聊天运行时技能注册与调用"
+        ],
+        "evidence_quote": "On Windows, channel/tool connection state appears successful in settings UI, but in chat the agent reports integrations as unavailable or not connected.",
+        "test_ideas": [
+          "在 Windows 中连接集成，确认已连接标记后立即在聊天中调用对应技能，检查状态与实际可用性是否一致。",
+          "断开并重新连接集成，再调用对应技能，检查运行时是否反映最新连接状态。",
+          "连接成功后退出并重新启动应用，检查连接状态恢复与技能实际调用结果是否一致。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 18914,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1206,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f407-606c-7023-85bc-3fe66d9c13b4"
+        }
+      }
+    },
+    {
+      "id": 4424596465,
+      "title": "Minimize to system tray when closing the Windows app",
+      "url": "https://github.com/tinyhumansai/openhuman/issues/1503",
+      "repo": "tinyhumansai/openhuman",
+      "extraction": {
+        "id": 4424596465,
+        "issue_kind": "feature",
+        "symptom": "Windows 应用关闭后完全退出，用户希望关闭时进入系统托盘以便快速重新打开。",
+        "root_cause": null,
+        "root_cause_category": "窗口管理(多窗口/托盘/全屏)",
+        "environment": [
+          "Windows",
+          "系统托盘",
+          "窗口关闭行为"
+        ],
+        "evidence_quote": "Would be nice if closing the app on Windows minimized it to the system tray instead of fully exiting.",
+        "test_ideas": [
+          "若实现关闭到托盘功能，点击窗口关闭按钮，检查窗口隐藏、托盘图标出现且应用仍在运行。",
+          "从托盘重新打开应用，检查窗口可见且可正常交互。",
+          "若提供设置开关，分别启用和禁用后关闭窗口，验证实际行为分别为进入托盘和完全退出。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 18914,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1206,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f407-606c-7023-85bc-3fe66d9c13b4"
+        }
+      }
+    },
+    {
+      "id": 5199085774,
+      "title": "bug: non-empty treePathExcludePatterns can leave initial project tree empty",
+      "url": "https://github.com/marktext/marktext/issues/5159",
+      "repo": "marktext/marktext",
+      "extraction": {
+        "id": 5199085774,
+        "issue_kind": "bug",
+        "symptom": "报告称 treePathExcludePatterns 为非空值时侧栏项目树首次扫描为空，而设为空数组时同一项目可以扫描。",
+        "root_cause": null,
+        "root_cause_category": "文件监视与项目树初始化",
+        "environment": [
+          "检查对象为官方 v0.19.1 macOS arm64 发布产物",
+          "发布包包含 Chokidar 5.0.0、Electron 42.1.0 和 Node 24.15.0",
+          "隔离检查启用了 macOS 轮询，未复现空树",
+          "实际故障的最小项目、精确配置、操作系统版本及文件夹打开方式尚缺失"
+        ],
+        "evidence_quote": "In the released application, setting `treePathExcludePatterns` to any non-empty value causes the sidebar project tree's initial scan to produce an empty tree. The same project can be scanned when the preference is an empty array.",
+        "test_ideas": [
+          "准备包含 Markdown 文件和子目录的固定项目，分别配置空数组及不匹配任何路径的非空模式，在完整应用中首次打开，比较项目树是否一致。",
+          "配置只匹配一个已知路径的排除模式，检查仅该路径被隐藏，其余文件与目录仍正常显示。",
+          "分别在启动时恢复项目和运行中手动打开项目，记录 watcher 初始事件及渲染端相对 mt::open-directory 的接收顺序，检查最终树是否完整。",
+          "保存非空模式后重启应用，核对持久化值及元素类型，并检查重新创建 watcher 后的首次项目树。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 18914,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1206,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f407-606c-7023-85bc-3fe66d9c13b4"
+        }
+      }
+    },
+    {
+      "id": 4743855182,
+      "title": "Hardcover sync fails completely in v0.11.12 despite successful API key authentication",
+      "url": "https://github.com/readest/readest/issues/4792",
+      "repo": "readest/readest",
+      "extraction": {
+        "id": 4743855182,
+        "issue_kind": "bug",
+        "symptom": "Readest v0.11.12 中 Hardcover 显示已连接，但自动同步和手动同步均不生效。",
+        "root_cause": null,
+        "root_cause_category": "第三方服务同步",
+        "environment": [
+          "Readest v0.11.12",
+          "Hardcover 集成",
+          "已配置 API key，界面显示已连接",
+          "操作系统未提供"
+        ],
+        "evidence_quote": "However, sync never happens automatically, and manual sync also doesn't work at all.",
+        "test_ideas": [
+          "配置有效 Hardcover API key，确认已连接后准备一条符合产品同步规则的数据，执行手动同步并核对目标端数据是否更新。",
+          "在满足产品规定的自动同步触发条件后，检查同类数据是否自动同步，并与手动同步结果对照。",
+          "在已连接状态下触发同步失败场景，检查界面是否反馈同步失败，避免用户将连接成功误认为同步成功。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 18914,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1206,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f407-606c-7023-85bc-3fe66d9c13b4"
+        }
+      }
+    },
+    {
+      "id": 1874064152,
+      "title": "[feat] Allow Windows system tray menu open on mouse/trackpad left click",
+      "url": "https://github.com/tauri-apps/tauri/issues/7719",
+      "repo": "tauri-apps/tauri",
+      "extraction": {
+        "id": 1874064152,
+        "issue_kind": "feature",
+        "symptom": "Windows 托盘菜单目前需要右键打开再左键选择，用户希望支持左键打开和选择菜单项。",
+        "root_cause": null,
+        "root_cause_category": "窗口管理(多窗口/托盘/全屏)",
+        "environment": [
+          "Windows",
+          "鼠标与触控板",
+          "系统托盘菜单及动态菜单项",
+          "正文称 macOS 与 Linux 已支持左键打开菜单"
+        ],
+        "evidence_quote": "On Windows, if I want to access (show) system tray menu, I need to click the right mouse/trackpad click (show menu) then left click to select menu item.",
+        "test_ideas": [
+          "若实现左键打开选项，在 Windows 启用后分别使用鼠标和触控板左键打开托盘菜单，再左键选择菜单项，检查对应操作是否执行一次。",
+          "关闭该选项，检查右键打开菜单、左键选择菜单项的默认流程是否正常。",
+          "更新动态生成的菜单项后，用左键打开菜单，检查显示内容及选中项执行结果是否对应最新菜单。",
+          "在 macOS、Linux 和 Windows 上对照验证左键打开与选择行为，记录各平台实际支持情况。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 18914,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1206,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f407-606c-7023-85bc-3fe66d9c13b4"
+        }
+      }
+    },
+    {
+      "id": 4389332279,
+      "title": "Improve language switcher UI in Settings for clearer selection and smoother browsing",
+      "url": "https://github.com/nexu-io/open-design/issues/628",
+      "repo": "nexu-io/open-design",
+      "extraction": {
+        "id": 4389332279,
+        "issue_kind": "feature",
+        "symptom": "设置中的语言选择器功能可用，但选中、悬停和焦点状态难以区分，长列表及混合文字条目显得拥挤。",
+        "root_cause": "正文明确指出选中与悬停行的背景处理非常相似，视觉强调不足，列表间距较密。",
+        "root_cause_category": "渲染与 UI 布局",
+        "environment": [
+          "Settings > Language 的语言选择器",
+          "长语言列表",
+          "不同文字体系的语言名称与 locale code 混排"
+        ],
+        "evidence_quote": "Selected and hovered rows use very similar background treatments.",
+        "test_ideas": [
+          "打开语言选择器，保留一个选中项并悬停另一行，检查选中、悬停和焦点状态能否清晰区分。",
+          "滚动长语言列表并切换语言，检查当前选中项与焦点提示是否清晰，行间距是否便于扫描。",
+          "逐项检查不同文字体系的语言名称与 locale code，确认无重叠、裁切或难以辨认的拥挤布局。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 17934,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 499,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f408-0c3f-7483-9854-bc256cb054cd"
+        }
+      }
+    },
+    {
+      "id": 1967028957,
+      "title": "Add ACK strategy to WebSocket Client/Server to reduce the pendingStruct situations",
+      "url": "https://github.com/toeverything/AFFiNE/issues/4755",
+      "repo": "toeverything/AFFiNE",
+      "extraction": {
+        "id": 1967028957,
+        "issue_kind": "feature",
+        "symptom": "标题提出减少 pendingStruct 情况的需求，正文建议通过 WebSocket ACK 策略控制操作发送与同步状态。",
+        "root_cause": null,
+        "root_cause_category": "网络同步与持久化确认",
+        "environment": [
+          "WebSocket 客户端与服务端",
+          "二进制操作传输",
+          "数据库持久化"
+        ],
+        "evidence_quote": "Add ACK strategy to WebSocket Client/Server to reduce the pendingStruct situations",
+        "test_ideas": [
+          "按正文提出的策略设计测试：延迟首个操作的 ACK，连续产生后续操作，检查后续操作暂停发送且连接状态显示 reconnecting。",
+          "模拟操作已持久化但 ACK 丢失，检查客户端重发后，只有收到服务端 ACK 才恢复 Synced。",
+          "延迟数据库持久化或使其失败，检查服务端是否避免提前发送 ACK；持久化成功后再检查确认行为。",
+          "模拟重发同一操作，检查最终数据是否一致、是否产生重复应用；此项属于扩展测试建议，正文未说明去重机制。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 17934,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 499,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f408-0c3f-7483-9854-bc256cb054cd"
+        }
+      }
+    }
+  ],
+  "open_questions": [
+    "Features 列出通知功能，但 Demo Proof 又称桌面小组件和通知视觉仅为静态设计预览，直到运行时实现发布。当前通知的实际验收范围是什么？桌面小组件不应仅凭该预览描述纳入功能要求。",
+    "Claude 认证失败后退避一小时，与后文“failed reads wait for a manual recheck”之间的适用边界不明确：哪些失败会自动重试，哪些必须手动复查？",
+    "通知的 80%、95%、100% 指已用比例还是剩余比例？全文要求额度数字统一显示剩余量，但未明确通知触发阈值的口径。"
+  ],
+  "generation": {
+    "queries": {
+      "engine": "codex",
+      "requested_model": null,
+      "usage": {
+        "input_tokens": 21188,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1635,
+        "reasoning_output_tokens": 323
+      },
+      "thread_id": "01a0f405-cd38-7943-a765-f4cfb47c56a1"
+    },
+    "plan": {
+      "engine": "codex",
+      "requested_model": null,
+      "usage": {
+        "input_tokens": 27670,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3891,
+        "reasoning_output_tokens": 104
+      },
+      "thread_id": "01a0f408-756c-7600-a243-3ef08c695ff0"
+    }
+  },
+  "cases": [
+    {
+      "requirement_id": "R1",
+      "category": "额度展示",
+      "title": "免费与付费 Codex 登录状态下均按实际响应展示剩余额度",
+      "preconditions": [
+        "分别准备免费和付费 Codex 登录环境，逐个环境测试，不要求 QuotaBar 支持同服务多账户管理。",
+        "为两个环境提供可核对的有效额度响应，包含不同的已用比例及重置时间。"
+      ],
+      "steps": [
+        "在免费账户环境启动 QuotaBar，刷新并查看概览、Codex 详情和托盘。",
+        "在付费账户环境重复操作。",
+        "分别将界面数值与该环境的响应对照。"
+      ],
+      "expected_result": "响应提供的额度和重置时间可见；额度数字、环和条均表达剩余量。Codex 托盘优先采用 secondary_window，缺失时采用 primary_window，并将已用比例转换为剩余比例；不因账户免费而遗漏已有数据。",
+      "source_ids": [
+        4578489177
+      ],
+      "rationale": "原文证据明确报告免费 Codex 账户缺少剩余额度及重置时间。迁移账户类型这一触发条件，验证 QuotaBar 对有效响应的展示；不推定原产品根因，也不新增多账户功能。",
+      "id": "TC001"
+    },
+    {
+      "requirement_id": "R2",
+      "category": "连接与用量状态",
+      "title": "Windows 服务状态在设置、选择器和额度详情中一致",
+      "preconditions": [
+        "使用 Windows 桌面环境，已启用 Codex 可见性。",
+        "准备有效登录及有效额度响应，并能模拟随后发生的认证失效。"
+      ],
+      "steps": [
+        "通过 Check connection 检查有效登录，查看设置、All 选择器及 Codex 详情。",
+        "使认证失效并执行连接检查，等待检查完成。",
+        "再次查看上述入口。"
+      ],
+      "expected_result": "成功检查后，各入口对连接状态的表达一致，额度详情显示对应响应。认证失效后不得继续表达当前额度获取成功；保留的旧读数带过期标记，已检测服务仍可访问并进行重新检查。",
+      "source_ids": [
+        4306798485
+      ],
+      "rationale": "原文证据明确描述 Windows 设置显示连接成功而实际能力不可用。迁移跨界面状态不一致的条件到连接检查和额度读取，不引入聊天技能或假定相同实现根因。",
+      "id": "TC002"
+    },
+    {
+      "requirement_id": "R2",
+      "category": "连接与用量状态",
+      "title": "已连接服务的自动刷新与手动刷新均产生可见结果",
+      "preconditions": [
+        "某个受支持的额度服务已连接，已有有效额度快照。",
+        "可控制额度响应，且当前没有认证失败或限流退避。"
+      ],
+      "steps": [
+        "改变服务响应中的额度值，等待下一次正常轮询。",
+        "再次改变响应值，执行手动刷新。",
+        "使额度请求失败，分别观察自动刷新及手动刷新完成后的界面。"
+      ],
+      "expected_result": "正常轮询和手动刷新均显示各自的新额度；请求失败时不将旧读数冒充新结果，旧读数保留时带过期标记，用量状态反映当前不可用情况。连接成功本身不被当作用量获取成功。",
+      "source_ids": [
+        4743855182
+      ],
+      "rationale": "原文证据只确认自动及手动同步均不工作，未证明认证或实现根因。迁移自动、手动两条数据更新路径的对照检查到额度刷新，不增加第三方同步功能。",
+      "id": "TC003"
+    },
+    {
+      "requirement_id": "R3",
+      "category": "窗口生命周期",
+      "title": "Windows 默认托盘启动，关闭工作区后仍持续监控",
+      "preconditions": [
+        "使用 Windows 桌面环境，应用未运行。",
+        "至少启用一个托盘图标，某个服务可返回有效额度。"
+      ],
+      "steps": [
+        "启动应用，观察是否出现桌面工作区。",
+        "从托盘菜单打开工作区，再点击工作区关闭按钮。",
+        "改变额度响应，等待至少一个正常轮询周期。",
+        "点击托盘查看额度，再从托盘菜单打开工作区。"
+      ],
+      "expected_result": "启动时只提供托盘入口，不自动打开工作区；关闭工作区后应用进程和托盘仍在，额度继续更新；托盘面板及重新打开的工作区可正常使用。",
+      "source_ids": [
+        4424596465,
+        1630928101
+      ],
+      "rationale": "两条证据均是托盘驻留相关功能诉求，其中一条明确提出 Windows 关闭应用不应完全退出。QuotaBar 已明确承诺该行为，因此迁移关闭窗口这一生命周期触发条件，不引入最小化开关或快捷键。",
+      "id": "TC004"
+    },
+    {
+      "requirement_id": "R3",
+      "category": "窗口生命周期",
+      "title": "关闭工作区后使用 Quit 完整结束应用",
+      "preconditions": [
+        "使用 Windows 桌面环境，工作区已关闭，托盘监控仍在运行。",
+        "可观察应用进程、托盘图标及额度请求记录。"
+      ],
+      "steps": [
+        "从托盘入口执行 Quit。",
+        "观察应用进程和托盘图标。",
+        "继续观察超过一个正常轮询周期。"
+      ],
+      "expected_result": "应用进程退出，全部 QuotaBar 托盘图标消失，退出后不再发起额度轮询。",
+      "source_ids": [
+        4424596465
+      ],
+      "rationale": "原文证据讨论关闭与完全退出的行为差异。迁移该边界并依据 QuotaBar 的明确要求检查 Quit，避免关闭到托盘与真正退出混淆；不是将功能请求当作已证实故障。",
+      "id": "TC005"
+    },
+    {
+      "requirement_id": "R3",
+      "category": "托盘交互",
+      "title": "Windows 鼠标与触控板均可通过托盘进入额度面板及工作区",
+      "preconditions": [
+        "使用带鼠标及触控板的 Windows 环境。",
+        "应用仅在托盘运行，至少一个服务图标可见。"
+      ],
+      "steps": [
+        "分别使用鼠标和触控板点击服务托盘图标，检查额度面板。",
+        "通过产品实际提供的托盘菜单入口打开工作区。",
+        "关闭工作区后重复一次。"
+      ],
+      "expected_result": "两种输入设备均能打开额度面板，并可经托盘菜单打开工作区；没有因托盘点击不可达而失去应用入口。测试不要求左键直接打开原生菜单，也不要求新增点击模式设置。",
+      "source_ids": [
+        1874064152
+      ],
+      "rationale": "原文证据明确指出 Windows 托盘菜单依赖右键后再左键选择的操作路径。迁移平台及输入方式这一交互条件，验证 QuotaBar 承诺的入口可达性，不照搬源产品的左键菜单功能请求。",
+      "id": "TC006"
+    },
+    {
+      "requirement_id": "R4",
+      "category": "轮询退避",
+      "title": "持续 429 时按五分钟退避并保留过期标记",
+      "preconditions": [
+        "某个额度服务已有成功快照，正常轮询间隔为 60 秒。",
+        "测试环境可连续返回 429、恢复成功响应，并记录请求时间及控制时间推进。"
+      ],
+      "steps": [
+        "先观察正常轮询，再令下一次请求返回 429。",
+        "在随后五分钟内观察该服务请求记录及缓存展示。",
+        "五分钟后继续返回 429，观察下一个退避周期。",
+        "恢复成功响应，观察下一次到期请求及后续正常轮询。"
+      ],
+      "expected_result": "每次 429 后，该服务自动轮询等待五分钟，不立即循环重试，也不继续每 60 秒请求；缓存读数明确标记过期且不产生用量建议。成功后显示新额度并恢复正常轮询。",
+      "source_ids": [
+        4545732800
+      ],
+      "rationale": "原文引文仅直接证明出现 31,328 条错误事件，没有直接证明 429 或缺少退避是根因。结合 QuotaBar 明确的 429 退避要求，迁移重复失败放大的风险场景；429 来自 PRD，不把提炼中的根因判断当作事实，也不要求接入 Sentry。",
+      "id": "TC007"
+    },
+    {
+      "requirement_id": "R5",
+      "category": "语言入口与布局",
+      "title": "三档缩放和受限空间下语言选项仍可访问",
+      "preconditions": [
+        "在 macOS、Windows、Linux 桌面环境分别执行。",
+        "可打开托盘面板和桌面工作区，并可缩小工作区或使用可用空间有限的屏幕。"
+      ],
+      "steps": [
+        "依次设置 100%、125%、150% 界面大小。",
+        "在两种窗口的设置入口打开 Language 选择控件。",
+        "在受限空间下滚动内容，逐项访问 Follow system、简体中文、English。",
+        "关闭并重新打开语言选择控件。"
+      ],
+      "expected_result": "两种窗口的文字和控件随缩放更新；三个语言选项均可见或可滚动到达并可选择，无不可访问的裁切或遮挡。托盘面板调整大小后保持锚定图标，空间不足时内容可滚动。",
+      "source_ids": [
+        1895986627
+      ],
+      "rationale": "原文证据只说明语言菜单不能正确弹出，未给出窗口尺寸或平台原因。将 QuotaBar 明确支持的缩放和受限空间作为测试变体，检查同类入口可达性，不断言历史问题由缩放引起。",
+      "id": "TC008"
+    },
+    {
+      "requirement_id": "R5",
+      "category": "语言切换",
+      "title": "反复选择中英文后双窗口立即同步并保存偏好",
+      "preconditions": [
+        "托盘面板及工作区可用，已有有效额度及持续轮询。",
+        "记录两种窗口当前导航位置和当前额度。"
+      ],
+      "steps": [
+        "在一个窗口将语言切为简体中文，查看另一个窗口。",
+        "在另一个窗口切为 English，再次打开语言选项检查当前选择。",
+        "反复打开、关闭选择控件并切换中英文，观察额度、导航和轮询。",
+        "设置 125% 或 150% 缩放后正常退出并重启。"
+      ],
+      "expected_result": "显式选择中英文后，两种窗口立即使用同一语言，当前选项与显示一致；额度数据、当前导航及轮询保持有效。重启后语言与缩放偏好恢复。",
+      "source_ids": [
+        1895986627
+      ],
+      "rationale": "从语言菜单无法正确弹出的证据迁移选择入口及重复交互检查，并以 QuotaBar 的同步、持久化要求定义结果；这些扩展检查不是历史 issue 已证实的故障表现。",
+      "id": "TC009"
+    },
+    {
+      "requirement_id": "R5",
+      "category": "语言选择状态",
+      "title": "语言选中项不会被其他选项的悬停状态混淆",
+      "preconditions": [
+        "语言设置为 English，选择控件处于可操作状态。",
+        "分别使用 100%、125%、150% 缩放。"
+      ],
+      "steps": [
+        "打开语言选择控件，将指针移到简体中文但不选择。",
+        "移开指针后核对当前语言及选中项。",
+        "选择简体中文，再悬停 English。",
+        "在两种窗口中核对选择状态和实际界面语言。"
+      ],
+      "expected_result": "悬停不改变已保存语言，当前选中项始终可辨认；实际选择后选中状态和两种窗口语言一致。三个现有选项的名称无影响辨认的重叠或裁切。",
+      "source_ids": [
+        4389332279
+      ],
+      "rationale": "原文证据明确指出选中行与悬停行背景非常相似。迁移语言选择状态混淆的交互条件，仅检查 QuotaBar 的三个选项，不扩展为长语言列表或指定视觉实现。",
+      "id": "TC010"
+    }
+  ],
+  "coverage_gaps": [
+    {
+      "requirement_id": "R1",
+      "reason": "相关证据仅覆盖 Codex 账户类型下的额度展示风险；未充分覆盖最紧张窗口排序、隐藏周详情后仍参与排序、低剩余额度颜色、Claude 各窗口、Cursor 回退规则、Grok 共享池及响应缺字段的展示契约。不能由免费账户缺显示的证据推定这些机制也存在问题。"
+    },
+    {
+      "requirement_id": "R2",
+      "reason": "现有案例覆盖连接状态与实际用量读取的一致性，未充分覆盖最多三个收藏、收藏持久化、搜索、账户可见性设置及 Antigravity 仅显示可用状态。消息渠道静默失败的引文缺少具体触发条件，WebSocket ACK 提案涉及目标未声明的同步机制，均未据此新增案例。"
+    },
+    {
+      "requirement_id": "R3",
+      "reason": "托盘生命周期与输入方式的直接相关证据主要针对 Windows；macOS、Linux 的默认启动、关闭、退出行为尚未充分覆盖。各服务独立托盘、至少保留一个入口、工作区各页面及尺寸调整也缺少对应历史触发证据；未将源产品的最小化设置扩展为目标要求。"
+    },
+    {
+      "requirement_id": "R4",
+      "reason": "仅形成持续 429 的退避方案，且历史原文引文只证实错误事件数量，未直接证实其重试机制。Claude 各平台凭据来源、OAuth 只读、认证失败一小时退避、读取失败等待手动复查、手动操作仍受限流期限约束，以及 macOS 隐藏窗口持续轮询均未充分覆盖。认证失败自动重试与读取失败仅手动复查的适用边界仍需澄清。"
+    },
+    {
+      "requirement_id": "R4",
+      "reason": "没有相关历史原文证据支持 Grok 续期专门案例：每轮读取凭据、委托官方 CLI、续期后重读、20 秒超时、失败后五分钟自动重试、手动立即重试、不启动对话、不自行写令牌及不记录 CLI 输出均未覆盖，不能从错误事件洪泛推导这些认证行为。"
+    },
+    {
+      "requirement_id": "R5",
+      "reason": "案例覆盖语言入口、显式中英文切换及相关缩放变体；Follow system 对中文及其他系统区域的映射、系统语言变化后的行为、完整文本和控件缩放、全部屏幕位置的托盘锚定仍未充分覆盖。项目树排除模式导致空树的证据与本要求无直接关联，未迁移为偏好或语言测试。"
+    },
+    {
+      "requirement_id": "R6",
+      "reason": "未提供真正相关的历史证据，未生成案例。统一筛选报告、缺失源数据与定价提示、API 等价估值说明、会话标题来源及 JSON/SVG 排除标题与路径均存在覆盖缺口；文件树扫描问题不能证明本地分析或导出具有相同触发条件。"
+    },
+    {
+      "requirement_id": "R7",
+      "reason": "未提供真正相关的历史证据，未生成案例。仅展示 Astra 与 GPT-5.6 Sol、本地和社区来源切换、不重新请求用量、不改变官方额度、减少动态效果、估算公式及不可用回退均未覆盖。"
+    },
+    {
+      "requirement_id": "R8",
+      "reason": "未提供相关历史证据，未生成案例。80%、95%、100% 阈值及奖励重置、到期提醒均未覆盖；还需明确通知运行时是否已交付，以及阈值采用已用还是剩余比例。静态通知或桌面小组件预览不作为已实现功能的验收依据。"
+    }
+  ]
+}

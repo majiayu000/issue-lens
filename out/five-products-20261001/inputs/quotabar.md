@@ -1,0 +1,333 @@
+# QuotaBar
+
+[![CI](https://github.com/majiayu000/quotabar/actions/workflows/ci.yml/badge.svg)](https://github.com/majiayu000/quotabar/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+<p align="center">
+  <img src="src-tauri/icons/app-icon.svg" alt="QuotaBar logo" width="128" />
+</p>
+
+QuotaBar is a Tauri v2 menubar app for monitoring Claude Code, Codex, Cursor, Grok Build, and Antigravity usage. It shows live quota windows, per-provider tray indicators, and local cost estimates from on-device logs.
+
+Website: https://majiayu000.github.io/quotabar/
+
+## Features
+
+- Overview: large account rings and quota windows, with remaining quota and optional weekly detail. The headline always identifies the most constrained window; stale readings stay marked and provider details remain one click away.
+- High-usage tips explain remaining quota and reset timing; stale data does not produce usage advice.
+- Provider switcher: overview, up to three saved favorites, and an All picker with search and connection/usage status. The picker follows account visibility settings; Antigravity quota integration remains pending.
+- Claude quota: 5-hour, 7-day, Opus, Sonnet, and Claude Design windows.
+- Codex quota: short and weekly ChatGPT usage windows, local weekly pace and API-equivalent value estimates, and an exhausted-week layout that keeps the last estimate and a clickable bonus reset.
+  Observed usage is valued at standard API token prices; the full-week value is a rough extrapolation from an official quota snapshot, not a bill or an official dollar allowance. Fast-mode premiums and purchased credits are not represented by this estimate.
+- Cursor quota: signed-in Cursor usage and request-limit windows when session data is available.
+- Grok quota: SuperGrok weekly (or monthly) credits pool, product mix for Build/Chat/Imagine/Voice/API, extra credits, and an API-equivalent value estimate from ccstats' durable inference ledger.
+- Antigravity panel: placeholder provider status while quota tracking is pending.
+- Local cost tracking: today, week, and month estimates for Claude Code, Codex, and Cursor.
+- Per-provider tray icons: independent menu bar indicators for supported providers.
+- Tray controls: enable or hide each tray while keeping at least one entry point.
+- Settings view: Display / Alerts / Accounts pages, with quota display preferences, theme, macOS Hide Dock, Launch at Login, All / single-service presets, and per-provider tray controls. Launch at Login uses the OS login item rather than a local storage key.
+- Notifications: 80%, 95%, 100%, unused bonus reset, and bonus-expiry alerts.
+- Background polling: refreshes every 60 seconds, backs off to 5 minutes on 429, and backs off to 1 hour on Claude auth failures.
+- Read-only Claude OAuth: reads Claude Code credentials from the correct source, but never refreshes or writes OAuth tokens.
+- Grok auth: checks `~/.grok/auth.json` on each polling cycle. When an expired credential has a refresh token, runs the installed official `grok models` command to let Grok renew and save its own credentials, then rereads them before requesting quota. This does not start a conversation. The helper has a 20-second timeout; unsuccessful automatic renewal retries after 5 minutes, while manual refresh can retry immediately. QuotaBar never writes tokens itself or logs CLI output. If renewal remains unavailable, open `grok` and sign in only if prompted.
+- Hidden-window polling: disables macOS webview throttling so menubar mode keeps working.
+
+## Demo Proof
+
+![QuotaBar browser preview without provider credentials](docs/assets/quotabar-no-provider-preview.png)
+
+This `v0.4.0` screenshot was refreshed on 2026-08-31 from the production React UI in browser preview without a Tauri desktop backend. It intentionally shows the default unavailable-backend state and includes no provider quota values, account identifiers, tokens, cookies, or sessions. Desktop widget and notification visuals are static design previews only until a runtime implementation ships. See `docs/demo-proof.md` for the capture scope and refresh steps.
+
+## Quota Semantics
+
+- Claude tray value:
+  - uses the hottest Claude window (same ranking as the overview/header)
+  - includes the 5-hour session, 7-day All models (`weeklyTotal`), Opus, Sonnet, Design, and Fable 5 windows
+  - keeps `weeklyTotal` as a labeled card, not the implicit tray or 80/95 alert headline
+- Codex tray value:
+  - prefers `secondary_window.used_percent`
+  - falls back to `primary_window.used_percent`
+- Cursor tray value:
+  - prefers Cursor Models (`autoPercent`)
+  - falls back to the overall Cursor quota percentage
+- Grok tray value:
+  - uses the shared SuperGrok credits pool percent (`creditUsagePercent`)
+- Antigravity tray value:
+  - shows provider availability while usage tracking is pending
+- Tray percentages and rings represent remaining quota.
+- All quota numbers, rings, and bars consistently display remaining quota. Hiding weekly detail does not remove a weekly limit from headline selection. Low remaining quota retains warning and critical colors.
+
+## Project Layout
+
+- Frontend:
+  - `src/App.tsx`
+  - `src/components/*`
+  - `src/services/backend.ts`
+  - `src/services/service_meta.ts`
+  - `src/services/tray_visibility.ts`
+  - `src/types/models.ts`
+  - `src/utils/*`
+- Backend:
+  - `src-tauri/src/commands.rs`
+  - `src-tauri/src/domain/models.rs`
+  - `src-tauri/src/services/claude.rs`
+  - `src-tauri/src/services/codex.rs`
+  - `src-tauri/src/services/cursor.rs`
+  - `src-tauri/src/services/grok.rs`
+  - `src-tauri/src/services/antigravity.rs`
+  - `src-tauri/src/services/cost.rs`
+  - `src-tauri/src/services/http.rs`
+  - `src-tauri/src/services/tray.rs`
+  - `src-tauri/src/services/tray_icon.rs`
+  - `src-tauri/src/services/window.rs`
+- Release notes:
+  - `CHANGELOG.md`
+  - `docs/release.md`
+
+## Requirements
+
+- macOS, Windows, or Linux
+- Node.js with npm
+- Rust toolchain
+- Tauri prerequisites installed
+- Claude Code login for Claude quota and cost data
+- Codex login for Codex quota and cost data
+- Cursor sign-in or `CURSOR_SESSION_TOKEN` for Cursor quota data
+- Grok Build login (`grok login`) for Grok quota data
+- Antigravity installed for Antigravity provider status
+
+## Language
+
+Settings → Display → Interface size offers **100%**, **125%**, and **150%**. It scales text and controls in both windows and is remembered across restarts. The tray resizes and stays anchored to its icon; content scrolls when screen space is limited.
+
+Settings → Display → Language offers **Follow system**, **简体中文**, and **English**.
+Both the menu bar panel and desktop workspace update immediately and share the
+saved preference. Chinese system locales use Simplified Chinese; other system
+locales use English. Quota data, current navigation and provider polling survive
+language changes.
+
+UI messages live in `src/i18n/en.ts` and `src/i18n/zh-CN.ts`. See [the i18n architecture](docs/i18n.md)
+for rendering, stored messages, formatting and extension rules.
+
+## Development
+
+QuotaBar starts as a menu bar app. Click a tray icon for the quota popover.
+A resizable desktop workspace (Overview, Quota, Usage, History, Sources, and
+Settings) is optional: open it from the tray menu. It does not open on launch. Closing the workspace keeps tray
+monitoring running; Quit exits the application.
+
+Local analytics use one filtered ccstats report for summaries, projects,
+sessions, daily/hourly history, activity, and period comparisons. Missing source
+data and incomplete pricing are shown explicitly. API-equivalent estimates are
+not subscription bills. Session titles come from existing source metadata or
+local manual names, with no model summarization. JSON/SVG summary exports omit
+session titles and paths.
+
+The latest matching report is cached locally for quick startup while fresh
+analysis runs in the background. First-run loading has a reduced-motion-aware
+animation. Invalid Claude credentials require login before a quota request;
+failed reads wait for a manual recheck, with rate-limit deadlines still applied.
+
+The repositories remain separate. QuotaBar depends on the published ccstats
+0.9.0 SDK from crates.io; Cargo.lock pins the resolved version. Claude/Codex
+parsing is shared through
+agent-sessions. The SDK excludes the independent gpt-reserve pool from subscription
+week estimates while retaining it in general usage, and includes Grok 4.7 pricing.
+No local SDK archive or patch preparation is needed. Official quota percentages
+remain provider-reported; ordinary Luna usage is not excluded.
+
+Cost estimates automatically use the SDK's public
+[LiteLLM price catalog](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json).
+The SDK downloads it when no fresh price cache exists and refreshes it after
+24 hours. Once a new model is included in that catalog and recognized by the
+SDK, its prices become available without a QuotaBar release. Only the public
+catalog is fetched; local usage logs are processed on-device. If the download
+fails, the SDK uses its existing cache or bundled prices; models without a known
+price remain unavailable rather than being shown as free.
+
+For GPT-6.1 Sol, the catalog supplies the
+[standard API prices](https://developers.openai.com/api/docs/pricing): $2 input,
+$0.10 cached input, $2.50 cache writes, and $10 output per million tokens.
+Above 272K input tokens, the full request uses $4 input, $0.20 cached input,
+$5 cache writes, and $15 output. These are API-equivalent estimates, not
+subscription charges. The dated GPT-5.6 Sol weekly reference below remains
+specific to that model.
+
+Weekly token capacity shows only **Astra** and **GPT-5.6 Sol**. It defaults to
+the local estimate when available. Click the source badge to switch between
+local and community values; the badge flips horizontally and respects reduced
+motion. Switching does not refetch usage or change the official quota percentage.
+
+Local conversion uses all matched token records in the current weekly window,
+including cached input. Divide their API-equivalent cost by the official used
+fraction to estimate the full-week value. Reprice those same input/cache/output
+tokens as Astra, then calculate `weekly value / Astra replay cost × observed
+tokens`. This works with mixed-model usage and does not require a continuous
+single-model span or five percentage points of usage. Sol shows its API-price
+equivalent: Astra tokens × 2.5. The
+[Astra](https://openai.com/index/gpt-6-astra/) and
+[Sol](https://developers.openai.com/api/docs/models/gpt-5.6-sol) standard API
+input/cached-input/output prices checked on September 16, 2026 have the same
+2.5 ratio. This is price conversion, not a measured Sol subscription allowance.
+
+The **community reference** view shows Astra ≈853.5M and Sol ≈3.6B tokens per
+full week, including cached
+input. These factual results come from [Codex Weekly Quota
+Observatory](https://codex-quota.manetli.com/data/), snapshot
+`2026-09-16T08:50:43.414Z`, one Pro 20× account at Standard speed. They are not
+scaled to or presented as the current account's allowance. The source and date
+are shown in the panel; the reference values and dated price ratio live in
+`src/services/codex_weekly_reference.json`.
+If local data or Astra pricing is unavailable, the panel uses the community view
+and disables the switch with an explicit unavailable label.
+
+The two rows represent alternative uses of one quota and cannot be added.
+Other devices, cloud usage and workload changes can skew local estimates.
+Official remaining percentages stay provider-reported. The mixed-workload
+API-equivalent value and any local valuation errors remain in collapsed details.
+SDK changes are tested and released in ccstats first, then adopted with an explicit Cargo dependency update.
+
+```bash
+npm ci
+npm run tauri dev
+```
+
+## Build
+
+Frontend and Rust verification:
+
+```bash
+npm ci
+npm run release:check
+npm test
+npm run build
+cargo fmt --manifest-path src-tauri/Cargo.toml --check
+cargo check --manifest-path src-tauri/Cargo.toml
+cargo test --manifest-path src-tauri/Cargo.toml
+```
+
+Local macOS app bundle:
+
+```bash
+npm run tauri build -- --bundles app
+```
+
+`src-tauri/target/release/bundle/macos/QuotaBar.app`
+
+Downloadable release bundles:
+
+```bash
+# macOS, for the current host architecture
+npm run tauri build -- --bundles dmg
+
+# Windows
+npm run tauri build -- --bundles msi,nsis
+
+# Linux
+npm run tauri build -- --bundles appimage
+```
+
+Expected output locations:
+
+`src-tauri/target/release/bundle/dmg/`
+`src-tauri/target/release/bundle/msi/`
+`src-tauri/target/release/bundle/nsis/`
+`src-tauri/target/release/bundle/appimage/`
+
+## Release Artifacts
+
+The latest published release is available from [GitHub Releases](https://github.com/majiayu000/quotabar/releases/latest).
+
+Published `v*` tags build Developer ID signed and notarized macOS DMGs. Older GitHub Release assets such as v0.5.1 remain unsigned. Pull-request workflow artifacts stay unsigned tester builds.
+
+Release candidates should be built by the `release-artifacts` GitHub Actions workflow or from a clean checkout, then attached manually to the matching GitHub release only after final human approval. The workflow uploads build artifacts and SHA-256 manifests for inspection; it does not publish a GitHub Release. See [docs/release.md](docs/release.md) for the release checklist and signing-secret requirements.
+
+## Install / Run
+
+With no saved panel preferences, the switcher shows detected services and keeps them accessible if a connection later fails. Use **Add service** for setup, or Settings to choose providers manually.
+
+On first launch, Overview shows detected connections and instructions for signing in through each provider. Use **Check connection** after signing in. QuotaBar reads existing local sign-ins and delegates expired Grok session renewal to the installed Grok CLI; interactive sign-in stays with the provider. Antigravity quota tracking is still pending.
+
+For normal use, download the current installer from [GitHub Releases](https://github.com/majiayu000/quotabar/releases/latest). For development, install from a local build.
+
+macOS:
+
+```bash
+./scripts/stop_app.sh
+./scripts/install_app.sh
+./scripts/run_app.sh
+```
+
+Or one-shot restart after rebuild:
+
+```bash
+./scripts/reinstall_and_run.sh
+```
+
+Windows:
+
+- Download the `.msi` or `.exe` from GitHub Releases.
+- Build installer: `npm run tauri build -- --bundles msi,nsis`
+- Install from the generated `.msi` or `.exe`
+
+Linux x64:
+
+- Download the `.AppImage` from GitHub Releases.
+- Make it executable: `chmod +x QuotaBar_*.AppImage`
+- Run it: `./QuotaBar_*.AppImage`
+
+## Verification
+
+```bash
+npm run release:check
+npm test
+npm run build
+cargo fmt --manifest-path src-tauri/Cargo.toml --check
+cargo check --manifest-path src-tauri/Cargo.toml
+cargo test --manifest-path src-tauri/Cargo.toml
+npm run tauri build -- --bundles app
+```
+
+## Limitations
+
+- QuotaBar reads local provider auth state; it does not manage provider login flows.
+- Claude quota depends on Claude Code OAuth credentials and Anthropic's current usage response shape.
+- Codex quota depends on `~/.codex/auth.json` and ChatGPT usage windows returned by the current backend API.
+- Cursor quota requires Cursor sign-in or `CURSOR_SESSION_TOKEN`.
+- Antigravity support currently reports provider availability only; quota windows are not exposed yet.
+- Cost estimates are derived from local logs and may be empty until provider tools have written usage history.
+
+## Troubleshooting
+
+- Tray icon flashes then disappears:
+  - check menu bar manager hidden area, such as Ice or Bartender
+  - ensure the app is not auto-grouped into hidden extras
+- No Claude quota data:
+  - macOS: ensure Claude Code login exists in Keychain with `claude login`
+  - Windows/Linux: set `CLAUDE_CODE_OAUTH_TOKEN`
+  - if Claude auth fails, re-login with Claude Code and click Refresh
+- No Codex quota data:
+  - ensure `~/.codex/auth.json` is valid
+  - run the `codex` login flow again if the token expired
+- No Cursor quota data:
+  - sign in to Cursor
+  - or set `CURSOR_SESSION_TOKEN`
+- Antigravity quota is pending:
+  - Antigravity support currently exposes provider status, not quota windows
+- Persistent 429 rate limiting:
+  - QuotaBar uses a Claude Code user agent and serves stale cached data when available
+  - polling backs off to 5 minutes after 429 responses
+- Cost data is empty:
+  - local logs may not exist yet
+  - costs are estimated from local logs via `ccstats`, using automatically refreshed public prices
+
+## Support and Security
+
+- Bugs and feature requests: use GitHub issues.
+- Security or credential exposure: use GitHub private security advisories. Do not paste provider tokens, cookies, session files, or local auth material into public issues.
+- Contributor setup and expectations: see [CONTRIBUTING.md](CONTRIBUTING.md).
+- Security scope and reporting: see [SECURITY.md](SECURITY.md).
+
+## License
+
+MIT

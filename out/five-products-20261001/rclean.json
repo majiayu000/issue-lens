@@ -1,0 +1,922 @@
+{
+  "status": "draft_not_executed",
+  "form": "cli",
+  "generated_at": "2026-09-30T20:50:48.413436+00:00",
+  "prd_sha256": "bea362dbc2b6edca917e1de67015dfdbd7e881a17bc6d63134e4adc00eec122e",
+  "corpus_issue_count": 16054,
+  "source_limit": 12,
+  "requirements": [
+    {
+      "title": "扫描与批量清理安全：校验项目标记、阻止符号链接，谨慎项须显式纳入",
+      "quote": "- `scan` never deletes files.\n- blocked candidates are never selected by `clean --all`.\n- symlink candidates are blocked.\n- generic directories like `build`, `dist`, `out`, `target`, and `vendor` require\n  project marker evidence.\n- Python `venv` must contain virtualenv markers.\n- dirty git worktrees downgrade otherwise safe candidates to `caution`.\n- `--all` selects only `safe` candidates unless `--include-caution` is passed.",
+      "terms": [
+        "symlink",
+        "classification",
+        "marker",
+        "deletion"
+      ],
+      "id": "R1",
+      "retrieved_source_ids": [
+        5025682909,
+        858324277
+      ]
+    },
+    {
+      "title": "清理计划回放：删除前重新验证路径，拒绝新增符号链接及根路径变化",
+      "quote": "The action plan is the trust boundary: `clean --plan` re-validates every\npath against the live filesystem before deleting, refuses to follow new\nsymlinks, and rejects plans whose roots have changed shape since the\nscan.",
+      "terms": [
+        "revalidation",
+        "symlink",
+        "race",
+        "traversal"
+      ],
+      "id": "R2",
+      "retrieved_source_ids": [
+        5145521751,
+        4536421042
+      ]
+    },
+    {
+      "title": "恢复操作：交互选择与确认、目标冲突检查、批量失败统计及无副作用预览",
+      "quote": "Restore one grave directly with `rclean restore --id <ID>`. Add `--to <PATH>` to\nchoose another destination. Running `rclean restore` without `--id` on a\nterminal opens a newest-first numbered selector that accepts numbers, ranges,\n`all`, or `q`, then asks for confirmation. Every selected item still passes\nthrough the same target-exists and symlink checks as a direct restore. A batch\ncontinues after an item is skipped or fails, prints restored/skipped/failed\ntotals, and exits non-zero when any item was not restored.\n\nAdd `--dry-run` to either form to preview the selected restore operations\nwithout moving payloads, creating target directories, or updating the\nmanifest:",
+      "terms": [
+        "restore",
+        "collision",
+        "partial",
+        "dry-run"
+      ],
+      "id": "R3",
+      "retrieved_source_ids": [
+        5357643798,
+        4780209695
+      ]
+    },
+    {
+      "title": "按空间目标生成最小安全清理提案：不直接删除，正确处理不足及空结果",
+      "quote": "`rclean free <size>` computes the smallest safe set that can meet a target\nreclaim amount and writes it as an ActionPlan for review. It never deletes by\nitself; replay the plan with `rclean clean --plan ... --dry-run` first.\n`free --json` emits a versioned proposal containing `targetBytes`,\n`selectedBytes`, `targetMet`, `planPath`, and the selected scan candidates.\nExit code `0` means the target was met; exit code `3` means the safe set was\nshort or empty. A short proposal still writes a reviewable plan, while an empty\nproposal reports `planPath: null` and writes none.",
+      "terms": [
+        "selection",
+        "capacity",
+        "empty",
+        "exit-code"
+      ],
+      "id": "R4",
+      "retrieved_source_ids": [
+        4399114659,
+        4671767128
+      ]
+    },
+    {
+      "title": "管道提前关闭：避免崩溃、保留退出状态，并在删除开始前安全停止",
+      "quote": "Non-interactive stdout is pipe-aware. If a downstream reader closes early\n(for example, `rclean rules | head -n 1`), rclean stops writing without a panic\nor backtrace and retains any command exit status already determined. Other\nstdout I/O errors still fail explicitly. For `clean`, a closed pipe before the\ndelete phase stops the command before any artifact is removed; if cleanup has\nalready completed, its computed success or failure status is preserved.",
+      "terms": [
+        "pipe",
+        "stdout",
+        "panic",
+        "exit-code"
+      ],
+      "id": "R5",
+      "retrieved_source_ids": [
+        4808723392
+      ]
+    },
+    {
+      "title": "忽略规则：文件与命令行排除叠加，区分非法模式的失败与警告",
+      "quote": "If both an `.rcleanignore` entry and a `--ignore` glob match the same path,\nthe path is excluded.\n\nInvalid `--ignore` globs fail the scan. Invalid `.rcleanignore` files are\nreported as scan warnings so the scan can continue while still marking the\nresult as potentially incomplete.",
+      "terms": [
+        "glob",
+        "exclusion",
+        "validation",
+        "warning"
+      ],
+      "id": "R6",
+      "retrieved_source_ids": [
+        3327946339
+      ]
+    },
+    {
+      "title": "受保护用户记录：扫描、计划回放和删除均拒绝，自定义规则及篡改计划不能绕过",
+      "quote": "User records are not cleanup candidates. The following paths are\ntreated as protected user data and refused at scan, plan replay, and\ndelete time — even if a custom rule or tampered ActionPlan points at\nthem:\n\n- `~/.codex/sessions`, `~/.codex/memories`\n- `~/.claude/projects`, `~/.claude/sessions`, `~/.claude/history.jsonl`,\n  `~/.claude/shell-snapshots`, `~/.claude/file-history`,\n  `~/.claude/todos`",
+      "terms": [
+        "protection",
+        "bypass",
+        "tampering",
+        "deletion"
+      ],
+      "id": "R7",
+      "retrieved_source_ids": [
+        4273335397
+      ]
+    },
+    {
+      "title": "Docker 仅报告：子进程有超时、参数按数组传递，任何资源均不执行删除",
+      "quote": "`docker report` uses the official Docker CLI with bounded subprocess timeouts\nand array arguments. It does not call `docker system prune`, `docker builder\nprune`, `docker rm`, `docker rmi`, `docker volume rm`, or any other deletion\ncommand. Build cache and dangling-image categories may be classified as\n`caution` in the report taxonomy, while volumes, named resources, networks, and\ntagged images remain `report-only`; all Docker rows are `selected=false` in this\nrelease.",
+      "terms": [
+        "timeout",
+        "subprocess",
+        "arguments",
+        "deletion"
+      ],
+      "id": "R8",
+      "retrieved_source_ids": [
+        16408569
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": 5025682909,
+      "title": "[Bug]: Symlink file cannot be opened, showing \"Cannot open symlink target\"",
+      "url": "https://github.com/stablyai/orca/issues/11654",
+      "repo": "stablyai/orca",
+      "extraction": {
+        "id": 5025682909,
+        "issue_kind": "bug",
+        "symptom": "点击符号链接文件时显示“Cannot open symlink target”，无法直接打开目标文件。",
+        "root_cause": null,
+        "root_cause_category": "文件系统与权限",
+        "environment": [
+          "macOS",
+          "Orca 1.4.162",
+          "文件浏览器中的符号链接"
+        ],
+        "evidence_quote": "Clicking on a soft symlink file displays a \"Cannot open symlink target\" error instead of opening the target file directly (expected behavior, matching VS Code).",
+        "test_ideas": [
+          "创建指向可读文件的符号链接，分别打开原文件和链接，验证两者打开相同内容。",
+          "分别测试相对路径和绝对路径链接；对目标不存在或不可读的链接，验证错误信息能区分失败原因。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19349,
+            "cached_input_tokens": 8832,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1115,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f411-be5a-76f1-b219-fdc645b7e0fc"
+        }
+      }
+    },
+    {
+      "id": 5145521751,
+      "title": "tests/intake.test.mjs aborts the whole suite on a machine without symlink privileges, hiding 56% of the checks",
+      "url": "https://github.com/career-ops-hq/career-ops/issues/2828",
+      "repo": "career-ops-hq/career-ops",
+      "extraction": {
+        "id": 5145521751,
+        "issue_kind": "bug",
+        "symptom": "缺少符号链接权限时测试运行提前中止，正文对比显示约56%的检查未执行，且没有最终结果汇总。",
+        "root_cause": "正文明确指出：未保护的 symlinkSync 调用因权限不足抛出 EPERM；测试文件被同进程导入，未捕获的异常使整个测试框架终止，后续检查和 finish() 均未运行。",
+        "root_cause_category": "文件系统与权限",
+        "environment": [
+          "Windows 11 Pro 26200",
+          "Node v24.18.0",
+          "非提权 shell",
+          "Developer Mode 关闭"
+        ],
+        "evidence_quote": "The uncaught throw takes the whole harness down with it.",
+        "test_ideas": [
+          "在无符号链接权限的 Windows shell 中运行测试，验证相关检查明确报告跳过或失败，后续哨兵测试仍执行且最终汇总存在。",
+          "构造导入时抛异常的测试文件，验证框架记录失败、继续执行后续文件，并以非零退出码结束。",
+          "在具备符号链接权限的环境运行同一套测试，验证相关断言实际执行，未被无条件跳过。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19349,
+            "cached_input_tokens": 8832,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1115,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f411-be5a-76f1-b219-fdc645b7e0fc"
+        }
+      }
+    },
+    {
+      "id": 5357643798,
+      "title": "Verify all Cargo package tarballs before the first release upload",
+      "url": "https://github.com/Hmbown/Codewhale/issues/5892",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 5357643798,
+        "issue_kind": "bug",
+        "symptom": "发布 dry-run 返回成功，但正式发布上传 18 个 crate 后才因 TUI 包缺少文件而失败，形成部分发布。",
+        "root_cause": "正文指出，dry-run 对包含工作区依赖的 crate 只调用 cargo package --list，没有从 tarball 编译 TUI；实际发布时，16 个嵌入插件文件位于包根目录之外，导致验证失败。",
+        "root_cause_category": "安装与依赖(二进制/包管理器)",
+        "environment": [
+          "v0.9.12 发布",
+          "macOS",
+          "Cargo 1.98.0",
+          "原始发布提交 dcd4c200f72f0c1ffd60d8e7f6850313db879fc5",
+          "包含工作区依赖的多 crate 发布流程"
+        ],
+        "evidence_quote": "The v0.9.12 publication exposed a release-gate gap: 18 crates uploaded successfully before `codewhale-tui` failed verification because 16 embedded plugin files were outside the package root.",
+        "test_ideas": [
+          "在测试工作区构造引用未打包文件的依赖 crate，以上传替身记录调用，断言包验证失败时退出非零且上传次数为零。",
+          "构造源码目录可构建、tarball 内容无法构建的包，验证 dry-run 能发现差异，包含依赖 crate，且始终不上传。",
+          "验证完整包集全部通过验证后才出现第一次上传调用，并保持依赖顺序。",
+          "使用模拟注册表预置部分已发布版本，验证恢复发布时跳过这些版本。",
+          "分别破坏精确标签、干净工作树、已发布二进制资产和依赖锁定条件，验证现有发布检查仍生效。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19886,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1734,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40a-59a0-7b81-adcc-a3978d911d78"
+        }
+      }
+    },
+    {
+      "id": 4399114659,
+      "title": "fix(core): capacity-memory checkpoint and cross-session recovery",
+      "url": "https://github.com/Hmbown/Codewhale/issues/1062",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 4399114659,
+        "issue_kind": "bug",
+        "symptom": "新的 exec --auto 会话无法恢复先前会话状态，目标和已确认事实等字段为空。",
+        "root_cause": "正文明确列出两个原因：未启用 capacity.enabled 时，关闭会话不写入检查点；恢复逻辑只读取当前会话 ID 对应的文件，而每次 exec --auto 都生成新 UUID，且没有跨会话扫描回退。",
+        "root_cause_category": "状态持久化与跨会话恢复",
+        "environment": [
+          "exec --auto 每次生成新的会话 UUID",
+          "capacity scoring 默认禁用",
+          "记忆文件位于 ~/.deepseek/memory/<session_id>.jsonl",
+          "会话通过 /exit、SIGTERM 等方式结束"
+        ],
+        "evidence_quote": "A new `exec --auto` session starts with a completely blank `CanonicalState` — `goal`, `confirmed_facts`, and all other state fields are empty.",
+        "test_ideas": [
+          "分别在 capacity.enabled 开启和关闭时，通过 /exit 与 SIGTERM 结束含已知状态的会话，检查是否写出可读取的检查点。",
+          "同一工作区创建多个时间不同的历史记录，显式启用跨会话恢复后启动新 UUID 会话，验证恢复最新适用记录的目标和事实。",
+          "关闭跨会话恢复选项，验证新会话不会自动读取其他会话记录。",
+          "为两个工作区写入不同标记，启用跨会话恢复后验证只恢复当前工作区记录，避免项目间状态串入。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19886,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1734,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40a-59a0-7b81-adcc-a3978d911d78"
+        }
+      }
+    },
+    {
+      "id": 4808723392,
+      "title": "Bug: panic on broken pipe (SIGPIPE) — crash dump when piping codewhale output",
+      "url": "https://github.com/Hmbown/Codewhale/issues/4030",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 4808723392,
+        "issue_kind": "bug",
+        "symptom": "输出管道的接收端提前退出时，codewhale 因 Broken pipe 恐慌并生成崩溃转储。",
+        "root_cause": "正文说明，部分执行环境使进程继承被忽略的 SIGPIPE，写入因此返回 EPIPE；Rust println!() 将写入错误视为致命错误并触发恐慌。",
+        "root_cause_category": "管道与重定向",
+        "environment": [
+          "codewhale v0.8.66",
+          "Kali Linux 2026.3",
+          "正文称 Linux/macOS 均可复现",
+          "接收端在输出完成前退出",
+          "正文提及 systemd、Docker、部分 shell 可能继承 SIGPIPE=SIG_IGN"
+        ],
+        "evidence_quote": "When codewhale output is piped to another command (e.g. `codewhale doctor | head`) and the receiving end exits before codewhale finishes writing, the process panics with a noisy crash dump instead of terminating cleanly.",
+        "test_ideas": [
+          "运行 codewhale doctor | head -20 并单独采集生产端状态，验证提前断管时符合正文期望的 SIGPIPE 终止语义（shell 常表示为 141），无恐慌输出。",
+          "通过启动器令子进程继承 SIGPIPE=SIG_IGN，再让接收端提前关闭，验证同样安静终止。",
+          "使用隔离 HOME 比较运行前后的 crashes 目录，验证断管不会新增崩溃转储。",
+          "让接收端完整读取输出，并测试普通文件重定向，验证正常输出完整且成功退出。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19886,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1734,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40a-59a0-7b81-adcc-a3978d911d78"
+        }
+      }
+    },
+    {
+      "id": 3327946339,
+      "title": "Consolidate file exclusion patterns between glob tool and read-many-files tool",
+      "url": "https://github.com/google-gemini/gemini-cli/issues/6414",
+      "repo": "google-gemini/gemini-cli",
+      "extraction": {
+        "id": 3327946339,
+        "issue_kind": "feature",
+        "symptom": "glob 与 read-many-files 的默认排除范围不同，用户对同一文件集合可能得到不同结果。",
+        "root_cause": "正文明确说明两个工具分别维护排除列表：glob.ts 只排除 node_modules 和 .git，而 read-many-files.ts 还排除构建目录、二进制文件和覆盖率文件等。",
+        "root_cause_category": "文件筛选规则一致性",
+        "environment": [
+          "glob.ts",
+          "read-many-files.ts",
+          "两个工具独立维护文件排除列表"
+        ],
+        "evidence_quote": "Inconsistent behavior: glob.ts only excludes node_modules and .git, while read-many-files.ts excludes build dirs, binaries, coverage files, etc.",
+        "test_ideas": [
+          "建立包含普通源码、node_modules、.git、构建目录、二进制和覆盖率文件的夹具，对两个工具使用等价匹配范围，对比实际纳入的文件路径。",
+          "在统一排除规则的预期确定后，为每类排除项及名称相似但应保留的普通文件建立回归用例，验证两个工具均符合该预期。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19349,
+            "cached_input_tokens": 8832,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1115,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f411-be5a-76f1-b219-fdc645b7e0fc"
+        }
+      }
+    },
+    {
+      "id": 4273335397,
+      "title": "[BUG] `mole clean` deletes Aldente helper tool",
+      "url": "https://github.com/tw93/Mole/issues/753",
+      "repo": "tw93/Mole",
+      "extraction": {
+        "id": 4273335397,
+        "issue_kind": "bug",
+        "symptom": "标题报告运行 mole clean 会删除 Aldente helper tool，正文未提供具体复现信息。",
+        "root_cause": null,
+        "root_cause_category": "文件系统与权限",
+        "environment": [],
+        "evidence_quote": "[BUG] `mole clean` deletes Aldente helper tool",
+        "test_ideas": [
+          "在可还原的隔离环境中安装 Aldente，记录 helper tool 的路径和存在状态，运行 mole clean 后对比其是否仍存在并验证相关功能。",
+          "构造同时包含清理候选文件与需保留的应用辅助程序的测试夹具，验证删除范围符合清理规则且保留项未被删除。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19349,
+            "cached_input_tokens": 8832,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1115,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f411-be5a-76f1-b219-fdc645b7e0fc"
+        }
+      }
+    },
+    {
+      "id": 16408569,
+      "title": "Git completion was broken when using `gb -d` or `gb -D`",
+      "url": "https://github.com/ohmyzsh/ohmyzsh/issues/1952",
+      "repo": "ohmyzsh/ohmyzsh",
+      "extraction": {
+        "id": 16408569,
+        "issue_kind": "bug",
+        "symptom": "使用 gb -d 或 gb -D 触发 Git 补全时，出现 __git_ignore_line_inside_arguments 命令不存在的错误。",
+        "root_cause": "正文明确指出补全逻辑调用了不存在的 __git_ignore_line_inside_arguments 函数；该函数为何缺失并未确定。",
+        "root_cause_category": "补全函数依赖缺失",
+        "environment": [
+          "Git 命令补全",
+          "gb -d 与 gb -D",
+          "正文报告关联提交 46f0d8d"
+        ],
+        "evidence_quote": "_arguments:448: command not found: __git_ignore_line_inside_arguments",
+        "test_ideas": [
+          "在包含本地分支和远程跟踪分支的临时仓库中，分别触发 gb -d、gb -D 的补全，验证候选分支正确且无 command not found 输出。",
+          "分别测试带与不带 -r 的删除补全路径，验证远程跟踪分支与本地分支候选符合参数含义。",
+          "在仅加载项目规定补全依赖的干净 shell 中重复测试，检查是否依赖用户配置中偶然存在的辅助函数。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19349,
+            "cached_input_tokens": 8832,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1115,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f411-be5a-76f1-b219-fdc645b7e0fc"
+        }
+      }
+    },
+    {
+      "id": 858324277,
+      "title": "Target type detection (file/directory) for relative symlinks is still broken, even on Windows",
+      "url": "https://github.com/PowerShell/PowerShell/issues/15235",
+      "repo": "PowerShell/PowerShell",
+      "extraction": {
+        "id": 858324277,
+        "issue_kind": "bug",
+        "symptom": "创建使用相对目标路径的符号链接时，目标的文件或目录类型会随当前工作目录变化而被误判。",
+        "root_cause": "正文指出，目标类型检测以 PowerShell 当前工作目录解析相对目标路径，而不是以符号链接所在的父目录解析，导致检测了错误的路径。",
+        "root_cause_category": "文件系统与权限",
+        "environment": [
+          "PowerShell 7.2.0-preview.4 Core",
+          "Microsoft Windows 10.0.19042 / Win32NT",
+          "New-Item -Type SymbolicLink 使用相对 Target"
+        ],
+        "evidence_quote": "Got: **file** symlink to `D:/test/dir`, with target `./dir`",
+        "test_ideas": [
+          "在链接父目录之外执行创建命令，让相对目标指向已有目录；检查生成的是目录链接、保存的目标仍为相对路径，并验证能遍历目录。",
+          "分别从链接父目录和其他目录创建等价链接，检查类型识别与实际访问结果一致。",
+          "在当前目录和链接父目录下创建同名但类型相反的目标，覆盖文件/目录两种排列，验证链接类型由实际目标决定。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20115,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1201,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f412-8e86-7483-80a7-38a41516c035"
+        }
+      }
+    },
+    {
+      "id": 4536421042,
+      "title": "[Bug]: Discard can delete files outside the worktree through symlink parents",
+      "url": "https://github.com/stablyai/orca/issues/2928",
+      "repo": "stablyai/orca",
+      "extraction": {
+        "id": 4536421042,
+        "issue_kind": "bug",
+        "symptom": "丢弃符号链接父目录下的文件时，单项和批量操作可能删除工作树外的文件。",
+        "root_cause": "正文指出，路径校验将 /repo/link/keep.txt 接受为工作树内路径，但父目录 link 指向树外；git ls-files 失败后，rm 回退沿该符号链接删除了外部文件。",
+        "root_cause_category": "文件系统与权限",
+        "environment": [
+          "正文标注涉及 macOS、Linux、Windows",
+          "工作树内符号链接指向外部目录",
+          "git ls-files --error-unmatch 失败后进入 rm 回退"
+        ],
+        "evidence_quote": "Discarding a path under a symlinked parent deletes files OUTSIDE the worktree via the rm fallback — data loss beyond the repository.",
+        "test_ideas": [
+          "创建真实临时仓库、外部临时目录及标记文件，通过仓库内符号链接对外部文件调用 discardChanges，断言操作拒绝且文件仍存在。",
+          "对 bulkDiscardChanges 执行相同测试，验证批量入口同样保护外部文件。",
+          "构造符号链接父目录下不存在的叶子路径，验证路径处理不会越过真实工作树边界，也不会删除外部目录。",
+          "回归普通已跟踪、未跟踪文件及 ../ 越界路径，验证正常丢弃行为和错误行为符合各自约定。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19886,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1734,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40a-59a0-7b81-adcc-a3978d911d78"
+        }
+      }
+    },
+    {
+      "id": 4780209695,
+      "title": "Registry restore deletes the key subtree before rewriting, with no rollback on partial failure (data loss)",
+      "url": "https://github.com/Raphire/Win11Debloat/issues/686",
+      "repo": "Raphire/Win11Debloat",
+      "extraction": {
+        "id": 4780209695,
+        "issue_kind": "bug",
+        "symptom": "据正文的代码分析，恢复注册表备份中途失败时，用户可能看到恢复失败提示，而原有数据已被删除或只恢复了一部分；作者未实际执行破坏性复现。",
+        "root_cause": "正文指出，完整子树恢复先删除现有子树，再创建键、写入值并递归恢复，失败时没有回滚；加载验证仅检查 Kind 名称，没有检查 Data 是否符合 Kind，因而不合法数据也可能在删除后才触发异常。",
+        "root_cause_category": "恢复操作原子性与失败回滚",
+        "environment": [
+          "PowerShell 脚本使用 .NET Microsoft.Win32.RegistryKey API",
+          "GUI Restore Backup 流程",
+          "含子键的注册表备份触发 forceFullTree 恢复路径",
+          "正文列出的触发条件包括备份数据与类型不匹配，以及恢复期间权限或 IO 状态变化"
+        ],
+        "evidence_quote": "In both cases the live subtree is already gone; the user sees a 'restore failed' message but their registry data is now lost or half-restored (including any live values outside this backup's captured scope).",
+        "test_ideas": [
+          "在隔离测试注册表子树中保留已知原始数据，使用含子键且包含 Kind=DWord、Data=4294967296 的备份恢复；检查是否在改动原数据前拒绝输入，并对比失败后的完整子树。",
+          "在恢复写值循环的中间位置注入 SetValue 的 AccessDenied 或 IO 异常，检查失败是否保留或恢复原始键值，以及备份未覆盖的现有值是否仍在。",
+          "对多个根键的恢复在后续根键注入失败，核对各根键最终状态与界面结果是否一致，避免把部分恢复报告为全部成功。",
+          "若恢复或回滚使用注册表写入 fallback，模拟部分操作成功、部分拒绝访问，检查失败计数和成功提示能准确反映部分失败。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20115,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1201,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f412-8e86-7483-80a7-38a41516c035"
+        }
+      }
+    },
+    {
+      "id": 4671767128,
+      "title": "bat panics (capacity overflow) on `--terminal-width 1` with multiple line ranges",
+      "url": "https://github.com/sharkdp/bat/issues/3803",
+      "repo": "sharkdp/bat",
+      "extraction": {
+        "id": 4671767128,
+        "issue_kind": "bug",
+        "symptom": "bat 在终端宽度为 1、输出包含 snip 分隔符时发生 capacity overflow panic，并以退出码 101 结束。",
+        "root_cause": "正文指出，print_snip 计算右侧分隔符长度时，在宽度为 1、面板宽度为 0、标题宽度为 2 的情况下执行 usize 减法产生下溢，形成极大的重复次数，随后 repeat 触发容量溢出。",
+        "root_cause_category": "编码与终端兼容(颜色/宽度/Unicode)",
+        "environment": [
+          "bat 0.26.1 (v0.25.0-726-gaf1f53d9)",
+          "提交 af1f53d9，cargo build --release 源码构建",
+          "Ubuntu 20.04，Linux 内核 5.4.0-216-generic",
+          "--terminal-width 1，两个不连续的 --line-range，样式包含 snip",
+          "复现命令使用 --no-config --paging=never --color=always"
+        ],
+        "evidence_quote": "`bat --terminal-width 1` panics with `capacity overflow` (exit 101) when the output contains a \"snip\" separator — i.e. two or more disjoint `--line-range`s (or a diff gap) with a style that includes `snip` (the default).",
+        "test_ideas": [
+          "使用八行文本和 --line-range 1:2 --line-range 7:8，在 --terminal-width 1 下分别测试显式 --style=snip 和默认样式，检查无 panic、正常退出且所选内容仍可输出。",
+          "对宽度 1、2、3、4 执行相同测试，检查分隔符在空间不足时安全缩短或省略，避免长度计算下溢。",
+          "对比单个连续行范围、不连续行范围以及不含 snip 的样式，确认极窄宽度下各输出路径均可正常完成。",
+          "构造产生 diff gap 的输入，在宽度 1 且包含 snip 的样式下检查退出码、错误输出和分隔符渲染。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20115,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1201,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f412-8e86-7483-80a7-38a41516c035"
+        }
+      }
+    }
+  ],
+  "open_questions": [
+    "默认删除去向存在冲突：Usage 指定无子命令交互流程默认移入 rclean graveyard，Safety Model 则写明默认 clean 在可用时移入 Trash。两者是否按调用方式区分？普通 clean 及计划中的默认 deleteMode 应采用哪一种？",
+    "Product Boundaries 要求本地模型存储等高成本用户数据保持 report-only，但规则表将 HuggingFace Hub 和 Whisper 模型列为 caution。哪些模型目录属于明确允许清理的缓存例外，哪些必须始终禁止选择？",
+    "free 所称“smallest safe set”是最少候选数量、最小总字节数，还是其他优化目标？这会影响提案选择结果的测试判定。"
+  ],
+  "generation": {
+    "queries": {
+      "engine": "codex",
+      "requested_model": null,
+      "usage": {
+        "input_tokens": 26291,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1807,
+        "reasoning_output_tokens": 303
+      },
+      "thread_id": "01a0f410-bba1-7b21-a005-335d0c609d32"
+    },
+    "plan": {
+      "engine": "codex",
+      "requested_model": null,
+      "usage": {
+        "input_tokens": 33773,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 4729,
+        "reasoning_output_tokens": 98
+      },
+      "thread_id": "01a0f413-4788-75d3-bc87-f2401f3ca765"
+    }
+  },
+  "cases": [
+    {
+      "requirement_id": "R1",
+      "category": "扫描与批量清理安全",
+      "title": "符号链接候选被阻止且目标内容保持不变",
+      "preconditions": [
+        "在 macOS 隔离目录中准备含 Cargo.toml 的干净项目。",
+        "项目的 target 为指向扫描根之外目录的符号链接，外部目录含已记录内容的哨兵文件。"
+      ],
+      "steps": [
+        "以包含 blocked 项、最小大小为 0 的选项扫描项目，检查分类并对比文件内容。",
+        "分别预览和执行显式永久删除的 clean --all，加入 --include-caution 和 --include-blocked。",
+        "检查符号链接及其目标中的哨兵文件。"
+      ],
+      "expected_result": "扫描不修改文件；符号链接候选显示为 blocked，所有批量选择均不选中它；链接及外部目标保持不变。",
+      "source_ids": [
+        5025682909,
+        4536421042
+      ],
+      "rationale": "引文分别报告符号链接访问异常和经符号链接父目录删除工作树外文件。迁移链接路径这一触发条件，按 rclean 的阻止策略判定，不沿用编辑器打开链接的功能要求，也不推断相同根因。",
+      "id": "TC001"
+    },
+    {
+      "requirement_id": "R2",
+      "category": "计划回放路径验证",
+      "title": "计划生成后候选被替换为符号链接",
+      "preconditions": [
+        "在支持符号链接的 macOS 或 Linux 隔离环境中准备合法 Rust 项目及真实 target 目录。",
+        "生成选中 target 的永久删除 ActionPlan，并准备含哨兵文件的根外目录。"
+      ],
+      "steps": [
+        "将原 target 移到夹具保留位置，在原路径创建指向根外目录的符号链接。",
+        "先进行计划回放预览，再执行该计划。",
+        "检查拒绝信息、原目录和根外哨兵。"
+      ],
+      "expected_result": "回放识别新增符号链接并拒绝清理该路径；不删除链接目标或保留位置中的原目录，不把该项报告为清理成功。",
+      "source_ids": [
+        4536421042
+      ],
+      "rationale": "引文支持链接路径可能使删除越过仓库边界这一风险场景。将其迁移为扫描后路径变化，用 PRD 的实时重验要求确定预期；历史引文未证明存在扫描与删除之间的竞态根因。",
+      "id": "TC002"
+    },
+    {
+      "requirement_id": "R2",
+      "category": "计划回放路径验证",
+      "title": "候选父目录被替换为指向根外的符号链接",
+      "preconditions": [
+        "在 macOS 或 Linux 隔离扫描根下准备 app/target，并生成选中它的永久删除计划。",
+        "另建根外目录，其中存在同名 target 和哨兵文件。"
+      ],
+      "steps": [
+        "保留原 app 目录，将扫描根下的 app 替换为指向根外目录的符号链接。",
+        "预览并执行原计划。",
+        "检查根外 target、哨兵及回放结果。"
+      ],
+      "expected_result": "即使叶子路径名称未变，回放仍拒绝经新增符号链接父目录访问的候选；根外内容保持不变。",
+      "source_ids": [
+        4536421042
+      ],
+      "rationale": "原文证据明确涉及 symlinked parent 导致工作树外删除，直接适用于验证 rclean 是否检查完整路径而非仅检查叶子目录。",
+      "id": "TC003"
+    },
+    {
+      "requirement_id": "R2",
+      "category": "计划回放路径验证",
+      "title": "计划根目录被替换为符号链接后拒绝回放",
+      "preconditions": [
+        "在 macOS 或 Linux 隔离环境中，从真实项目根生成永久删除计划。",
+        "准备另一目录，包含相同相对路径的候选和哨兵。"
+      ],
+      "steps": [
+        "将原扫描根移到保留位置，并在原根路径创建指向另一目录的符号链接。",
+        "预览并执行原计划。",
+        "对比两个目录中的文件及回放结果。"
+      ],
+      "expected_result": "回放因根路径形态变化拒绝计划，不沿替换后的根访问并删除另一目录的候选；两处数据均保持不变。",
+      "source_ids": [
+        4536421042
+      ],
+      "rationale": "借用经符号链接父路径越界的触发条件，将链接位置提升到计划根；拒绝根形态变化是目标 PRD 的明确要求。",
+      "id": "TC004"
+    },
+    {
+      "requirement_id": "R3",
+      "category": "恢复冲突保护",
+      "title": "恢复目标已有数据时不覆盖现有内容",
+      "preconditions": [
+        "在 macOS 或 Linux 隔离环境中准备有效 grave 及其 payload。",
+        "在原恢复位置建立同名目录并放入不同内容的哨兵；另准备同样冲突的 --to 目标。",
+        "记录现有目标、payload 和 manifest 内容。"
+      ],
+      "steps": [
+        "使用 grave 的实际 ID 恢复至原位置。",
+        "使用同一 grave 的实际 ID 和 --to 恢复至另一个已存在目标。",
+        "检查两处目标和 grave 状态。"
+      ],
+      "expected_result": "两次操作均拒绝覆盖已存在目标，不先删除目标再尝试恢复；现有内容及未恢复 payload 保留，结果不声称恢复成功。",
+      "source_ids": [
+        4780209695
+      ],
+      "rationale": "引文描述恢复失败时原有子树已丢失或仅部分恢复。迁移为文件恢复遇到现存目标的保护检查，不复制注册表功能，也不假定 rclean 必须实现 PRD 未要求的事务回滚。",
+      "id": "TC005"
+    },
+    {
+      "requirement_id": "R3",
+      "category": "恢复批量失败",
+      "title": "批量恢复中间项失败后继续并准确统计",
+      "preconditions": [
+        "在 macOS 或 Linux 的 TTY 中准备三个有效 grave，确保编号顺序已知。",
+        "第一项和第三项目标可写且不存在；第二项通过权限夹具在恢复时触发确定的写入失败。",
+        "以非特权身份运行，确保失败条件实际生效。"
+      ],
+      "steps": [
+        "运行不带 --id 的恢复，选择三个项目并确认。",
+        "观察第二项失败后是否尝试第三项。",
+        "核对各目标实际内容、restored/skipped/failed 汇总和进程退出状态。"
+      ],
+      "expected_result": "第一项和第三项恢复成功，第二项记为失败；批量操作继续，汇总为 restored=2、skipped=0、failed=1，退出非零，不将部分恢复报告为全部成功。",
+      "source_ids": [
+        4780209695
+      ],
+      "rationale": "引文支持恢复失败可能留下部分完成状态。迁移该条件验证 rclean 明确规定的继续处理、准确汇总和非零退出，不把提炼中的权限变化原因作为已证实历史事实。",
+      "id": "TC006"
+    },
+    {
+      "requirement_id": "R5",
+      "category": "管道提前关闭",
+      "title": "只读输出遇到提前断管时无 panic",
+      "preconditions": [
+        "在 macOS 或 Linux 中以非交互 stdout 运行。",
+        "接收端能够读取少量内容后立即关闭；测试装置分别采集生产端状态和 stderr。",
+        "确保关闭后生产端仍会尝试写入，避免输出已全部进入缓冲区而未触发断管。"
+      ],
+      "steps": [
+        "让 rules 输出进入提前关闭的接收端。",
+        "检查生产端 stderr 和退出情况。",
+        "以完整读取输出作为对照。"
+      ],
+      "expected_result": "提前断管时停止写入，无 panic 或 backtrace；完整读取时输出正常完成。退出状态遵循 rclean 的已确定状态保留要求，不套用其他产品的 SIGPIPE 退出码。",
+      "source_ids": [
+        4808723392
+      ],
+      "rationale": "原文直接描述接收端提前退出触发生产端恐慌，和 R5 的触发条件一致；原文提炼中的具体 Rust 实现原因不作为本方案事实。",
+      "id": "TC007"
+    },
+    {
+      "requirement_id": "R5",
+      "category": "管道与退出状态",
+      "title": "空间提案状态已确定后断管仍保留退出码",
+      "preconditions": [
+        "在 macOS 或 Linux 隔离目录中分别准备目标可满足、非空但不足、无安全候选三种 free 场景。",
+        "设置输出故障注入点，在提案结果已计算完成且仍有 stdout 写入时产生断管。"
+      ],
+      "steps": [
+        "分别完整读取三种 free --json 调用，记录生产端退出码。",
+        "对相同场景在结果确定后的输出阶段触发断管。",
+        "采集生产端退出码和 stderr。"
+      ],
+      "expected_result": "可满足场景保持退出码 0；不足及空场景保持退出码 3；均不因断管出现 panic 或 backtrace。",
+      "source_ids": [
+        4808723392
+      ],
+      "rationale": "借用接收端提前退出这一已引证条件验证 R5 的状态保留；0 和 3 来自 rclean PRD，不采用其他产品的退出语义。本条不覆盖 free 的最小集合算法。",
+      "id": "TC008"
+    },
+    {
+      "requirement_id": "R5",
+      "category": "删除前断管",
+      "title": "清理进入删除阶段前断管不移除任何候选",
+      "preconditions": [
+        "在 macOS 或 Linux 隔离项目中准备多个 safe 候选并记录完整内容。",
+        "采用显式永久删除参数，避免默认删除去向歧义。",
+        "测试装置能够在删除前输出阶段稳定触发断管并确认触发时序。"
+      ],
+      "steps": [
+        "启动 clean --all --permanent --yes，将 stdout 接入受控接收端。",
+        "在删除阶段开始前关闭接收端并使下一次写入遇到断管。",
+        "检查所有候选和 stderr。"
+      ],
+      "expected_result": "命令在删除前停止，所有候选及内容保持不变，无 panic 或 backtrace。",
+      "source_ids": [
+        4808723392
+      ],
+      "rationale": "迁移原文的提前断管条件至 rclean 的破坏性操作边界；不推断历史产品曾因断管发生误删。",
+      "id": "TC009"
+    },
+    {
+      "requirement_id": "R5",
+      "category": "删除后断管",
+      "title": "清理已完成后的断管保留成功或失败状态",
+      "preconditions": [
+        "在 macOS 或 Linux 准备全部清理成功和包含确定删除失败的两套隔离夹具。",
+        "使用显式永久删除模式，并能在清理结果确定后的摘要输出阶段注入断管。",
+        "能够采集生产端自身的退出状态。"
+      ],
+      "steps": [
+        "在完整接收输出时运行两套夹具，记录计算结果和退出状态。",
+        "重建夹具，在清理完成后的摘要输出阶段分别触发断管。",
+        "比较实际清理结果、生产端状态及 stderr。"
+      ],
+      "expected_result": "断管不改变已经计算出的清理成功或失败状态，不将失败改为成功；无 panic 或 backtrace，实际文件状态与已完成的清理结果一致。",
+      "source_ids": [
+        4808723392
+      ],
+      "rationale": "同一提前关闭接收端的条件用于覆盖 PRD 明确区分的删除后阶段；不要求回滚已完成清理。",
+      "id": "TC010"
+    },
+    {
+      "requirement_id": "R6",
+      "category": "忽略规则一致性",
+      "title": "文件排除与命令行排除在扫描和清理预览中一致",
+      "preconditions": [
+        "准备四个独立、带项目标记的 safe 候选 A、B、C、D。",
+        ".rcleanignore 排除 A 和 C；--ignore 排除 B 和 C；D 不被排除。",
+        "各入口使用相同扫描根、大小和其他过滤条件。"
+      ],
+      "steps": [
+        "分别运行人类可读扫描、JSON 扫描和 clean --all --dry-run。",
+        "比较报告及预览中的候选路径。",
+        "检查夹具未发生变化。"
+      ],
+      "expected_result": "A、B、C 均被排除，D 被保留；不同输出和预览入口的排除结果一致，扫描及预览均不修改候选。",
+      "source_ids": [
+        3327946339
+      ],
+      "rationale": "原文明确指出两个工具排除集合不一致。迁移同一文件集合经不同入口筛选的条件，不照搬来源产品对 node_modules 等目录的默认排除策略。",
+      "id": "TC011"
+    },
+    {
+      "requirement_id": "R6",
+      "category": "忽略规则叠加",
+      "title": "文件规则重新纳入后命令行排除仍生效",
+      "preconditions": [
+        "在 legacy-monorepo 下准备多个合法项目及 node_modules。",
+        ".rcleanignore 排除 legacy-monorepo/，并通过 PRD 示例形式的否定规则重新纳入其中一个项目的 node_modules。",
+        "准备一个只匹配该重新纳入候选的 --ignore 模式。"
+      ],
+      "steps": [
+        "不加命令行排除进行扫描和清理预览，记录重新纳入项。",
+        "加入准备好的 --ignore，再次进行扫描和清理预览。",
+        "比较各入口的选择结果。"
+      ],
+      "expected_result": "仅使用文件规则时指定候选被重新纳入，其他被排除项目保持排除；加入命令行排除后该候选也被排除，扫描和清理预览一致。",
+      "source_ids": [
+        3327946339
+      ],
+      "rationale": "借用多个筛选入口行为不一致的历史现象，检查 rclean 自身定义的否定规则与命令行叠加语义；不声称来源证据包含否定规则故障。",
+      "id": "TC012"
+    },
+    {
+      "requirement_id": "R7",
+      "category": "用户数据保护",
+      "title": "清理候选与受保护记录共存时保留全部记录",
+      "preconditions": [
+        "使用隔离 HOME，不接触真实用户记录。",
+        "创建 PRD 列出的全部受保护路径，各自放入可核对的合成内容，同时准备合法 safe 缓存。",
+        "记录受保护内容，清理时显式指定永久删除模式。"
+      ],
+      "steps": [
+        "扫描隔离 HOME；对没有被 --home 遍历到的受保护路径另做显式扫描。",
+        "检查受保护路径是否进入可选择候选集合。",
+        "对隔离 HOME 执行允许宽根的批量清理，包含 caution 项。",
+        "逐项对比受保护记录，并确认合法缓存按选择结果处理。"
+      ],
+      "expected_result": "受保护记录不成为可清理项，内容保持不变；包含 caution 或允许宽根均不解除用户数据保护。",
+      "source_ids": [
+        4273335397
+      ],
+      "rationale": "唯一原文证据是标题所报告的清理误删 helper，未给出路径或复现条件。仅借用清理时混有应保留数据这一有限场景检查目标产品明确的保护名单，不引入 Aldente 功能或断言历史根因。",
+      "id": "TC013"
+    }
+  ],
+  "coverage_gaps": [
+    {
+      "requirement_id": "R1",
+      "reason": "已覆盖符号链接候选及扫描不删除，但缺少与项目标记缺失、虚拟环境标记、脏工作树降级及 caution 显式纳入相关的原文触发证据。相对链接与工作目录变化仅见模型提炼，858324277 的 evidence_quote 不足以独立确认完整条件，未据此生成专门用例。Windows 链接权限及跨平台差异也未充分覆盖。"
+    },
+    {
+      "requirement_id": "R1",
+      "reason": "默认清理去向在 graveyard 与 Trash 之间存在待澄清冲突，已有清理用例显式采用永久删除，不能覆盖默认模式。模型目录 report-only 与部分 caution 规则的范围也尚不明确，不能制定统一选择预期。"
+    },
+    {
+      "requirement_id": "R2",
+      "reason": "已覆盖候选、父目录和根被替换为符号链接；未充分覆盖非链接形式的根变化、验证完成到实际删除之间的时序变化及 Windows 路径行为。5145521751 的原文仅说明未捕获异常使测试框架终止，不能证明与计划回放相关的具体触发条件，未迁移测试框架功能。"
+    },
+    {
+      "requirement_id": "R3",
+      "reason": "已覆盖目标冲突和部分失败继续处理；最新优先排序、数字与范围及 all/q 输入、取消确认、恢复路径符号链接检查、跳过项统计、直接及交互 dry-run 的 payload/目录/manifest 无副作用尚未充分覆盖。5357643798 的引文只证明发布过程部分上传后验证失败，没有 dry-run 的原文证据，不能据提炼将其作为恢复预览故障证据。批量恢复也未据历史材料扩展为 PRD 未承诺的事务回滚。"
+    },
+    {
+      "requirement_id": "R4",
+      "reason": "没有直接相关的空间提案选择证据：4399114659 引文涉及会话状态为空，4671767128 涉及窄终端分隔符导致容量溢出，均不能用来验证磁盘空间集合选择。尚缺最小安全集合、禁止直接删除、JSON 版本和字段、不足时仍写计划、空结果不写计划等覆盖；smallest safe set 的优化目标也待明确。R5 中的退出码用例仅检查断管状态保留。"
+    },
+    {
+      "requirement_id": "R5",
+      "reason": "已覆盖提前断管、已确定退出状态及删除前后边界；非 Broken pipe 的 stdout I/O 错误必须显式失败尚无对应历史证据。Windows 管道行为也未覆盖；SIGPIPE 继承状态仅见模型提炼，未作为已证实历史触发条件。删除阶段时序用例需要可控输出注入，普通 head 管道不足以证明命中指定阶段。"
+    },
+    {
+      "requirement_id": "R6",
+      "reason": "已覆盖排除叠加和入口一致性；非法 --ignore 必须失败、非法 .rcleanignore 只产生可恢复警告、JSON warnings 与表格警告一致及结果不完整标记仍缺少相关历史证据，不能由来源的排除列表不一致推断这些错误路径。"
+    },
+    {
+      "requirement_id": "R7",
+      "reason": "误删来源仅有标题，证据强度有限。已生成普通清理共存保护用例，但自定义规则绕过、篡改 ActionPlan、回放及实际删除阶段分别重验保护名单尚无具体历史触发证据，不能把普通清理用例视为这些绕过场景已覆盖。"
+    },
+    {
+      "requirement_id": "R8",
+      "reason": "16408569 的原文是 shell 补全辅助函数不存在，与 Docker 报告的子进程超时、数组参数和禁止删除无实质关联，因此不生成用例。超时处理、参数边界、资源分类、所有行 selected=false、禁止删除命令及不生成文件系统候选或 ActionPlan 项均缺少相关历史证据。"
+    }
+  ]
+}

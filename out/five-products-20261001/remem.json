@@ -1,0 +1,836 @@
+{
+  "status": "draft_not_executed",
+  "form": "cli",
+  "generated_at": "2026-09-30T20:45:44.327552+00:00",
+  "prd_sha256": "bde1e3b4a03b48c096ddb2105c9521a2af7a0b624526d397e51eef2c242dcd55",
+  "corpus_issue_count": 16054,
+  "source_limit": 12,
+  "requirements": [
+    {
+      "title": "宿主集成与跨会话记忆：Claude/Codex 自动注入和总结；Cursor v1 仅 macOS/Linux MCP 安装及手动运行时能力，不要求自动捕获、会话注入或修复",
+      "quote": "Start a new Claude Code or Codex CLI session after installation. remem should\ninject relevant project memory at session start and summarize durable memory\nafter the session stops.",
+      "terms": [
+        "installation",
+        "configuration",
+        "capture",
+        "restore"
+      ],
+      "id": "R1",
+      "retrieved_source_ids": [
+        744546094,
+        4686806393
+      ]
+    },
+    {
+      "title": "搜索正确性：项目隔离、中英文检索、有限图扩展及内容去重",
+      "quote": "- Entity-index and trusted typed-graph expansion (bounded 2-hop retrieval)\n- Project-scoped entity search (no cross-project leakage)\n- CJK segmentation support\n- Chinese-English synonym expansion\n- Title-weighted BM25 (`bm25(fts, 10.0, 1.0)`)\n- Content-hash deduplication via `topic_key`",
+      "terms": [
+        "search",
+        "isolation",
+        "tokenization",
+        "deduplication"
+      ],
+      "id": "R2",
+      "retrieved_source_ids": [
+        5038512351,
+        4276056101
+      ]
+    },
+    {
+      "title": "实验性上下文包：预算、来源和选择审计，投毒拦截与高风险弃答；查询嵌入仅本地，不要求稳定 API",
+      "quote": "- The experimental MCP `context_bundle` tool compiles a versioned, budgeted,\n  source-attributed SessionStart context bundle with a complete selection/drop\n  audit, including redacted poisoning-gate drops and canonical memory, session,\n  and preference preselection reasons. Poisoned session/workstream text is\n  rejected before it can steer implicit retrieval. High-risk requests return\n  only user-authored trusted memories and abstain when none survive. It requires\n  `schema_version: 1`; its foreground query embeddings are local-only, ambient\n  reranking is disabled, retrieval weights are fixed to the bundle v1 policy\n  instead of ambient overrides, and the effective local embedding\n  provider/model/dimensions are fingerprinted into `plan_hash`. The shape is\n  intentionally not yet a stable API commitment.",
+      "terms": [
+        "poisoning",
+        "provenance",
+        "redaction",
+        "truncation"
+      ],
+      "id": "R3",
+      "retrieved_source_ids": [
+        5040170145,
+        5038512351
+      ]
+    },
+    {
+      "title": "记忆治理：抑制策略跨默认读取入口生效，保留源记录和显式审计；反馈默认不改变排序",
+      "quote": "`remem memory suppress` applies a default-read policy without deleting the\nsource row. Targets can be `memory:<id>`, `claim:<id>`, `topic:<key>`,\n`entity:<name>`, `pattern:<text>`, or a bare memory id/topic key. Default\nsearch, SessionStart context, profile-summary sources, preferences, lessons,\ncurrent-state lookup, MCP search, and REST search exclude active suppressions.\nUse `--include-suppressed` on search when an audit needs to inspect suppressed\nevidence explicitly. `remem why <id>` reports whether the memory is currently\nsuppressed and which policy matched it. `remem memory feedback` records\n`relevant`, `not-relevant`, `harmful`, `stale`, or `too-noisy` events without\nchanging ranking by default.",
+      "terms": [
+        "filtering",
+        "suppression",
+        "consistency",
+        "audit"
+      ],
+      "id": "R4",
+      "retrieved_source_ids": [
+        4893566353,
+        5186509797
+      ]
+    },
+    {
+      "title": "失败恢复：精确 ID 重试与隔离确认，归档恢复受单工作进程约束，失败或中断后仍保持隔离",
+      "quote": "If the quarantined range has also archived, the pending command accepts\n`--include-archived` only for a dual-confirmation dry-run. The write must use\nthe exact worker command with the same ID, both acknowledgements, and an\nexplicit `--profile`. That worker refuses to write while another worker holds\nthe singleton, atomically requeues and claims only the target task, and returns\npartial, failed, timed-out, or interrupted attempts to archived quarantine\ninstead of exposing them to the ordinary daemon queue.",
+      "terms": [
+        "retry",
+        "quarantine",
+        "concurrency",
+        "rollback"
+      ],
+      "id": "R5",
+      "retrieved_source_ids": [
+        4331445984,
+        4506769273
+      ]
+    },
+    {
+      "title": "原始会话读取：精确会话隔离、完整内容、快照分页和显式游标错误；查询只读，旧模式不自动迁移",
+      "quote": "`remem raw messages` reads one exact\n`(source_root, project, session_id)` tuple without truncating stored content.\nIt orders rows by `(created_at_epoch ASC, id ASC)`, defaults to 500 rows per\npage, and returns an opaque `next_cursor` when `has_more` is true. The first\npage freezes a maximum row ID; subsequent pages bind the cursor to the same\nselectors and snapshot, so concurrent appends do not create duplicates,\nomissions, or cross-session mixing. Invalid, stale, or selector-mismatched\ncursors fail explicitly; a missing tuple returns a successful empty envelope.\n`raw search`, `raw sessions`, `raw messages`, and `raw reconcile` open the\ncurrent schema read-only, so a writer lock does not trigger migration\ncontention and stale schemas fail with a migration diagnostic.",
+      "terms": [
+        "pagination",
+        "snapshot",
+        "cursor",
+        "isolation"
+      ],
+      "id": "R6",
+      "retrieved_source_ids": [
+        4370092094
+      ]
+    },
+    {
+      "title": "CLI 脚本契约：列明支持的命令在 JSON 模式下仅向标准输出写入一个 JSON 对象",
+      "quote": "These commands emit one JSON object and no human text on stdout when `--json`\nis set:",
+      "terms": [
+        "serialization",
+        "stdout",
+        "parsing"
+      ],
+      "id": "R7",
+      "retrieved_source_ids": [
+        4891743034
+      ]
+    },
+    {
+      "title": "本地数据与接口安全：静态加密、目录和密钥权限、仅本机监听及令牌认证",
+      "quote": "- SQLCipher encryption at rest (`remem encrypt`)\n- Data directory permissions (`0700`)\n- Key file permissions (`0600`)\n- REST API binds localhost only (`127.0.0.1`) and requires\n  `Authorization: Bearer $(cat ~/.remem/.api-token)`\n- API token file permissions (`0600`)",
+      "terms": [
+        "encryption",
+        "permission",
+        "authentication",
+        "credential"
+      ],
+      "id": "R8",
+      "retrieved_source_ids": [
+        3052592385
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": 744546094,
+      "title": "MSBuild issues warning on CascadiaPackage in VS 16.8",
+      "url": "https://github.com/microsoft/terminal/issues/8301",
+      "repo": "microsoft/terminal",
+      "extraction": {
+        "id": 744546094,
+        "issue_kind": "bug",
+        "symptom": "使用 VS 16.8 启动项目时，CascadiaPackage 持续出现 NuGet 还原配置警告。",
+        "root_cause": "正文中的警告明确指出，Release|x64 配置的 TargetFrameworkMoniker 和 NuGetTargetMoniker 属性均为空，导致该配置不参与 NuGet 还原；属性为空的原因未说明。",
+        "root_cause_category": "配置错误",
+        "environment": [
+          "Visual Studio 16.8",
+          "MSBuild",
+          "CascadiaPackage",
+          "Release|x64",
+          "NuGet 还原"
+        ],
+        "evidence_quote": "The value of the 'TargetFrameworkMoniker' and 'NuGetTargetMoniker' properties in the 'Release|x64' configuration are both empty. This configuration will not contribute to NuGet restore, which may result in restore and build errors.",
+        "test_ideas": [
+          "在 VS 16.8 中打开项目并选择 Release|x64，记录是否出现该警告，并分别检查还原和构建结果，避免将警告等同于构建失败。",
+          "构造两个 Moniker 属性均为空、仅一个为空和均有效的配置，检查诊断及 NuGet 还原参与情况。",
+          "重新加载解决方案后再次启动项目，检查警告是否重复出现及配置读取是否一致。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19205,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1427,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40c-dcc9-7fa0-879a-2adb5747d767"
+        }
+      }
+    },
+    {
+      "id": 5038512351,
+      "title": "Make web search and fetch a coherent, high-quality retrieval path",
+      "url": "https://github.com/Hmbown/Codewhale/issues/5037",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 5038512351,
+        "issue_kind": "feature",
+        "symptom": "Web 搜索与抓取尚未形成输出、来源信息和降级行为一致的检索流程。",
+        "root_cause": null,
+        "root_cause_category": "检索流程与结果质量",
+        "environment": [
+          "Web 搜索与已知 URL 抓取",
+          "搜索提供商及可选配置",
+          "HTML、JSON、文本响应"
+        ],
+        "evidence_quote": "Web research does not yet feel consistently well configured.",
+        "test_ideas": [
+          "建立离线固定语料，分别输入发现型查询和已知规范 URL，检查搜索与抓取的选择以及输出字段一致性。",
+          "在语料中加入重复来源、低相关结果及不同域名和日期的文档，验证去重、排序、域名限制和时效限制。",
+          "针对 HTML、JSON、文本、重定向及超出大小限制的响应，检查提取和截断结果，并验证 URL、标题、摘录及引用元数据仍可追溯。",
+          "移除可选搜索配置并模拟提供商失败，检查降级说明、错误记录和重试行为，确认不会生成来源中不存在的内容。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19205,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1427,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40c-dcc9-7fa0-879a-2adb5747d767"
+        }
+      }
+    },
+    {
+      "id": 5040170145,
+      "title": "Runtime API: expose bounded memory inspection and lifecycle controls",
+      "url": "https://github.com/Hmbown/Codewhale/issues/5072",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 5040170145,
+        "issue_kind": "feature",
+        "symptom": "托管客户端无法通过规范运行时 API 查看记忆的内容范围与来源，或执行受限的生命周期操作。",
+        "root_cause": "正文明确说明 v0.9.4 HTTP 路由表没有 memory 端点，导致托管客户端缺少对应 API 能力。",
+        "root_cause_category": "API 能力缺失",
+        "environment": [
+          "Codewhale v0.9.4",
+          "HTTP Runtime API",
+          "托管客户端",
+          "持久化记忆与状态"
+        ],
+        "evidence_quote": "Codewhale has durable memory/state behavior, but the v0.9.4 HTTP route table has no memory endpoint.",
+        "test_ideas": [
+          "为全局、工作区、线程和代理作用域准备记忆样本，验证列表和详情返回正确的身份、作用域、来源、新鲜度、状态及有界摘要。",
+          "使用不同作用域权限的客户端读取记忆，检查跨作用域访问控制，并验证摘要不泄露提示词、秘密或原始私有资料。",
+          "分别以有权限和无权限身份尝试创建、更新、归档和删除，检查授权结果以及原有持久化存储中的实际状态。",
+          "检查 API 能力声明与实际可用操作一致，确保客户端能够准确展示支持范围。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19205,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1427,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40c-dcc9-7fa0-879a-2adb5747d767"
+        }
+      }
+    },
+    {
+      "id": 4893566353,
+      "title": "bug: scan-ats-full.mjs does not respect data/blacklist.md",
+      "url": "https://github.com/career-ops-hq/career-ops/issues/1911",
+      "repo": "career-ops-hq/career-ops",
+      "extraction": {
+        "id": 4893566353,
+        "issue_kind": "bug",
+        "symptom": "反向 ATS 扫描不遵守公司黑名单，可能重新写入被排除的公司，并拒绝审计参数 --include-blacklisted。",
+        "root_cause": "正文指出黑名单行为已加入 scan.mjs 及评估、应用模式，但未加入 scan-ats-full.mjs；该脚本缺少相关黑名单接入且不识别审计参数。",
+        "root_cause_category": "过滤规则集成遗漏",
+        "environment": [
+          "Node.js CLI",
+          "scan-ats-full.mjs",
+          "正文所述 current origin/main",
+          "data/blacklist.md",
+          "data/pipeline.md"
+        ],
+        "evidence_quote": "`scan-ats-full.mjs` does not apply the user-owned company blacklist from `data/blacklist.md`.",
+        "test_ideas": [
+          "提供包含黑名单公司和普通公司的固定 ATS 数据，默认执行反向扫描，检查黑名单公司不会写入 pipeline.md，且过滤数量被报告和持久化。",
+          "使用 --dry-run --include-blacklisted --limit 1 --ats greenhouse 执行，验证参数被接受、匹配结果带有黑名单标注且 dry-run 不写入数据。",
+          "移除 data/blacklist.md 后扫描，验证不会进行黑名单过滤。",
+          "将公司名称规范化测试样本分别交给常规扫描和反向扫描，检查匹配结果及 filtered_blacklist 统计一致。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19205,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1427,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40c-dcc9-7fa0-879a-2adb5747d767"
+        }
+      }
+    },
+    {
+      "id": 4331445984,
+      "title": "update-system rollback() should delete paths absent from backup branch",
+      "url": "https://github.com/career-ops-hq/career-ops/issues/466",
+      "repo": "career-ops-hq/career-ops",
+      "extraction": {
+        "id": 4331445984,
+        "issue_kind": "bug",
+        "symptom": "旧安装升级后执行回滚，新版本新增且备份中不存在的路径仍留在磁盘上。",
+        "root_cause": "正文明确指出 rollback() 吞掉了路径在备份分支中不存在时的 checkout 失败，导致 apply() 新建的 SYSTEM_PATHS 路径未被删除。",
+        "root_cause_category": "版本升级与配置迁移",
+        "environment": [
+          "career-ops",
+          "update-system.mjs",
+          "apply() 与 rollback()",
+          "备份分支",
+          "SYSTEM_PATHS"
+        ],
+        "evidence_quote": "`update-system.mjs` `rollback()` currently swallows checkout failures when a path was absent from the backup branch.",
+        "test_ideas": [
+          "从不含路径 X 的旧安装升级到包含 X 的版本，再执行回滚，断言 X 已删除且原有受管理路径恢复为备份状态。",
+          "同时准备备份中存在的已修改路径和备份中不存在的新增路径，检查回滚分别执行恢复和删除。",
+          "模拟备份中已有路径的 checkout 失败，检查错误不会被误判为路径原本不存在并触发删除。",
+          "记录升级前后及回滚后的受管理路径清单和内容，比较回滚结果与升级前快照，并检查无关用户文件未被删除。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19205,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1427,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40c-dcc9-7fa0-879a-2adb5747d767"
+        }
+      }
+    },
+    {
+      "id": 4370092094,
+      "title": "v0.8.6 feat: /edit — revise the last submitted message and resubmit",
+      "url": "https://github.com/Hmbown/Codewhale/issues/383",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 4370092094,
+        "issue_kind": "feature",
+        "symptom": "用户希望通过 /edit 或 Ctrl+Up 重新编辑最近提交的消息，并替换原回合重新运行。",
+        "root_cause": null,
+        "root_cause_category": "交互编辑与会话状态",
+        "environment": [
+          "交互式消息输入框",
+          "提议支持 /edit 命令和 Ctrl+Up 快捷键"
+        ],
+        "evidence_quote": "Submitting replaces the prior turn — the engine truncates back to the parent turn, runs again with the revised prompt.",
+        "test_ideas": [
+          "提交一条消息后执行无参数 /edit，检查输入框预填最近的用户消息且光标位于末尾。",
+          "在空输入框按 Ctrl+Up，检查是否进入最近消息的编辑状态；另测非空输入框以明确快捷键边界。",
+          "修改并提交消息，检查会话回退到父回合后重新运行，历史中不残留被替换回合的响应。",
+          "完成编辑重跑后执行 /undo，检查能否恢复编辑前的原始会话。",
+          "在没有已提交消息时执行 /edit，检查有明确反馈且会话状态不受损；检查 /help 是否说明该命令。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20910,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1550,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40d-aea0-7783-9d0b-63848efba1a0"
+        }
+      }
+    },
+    {
+      "id": 4891743034,
+      "title": "scan.mjs: dotenv v17 banner contaminates --json stdout, breaking JSON consumers",
+      "url": "https://github.com/career-ops-hq/career-ops/issues/1906",
+      "repo": "career-ops-hq/career-ops",
+      "extraction": {
+        "id": 4891743034,
+        "issue_kind": "bug",
+        "symptom": "扫描器在 --json 模式下将 dotenv 横幅写入 stdout，导致消费者解析失败，网页显示无可读输出和 0 条结果。",
+        "root_cause": "正文明确指出：scan.mjs 在模块顶层调用未启用 quiet 的 dotenv config()；dotenv v17 默认向 stdout 输出横幅且不受 isTTY 限制，导入该模块便会污染 JSON 输出。",
+        "root_cause_category": "管道与重定向",
+        "environment": [
+          "dotenv 17.x，package.json 声明 ^17.0.0",
+          "macOS 26.5.2",
+          "Node.js 22.22.3",
+          "scan-ats-full.mjs --json",
+          "网页消费者对完整 stdout 调用 JSON.parse"
+        ],
+        "evidence_quote": "In `--json` mode the banner lands on the same stdout channel that is supposed to carry a single JSON object, so any consumer parsing that stdout fails.",
+        "test_ideas": [
+          "运行正文中的 --dry-run --since 7 --ats greenhouse --limit 3 --json 命令，捕获完整 stdout，断言可直接解析为单个 JSON 对象且没有前后杂文。",
+          "分别通过管道和文件重定向接收 --json 输出，检查非交互环境下同样保持可解析。",
+          "分别在未设置 quiet 和设置 DOTENV_CONFIG_QUIET=true 时运行，比较输出纯净性，并确认环境变量仍正常加载。",
+          "单独导入 scan.mjs 并捕获 stdout，检测模块初始化是否产生污染机器可读输出的副作用。",
+          "将捕获的扫描输出传入网页解析路径，检查合法扫描结果能够显示，解析异常则提供明确错误而非被误认成真实零结果。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20910,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1550,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40d-aea0-7783-9d0b-63848efba1a0"
+        }
+      }
+    },
+    {
+      "id": 3052592385,
+      "title": "\"Bearer Auth\" Generic Authentication on the HTTP Request node does not work",
+      "url": "https://github.com/n8n-io/n8n/issues/15261",
+      "repo": "n8n-io/n8n",
+      "extraction": {
+        "id": 3052592385,
+        "issue_kind": "bug",
+        "symptom": "HTTP Request 节点配置 Generic Authentication 的 Bearer Auth 后，发出的请求缺少 Authorization 请求头。",
+        "root_cause": null,
+        "root_cause_category": "认证配置与请求头传递",
+        "environment": [
+          "n8n 1.91.3",
+          "MacOS 15.4.1 (24E263)",
+          "SQLite（默认）",
+          "main 执行模式（默认）",
+          "HTTP Request 节点的 Generic Credential Type / Bearer Auth"
+        ],
+        "evidence_quote": "Observe incoming request in webhook.site does not contain an Authorization header at all.",
+        "test_ideas": [
+          "用本地请求捕获服务和虚构 token，配置 Generic Credential Type → Bearer Auth，保存并执行 Test Step，断言收到 Authorization: Bearer <token>。",
+          "分别使用 Bearer Auth、通用 Header Authentication 和手动请求头发送相同虚构 token，对比最终请求的 Authorization 字段。",
+          "保存凭据后重新打开节点并执行，检查凭据引用仍能转化为正确的请求头。",
+          "让两个节点引用同一份 Bearer 凭据，分别执行并检查请求头，覆盖共享凭据场景。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20910,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1550,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40d-aea0-7783-9d0b-63848efba1a0"
+        }
+      }
+    },
+    {
+      "id": 4686806393,
+      "title": "[Bug]: Active agent sessions not restored after auto-update on Windows (tab titles kept, panes blank) — post-#5240, distinct from #5356",
+      "url": "https://github.com/stablyai/orca/issues/5626",
+      "repo": "stablyai/orca",
+      "extraction": {
+        "id": 4686806393,
+        "issue_kind": "bug",
+        "symptom": "Windows 上 Orca 自动更新重启后，活动 Claude 会话未恢复，终端仅剩新 shell 提示符，标签标题仍保留且没有警告。",
+        "root_cause": null,
+        "root_cause_category": "更新重启与会话恢复",
+        "environment": [
+          "Windows 10",
+          "Orca v1.4.77，正文称 v1.4.75 / v1.4.76 也观察到",
+          "两个浮动终端窗格运行活动 claude 会话",
+          "自动更新并重新启动",
+          "experimentalAgentHibernation=false"
+        ],
+        "evidence_quote": "Blank shell prompt; tab title preserved; no record in `sleepingAgentSessionsByPaneKey`; no warning.",
+        "test_ideas": [
+          "在两个浮动窗格中分别启动活动 claude 会话，触发一次自动更新重启，检查两个会话都能恢复，而不只恢复标签标题。",
+          "分别覆盖守护进程存活的热重连路径和需要冷恢复的路径，验证恢复后会话身份与更新前一致。",
+          "对比正常退出重启与自动更新重启，记录会话状态是否写入及是否被读取，用于检验正文尚未证实的退出时捕获假设。",
+          "构造恢复存储中仅有已删除标签的陈旧条目，检查不会误恢复到其他窗格，并检查活动会话的恢复结果。",
+          "模拟会话无法恢复，检查界面是否明确告知恢复失败；再从原工作目录运行 claude --resume，检查手动恢复途径。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20910,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1550,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40d-aea0-7783-9d0b-63848efba1a0"
+        }
+      }
+    },
+    {
+      "id": 4276056101,
+      "title": "Skills: post-merge review feedback follow-ups",
+      "url": "https://github.com/cli/cli/issues/13184",
+      "repo": "cli/cli",
+      "extraction": {
+        "id": 4276056101,
+        "issue_kind": "unclear",
+        "symptom": "该条目混合重构、待定行为和界面反馈问题，其中明确指出 push 操作尚未完成就显示图标。",
+        "root_cause": null,
+        "root_cause_category": "命令执行状态与结果反馈",
+        "environment": [
+          "GitHub CLI 的 skills 命令开发",
+          "sm/add-skills-command 分支",
+          "search 去重逻辑",
+          "publish 自动 push 流程"
+        ],
+        "evidence_quote": "The push icon is shown before the push operation completes.",
+        "test_ideas": [
+          "用命令桩让 git push 延迟完成，检查等待期间不显示成功图标；分别返回成功和失败，检查图标及错误反馈匹配实际结果。",
+          "在明确技能名称大小写规则后，用 MySkill 与 myskill 测试搜索去重行为，避免把尚待决定的规则当成既定契约。",
+          "构造不同去重字段组合但字符串拼接结果相同的输入，检查不同技能是否被错误合并。",
+          "通过 HTTP 客户端工厂注入桩，覆盖发布请求成功、HTTP 失败和网络错误，检查用户反馈与错误返回。",
+          "用桩提供 upstream、github、origin 及其他 remote 的不同组合，按最终选定的优先规则验证发布目标。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20910,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1550,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40d-aea0-7783-9d0b-63848efba1a0"
+        }
+      }
+    },
+    {
+      "id": 5186509797,
+      "title": "Terminal: add a 'Report mouse clicks & drags' toggle (iTerm2-style)",
+      "url": "https://github.com/stablyai/orca/issues/15367",
+      "repo": "stablyai/orca",
+      "extraction": {
+        "id": 5186509797,
+        "issue_kind": "feature",
+        "symptom": "全屏终端程序启用鼠标跟踪后，点击和拖动会发送给程序，用户必须按住修饰键才能选择本地文本。",
+        "root_cause": null,
+        "root_cause_category": "终端鼠标交互与事件上报",
+        "environment": [
+          "启用鼠标跟踪的全屏终端程序，如 vim、tmux、less、htop",
+          "提案涉及 patched xterm 的 mouseEventsRequireAlt 选项"
+        ],
+        "evidence_quote": "To select text with the mouse you have to remember to hold a modifier.",
+        "test_ideas": [
+          "针对提议的开关，在启用鼠标跟踪的 TUI 中验证默认 true 时点击和拖动仍上报，交互与现有行为一致。",
+          "关闭开关后，分别执行单击和拖动，验证能够本地选择文本且程序未收到对应鼠标报告。",
+          "关闭开关后滚动滚轮，验证程序仍收到滚轮报告；执行 Alt-click，验证仍能强制上报。",
+          "在已打开的终端面板中切换设置，验证行为即时更新；新建面板并验证应用同一用户设置。",
+          "分别在开关开启和关闭时触发链接点击的临时鼠标抑制，验证结束后恢复各自原有设置。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 18396,
+            "cached_input_tokens": 14976,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 712,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40e-8c61-7893-84e2-4eb1df6a58da"
+        }
+      }
+    },
+    {
+      "id": 4506769273,
+      "title": "update-system.mjs rollback selects oldest backup branch, not most recent",
+      "url": "https://github.com/career-ops-hq/career-ops/issues/733",
+      "repo": "career-ops-hq/career-ops",
+      "extraction": {
+        "id": 4506769273,
+        "issue_kind": "bug",
+        "symptom": "多次更新后执行 rollback 会选择最旧的备份分支，使用户回退到比预期更早的版本。",
+        "root_cause": "正文明确指出，rollback 选择按字母或字典序排列的第一个 backup-pre-update-* 分支，导致所述多备份场景中选中最旧备份。",
+        "root_cause_category": "版本升级与配置迁移",
+        "environment": [
+          "Windows 11",
+          "通过 node update-system.mjs rollback 执行回滚",
+          "更新尝试前版本为 1.7.0，回滚后为 1.3.0",
+          "同时存在 backup-pre-update-1.3.0 和 backup-pre-update-1.7.0 分支"
+        ],
+        "evidence_quote": "System files end up at v1.3.0 even though the user was on v1.7.0.",
+        "test_ideas": [
+          "在隔离 Git 仓库中依次创建对应 1.3.0 和 1.7.0 状态的备份分支，执行回滚，验证选中最近一次更新对应的备份而非字典序第一项。",
+          "构造分支名排序、提交时间顺序与最近更新备份顺序不一致的测试夹具，验证回滚目标符合最近一次更新的预期，避免仅用命名顺序判断新旧。",
+          "模拟更新失败后执行回滚，验证系统文件内容及新增文件的删除范围均以正确备份为准，未误恢复到更早版本。",
+          "核对回滚日志中的备份分支与实际恢复内容一致，避免仅根据完成提示判定回滚正确。",
+          "在隔离仓库记录回滚前 HEAD，检查回滚后的分支引用与 reflog，验证正文描述的回滚前状态恢复路径。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 18396,
+            "cached_input_tokens": 14976,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 712,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40e-8c61-7893-84e2-4eb1df6a58da"
+        }
+      }
+    }
+  ],
+  "open_questions": [
+    "编译偏好规则明确提到 GH-671 尚未关闭，精确的全局所有者过滤和完整资格矩阵仍由 #813 承担；本轮可验收的过滤规则和资格边界是什么？",
+    "安全控制台功能要求已发布的 v0.6.6 及精确能力/端点映射，原文未提供已发布证据；本轮被测版本是否满足条件？不能仅凭 unreleased 源码清单将这些功能认定为已发布要求。"
+  ],
+  "generation": {
+    "queries": {
+      "engine": "codex",
+      "requested_model": null,
+      "usage": {
+        "input_tokens": 29264,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1759,
+        "reasoning_output_tokens": 251
+      },
+      "thread_id": "01a0f40b-d3a9-7aa1-b4cf-d54a31e883af"
+    },
+    "plan": {
+      "engine": "codex",
+      "requested_model": null,
+      "usage": {
+        "input_tokens": 36976,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3687,
+        "reasoning_output_tokens": 185
+      },
+      "thread_id": "01a0f40f-1264-7e73-975d-b7bbdf930532"
+    }
+  },
+  "cases": [
+    {
+      "requirement_id": "R1",
+      "category": "Cursor 安装恢复",
+      "title": "协调更新失败后恢复原有配置及文件缺失状态",
+      "preconditions": [
+        "分别在 macOS 和 Linux 的隔离用户目录测试 Cursor v1 安装。",
+        "准备两组配置：两文件均存在且包含第三方条目；一个文件存在、另一个文件不存在。",
+        "保存安装前文件存在性及配置内容快照，具备阶段性写入故障注入条件。"
+      ],
+      "steps": [
+        "执行 remem install --target cursor，在一个配置文件已应用、后续配置应用尚未完成时注入写入失败。",
+        "比较失败后 ~/.cursor/hooks.json 和 ~/.cursor/mcp.json 与安装前快照。",
+        "移除故障并重新安装，检查 MCP 注册、第三方条目及能力提示。"
+      ],
+      "expected_result": "补偿回滚恢复原有配置语义；本次操作新建的文件不作为残留配置保留。重新安装后注册 remem MCP，保留第三方条目，不注册 Cursor 自动捕获或 SessionStart hook，并显示 session-init: not supported on cursor。",
+      "source_ids": [
+        4331445984
+      ],
+      "rationale": "原文证据指出备份中不存在路径时，回滚会吞掉 checkout 失败。迁移的是“部分更新创建了原先不存在的对象”这一恢复边界，适用于 PRD 明确的 Cursor staged apply 与补偿回滚；不将其视为跨文件原子事务，也不声称 remem 已存在同类缺陷。",
+      "id": "TC001"
+    },
+    {
+      "requirement_id": "R4",
+      "category": "默认读取策略",
+      "title": "同一抑制策略在所有规定的默认读取入口生效",
+      "preconditions": [
+        "准备可被检索、注入及相关派生读取入口引用的测试记忆和未抑制对照记录。",
+        "针对 memory、claim、topic、entity、pattern 及裸 ID/topic 目标分别准备能够匹配的样本。",
+        "Claude Code 或 Codex CLI 集成已配置，MCP 和本机 REST API 可用于读取同一测试存储。"
+      ],
+      "steps": [
+        "逐组应用 remem memory suppress，并记录被匹配的测试记录。",
+        "分别通过默认 CLI 搜索、SessionStart、profile-summary sources、preferences、lessons、current-state lookup、MCP 搜索和 REST 搜索读取相关内容。",
+        "比较各入口结果与未抑制对照记录，并检查源记录仍存在。"
+      ],
+      "expected_result": "每个规定的默认读取入口均排除活动抑制策略命中的内容；对照记录在满足原有读取条件时仍可见；抑制不删除源记录。Cursor 不作为 SessionStart 注入测试宿主。",
+      "source_ids": [
+        4893566353
+      ],
+      "rationale": "原文明确指出一个扫描入口没有应用用户黑名单。可迁移条件是共享排除策略接入多个读取入口时发生遗漏；这里只验证 remem 已规定的抑制入口，不复制 ATS 扫描功能。",
+      "id": "TC002"
+    },
+    {
+      "requirement_id": "R4",
+      "category": "抑制审计",
+      "title": "默认隐藏与显式审计能够读取同一源记录",
+      "preconditions": [
+        "测试记忆已被活动抑制策略命中，且普通搜索条件能够匹配它。",
+        "保留该记忆的 ID、内容和抑制策略信息作为对照。"
+      ],
+      "steps": [
+        "执行普通搜索，再以相同条件添加 --include-suppressed 搜索。",
+        "执行 remem why 查看该记忆的抑制状态和匹配策略。",
+        "解除抑制后再次执行普通搜索，并比较源记录身份与内容。"
+      ],
+      "expected_result": "普通搜索隐藏该记忆，显式审计搜索能够找回它；why 报告当前抑制状态及匹配策略；解除抑制后记录恢复默认可见性，源记录身份和内容未因抑制而被删除或替换。",
+      "source_ids": [
+        4893566353
+      ],
+      "rationale": "黑名单未被某入口应用的直接证据支持检查过滤策略的一致性。本条将默认过滤与 PRD 自身规定的审计绕过配对验证；不把提炼结果中有关其他产品审计参数的描述当成原文已证实事实。",
+      "id": "TC003"
+    },
+    {
+      "requirement_id": "R5",
+      "category": "精确恢复",
+      "title": "多条失败范围并存时只恢复指定 ID",
+      "preconditions": [
+        "准备多个可重试的失败 extraction range，记录各自 ID、关联任务和状态。",
+        "使目标范围既不是最旧记录，也不是列表中的第一条记录。",
+        "选择普通非隔离范围，避免将隔离确认流程混入本条。"
+      ],
+      "steps": [
+        "对目标 ID 执行 list-extraction-ranges --id <目标ID> --json。",
+        "仅对该 ID 执行 retry-extraction-ranges 的 dry-run，再执行实际重试。",
+        "再次查询目标及其他范围，核对关联 replay task。",
+        "另以不存在的 ID 请求重试，检查其他范围是否发生变化。"
+      ],
+      "expected_result": "预览、重试和查询始终指向指定范围及其关联任务，其他范围不被替代选中；不存在的 ID 不回退到相邻范围。若目标达到 replayed 终态，精确查询仍返回该范围及关联任务。",
+      "source_ids": [
+        4506769273
+      ],
+      "rationale": "原文证据仅确认回滚结果变成 v1.3.0，而用户此前为 v1.7.0，不能据此认定具体排序根因。可迁移的是多恢复候选下恢复对象错误的风险；remem 的验收依据是显式 ID 契约，不是其他产品的最近备份选择规则。",
+      "id": "TC004"
+    },
+    {
+      "requirement_id": "R5",
+      "category": "归档隔离恢复",
+      "title": "归档隔离恢复失败或中断后不遗留普通队列可领取任务",
+      "preconditions": [
+        "准备一个已归档且已隔离的 extraction range，保存范围及任务初始状态。",
+        "没有其他 worker 持有 singleton。",
+        "具备分别模拟部分处理、处理失败、超时和中断的条件。"
+      ],
+      "steps": [
+        "使用目标精确 ID、--acknowledge-quarantine 和 --include-archived 完成 dry-run。",
+        "使用相同 ID、两项确认和显式 --profile 执行 PRD 规定的 worker 恢复命令。",
+        "分别注入部分处理、失败、超时和中断，每个变体使用独立夹具。",
+        "查询同一 ID 的范围与任务状态，再启动普通 worker 检查是否领取该目标。"
+      ],
+      "expected_result": "各异常变体均将目标保留或返回归档隔离状态，不使其暴露给普通 daemon 队列；精确查询仍能关联范围、任务状态及有界错误证据，其他范围不受影响。",
+      "source_ids": [
+        4331445984
+      ],
+      "rationale": "原文涉及回滚对原先不存在路径的失败处理。迁移到 remem 的是部分执行后新增状态可能未被恢复流程收回的边界；数据库队列中的具体验收结果来自 PRD，此类迁移不证明二者具有相同根因。",
+      "id": "TC005"
+    },
+    {
+      "requirement_id": "R7",
+      "category": "JSON 输出",
+      "title": "所有列明的 JSON 命令在终端、管道及重定向中保持单对象输出",
+      "preconditions": [
+        "按 PRD 的 Scriptable JSON output 表建立命令清单，为每个命令准备满足参数及状态要求的隔离夹具。",
+        "变更类命令使用独立数据，避免相互影响。",
+        "能够分别完整捕获 stdout 和 stderr。"
+      ],
+      "steps": [
+        "逐项执行清单中的 --json 命令，分别覆盖终端、管道和文件重定向。",
+        "对完整 stdout 直接进行 JSON 解析，不预先裁剪横幅、日志或前后文本。",
+        "检查解析结果为单个对象，并核对该命令在 PRD 表中列明的顶层字段。"
+      ],
+      "expected_result": "各次成功调用的完整 stdout 均可解析为且仅为一个 JSON 对象，包含规定的顶层字段，没有人类提示、初始化横幅或进度文本混入。",
+      "source_ids": [
+        4891743034
+      ],
+      "rationale": "原文直接说明 --json 的 stdout 混入横幅导致消费者解析失败。该触发条件与 remem 的脚本输出契约直接相关，但不要求 remem 使用 dotenv 或实现网页消费者。",
+      "id": "TC006"
+    },
+    {
+      "requirement_id": "R7",
+      "category": "JSON 输出",
+      "title": "空结果及诊断型成功响应不混入人类提示",
+      "preconditions": [
+        "准备正常可打开的测试数据库。",
+        "准备无匹配搜索词、不存在的记忆 ID、空 review inbox，以及能产生 skipped 条目的 user backfill 夹具。"
+      ],
+      "steps": [
+        "分别执行 search --json、show <不存在ID> --json、user review inbox --json 和 user backfill --json。",
+        "完整捕获 stdout，直接解析并检查命令对应的稳定字段。",
+        "检查空结果、found 状态或跳过原因是否表达在 JSON 字段中。"
+      ],
+      "expected_result": "每项响应只输出一个 JSON 对象；空搜索和空 inbox 通过结果字段表达，show 使用 found 表达未找到，backfill 在规定字段中表达跳过原因，不额外向 stdout 打印说明文字。",
+      "source_ids": [
+        4891743034
+      ],
+      "rationale": "同一 stdout 通道混入非 JSON 文本的证据可迁移到容易打印提示的空结果和诊断分支；具体结果字段以 remem PRD 为准。",
+      "id": "TC007"
+    },
+    {
+      "requirement_id": "R8",
+      "category": "REST 认证",
+      "title": "Authorization 头缺失或错误时不能读取受保护接口",
+      "preconditions": [
+        "本机测试 API 已启动，使用隔离环境中的测试令牌。",
+        "测试客户端能记录请求头是否存在，但不输出令牌内容。",
+        "选用 PRD 已明确的 health、status 和 search 接口。"
+      ],
+      "steps": [
+        "携带正确的 Authorization: Bearer 测试令牌请求三个接口，建立可访问对照。",
+        "分别省略 Authorization、发送空 Bearer 值及发送错误测试令牌。",
+        "比较响应状态和内容，确认未认证请求没有获得受保护数据。"
+      ],
+      "expected_result": "正确 Bearer 令牌允许访问；缺失、空值及错误令牌均被明确拒绝，不返回受保护的状态或记忆数据。具体拒绝状态码不在本草稿中额外指定。",
+      "source_ids": [
+        3052592385
+      ],
+      "rationale": "原文仅证实接收端未收到 Authorization 头，未证实根因。迁移的是认证头在请求链路中缺失的条件，用于验证 remem 服务端认证边界，不要求 remem 提供 n8n 凭据节点。",
+      "id": "TC008"
+    }
+  ],
+  "coverage_gaps": [
+    {
+      "requirement_id": "R1",
+      "reason": "仅覆盖 Cursor 协调安装的补偿恢复边界。Claude/Codex 跨会话注入与 Stop 总结、首次安装与自动发现、Claude repair、Cursor 手动 observe/summarize、平台跳过和 doctor 能力提示尚未充分覆盖。744546094 的原文是 NuGet 配置警告；4686806393 的引文仅描述空 shell、保留标题和缺少恢复记录，不能单凭提炼结果推导 remem 的自动更新或终端恢复要求，也不足以支撑跨会话记忆用例。"
+    },
+    {
+      "requirement_id": "R2",
+      "reason": "无充分相关原文证据，未生成案例。5038512351 仅泛述 Web research 配置体验不一致；4276056101 的证据是 push 完成前显示图标，均不能支撑项目隔离、中英文分词与同义词、有限图扩展、topic_key 去重或排序正确性的历史触发条件。"
+    },
+    {
+      "requirement_id": "R3",
+      "reason": "无充分相关原文证据，未生成案例。5040170145 只说明其他产品缺少 memory HTTP 端点，5038512351 只描述 Web research 体验；不能支撑上下文预算、来源与脱敏审计、投毒拦截、高风险弃答、本地嵌入、固定检索策略、plan_hash 或实际发出内容的审计重封装测试。"
+    },
+    {
+      "requirement_id": "R4",
+      "reason": "已有案例覆盖多入口默认抑制及显式审计，但反馈事件默认不改变排序、策略变更后的并发读取一致性等未充分覆盖。5186509797 的鼠标修饰键证据与记忆治理不相关，不能用来补齐缺口。"
+    },
+    {
+      "requirement_id": "R5",
+      "reason": "已有案例覆盖恢复对象身份及失败后的隔离状态，但 singleton 竞争拒写、缺失确认参数、--id 与批量过滤参数冲突、普通隔离重试限制及完整原子状态转换尚未充分覆盖。两条历史证据来自文件回滚，不能视为数据库并发或隔离机制的直接故障证据。"
+    },
+    {
+      "requirement_id": "R6",
+      "reason": "未生成案例。4370092094 的证据描述编辑后替换回合并重新运行，不涉及只读归档的快照分页；不能向 remem 引入 /edit、/undo 或历史截断功能。精确会话隔离、完整内容、排序与并发追加分页、非法/过期/错配游标、空元组、写锁下只读及旧模式迁移诊断均缺少相关历史证据。"
+    },
+    {
+      "requirement_id": "R7",
+      "reason": "案例覆盖列明命令的成功输出、空结果及诊断型成功响应；启动失败、数据库错误和参数错误时的退出码、stderr 与 JSON 行为未充分覆盖。PRD 未统一规定所有失败路径的 JSON envelope，不能自行指定失败必须返回何种对象。"
+    },
+    {
+      "requirement_id": "R8",
+      "reason": "仅覆盖 Bearer 认证头缺失和错误。SQLCipher 静态加密、数据目录及密钥/令牌权限、仅绑定 127.0.0.1、SQLite 调优约束和明文残留诊断缺少相关历史证据；3052592385 不能证明这些安全边界存在问题。"
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 # Turn a GitHub issue into a test charter
 
 This worked example uses a real row from the committed [CLI report](../out/report_cli.md).
-It teaches manual test design. It does not claim that your product has the same bug
-or that issue-lens already generates tests with an LLM.
+It teaches manual test design. It does not claim that your product has the same bug.
+For automated drafts, see [Codex CLI planning](../README.md#generate-a-test-plan-with-codex-cli).
 
 ## 1. Read the original issue
 
@@ -54,5 +54,5 @@ feature requests, so classify the source manually before designing a test.
 
 For the exploratory-testing approach, see this [author's charter guidance](https://github.com/Maaikees/exploratory-testing/blob/master/exploratory-testing-with-the-team.md).
 For corpus selection and limits, read [research](research.md) and the
-[known limitations](../README.md#known-limitations). Automatic extraction remains
-an unwired interface in `extract.py`.
+[known limitations](../README.md#known-limitations). Automatic extraction and planning
+produce suggestions that still need this source and applicability review.

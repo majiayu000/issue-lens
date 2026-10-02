@@ -1,0 +1,783 @@
+{
+  "status": "draft_not_executed",
+  "form": "cli",
+  "generated_at": "2026-09-30T20:41:22.506696+00:00",
+  "prd_sha256": "d169b8a425e0c87f70f2c17863d1e688c0e8b06c8e1264dc44e2867fad3abf9e",
+  "corpus_issue_count": 16054,
+  "source_limit": 12,
+  "requirements": [
+    {
+      "title": "凭据加密与 Agent 隔离",
+      "quote": "- Credentials are stored envelope-encrypted (AES-256-GCM, binary AAD binding\n  vault/credential/version/purpose) and decrypted only after capability,\n  action, and audit checks pass — once per request, zeroized after use.\n- The agent wire protocol has no secret-read operation and no way to choose\n  origin, method, path, auth headers, or redirects.",
+      "terms": [
+        "credential",
+        "encryption",
+        "permission",
+        "isolation"
+      ],
+      "id": "R1",
+      "retrieved_source_ids": [
+        3119477140,
+        2727647285
+      ]
+    },
+    {
+      "title": "固定请求的网络限制与响应防泄漏",
+      "quote": "The production transport rejects all non-public address ranges, including\n`198.18.0.0/15`. On systems where a TUN proxy returns that range as fake DNS\nanswers, domain-based Actions fail closed until the host supplies real DNS;\nRekey does not silently allow the fake-IP range or honor proxy environment\nvariables.",
+      "terms": [
+        "ssrf",
+        "dns",
+        "proxy",
+        "redaction"
+      ],
+      "id": "R2",
+      "retrieved_source_ids": [
+        4399425176,
+        5032689698
+      ]
+    },
+    {
+      "title": "密码与恢复密钥管理",
+      "quote": "The recovery key can unlock the running broker, satisfy an explicit Admin\nstep-up with `--recovery`, or verify an offline backup restore. With the broker\nunlocked, `rekey password change` atomically replaces the password wrapper;\nadd `--recovery` when the current password is lost. `rekey recovery rotate`\nrequires the current password, replaces the recovery wrapper, and displays the\nnew recovery key once. Neither operation rotates the VRK or Credential data.",
+      "terms": [
+        "recovery",
+        "restore",
+        "rotation",
+        "atomicity"
+      ],
+      "id": "R3",
+      "retrieved_source_ids": [
+        5045284631,
+        4370093846
+      ]
+    },
+    {
+      "title": "签名策略、会话撤销与工作负载令牌防重放",
+      "quote": "The JWT is consumed once and replay denial persists across restart and any\nrestore whose backup already contains the consumption record. A new-version\npolicy activation revokes workload-minted sessions; an exact same-bundle retry\npreserves them.",
+      "terms": [
+        "signature",
+        "replay",
+        "revocation",
+        "session"
+      ],
+      "id": "R4",
+      "retrieved_source_ids": [
+        5418816013,
+        4952152023
+      ]
+    },
+    {
+      "title": "审批授权精确绑定与有效期限制",
+      "quote": "The grant is bound to the challenge, session, principal, exact Action/resource,\ncanonical parameters, determining rule, policy version/digest, validity window,\nand use limit. Rekey provides no hosted remote approval service, notification UI,\nhuman directory, private-key custody, or approval survival across lock/restart.",
+      "terms": [
+        "approval",
+        "authorization",
+        "expiration",
+        "binding"
+      ],
+      "id": "R5",
+      "retrieved_source_ids": [
+        4556858835
+      ]
+    },
+    {
+      "title": "锁定状态下的脱敏审计与安全导出",
+      "quote": "List results use a stable sequence snapshot and bounded pages. Export creates a\nnew mode-0600 JSONL file and never overwrites or follows a symlink. Audit output\nomits secrets, bodies, headers, capability tokens, resource IDs, and parameter\nhashes. It is sensitive operational metadata, not an encrypted backup. Local\nretention is append-only for the vault lifetime; SIEM, WORM, legal hold, remote\ndelivery, configurable retention, and audit deletion are not implemented.",
+      "terms": [
+        "audit",
+        "pagination",
+        "symlink",
+        "redaction"
+      ],
+      "id": "R6",
+      "retrieved_source_ids": [
+        5224906687
+      ]
+    },
+    {
+      "title": "CLI 自动化秘密输入通道",
+      "quote": "For explicit automation, proof-only commands use `--password-stdin`;\n`rekey password change --stdin-secrets`, `rekey credential add`, and\n`rekey credential rotate` read the step-up proof on line 1 and the new secret\non line 2. Add `--recovery` when that proof is the recovery key. Secrets are\nnever accepted as argument values or environment variables.",
+      "terms": [
+        "stdin",
+        "credential",
+        "argument",
+        "environment"
+      ],
+      "id": "R7",
+      "retrieved_source_ids": [
+        5139213685
+      ]
+    },
+    {
+      "title": "限定 Vault 动态凭据执行与租约撤销",
+      "quote": "This archive also supports one closed one-shot Vault dynamic source. Each\nexecution performs one `GET /v1/MOUNT/creds/ROLE`, uses one selected string in\nthe fixed Action, and withholds the Action response until\n`POST /v1/sys/leases/revoke` succeeds for the exact lease with `sync: true`:",
+      "terms": [
+        "lease",
+        "revocation",
+        "cleanup",
+        "response"
+      ],
+      "id": "R8",
+      "retrieved_source_ids": [
+        5238725556
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": 3119477140,
+      "title": "Crypto node does not support secret as a credential",
+      "url": "https://github.com/n8n-io/n8n/issues/16035",
+      "repo": "n8n-io/n8n",
+      "extraction": {
+        "id": 3119477140,
+        "issue_kind": "feature",
+        "symptom": "Crypto 节点的 HMAC secret 无法引用凭据，只能作为参数填写，工作流编辑者可看到其值。",
+        "root_cause": "正文指出 secret 必须作为节点参数提供，且不支持使用凭据，因此拥有工作流编辑权限的人可见该值。",
+        "root_cause_category": "凭据管理与敏感信息可见性",
+        "environment": [
+          "n8n 1.92.2",
+          "操作系统字段填写为 ec2",
+          "Node.js 版本填写为 current",
+          "SQLite（默认）",
+          "main 执行模式",
+          "Crypto 节点 HMAC 操作"
+        ],
+        "evidence_quote": "The built in crypto node insecurely requires the parameter 'secret' and does not allow us to use a credential for it. This allows anyone with edit permission on the workflow to see the secret value.",
+        "test_ideas": [
+          "使用虚构密钥创建 HMAC 节点，检查 secret 是否支持选择凭据，并用已知输入验证计算结果。",
+          "分别以凭据管理者和仅有工作流编辑权限的用户查看节点、工作流导出及执行错误，检查虚构密钥是否暴露。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20952,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1668,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f409-224a-7522-9d3d-d75c04f757e4"
+        }
+      }
+    },
+    {
+      "id": 4399425176,
+      "title": "fetch_url blocks all requests when DNS resolves to private IPs (fakeip proxy incompatible)",
+      "url": "https://github.com/Hmbown/Codewhale/issues/1071",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 4399425176,
+        "issue_kind": "bug",
+        "symptom": "使用 fakeip 透明代理时，fetch_url 及内部调用它的工具因 DNS 返回受限地址而拒绝请求。",
+        "root_cause": "正文说明 DNS 解析结果会经过硬编码的受限 IP 检查；该检查与域名网络策略串行独立执行，且没有配置覆盖入口，因此会阻断代理返回的 fakeip 地址。",
+        "root_cause_category": "网络代理与 SSRF 防护兼容性",
+        "environment": [
+          "Linux（Gentoo）",
+          "DeepSeek CLI 0.8.16",
+          "deepseek-v4-flash",
+          "fish",
+          "Clash / sing-box fakeip 模式",
+          "系统 DNS 经代理解析"
+        ],
+        "evidence_quote": "Users behind fakeip proxies cannot use `fetch_url` at all.",
+        "test_ideas": [
+          "在可控 DNS 与代理环境中，让同一域名分别解析为公网地址和 198.18.0.0/15 内的 fakeip 地址，比较 fetch_url 的结果与错误信息。",
+          "设置 network.default = \"allow\" 后重复请求，检查域名策略与 IP 防护的实际交互，并确认错误能说明阻断层。",
+          "覆盖直接填写私网 IP、域名解析到真实内网、代理管理的 fakeip 三类请求；若引入代理兼容配置，验证其仅放行明确授权的情形。",
+          "通过 web_search 触发内部 fetch_url 请求，验证代理兼容性与错误提示在调用链中保持一致。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20952,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1668,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f409-224a-7522-9d3d-d75c04f757e4"
+        }
+      }
+    },
+    {
+      "id": 5045284631,
+      "title": "v0.9.4: composer send dies on route preflight with truncated \"Message not sent (Failed to configure provider…)\"",
+      "url": "https://github.com/Hmbown/Codewhale/issues/5101",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 5045284631,
+        "issue_kind": "bug",
+        "symptom": "发送消息时路由预检失败，草稿恢复但状态栏截断具体错误，用户重复发送仍无法获知可操作的原因。",
+        "root_cause": "正文明确说明长路由配置错误经草稿恢复路径写入粘性状态栏，并被状态栏宽度和缓存后缀截断；实际触发路由配置失败的具体原因未确定。",
+        "root_cause_category": "编码与终端兼容(颜色/宽度/Unicode)",
+        "environment": [
+          "标题标注 v0.9.4",
+          "TUI 消息编辑器",
+          "路由发送前预检",
+          "自定义 provider",
+          "状态栏带缓存占比后缀"
+        ],
+        "evidence_quote": "The status bar (and the `· cache 75%` suffix) **truncates** the long error, so the operator often only sees `Failed to configure p…` and never the real root cause (missing key, TLS policy, bad base URL, model/protocol mismatch, etc.).",
+        "test_ideas": [
+          "在多种终端宽度下触发长预检错误并显示缓存后缀，验证用户仍能通过详情或持续提示读取完整 provider、model 和内部原因。",
+          "分别构造缺少密钥及 TLS/base URL 配置失败，检查错误提供对应的修复入口，且不暴露密钥内容。",
+          "提交包含中文、换行和其他非 ASCII 字符的草稿，验证失败后逐字恢复、焦点保留，且不进入 loading、不写入 history/api_messages、不设置 last_submitted_prompt。",
+          "修正测试中的路由配置后直接再次提交，验证无需重启即可成功，旧错误随成功发送清除。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20952,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1668,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f409-224a-7522-9d3d-d75c04f757e4"
+        }
+      }
+    },
+    {
+      "id": 5418816013,
+      "title": "Google: thought-signature replay on a non-official route fails with Google's raw 400 instead of an actionable error",
+      "url": "https://github.com/Hmbown/Codewhale/issues/6048",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 5418816013,
+        "issue_kind": "bug",
+        "symptom": "通过通用 OpenAI 兼容配置调用 Gemini thinking 模型并继续工具调用时，用户收到缺失 thought_signature 的原始 400，缺少恢复指引。",
+        "root_cause": "正文说明 thought signature 仅在精确匹配的官方 Google 路由上捕获和重放，通用兼容配置会剥离该字段，而非官方路由又跳过重放校验，导致请求收到 Google 的缺失签名错误。",
+        "root_cause_category": "路由协议兼容与错误提示",
+        "environment": [
+          "Gemini thinking 模型",
+          "手工配置的通用 OpenAI-compatible provider",
+          "工具调用后的回合继续",
+          "官方路由标识为 generativelanguage.googleapis.com/v1beta/openai"
+        ],
+        "evidence_quote": "Configure a Gemini thinking model via the generic OpenAI-compatible provider, make a tool call, continue the turn: Google 400s on the missing `thought_signature` with no CodeWhale-authored guidance.",
+        "test_ideas": [
+          "对内置 google provider 和通用兼容配置执行相同的 Gemini 工具调用及后续回合，检查签名字段的保留、重放和失败提示。",
+          "模拟 Google 返回缺失 thought_signature 的 400，验证提示包含相关模型、工具调用及适用的恢复建议。",
+          "模拟能够自行管理签名的网关，验证不会仅因属于非官方路由就被预检拒绝。",
+          "切换 reasoning 设置重复缺失签名场景，验证错误不会错误地引导用户通过调整 reasoning 解决签名问题。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20952,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1668,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f409-224a-7522-9d3d-d75c04f757e4"
+        }
+      }
+    },
+    {
+      "id": 4556858835,
+      "title": "test(runtime): add end-to-end mobile control smoke for auth, approval retry, and LAN binding",
+      "url": "https://github.com/Hmbown/Codewhale/issues/2396",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 4556858835,
+        "issue_kind": "feature",
+        "symptom": "移动控制页面及相关鉴权、审批错误路径和监听地址行为缺少可重复运行的端到端冒烟验证。",
+        "root_cause": null,
+        "root_cause_category": "端到端测试覆盖",
+        "environment": [
+          "codewhale-tui serve",
+          "--mobile 模式",
+          "回环地址与默认监听地址",
+          "auth-token 与 --insecure",
+          "真实 HTTP 请求",
+          "隔离端口且无需 provider API 密钥"
+        ],
+        "evidence_quote": "It would be useful to preserve that verification ladder as a small repeatable smoke target so future runtime/API or CLI binding changes do not silently regress the mobile surface.",
+        "test_ideas": [
+          "以 --mobile --host 127.0.0.1 和测试 token 启动二进制，验证 /mobile 无 token 返回 401、带查询 token 返回 200 且包含页面标题。",
+          "验证 /v1/threads/summary 无 token 返回 401、带 bearer token 返回 200；带授权向 /v1/approvals/no_such_id 发起 POST，检查结构化 404。",
+          "以显式回环地址和 --insecure 启动，验证 /mobile 与 /v1/threads/summary 均可无 token 访问。",
+          "以 --mobile --insecure 启动且省略 --host，检查输出包含 0.0.0.0 监听警告和 LAN/mobile URL 提示。",
+          "使用隔离端口运行冒烟脚本，并分别制造成功、断言失败和启动失败，检查服务器进程及端口均被清理。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20952,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1668,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f409-224a-7522-9d3d-d75c04f757e4"
+        }
+      }
+    },
+    {
+      "id": 5224906687,
+      "title": "/import-claude: migrate ~/.claude permissions, env vars, MCP servers, hooks, and paths",
+      "url": "https://github.com/Hmbown/Codewhale/issues/5557",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 5224906687,
+        "issue_kind": "feature",
+        "symptom": "目前仅支持发现 ~/.claude.json 中的 MCP 配置，尚缺少可预览并确认的完整 Claude 配置导入功能。",
+        "root_cause": null,
+        "root_cause_category": "版本升级与配置迁移",
+        "environment": [
+          "配置来源：~/.claude、~/.claude.json",
+          "正文指定复用 v0.9.11 portable config bundle 导入流程"
+        ],
+        "evidence_quote": "Only MCP discovery of `~/.claude.json` exists (`crates/tui/src/mcp/external_import.rs`).",
+        "test_ideas": [
+          "准备包含权限、环境变量、MCP servers、hooks 和路径的配置，验证导入计划逐项展示映射结果。",
+          "生成计划后取消确认，验证目标配置没有变化；确认后验证仅导入获准项目。",
+          "在导入中途注入写入失败，验证回滚恢复导入前状态。",
+          "使用虚构敏感值，检查计划、日志和错误输出是否脱敏。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19960,
+            "cached_input_tokens": 8832,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1546,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40a-0c67-7941-b12b-68c2a1dd3348"
+        }
+      }
+    },
+    {
+      "id": 5139213685,
+      "title": "add-entry.mjs has no --help and silently ignores mistyped flags",
+      "url": "https://github.com/career-ops-hq/career-ops/issues/2798",
+      "repo": "career-ops-hq/career-ops",
+      "extraction": {
+        "id": 5139213685,
+        "issue_kind": "bug",
+        "symptom": "add-entry.mjs 缺少帮助入口，拼错的选项可能被忽略或当成数据，执行看起来仍然成功。",
+        "root_cause": "正文明确说明：脚本只识别 --dry-run 和 --stdin，其余参数均按位置参数处理，导致未知选项没有被拒绝。",
+        "root_cause_category": "参数解析与默认值",
+        "environment": [
+          "Node.js 脚本 add-entry.mjs",
+          "参数取自 process.argv.slice(2)"
+        ],
+        "evidence_quote": "Everything else in `process.argv.slice(2)` is treated as a positional argument, so a typo like `node add-entry.mjs --sumary` does not warn: it is silently ignored or read as data, and the run looks like it worked.",
+        "test_ideas": [
+          "分别执行 --help 和 -h，验证输出用法、退出码为 0，且不执行数据写入。",
+          "传入 --sumary，验证退出码为 1，stderr 包含错误选项名称和用法。",
+          "回归 --dry-run、--stdin 及普通位置参数，验证既有行为。",
+          "传入内部含连字符但不以连字符开头的位置参数，验证不会被误判为未知选项。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19960,
+            "cached_input_tokens": 8832,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1546,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40a-0c67-7941-b12b-68c2a1dd3348"
+        }
+      }
+    },
+    {
+      "id": 5238725556,
+      "title": "Flaky test: remote_control separate_predispatch_crashes_on_one_run_get_distinct_recovery_turn_ids fails under full-suite parallel load",
+      "url": "https://github.com/Hmbown/Codewhale/issues/5605",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 5238725556,
+        "issue_kind": "bug",
+        "symptom": "完整测试套件并行运行时，恢复回合 ID 应不同的断言偶发失败，但立即重跑及单独运行可通过。",
+        "root_cause": null,
+        "root_cause_category": "并发与状态一致性",
+        "environment": [
+          "codex/v0912-integration-20260823 分支，正文标注 5f97c2413 / 0d2cbde67 时期",
+          "cargo test -p codewhale-tui --lib --locked 完整套件并行运行",
+          "正文记录完整套件五次通过四次，隔离运行三次均通过"
+        ],
+        "evidence_quote": "Full suite `cargo test -p codewhale-tui --lib --locked`: failed once with\n  `remote_control::tests::separate_predispatch_crashes_on_one_run_get_distinct_recovery_turn_ids`\n  (`assert_ne!(first_recovery_turn, second_recovery_turn)`), plus one earlier run with an uncaptured failure name with identical symptoms.",
+        "test_ideas": [
+          "重复运行完整套件并捕获两个恢复回合 ID、run_id、lease_id 及持久化状态，对比成功与失败样本。",
+          "在串行、并行及增加临时目录读写负载的条件下运行同一测试，记录失败频率；将文件系统负载影响作为待验证假设。",
+          "构造同一 run 连续两次预派发崩溃，检查租约代际变化与恢复回合 ID 唯一性。",
+          "围绕游标协调和 journal 持久化设置可控交错点，验证第二次恢复读取到的租约状态。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19960,
+            "cached_input_tokens": 8832,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1546,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40a-0c67-7941-b12b-68c2a1dd3348"
+        }
+      }
+    },
+    {
+      "id": 2727647285,
+      "title": "X OAuth API fails with error 401",
+      "url": "https://github.com/n8n-io/n8n/issues/12114",
+      "repo": "n8n-io/n8n",
+      "extraction": {
+        "id": 2727647285,
+        "issue_kind": "bug",
+        "symptom": "用户在 n8n 中连接 X OAuth 账号时，授权后收到 HTTP 401，无法建立连接。",
+        "root_cause": null,
+        "root_cause_category": "认证与 OAuth 回调",
+        "environment": [
+          "Docker 自托管 n8n",
+          "Ubuntu 20.04",
+          "n8n 1.70.3；compose 使用 n8nio/n8n:latest",
+          "Node.js 20",
+          "PostgreSQL",
+          "main 默认执行模式",
+          "HTTPS；X 应用配置了 OAuth1 和 OAuth2 两种回调地址"
+        ],
+        "evidence_quote": "Connection should have been established without any error, but it throws error 401.",
+        "test_ideas": [
+          "按正文步骤创建 HTTP Request 节点并选择 X OAuth Account，使用测试账号完成授权，检查回调结果和凭证保存状态。",
+          "分别测试 OAuth1、OAuth2 回调与对应凭证类型，记录每个流程的实际结果；正文对 OAuth2 的描述不一致，需独立验证。",
+          "在 Docker 自托管 HTTPS 环境中，核对生成的回调地址与 X 应用登记地址，并检查授权流程是否保持一致。",
+          "模拟授权服务返回 401，验证界面明确报告连接失败、不保存为可用凭证，且错误信息不泄露密钥或令牌。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19960,
+            "cached_input_tokens": 8832,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1546,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40a-0c67-7941-b12b-68c2a1dd3348"
+        }
+      }
+    },
+    {
+      "id": 5032689698,
+      "title": "bug(tests): the SSRF DNS mock stubs dnsModule.default but liveness-browser calls the namespace — test passes by accident and costs 12s per run",
+      "url": "https://github.com/career-ops-hq/career-ops/issues/2386",
+      "repo": "career-ops-hq/career-ops",
+      "extraction": {
+        "id": 5032689698,
+        "issue_kind": "bug",
+        "symptom": "SSRF 测试虽通过，却未覆盖预期的回环地址拦截分支，并因真实 DNS 查询每次耗时约 12 秒。",
+        "root_cause": "正文明确说明：测试替换 dnsModule.default 上的方法，而被测代码调用模块命名空间绑定，导致 mock 未生效；真实解析返回空地址仍产生 blocked_host，使测试误通过，Windows 的 .local 查询等待又拖慢了测试。",
+        "root_cause_category": "测试替身与分支覆盖",
+        "environment": [
+          "Node.js ESM 动态导入 dns/promises",
+          "test-all.mjs 与 liveness-browser.mjs",
+          "Windows mDNS/LLMNR 与 .local 主机名",
+          "并行等待 resolve4、resolve6、lookup",
+          "dnsCache 按主机名缓存"
+        ],
+        "evidence_quote": "Same verdict, completely different code path, and the loopback-rejection branch the test was written to cover is never actually exercised.",
+        "test_ideas": [
+          "让 DNS 替身返回 127.0.0.1，除检查 blocked_host 外，还验证替身被调用且回环地址拦截分支实际执行。",
+          "将空地址列表与回环地址分别作为独立用例，验证相同结果不会掩盖不同路径缺失。",
+          "让任何真实 DNS 调用立即导致测试失败，确认 resolve4、resolve6、lookup 均被有效替换。",
+          "分别在空缓存和已有同主机名缓存的条件下运行，检查缓存是否绕过预期的解析与断言。",
+          "测量隔离测试耗时，并在 Windows 环境复核，确认测试不再依赖真实 .local 解析等待。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19960,
+            "cached_input_tokens": 8832,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1546,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40a-0c67-7941-b12b-68c2a1dd3348"
+        }
+      }
+    },
+    {
+      "id": 4370093846,
+      "title": "v0.8.6 feat: crash-recovery prompt — restore the in-flight turn after an unexpected exit",
+      "url": "https://github.com/Hmbown/Codewhale/issues/388",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 4370093846,
+        "issue_kind": "feature",
+        "symptom": "希望异常退出后再次启动时提示恢复未完成的轮次，目前已有检查点但未向用户提供恢复提示。",
+        "root_cause": null,
+        "root_cause_category": "会话恢复与异常退出",
+        "environment": [
+          "deepseek CLI",
+          "已有轮次开始前检查点",
+          "提议仅对修改时间在24小时内的检查点提示恢复"
+        ],
+        "evidence_quote": "Codex parity but better — we already have the checkpoint, we just don't surface it.",
+        "test_ideas": [
+          "在轮次执行中强制终止进程，再次启动，验证恢复提示出现在空白输入框之前。",
+          "正常退出后重新启动，验证检查点已清除且不出现恢复提示。",
+          "分别选择 r、s、d，验证恢复轮次、清除检查点后开始新会话、删除检查点且下次不再提示的行为。",
+          "构造修改时间略小于、等于及略大于24小时的检查点，验证提示时间边界符合约定。",
+          "存在符合提示条件的检查点时携带 --no-restore-prompt 启动，验证不显示恢复对话框。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 17942,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 678,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40a-e6ba-7911-9a43-852cf884632a"
+        }
+      }
+    },
+    {
+      "id": 4952152023,
+      "title": "Bound and de-synchronize terminal cold-restore replay on the main process",
+      "url": "https://github.com/stablyai/orca/issues/9971",
+      "repo": "stablyai/orca",
+      "extraction": {
+        "id": 4952152023,
+        "issue_kind": "bug",
+        "symptom": "终端重新连接并恢复多个会话历史时，主线程会累计停顿数秒，同时恢复缓存占用大量内存。",
+        "root_cause": "正文指出，detectColdRestore 在主线程上通过 HeadlessEmulator 同步重放每个会话最多约5MB的历史，没有并发上限，并在 coldRestoreCache 中保留每个会话数MB的快照和滚动历史ANSI字符串。",
+        "root_cause_category": "性能与大数据量",
+        "environment": [
+          "终端重新连接及启动恢复",
+          "主进程中的 HistoryReader 和 HeadlessEmulator",
+          "使用合成4MB会话进行测量",
+          "包含58份可恢复历史的配置",
+          "较旧硬件或包含大量TUI内容的历史"
+        ],
+        "evidence_quote": "Measured with the real `HistoryReader` on synthesized 4MB sessions: ~72–100ms main-thread block and ~1.2MB retained per session.",
+        "test_ideas": [
+          "使用真实 HistoryReader 分别恢复1个和58个合成4MB会话，记录事件循环最大延迟、累计阻塞时间、总恢复耗时及缓存保留字节数。",
+          "同时触发多个会话恢复，监测活跃重放任务数，验证实施并发限制后不超过设定上限且所有任务最终完成。",
+          "对普通文本和大量TUI ANSI内容分别执行恢复，比较耗时，并核对恢复后的屏幕及滚动历史是否完整。",
+          "若采用分批重放，在恢复期间安排定时回调和输入事件，验证批次之间能处理事件且重放顺序保持正确。",
+          "若实施缓存字节上限及消费后淘汰，持续恢复并消费多个会话，验证缓存不超过约定预算、已消费条目释放，且未消费的恢复数据仍可正确获取。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 17942,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 678,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f40a-e6ba-7911-9a43-852cf884632a"
+        }
+      }
+    }
+  ],
+  "open_questions": [
+    "测试目标是已发布的 alpha.2 CLI，还是当前开发源码 CLI？正文区分存储格式 9 与 10，并明确后者拒绝旧状态和备份、没有迁移；不能将两者合并为升级兼容要求。源码专属的 JWKS、Keycloak、MCP 和本地审批工具也需据此确定是否纳入。",
+    "正文未完整列出 CLI 平台支持矩阵，仅提供链接与 macOS/Linux 安装通过的描述；具体支持的系统版本和架构待明确。Linux agent-run 仅适用于所述 Linux 拓扑，不能扩展为 macOS 或默认 G2 要求。"
+  ],
+  "generation": {
+    "queries": {
+      "engine": "codex",
+      "requested_model": null,
+      "usage": {
+        "input_tokens": 20882,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1145,
+        "reasoning_output_tokens": 143
+      },
+      "thread_id": "01a0f408-6ecd-70d3-9bc1-c9f7adab7aee"
+    },
+    "plan": {
+      "engine": "codex",
+      "requested_model": null,
+      "usage": {
+        "input_tokens": 28362,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3160,
+        "reasoning_output_tokens": 220
+      },
+      "thread_id": "01a0f40b-5a5c-77b1-bbb5-785aee9be94d"
+    }
+  },
+  "cases": [
+    {
+      "requirement_id": "R1",
+      "category": "Agent 凭据隔离",
+      "title": "仅持 capability 的 Agent 执行 Action 时无法读取所用凭据",
+      "preconditions": [
+        "在待确认版本支持的 macOS 或 Linux 环境使用隔离测试 vault，采用默认 G1 范围。",
+        "Admin 已保存唯一可识别的虚构凭据，注册固定 HTTPS Action，并完成策略及 capability 配置。",
+        "受控公网 HTTPS 上游可验证认证是否正确，但响应不回显凭据；Agent 仅使用 agent.sock。"
+      ],
+      "steps": [
+        "通过 Agent CLI 使用 capability 执行固定 Action，不向 Agent 提供真实凭据值。",
+        "检查 Agent 可见的请求字段、正常响应及执行输出。",
+        "通过 agent.sock 尝试提交凭据读取请求，检查返回结果。",
+        "让受控上游返回不含凭据的错误，再检查 Agent 输出、broker 日志和审计记录。"
+      ],
+      "expected_result": "合法执行由上游确认认证成功，Agent 无需提供或看到凭据；凭据读取请求被拒绝且不返回秘密。正常及失败路径的 Agent 输出、日志和审计记录均不包含测试凭据。",
+      "source_ids": [
+        3119477140
+      ],
+      "rationale": "原文证据描述 secret 作为可编辑参数时对工作流编辑者可见。迁移的是执行配置暴露秘密这一条件，用于验证 Rekey 的 Admin 存储与 Agent 使用隔离；不引入 HMAC 节点，也不据此断言 Rekey 存在泄漏。",
+      "id": "TC001"
+    },
+    {
+      "requirement_id": "R2",
+      "category": "Fake DNS 与代理边界",
+      "title": "固定 Action 域名解析为 fake-IP 时拒绝，恢复真实公网 DNS 后可执行",
+      "preconditions": [
+        "固定 Action、策略及 capability 均有效，使用受控公网 HTTPS 上游。",
+        "测试环境可将该 Action 的精确主机名解析为 198.18.0.0/15 内地址或真实公网地址。",
+        "可观测 DNS 查询、上游请求以及测试代理收到的连接。"
+      ],
+      "steps": [
+        "让该主机名仅返回 fake-IP 地址，确认实际 DNS 应答后执行 Action。",
+        "在 broker 和调用 CLI 的启动环境中设置指向受控代理的 HTTP_PROXY、HTTPS_PROXY、ALL_PROXY，重复执行。",
+        "仅将该主机名的 DNS 恢复为真实公网地址，确认应答后再次执行同一 Action。"
+      ],
+      "expected_result": "fake-IP 两轮均拒绝执行，不向受限地址发送 Action 请求，也不通过环境变量指定的代理绕过筛选；恢复真实公网 DNS 后，在其余条件有效时上游收到固定请求并返回预设响应。",
+      "source_ids": [
+        4399425176
+      ],
+      "rationale": "原文证据仅确认 fakeip 代理用户无法使用请求工具；具体检查实现属于提炼判断。借用 fake-IP DNS 这一触发条件，预期依据 Rekey 明确的拒绝策略制定，不迁移其他产品的代理放行需求。",
+      "id": "TC002"
+    },
+    {
+      "requirement_id": "R2",
+      "category": "网络拒绝路径验证",
+      "title": "区分受限地址拒绝与 DNS 无结果，防止相同失败结果掩盖漏测",
+      "preconditions": [
+        "在支持的 macOS 或 Linux 测试环境使用有效的固定 Action 和授权配置。",
+        "可控 DNS 能记录查询并分别返回指定地址或空结果；网络观测可确认连接目的地址。",
+        "使用独立测试主机名或隔离运行，避免前一次解析结果影响下一轮。"
+      ],
+      "steps": [
+        "分别让 Action 主机名解析为 127.0.0.1、::1、私网地址及 198.18.0.0/15 内地址，逐轮执行。",
+        "每轮确认解析设施确实被调用并交付指定应答，同时检查是否出现向该地址的连接。",
+        "另设 DNS 空结果轮次，执行相同请求。",
+        "增加真实公网地址对照轮次，确认测试设施没有使所有请求无条件失败。"
+      ],
+      "expected_result": "受限地址轮次在确实取得对应 DNS 应答后被拒绝，且不向这些地址发送请求；空结果轮次同样不能发出 Action 请求，但记录能够与受限地址轮次区分。公网对照在其他条件有效时成功。不能仅以相同失败文本认定各路径已覆盖。",
+      "source_ids": [
+        5032689698
+      ],
+      "rationale": "原文证据明确指出相同判定来自不同路径，预期的回环拒绝分支未实际执行。迁移的是拒绝测试可能误通过的条件；不假设 Rekey 使用 Node.js 模块、相同 DNS 缓存或 Windows 解析机制。",
+      "id": "TC003"
+    },
+    {
+      "requirement_id": "R7",
+      "category": "秘密输入参数解析",
+      "title": "秘密输入选项拼错时不得转为位置参数并造成凭据变更",
+      "preconditions": [
+        "隔离 vault 已解锁，保存一个使用虚构旧凭据的固定 Action。",
+        "准备有效 Admin proof 和虚构新凭据，均仅通过 stdin 提供。",
+        "记录变更前的凭据版本及固定 Action 的认证结果。"
+      ],
+      "steps": [
+        "对 password change 使用拼错的 --stdin-secret，按预定两行输入 proof 与新密码。",
+        "对一个支持 --password-stdin 的 proof-only 命令使用拼错的 --password-stdni。",
+        "检查退出状态、错误输出及密码或凭据状态，再使用正确选项进行对照操作。"
+      ],
+      "expected_result": "拼错选项的调用明确失败，不显示操作成功，不将选项或 stdin 内容误当成业务数据执行变更，且不输出 proof 或新秘密。原密码和凭据仍有效；正确选项对照按对应命令契约处理 stdin。具体退出码和错误格式沿用目标 CLI 契约。",
+      "source_ids": [
+        5139213685
+      ],
+      "rationale": "原文证据描述未知选项被忽略或作为位置参数处理，导致操作看似成功。该触发条件可直接迁移到依赖精确秘密输入选项的 CLI；不复制来源脚本的选项集合或指定其退出码。",
+      "id": "TC004"
+    },
+    {
+      "requirement_id": "R7",
+      "category": "秘密输入数据边界",
+      "title": "两行 stdin 中以连字符开头的秘密不得被当成 CLI 选项",
+      "preconditions": [
+        "隔离 vault 已解锁，具备有效 Admin proof。",
+        "准备不含换行、以 -- 开头的虚构新密码或凭据，并使用正确的 stdin 输入方式。",
+        "固定 HTTPS 测试 Action 可验证凭据是否按原值注入。"
+      ],
+      "steps": [
+        "向 credential add 的 stdin 第 1 行写入 proof，第 2 行写入虚构凭据。",
+        "使用新增凭据配置固定 Action 并执行，由受控上游核对认证值。",
+        "使用 credential rotate 重复上述输入边界测试。",
+        "使用 password change --stdin-secrets 提交 proof 和以 -- 开头的新密码，随后锁定并用新密码解锁。",
+        "检查各次标准输出、错误输出、日志和审计记录。"
+      ],
+      "expected_result": "第 1 行仅用于 step-up，第 2 行作为秘密数据完整处理，不被解释为选项。新增及轮换后的凭据可用于预设认证，新密码可解锁；可见输出、日志和审计记录不泄漏输入秘密。",
+      "source_ids": [
+        5139213685
+      ],
+      "rationale": "原文证据支持参数与数据混淆这一风险。此处构造其在 Rekey 两行 stdin 协议中的边界对照，预期来自 PRD；不声称历史案例已经证明 stdin 中存在此故障。",
+      "id": "TC005"
+    }
+  ],
+  "coverage_gaps": [
+    {
+      "requirement_id": "R1",
+      "reason": "现有案例仅覆盖部分秘密可见性。AES-256-GCM 与 AAD 绑定、检查通过后才解密、每请求解密次数、使用后清零、双 socket 权限隔离及固定请求字段防篡改，缺少直接相关历史证据。2727647285 的原文仅报告 OAuth 401，不能支持这些测试。默认 G1 不扩展到同用户 ptrace、内存或文件系统攻击。"
+    },
+    {
+      "requirement_id": "R2",
+      "reason": "已覆盖 fake-IP 和部分 DNS 拒绝路径，但未穷尽全部非公网地址、混合 DNS 应答及解析变化。响应大小限制、响应头过滤、raw/base64/base64url/percent-encoded 秘密回显扫描和重定向限制也无充分相关历史证据。不能把其他产品的 Windows DNS 环境列为 Rekey 支持平台。"
+    },
+    {
+      "requirement_id": "R3",
+      "reason": "未生成历史驱动案例。5045284631 的证据是 TUI 状态栏截断，4370093846 的证据是已有检查点未展示；均不足以迁移到密码 wrapper 原子替换、恢复密钥解锁与轮换、离线恢复及 VRK/凭据数据不变性。测试版本尚未明确，不能混用 alpha.2 格式 9 与源码格式 10 的备份，更不能提出原地升级兼容要求。"
+    },
+    {
+      "requirement_id": "R4",
+      "reason": "未生成案例。5418816013 涉及模型协议 thought_signature 缺失，4952152023 涉及终端历史重放性能，均不支持策略签名或 JWT 防重放测试。信任根不可变、连续策略版本、解锁后重验、锁定/重启撤销、JWT 消费记录跨重启和含记录备份恢复，以及新版本撤销与同包重试保留会话，均待补充相关证据。源码专属 JWKS 是否纳入也待目标版本明确。"
+    },
+    {
+      "requirement_id": "R5",
+      "reason": "未生成案例。4556858835 的原文只建议保留移动端冒烟验证，没有证明审批绑定、重试或有效期的具体故障条件；不能将提炼出的 HTTP 路由场景视为原文证据。challenge、session、principal、Action/resource、规范参数、规则、策略版本/摘要、有效期和使用次数绑定，以及锁定/重启失效均未覆盖；不引入移动端、远程审批服务或通知 UI。"
+    },
+    {
+      "requirement_id": "R6",
+      "reason": "R1、R7 仅附带检查部分秘密不进入审计，不能替代本主题覆盖。5224906687 的证据仅说明已有 MCP 配置发现功能，与审计安全导出无直接关系。锁定读取、稳定序列快照、有界分页、完整字段脱敏、新建 mode-0600 文件、拒绝覆盖和符号链接、生命周期内仅追加均缺少充分相关案例；不引入配置迁移或审计删除功能。"
+    },
+    {
+      "requirement_id": "R7",
+      "reason": "已覆盖选项拼错及两行输入的数据边界；proof-only 输入、缺行/提前 EOF、错误 proof、--recovery、通过参数或环境变量提交秘密的拒绝行为，以及策略专用 --step-up-stdin 尚未充分覆盖。现有证据不能证明这些故障，未据此扩展案例。"
+    },
+    {
+      "requirement_id": "R8",
+      "reason": "未生成案例。5238725556 的原文是并行套件中恢复回合 ID 断言偶发失败，未提供 Vault 租约或撤销证据，不能依据提炼中的 lease_id 推断相关性。单次获取、选定字符串注入、精确 lease 的 sync:true 撤销、撤销成功前扣留响应、失败处理及 5–300 秒边界均未覆盖；不要求租约续期、后台注册表或进程/主机崩溃后清理。"
+    },
+    {
+      "requirement_id": "R1",
+      "reason": "跨主题执行范围待确定：本草稿未执行。尚未指定 alpha.2 CLI 或当前源码 CLI，也未提供完整系统版本与架构矩阵；案例应在确认后的受支持 macOS/Linux 组合落地，不包含 source-only macOS UI、默认 G2 或跨版本迁移验收。"
+    }
+  ]
+}

@@ -1,0 +1,793 @@
+{
+  "status": "draft_not_executed",
+  "form": "desktop",
+  "generated_at": "2026-09-30T20:54:55.323227+00:00",
+  "prd_sha256": "ea7ca5a70fde39a0f0425692faf41cd3f11c8d9ea3a24bab08ea33861d1c5cc8",
+  "corpus_issue_count": 14730,
+  "source_limit": 12,
+  "requirements": [
+    {
+      "title": "安装后自动启动固定运行时，无需系统 Node.js 或终端配置，并通过官方引导完成首个任务",
+      "quote": "2. Install and open DSH Desk. The pinned Harness runtime starts automatically.\n3. Choose a model provider in the official Harness onboarding dialog and send your first task.\n\nNo system Node.js installation, npm setup, port selection, or terminal command is required.",
+      "terms": [
+        "startup",
+        "dependency",
+        "onboarding",
+        "offline"
+      ],
+      "id": "R1",
+      "retrieved_source_ids": [
+        2798019308,
+        5367222388
+      ]
+    },
+    {
+      "title": "使用私有状态目录，不修改已有 CLI 配置",
+      "quote": "- isolates state in a private `DSH_HOME` instead of modifying an existing CLI setup;",
+      "terms": [
+        "isolation",
+        "configuration",
+        "overwrite"
+      ],
+      "id": "R2",
+      "retrieved_source_ids": [
+        4569856876,
+        1931172328
+      ]
+    },
+    {
+      "title": "启动就绪以携带启动令牌的回环地址 HTTP 健康检查为准",
+      "quote": "- waits for a real HTTP health check on the launch-token loopback URL;",
+      "terms": [
+        "readiness",
+        "loopback",
+        "token",
+        "timeout"
+      ],
+      "id": "R3",
+      "retrieved_source_ids": [
+        4460129527,
+        1054665493
+      ]
+    },
+    {
+      "title": "远程页面无桌面权限，应用内导航限定运行时来源，外链交给系统浏览器",
+      "quote": "- grants the remote Harness page no Tauri IPC, shell, or filesystem capability;\n- constrains navigation to the exact runtime origin and opens external links in the system browser;",
+      "terms": [
+        "permission",
+        "origin",
+        "navigation",
+        "sandbox"
+      ],
+      "id": "R4",
+      "retrieved_source_ids": [
+        28654929,
+        4427792323
+      ]
+    },
+    {
+      "title": "进程监管仅作用于应用自行启动的进程组",
+      "quote": "- supervises only the process group it started;",
+      "terms": [
+        "process",
+        "termination",
+        "ownership",
+        "cleanup"
+      ],
+      "id": "R5",
+      "retrieved_source_ids": [
+        4362780949
+      ]
+    },
+    {
+      "title": "插件安装前展示信任与兼容性信息，明确恢复边界；目录失败不得降级到未审查搜索",
+      "quote": "Open `DSH Desk → Plugins…` to inspect a plugin before installation:\n\n- exact package, resolved version, source, and integrity;\n- lifecycle scripts and declared file/network/command/credential needs;\n- compatibility with the pinned Desktop and Harness versions;\n- disable, removal, and profile restoration boundaries.\n\nCatalog failure never falls back to an unreviewed global search. The Plugins window can open the community registry at [plugin.dshdesk.com](https://plugin.dshdesk.com/); copied `dsh plugin add` commands are parsed into the same review flow, and that site is not the trusted catalog.",
+      "terms": [
+        "integrity",
+        "credential",
+        "fallback",
+        "restore"
+      ],
+      "id": "R6",
+      "retrieved_source_ids": [
+        4372016334
+      ]
+    },
+    {
+      "title": "更新须具备签名契约与明确的失败恢复路径",
+      "quote": "| Failed update recovery | User-managed | Project-dependent | Signed updater contract and explicit recovery path |",
+      "terms": [
+        "update",
+        "signature",
+        "failure",
+        "recovery"
+      ],
+      "id": "R7",
+      "retrieved_source_ids": [
+        5111200670
+      ]
+    },
+    {
+      "title": "每日检查固定版本及最新上游候选版本，报告偏移而不静默替换用户运行时",
+      "quote": "- checks the pinned version and the newest upstream candidate every day;",
+      "terms": [
+        "compatibility",
+        "regression",
+        "version",
+        "drift"
+      ],
+      "id": "R8",
+      "retrieved_source_ids": [
+        5016074417
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": 2798019308,
+      "title": "[bug] undeclared hyper-tls dependency of tauri causes failure with offline builds",
+      "url": "https://github.com/tauri-apps/tauri/issues/12448",
+      "repo": "tauri-apps/tauri",
+      "extraction": {
+        "id": 2798019308,
+        "issue_kind": "bug",
+        "symptom": "预先使用 cargo vendor 下载依赖后，Tauri 离线构建仍因找不到 hyper-tls 而失败。",
+        "root_cause": null,
+        "root_cause_category": "构建与依赖解析",
+        "environment": [
+          "无网络构建沙箱",
+          "cargo vendor 与 --offline",
+          "依赖使用 workspace inheritance",
+          "tauri 2.2.2、tauri-build 2.0.5、tauri-cli 2.1.0"
+        ],
+        "evidence_quote": "Specifically, it will try to fetch `hyper-tls` which then fails.",
+        "test_ideas": [
+          "使用固定 Cargo.lock 执行 cargo vendor，配置本地依赖源并禁用网络，再运行 cargo tauri build -- --offline，检查依赖是否完整且构建不访问网络。",
+          "分别配置 native-tls 与 rustls，以及工作区继承和直接声明依赖，比较 vendor 阶段与构建阶段解析的依赖及 feature 是否一致。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20189,
+            "cached_input_tokens": 14848,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1247,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f416-40b4-7343-8904-78e408ddf74a"
+        }
+      }
+    },
+    {
+      "id": 4569856876,
+      "title": "Add support for multiple MCP servers",
+      "url": "https://github.com/tinyhumansai/openhuman/issues/3196",
+      "repo": "tinyhumansai/openhuman",
+      "extraction": {
+        "id": 4569856876,
+        "issue_kind": "feature",
+        "symptom": "当前单服务器配置限制了用户同时使用多个 MCP 来源的工具与数据。",
+        "root_cause": null,
+        "root_cause_category": "多服务集成与故障隔离",
+        "environment": [
+          "OpenHuman",
+          "多个 MCP 服务器",
+          "内部、托管与本地 MCP 来源"
+        ],
+        "evidence_quote": "A single-server setup limits extensibility and makes it harder to combine internal, hosted, and local MCP capabilities.",
+        "test_ideas": [
+          "配置两个 MCP 服务器，分别执行新增、编辑、禁用、启用和删除，检查配置及连接状态是否对应正确。",
+          "让两个服务器提供同名工具，检查工具发现与调用能否正确区分来源。",
+          "在同一会话中分别调用两个服务器的工具，检查调用目标及返回结果。",
+          "使其中一个服务器连接失败，检查另一个服务器的工具发现和调用是否仍正常。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20753,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1296,
+            "reasoning_output_tokens": 31
+          },
+          "thread_id": "01a0f40a-f96a-7f21-b062-ddc3f7860c38"
+        }
+      }
+    },
+    {
+      "id": 4460129527,
+      "title": "Security: Unauthenticated RPC when OPENHUMAN_CORE_HOST=0.0.0.0 without OPENHUMAN_CORE_TOKEN",
+      "url": "https://github.com/tinyhumansai/openhuman/issues/1919",
+      "repo": "tinyhumansai/openhuman",
+      "extraction": {
+        "id": 4460129527,
+        "issue_kind": "bug",
+        "symptom": "据正文报告，Docker 默认配置下，网络中的其他主机可在未经认证的情况下调用 RPC。",
+        "root_cause": "正文明确称：未设置 OPENHUMAN_CORE_TOKEN 时，is_authenticated() 对任意 token 返回 true；结合绑定 0.0.0.0，使 RPC 可从网络无认证访问。",
+        "root_cause_category": "安全与认证边界",
+        "environment": [
+          "Docker / docker-compose 默认环境",
+          "OPENHUMAN_CORE_HOST=0.0.0.0",
+          "未设置 OPENHUMAN_CORE_TOKEN"
+        ],
+        "evidence_quote": "From another machine on the network, call any RPC endpoint — it succeeds without auth",
+        "test_ideas": [
+          "在隔离测试网络中，以非回环地址且未设置 token 启动服务，从另一测试容器调用无副作用 RPC，验证服务拒绝启动或拒绝未经认证的请求。",
+          "设置测试 token 后，分别发送缺失、空值、错误及正确 token，验证仅正确凭据获准访问。",
+          "使用模拟工具执行、文件访问及凭据接口，验证各敏感 RPC 均执行认证，避免测试触及真实文件或凭据。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20189,
+            "cached_input_tokens": 14848,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1247,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f416-40b4-7343-8904-78e408ddf74a"
+        }
+      }
+    },
+    {
+      "id": 28654929,
+      "title": "iframe origin wonkiness",
+      "url": "https://github.com/electron/electron/issues/193",
+      "repo": "electron/electron",
+      "extraction": {
+        "id": 28654929,
+        "issue_kind": "question",
+        "symptom": "作者观察到 Atom 中 iframe 能通过 window.parent 访问父窗口，而同类跨源访问在 Chrome 中被阻止，并询问原因。",
+        "root_cause": null,
+        "root_cause_category": "安全与 iframe 隔离",
+        "environment": [
+          "Atom 的 web-view 扩展",
+          "iframe sandbox 属性与 allow-scripts",
+          "Atom 调试控制台与 Chrome 对照"
+        ],
+        "evidence_quote": "But, as soon as I added the `allow-scripts` directive I found that JS did allow the inner frame to navigate out to Atom using `window.parent`.",
+        "test_ideas": [
+          "使用受控的不同源父子页面，分别设置无 sandbox、空 sandbox、sandbox=\"allow-scripts\"，从子页面脚本读取父窗口测试标记，记录是否被同源策略阻止。",
+          "对照子页面实际执行与调试控制台执行，并明确控制台所属 frame，排除执行上下文不同导致的观察差异。",
+          "在无 Node.js 上下文的 iframe 中，尝试读取父窗口暴露的无副作用测试接口，验证无法绕过隔离访问宿主能力。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20189,
+            "cached_input_tokens": 14848,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1247,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f416-40b4-7343-8904-78e408ddf74a"
+        }
+      }
+    },
+    {
+      "id": 4362780949,
+      "title": "Fix OpenHuman process management for clean shutdowns and no orphaned background processes",
+      "url": "https://github.com/tinyhumansai/openhuman/issues/1060",
+      "repo": "tinyhumansai/openhuman",
+      "extraction": {
+        "id": 4362780949,
+        "issue_kind": "bug",
+        "symptom": "退出或强制结束 OpenHuman 后，相关后台进程仍运行并消耗 CPU 和内存，且手动清理困难。",
+        "root_cause": null,
+        "root_cause_category": "进程生命周期与退出清理",
+        "environment": [
+          "OpenHuman",
+          "Tauri shell",
+          "core sidecar 与 CEF/webview 后台进程"
+        ],
+        "evidence_quote": "Even after quitting/killing the OpenHuman app, OpenHuman-related processes continue running in the background and cannot be easily killed.",
+        "test_ideas": [
+          "记录应用启动后的所属进程树，正常退出后在限定时间内检查子进程是否结束及 CPU、内存是否释放。",
+          "分别模拟崩溃和强制结束主进程，检查 core、sidecar 与 webview 进程是否残留，再启动应用检查是否出现重复实例。",
+          "使用可控的卡住子进程验证清理和恢复流程，并同时运行无关进程，检查清理不会误杀其他应用。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20189,
+            "cached_input_tokens": 14848,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1247,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f416-40b4-7343-8904-78e408ddf74a"
+        }
+      }
+    },
+    {
+      "id": 4372016334,
+      "title": "Support local OAuth fallback for OpenAI media provider",
+      "url": "https://github.com/nexu-io/open-design/issues/374",
+      "repo": "nexu-io/open-design",
+      "extraction": {
+        "id": 4372016334,
+        "issue_kind": "feature",
+        "symptom": "当前 OpenAI 媒体生成必须显式配置 API key，无法复用本机已登录 CLI 的 OAuth 凭据。",
+        "root_cause": null,
+        "root_cause_category": "凭据解析与认证集成",
+        "environment": [
+          "Open Design 的 OpenAI media provider",
+          "gpt-image-2",
+          "env/project API key 配置",
+          "本机 Codex 或其他 CLI 的 OAuth 凭据"
+        ],
+        "evidence_quote": "media generation currently requires an explicit OpenAI API key in env/project config.",
+        "test_ideas": [
+          "针对拟议功能，同时提供显式 API key 和本地 OAuth 凭据，验证请求始终使用显式 key。",
+          "未配置 API key 时，提供受支持 CLI 的测试凭据文件，验证回退可用；分别测试文件缺失、不可读、格式错误及 token 过期时的错误反馈。",
+          "用可识别的虚拟 token 执行成功和失败请求，检查日志、UI、API 响应及应用持久化文件均不包含 token 或其尾部；/api/media/config 仅返回粗粒度来源。",
+          "比较请求前后的本地凭据文件内容，验证读取过程不修改文件，并回归现有 API key 生成流程。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20189,
+            "cached_input_tokens": 14848,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1247,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f416-40b4-7343-8904-78e408ddf74a"
+        }
+      }
+    },
+    {
+      "id": 5111200670,
+      "title": "Preview iframe can stay stale until Code → Preview is toggled",
+      "url": "https://github.com/nexu-io/open-design/issues/6713",
+      "repo": "nexu-io/open-design",
+      "extraction": {
+        "id": 5111200670,
+        "issue_kind": "bug",
+        "symptom": "HTML 文件更新后，预览仍显示旧内容或空白，切换 Code → Preview 后才显示最新内容。",
+        "root_cause": "正文指出 Chromium 可能中止新的 about:srcdoc 导航，而宿主缺少针对新一代 iframe 激活确认缺失的恢复机制；文件监听及 SSE 已触发。",
+        "root_cause_category": "渲染与 UI 布局",
+        "environment": [
+          "Chromium",
+          "HTML artifact 预览",
+          "srcDoc 传输",
+          "预览可见时修改文件"
+        ],
+        "evidence_quote": "A generated HTML artifact can update on disk while the visible Preview iframe remains on its previous or blank document.",
+        "test_ideas": [
+          "强制使用 srcDoc 传输，在预览可见时修改 HTML，丢弃新一代 od:srcdoc-transport-activated 确认，检查能否自动恢复并显示最新内容。",
+          "连续更新两代 HTML，延迟送达上一代激活确认，检查宿主是否只将当前代确认视为成功。",
+          "模拟 about:srcdoc 导航中止，检查恢复无需切换 Code → Preview，且重试加载的是最新 HTML。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19054,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1299,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f416-f4e3-73e2-9350-54a09654083e"
+        }
+      }
+    },
+    {
+      "id": 5016074417,
+      "title": "fix(daemon): honor Kiro ACP turn_end completion",
+      "url": "https://github.com/nexu-io/open-design/issues/6265",
+      "repo": "nexu-io/open-design",
+      "extraction": {
+        "id": 5016074417,
+        "issue_kind": "bug",
+        "symptom": "Kiro 已输出助手内容并发送 turn_end 后，子进程关闭仍被误报为 ACP 会话未完成。",
+        "root_cause": "正文指出 ACP 桥接忽略 Kiro 的 turn_end 终止语义，在待处理的 session/prompt RPC 未返回时将子进程关闭判定为未完成。",
+        "root_cause_category": "协议适配与完成状态判定",
+        "environment": [
+          "Kiro CLI",
+          "ACP 桥接",
+          "turn_end session update",
+          "session/prompt RPC 未返回时子进程关闭"
+        ],
+        "evidence_quote": "The ACP bridge currently ignores that terminal semantic, then reports `ACP session exited before completion` when the child closes, even when assistant output was already streamed.",
+        "test_ideas": [
+          "模拟 Kiro 流式输出、发送 turn_end、不返回 session/prompt 响应后退出，检查是否判定完成并保留输出。",
+          "模拟 Kiro 未发送 turn_end 且未返回 RPC 响应就退出，检查仍报告未完成错误。",
+          "对其他 ACP 适配器发送 turn_end 但不返回 RPC 响应，检查仍保留标准响应要求。",
+          "模拟 Kiro 的 turn_end 与正常 RPC 响应先后到达，检查完成事件只处理一次。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19054,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1299,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f416-f4e3-73e2-9350-54a09654083e"
+        }
+      }
+    },
+    {
+      "id": 5367222388,
+      "title": "[macOS] First-run UI-scale legibility control is offered last, after the Accessibility prompt and full bootstrap",
+      "url": "https://github.com/debpalash/VoiceStudio/issues/1849",
+      "repo": "debpalash/VoiceStudio",
+      "extraction": {
+        "id": 5367222388,
+        "issue_kind": "bug",
+        "symptom": "macOS 全新安装首次运行时，辅助功能权限提示先出现，用户直到基础初始化完成后才能调整界面缩放。",
+        "root_cause": "正文明确指出，UiScaleSetup 的渲染受 backendReady 及前置初始化分支限制，虽然缩放偏好仅依赖本地存储；系统辅助功能弹窗的具体触发路径仍未确认。",
+        "root_cause_category": "渲染与 UI 布局",
+        "environment": [
+          "VoiceStudio 0.5.2-150",
+          "macOS 26.6.2",
+          "Apple Silicon arm64",
+          "托管 Python 3.11.15 后端",
+          "官方 DMG 安装，清除既有状态后首次运行"
+        ],
+        "evidence_quote": "Only after the base bootstrap finished did the app offer the \"Choose a comfortable UI size\" screen.",
+        "test_ideas": [
+          "清除应用状态后首次启动，记录辅助功能提示、基础初始化与缩放设置出现的顺序，检查用户能否尽早调整字号。",
+          "模拟后端初始化缓慢或未就绪，检查本地缩放设置是否仍可操作，并立即影响初始化页面。",
+          "分别允许、拒绝辅助功能权限，检查缩放设置的可达性与保存效果。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 20753,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1296,
+            "reasoning_output_tokens": 31
+          },
+          "thread_id": "01a0f40a-f96a-7f21-b062-ddc3f7860c38"
+        }
+      }
+    },
+    {
+      "id": 1931172328,
+      "title": "feature request: enable context-isolation",
+      "url": "https://github.com/pear-devs/pear-desktop/issues/1260",
+      "repo": "pear-devs/pear-desktop",
+      "extraction": {
+        "id": 1931172328,
+        "issue_kind": "feature",
+        "symptom": "用户请求启用 context-isolation，未描述具体故障现象。",
+        "root_cause": null,
+        "root_cause_category": "权限与沙箱(摄像头/麦克风/通知/辅助功能)",
+        "environment": [],
+        "evidence_quote": "feature request: enable context-isolation",
+        "test_ideas": [
+          "若实现 context-isolation，检查运行时配置确实启用，并验证页面脚本与预加载脚本的全局对象隔离。",
+          "若应用通过预加载脚本提供接口，检查隔离后明确暴露的接口仍可调用，未暴露的特权对象不可访问。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19054,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1299,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f416-f4e3-73e2-9350-54a09654083e"
+        }
+      }
+    },
+    {
+      "id": 1054665493,
+      "title": "[BUG] WebServer does not work on Node.js 17+",
+      "url": "https://github.com/microsoft/playwright/issues/10346",
+      "repo": "microsoft/playwright",
+      "extraction": {
+        "id": 1054665493,
+        "issue_kind": "bug",
+        "symptom": "Node.js 17 环境下 WebServer 无法正确识别服务就绪，测试陷入超时等待。",
+        "root_cause": null,
+        "root_cause_category": "测试服务启动与就绪检测",
+        "environment": [
+          "Playwright ToT",
+          "Mac",
+          "Node.js 17+（标题及环境字段）",
+          "pnpm 安装依赖",
+          "npm run e2e"
+        ],
+        "evidence_quote": "If the user is using the Webserver in Node.js 17 it does not detect its readiness accordingly and ends up in an infinite timeout.",
+        "test_ideas": [
+          "在所述 Mac、Node.js 17 环境中使用 pnpm 安装依赖并配置 webServer，运行 npm run e2e，检查服务就绪后测试是否开始。",
+          "分别模拟服务立即就绪、延迟就绪和始终未就绪，检查检测成功时及时继续，失败时在配置的超时内退出并给出错误。",
+          "以相同服务和配置比较 Node.js 17 与其他待支持版本的就绪检测结果，记录版本差异，不预设根因。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19054,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1299,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f416-f4e3-73e2-9350-54a09654083e"
+        }
+      }
+    },
+    {
+      "id": 4427792323,
+      "title": "HTML artifact preview iframe blocks localStorage/cookies (SecurityError)",
+      "url": "https://github.com/nexu-io/open-design/issues/1403",
+      "repo": "nexu-io/open-design",
+      "extraction": {
+        "id": 4427792323,
+        "issue_kind": "bug",
+        "symptom": "HTML 预览中的应用访问浏览器存储或 cookie 时抛出 SecurityError，导致 React 页面无法挂载并显示空白或错误状态。",
+        "root_cause": "正文明确指出 URL-load 预览 iframe 仅设置 sandbox=\"allow-scripts\"，缺少 allow-same-origin，导致文档使用不透明来源，访问 localStorage、sessionStorage 和 document.cookie 时抛出 SecurityError。",
+        "root_cause_category": "权限与沙箱(摄像头/麦克风/通知/辅助功能)",
+        "environment": [
+          "FileViewer URL-load HTML 预览",
+          "内联预览窗格及标签页内 Present 覆盖层",
+          "React 初始渲染读取 localStorage",
+          "i18next-browser-languagedetector cookie 检测",
+          "本地 HTTP 服务与宿主 UI 同源"
+        ],
+        "evidence_quote": "The React app inside the iframe never renders; the iframe shows a blank/error state.",
+        "test_ideas": [
+          "分别构造初始化时读取 localStorage、sessionStorage 和 document.cookie 的最小 HTML，在内联预览与 Present 中检查渲染结果及 SecurityError。",
+          "使用 React useState 初始化读取 localStorage，并启用 i18next cookie 检测，检查首次挂载和重新打开预览。",
+          "覆盖 URL-load 与 inspect、comment、palette、deck 对应的 srcDoc 分支，检查各自存储访问策略及 postMessage 桥接行为。",
+          "若调整沙箱权限，测试预览脚本访问 window.parent 和移除 sandbox 属性的能力，明确验证实际隔离边界。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": null,
+          "usage": {
+            "input_tokens": 19054,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1299,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0f416-f4e3-73e2-9350-54a09654083e"
+        }
+      }
+    }
+  ],
+  "open_questions": [
+    "验收对象是仓库中的 0.1.0-alpha.14 / Harness 0.1.5-rc.2，还是已发布的 0.1.0-alpha.13 / Harness 0.1.0-rc.6？原文区分了两者，旧发布组合不应自动成为新要求。",
+    "macOS Intel 已列为支持的下载平台，但每次推送和 PR 的测试列表仅列 macOS arm64、Windows x64、Linux x64；Intel 的验收证据与覆盖要求是什么？",
+    "“60 seconds”明确只是产品目标，尚非基准结论；计时起止点、机器与网络条件、通过标准尚未定义。",
+    "更新失败的具体恢复步骤，以及插件禁用、移除、配置恢复的实际边界未在所给正文展开，需补充验收标准。Windows 安装包未签名是明确允许的 alpha 状态，不应与更新载荷签名要求混同。"
+  ],
+  "generation": {
+    "queries": {
+      "engine": "codex",
+      "requested_model": null,
+      "usage": {
+        "input_tokens": 19143,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1077,
+        "reasoning_output_tokens": 127
+      },
+      "thread_id": "01a0f415-976e-7863-8e49-7e180da2bec6"
+    },
+    "plan": {
+      "engine": "codex",
+      "requested_model": null,
+      "usage": {
+        "input_tokens": 25334,
+        "cached_input_tokens": 8832,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3291,
+        "reasoning_output_tokens": 211
+      },
+      "thread_id": "01a0f417-b52c-7430-8002-3ccac7212b8a"
+    }
+  },
+  "cases": [
+    {
+      "requirement_id": "R3",
+      "category": "启动就绪",
+      "title": "HTTP 延迟就绪时不提前进入运行时页面",
+      "preconditions": [
+        "明确待验收的 Desktop 与 Harness 版本组合，使用随包 Node 24。",
+        "分别在 macOS Apple Silicon、macOS Intel、Windows x64、Linux x64 准备测试环境。",
+        "可通过测试夹具延迟当前启动令牌回环地址的 HTTP 健康响应，并记录健康响应与页面加载顺序。"
+      ],
+      "steps": [
+        "启动应用，使运行时进程已存在、端口已监听，但健康检查暂不成功。",
+        "观察应用是否进入运行时页面。",
+        "恢复有效的 HTTP 健康响应，观察应用是否继续加载官方页面。"
+      ],
+      "expected_result": "进程存在或端口监听不足以触发就绪；有效 HTTP 健康检查成功后，应用继续加载官方页面，不持续停留在等待状态。",
+      "source_ids": [
+        1054665493
+      ],
+      "rationale": "原文证据描述服务就绪未被正确识别、持续等待的现象。可迁移的是就绪检测与实际服务状态不一致的触发条件；不复用 Node 17 环境，也不推断历史问题根因。",
+      "id": "TC001"
+    },
+    {
+      "requirement_id": "R3",
+      "category": "启动就绪",
+      "title": "健康检查持续失败时不得误报就绪",
+      "preconditions": [
+        "使用已明确的验收版本及其随包运行时。",
+        "在支持平台上准备可分别返回 HTTP 失败响应、断开连接和不响应的健康检查夹具。",
+        "记录本次观察时长；PRD 尚未规定启动超时阈值。"
+      ],
+      "steps": [
+        "分别注入三种健康检查失败条件，每次从新的启动过程开始。",
+        "记录健康检查结果、应用显示状态及运行时页面是否加载。"
+      ],
+      "expected_result": "观察期间，应用不将失败或未收到响应的健康检查视为成功，不基于端口监听或进程存在宣告就绪。超时期限与失败提示的具体验收标准暂不判定。",
+      "source_ids": [
+        1054665493
+      ],
+      "rationale": "历史证据支持关注就绪检测持续等待这一现象，可据此检查失败状态是否被错误推进；证据与 PRD 均不足以指定目标产品必须采用的超时值或重试策略。",
+      "id": "TC002"
+    },
+    {
+      "requirement_id": "R3",
+      "category": "启动地址与令牌",
+      "title": "就绪探测使用本次启动令牌而非无令牌或旧令牌地址",
+      "preconditions": [
+        "使用已明确的验收版本，在支持平台上记录健康探测请求，令牌仅使用测试值。",
+        "测试夹具能区分本次启动令牌、旧令牌、错误令牌和缺失令牌的请求。",
+        "夹具可令非当前令牌地址返回成功，同时令当前令牌地址暂不就绪。"
+      ],
+      "steps": [
+        "启动应用并检查健康探测实际使用的地址与令牌。",
+        "保持当前令牌地址未就绪，观察其他令牌地址的成功响应是否导致应用继续加载。",
+        "使当前令牌地址返回有效健康响应，再观察应用状态。"
+      ],
+      "expected_result": "健康探测使用本次启动令牌对应的回环地址；其他令牌地址的成功响应不替代本次启动的健康检查。当前地址健康检查成功后才进入运行时页面。",
+      "source_ids": [
+        4460129527
+      ],
+      "rationale": "原文证据报告其他机器可无认证调用 RPC。这里仅迁移缺失或错误认证上下文的边界条件，验证 PRD 明确的启动令牌就绪契约，不据此宣称目标产品存在认证漏洞或要求全部 Harness RPC 采用同一认证方式。",
+      "id": "TC003"
+    },
+    {
+      "requirement_id": "R3",
+      "category": "回环网络边界",
+      "title": "启动地址保持回环访问边界",
+      "preconditions": [
+        "在支持平台运行已明确的验收版本。",
+        "隔离测试网络内另有一台测试主机。",
+        "可记录实际监听地址和健康检查目标；探测仅针对无副作用的健康接口。"
+      ],
+      "steps": [
+        "正常启动应用，记录运行时监听地址与健康检查目标。",
+        "从本机通过本次启动的回环地址访问健康接口。",
+        "从另一测试主机通过运行应用主机的局域网地址访问同一端口。"
+      ],
+      "expected_result": "健康检查目标及运行时监听保持回环边界；本机有效健康检查可成功，局域网主机不能通过该端口访问运行时。不能仅凭防火墙阻断结果替代监听地址核验。",
+      "source_ids": [
+        4460129527
+      ],
+      "rationale": "原文证据明确涉及另一台网络主机成功访问接口，适合迁移为网络暴露边界测试。目标产品测试使用桌面发行版，不引入该历史产品的 Docker 或配置变量。",
+      "id": "TC004"
+    },
+    {
+      "requirement_id": "R4",
+      "category": "页面权限隔离",
+      "title": "可执行脚本的跨源子框架不能借父窗口取得桌面能力",
+      "preconditions": [
+        "在支持平台使用已明确的验收版本及真实应用 WebView 权限配置。",
+        "通过测试夹具在运行时页面加载受控跨源子框架，允许子框架执行脚本。",
+        "准备无敏感内容的测试文件和可观察的无副作用命令探针。"
+      ],
+      "steps": [
+        "从运行时页面脚本尝试调用 Tauri IPC、桌面 shell 与桌面文件访问接口。",
+        "从子框架实际执行的脚本通过 window.parent 尝试读取父页面对象并调用上述接口。",
+        "检查接口返回、测试文件变化和命令探针记录。"
+      ],
+      "expected_result": "运行时页面及跨源子框架均不能获得桌面 IPC、shell 或文件系统能力；测试文件不被这些调用读取或修改，命令探针不执行。不得把 Harness 自身工具能力与桌面宿主能力混为一谈。",
+      "source_ids": [
+        28654929
+      ],
+      "rationale": "原文证据是添加 allow-scripts 后，作者观察到子框架可借 window.parent 导航到父窗口。该观察适合触发父子页面权限边界检查，但不证明其可读取父对象或获得宿主权限，更不要求目标产品引入 Electron 配置。",
+      "id": "TC005"
+    },
+    {
+      "requirement_id": "R5",
+      "category": "进程监管",
+      "title": "正常退出只清理应用拥有的运行时进程组",
+      "preconditions": [
+        "在支持平台使用已明确的验收版本。",
+        "预先启动独立 CLI 和无关 Node 测试进程，持续记录其存活与响应。",
+        "启动 DSH Desk 后记录其创建的运行时进程组及所有权信息。"
+      ],
+      "steps": [
+        "使应用自有运行时保持活动，同时确认独立 CLI 和无关进程正常响应。",
+        "通过应用正常退出入口退出。",
+        "检查自有运行时进程组及预先启动进程的存活状态。"
+      ],
+      "expected_result": "正常退出触发的运行时清理仅作用于应用启动的进程组；该组完成退出，独立 CLI 和无关 Node 进程继续响应。记录清理耗时，不擅自设置 PRD 未定义的性能阈值。",
+      "source_ids": [
+        4362780949
+      ],
+      "rationale": "原文证据报告退出后相关后台进程继续运行。迁移退出时仍有后台进程活动的条件，同时结合目标 PRD 检查清理对象的所有权，不套用历史产品的 CEF 进程结构。",
+      "id": "TC006"
+    },
+    {
+      "requirement_id": "R5",
+      "category": "进程监管",
+      "title": "主进程异常终止后再次启动不得误杀外部进程",
+      "preconditions": [
+        "在支持平台使用已明确的验收版本，并记录应用自有运行时进程组。",
+        "同时运行独立 CLI 和无关 Node 测试进程。",
+        "使用隔离测试环境，允许模拟桌面主进程异常终止。"
+      ],
+      "steps": [
+        "异常终止桌面主进程，记录原运行时进程组是否残留。",
+        "再次启动应用，记录启动和可能发生的恢复清理行为。",
+        "检查独立 CLI 和无关进程是否持续响应，核对被清理进程的所有权。"
+      ],
+      "expected_result": "异常终止及再次启动过程中，任何应用监管或恢复清理均不作用于外部进程组，独立 CLI 和无关进程继续响应。残留进程是否必须自动回收及回收期限留待补充标准。",
+      "source_ids": [
+        4362780949
+      ],
+      "rationale": "原文证据同时提到 quitting/killing 后的后台残留，支持迁移异常终止触发条件；本条仅对 PRD 明确的监管所有权边界给出验收结果，不推定存在未声明的崩溃恢复机制。",
+      "id": "TC007"
+    }
+  ],
+  "coverage_gaps": [
+    {
+      "requirement_id": "R1",
+      "reason": "缺少与成品安装、随包固定 Node/Harness、无系统 Node/npm/终端配置及官方引导首个任务直接相关的历史证据。2798019308 的证据是构建时抓取依赖失败，不能据此要求离线源码构建；5367222388 的证据是缩放设置出现较晚，目标 PRD 未要求缩放设置。未据此生成案例。验收版本组合、macOS Intel 验收证据及“60 seconds”的计时条件仍待明确；随包运行时离线可用不等于模型任务可离线执行。"
+    },
+    {
+      "requirement_id": "R2",
+      "reason": "私有 DSH_HOME 的路径选择、状态写入隔离和已有 CLI 配置不被修改均未覆盖。4569856876 仅说明单 MCP 服务限制，1931172328 仅请求脚本上下文隔离，都不是文件状态目录或配置覆盖的故障证据。"
+    },
+    {
+      "requirement_id": "R3",
+      "reason": "已有案例覆盖 HTTP 就绪、启动令牌与回环边界，但健康响应的具体成功判据、启动超时、错误提示及恢复操作未定义，不能充分验收持续未就绪场景。1054665493 未提供根因证据，不能假定是 IPv4/IPv6 解析问题；相关地址变体仍缺针对性证据。"
+    },
+    {
+      "requirement_id": "R4",
+      "reason": "已有案例覆盖页面和跨源子框架的桌面权限边界，但精确来源导航约束、重定向、新窗口及外链交给系统浏览器的完整路径缺少相应历史证据。4427792323 的 evidence_quote 仅证实 iframe 空白或错误，未证实存储异常根因，也未证明目标官方页面具有相同触发条件，故未复制其存储或预览功能测试。"
+    },
+    {
+      "requirement_id": "R5",
+      "reason": "正常退出和异常终止后的所有权边界已有案例；卡住进程的升级终止策略、强制结束后的自动回收、残留进程恢复期限及各平台进程组实现的验收标准仍未明确。不能将历史问题的残留现象直接转化为目标产品承诺的全部恢复行为。"
+    },
+    {
+      "requirement_id": "R6",
+      "reason": "插件包名、解析版本、来源、完整性、生命周期脚本、能力声明、版本兼容性、禁用与移除、配置恢复边界、目录失败不降级及复制命令进入同一审查流程均缺少相关历史证据。4372016334 的证据仅说明媒体生成需要显式 API key，不能支持插件信任或目录回退案例；插件恢复边界的具体验收标准亦未提供。"
+    },
+    {
+      "requirement_id": "R7",
+      "reason": "更新载荷签名验证、更新失败与明确恢复路径均未覆盖。5111200670 的证据描述 HTML 预览内容陈旧或空白，与软件更新签名及恢复无直接关联。还需补充恢复步骤和成功判据；Windows alpha 安装包允许未签名，不能据此认定更新载荷可免签名。"
+    },
+    {
+      "requirement_id": "R8",
+      "reason": "每日调度、固定版本与最新候选检查、隔离工作区、偏移报告及不静默替换用户运行时均缺少相关历史证据。5016074417 涉及特定 ACP 桥接的完成语义，所给 PRD 未说明目标兼容性检查涉及该适配器，不能扩展为 Kiro 或 ACP 功能测试。"
+    }
+  ]
+}
