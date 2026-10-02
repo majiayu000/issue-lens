@@ -1,0 +1,163 @@
+{
+  "snapshot_date": "2026-09-23",
+  "exported_at": "2026-10-02T17:20:10+00:00",
+  "repository_count": 79,
+  "issue_count": 30784,
+  "by_form": {
+    "cli": {
+      "repositories": 39,
+      "issues": 16054
+    },
+    "desktop": {
+      "repositories": 40,
+      "issues": 14730
+    }
+  },
+  "fetch_started_at": "2026-09-23T06:15:14+00:00",
+  "fetch_finished_at": "2026-09-23T06:52:59+00:00",
+  "selection": "is:issue is:closed linked:pr reason:completed; highest reactions first; at most 1000 per repository",
+  "truncated_repository_count": 15,
+  "source_database_sha256": "bbea7818bb0963c44b1d4c796ca88be3ffce7c925c1519bb90b18371b57d5480",
+  "public_database_sha256": "01ee3239039c7739945005675425ef3c976064753865d2d6e0d668a4621484bc",
+  "local_model_cache_included": false,
+  "comment_bodies_included": false,
+  "credential_like_fields_redacted": [
+    {
+      "id": 1138491052,
+      "url": "https://github.com/DevToys-app/DevToys/issues/391",
+      "field": "body"
+    },
+    {
+      "id": 2245418556,
+      "url": "https://github.com/OpenHands/OpenHands/issues/1156",
+      "field": "body"
+    },
+    {
+      "id": 2253082854,
+      "url": "https://github.com/OpenHands/OpenHands/issues/1226",
+      "field": "body"
+    },
+    {
+      "id": 2272358098,
+      "url": "https://github.com/OpenHands/OpenHands/issues/1476",
+      "field": "body"
+    },
+    {
+      "id": 3330708030,
+      "url": "https://github.com/OpenHands/OpenHands/issues/10462",
+      "field": "body"
+    },
+    {
+      "id": 701021124,
+      "url": "https://github.com/cli/cli/issues/1695",
+      "field": "body"
+    },
+    {
+      "id": 4077698468,
+      "url": "https://github.com/docmirror/dev-sidecar/issues/579",
+      "field": "body"
+    },
+    {
+      "id": 349559984,
+      "url": "https://github.com/jesseduffield/lazygit/issues/121",
+      "field": "body"
+    },
+    {
+      "id": 977796901,
+      "url": "https://github.com/jesseduffield/lazygit/issues/1450",
+      "field": "body"
+    },
+    {
+      "id": 4134470903,
+      "url": "https://github.com/junegunn/fzf/issues/4740",
+      "field": "body"
+    },
+    {
+      "id": 743053763,
+      "url": "https://github.com/laurent22/joplin/issues/4086",
+      "field": "body"
+    },
+    {
+      "id": 3364257951,
+      "url": "https://github.com/laurent22/joplin/issues/13081",
+      "field": "body"
+    },
+    {
+      "id": 597773630,
+      "url": "https://github.com/microsoft/playwright/issues/1740",
+      "field": "body"
+    },
+    {
+      "id": 1501588513,
+      "url": "https://github.com/n8n-io/n8n/issues/4956",
+      "field": "body"
+    },
+    {
+      "id": 2578475773,
+      "url": "https://github.com/ohmyzsh/ohmyzsh/issues/12740",
+      "field": "body"
+    },
+    {
+      "id": 2583416426,
+      "url": "https://github.com/ohmyzsh/ohmyzsh/issues/12745",
+      "field": "body"
+    },
+    {
+      "id": 992160760,
+      "url": "https://github.com/yt-dlp/yt-dlp/issues/929",
+      "field": "body"
+    },
+    {
+      "id": 1090063352,
+      "url": "https://github.com/yt-dlp/yt-dlp/issues/2151",
+      "field": "body"
+    },
+    {
+      "id": 1090144767,
+      "url": "https://github.com/yt-dlp/yt-dlp/issues/2153",
+      "field": "body"
+    },
+    {
+      "id": 1199323838,
+      "url": "https://github.com/yt-dlp/yt-dlp/issues/3388",
+      "field": "body"
+    },
+    {
+      "id": 1384591355,
+      "url": "https://github.com/yt-dlp/yt-dlp/issues/5017",
+      "field": "body"
+    },
+    {
+      "id": 1453166812,
+      "url": "https://github.com/yt-dlp/yt-dlp/issues/5572",
+      "field": "body"
+    },
+    {
+      "id": 1508571412,
+      "url": "https://github.com/yt-dlp/yt-dlp/issues/5854",
+      "field": "body"
+    },
+    {
+      "id": 3274297053,
+      "url": "https://github.com/yt-dlp/yt-dlp/issues/13874",
+      "field": "body"
+    }
+  ],
+  "redaction_note": "Whole fields with recognizable token/key-like text are replaced. Patterns may match inert examples; this is not a determination that the original text was an active credential.",
+  "license_note": "Issue text remains attributable to its original authors; the project MIT license does not relicense the collected third-party text.",
+  "release_url": "https://github.com/majiayu000/issue-lens/releases/tag/corpus-2026-09-23",
+  "assets": [
+    {
+      "name": "issue-lens-corpus-2026-09-23.sqlite3.gz",
+      "bytes": 59555168,
+      "sha256": "3348d28531fe2f6a78cddde0de3732ca7f0766e7baafa787c4b25d049eec389a",
+      "url": "https://github.com/majiayu000/issue-lens/releases/download/corpus-2026-09-23/issue-lens-corpus-2026-09-23.sqlite3.gz"
+    },
+    {
+      "name": "issue-lens-corpus-2026-09-23.jsonl.gz",
+      "bytes": 17363598,
+      "sha256": "eb2849cd96c65b578aa4fa5eb585a9cbe5a66f0e7e841fad655ae514a7ac88fd",
+      "url": "https://github.com/majiayu000/issue-lens/releases/download/corpus-2026-09-23/issue-lens-corpus-2026-09-23.jsonl.gz"
+    }
+  ]
+}

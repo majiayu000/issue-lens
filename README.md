@@ -9,6 +9,11 @@ Design rationale and the full feasibility research (data sources, prior art, aca
 
 ## Try the reports before rebuilding
 
+**[Browse all 30,784 collected issues from 79 repositories](out/corpus/README.md)**
+or **[download the corpus snapshot from GitHub Releases](https://github.com/majiayu000/issue-lens/releases/tag/corpus-2026-09-23)**.
+The online directory lists every collected issue with its original GitHub link;
+the downloadable SQLite and JSONL files include issue bodies.
+
 Start with the committed [desktop report](out/report_desktop.md) or
 [CLI report](out/report_cli.md), then follow the
 [worked issue-to-test-charter example](docs/issue-to-test-charter.md).
@@ -60,9 +65,29 @@ python3 s03_report.py --forms cli
 python3 s04_search.py --form cli --top 5
 ```
 
-## The corpus is not in this repo — rebuild it
+## Browse or download the corpus
 
-`data/issues.db` (~176 MB of full issue bodies) is intentionally excluded: it exceeds GitHub's 100 MB file limit, and redistributing issue text at scale sits in an uncertain licensing zone with real PII risk (see research §5). The pipeline rebuilds it from public APIs in roughly 30 minutes; `data/repos_*.json` (repo lists, no user content) are tracked for reproducibility.
+The [complete online directory](out/corpus/README.md) groups all **79 repositories
+and 30,784 issues** by source repository. Unlike the top-50 sample reports, it
+lists every collected issue. Click a title to read the original GitHub issue.
+
+The [2026-09-23 corpus release](https://github.com/majiayu000/issue-lens/releases/tag/corpus-2026-09-23)
+provides compressed SQLite and JSONL snapshots, a manifest and SHA-256 checksums.
+The SQLite file works with the existing search and planning scripts through
+`ISSUE_LENS_DB`; [download and query instructions](out/corpus/README.md#下载后查询)
+are included. The large database remains outside Git history, but is now hosted
+on GitHub as a release asset instead of existing only on the local machine.
+
+All records are retained. In the public copy, 24 issue bodies containing
+credential-like text are replaced with a redaction notice; their original URLs
+remain available. These matches may include inert examples. Local model caches
+are excluded. The [manifest](out/corpus/manifest.json) lists the affected records
+and exact snapshot scope. Original issue text remains attributable to its
+authors; this project's MIT license does not relicense third-party content.
+
+The snapshot contains issue bodies and comment counts, not comment text, and
+15 repositories were capped at 1,000 issues. Run the fetch pipeline to create a
+new snapshot; `data/repos_*.json` records the source repository lists.
 
 ## Generate a test plan with Codex CLI
 

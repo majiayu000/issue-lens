@@ -1,5 +1,5 @@
-# 语料库:176MB 超过 GitHub 单文件 100MB 硬限制,且 issue 正文再分发有许可/PII 顾虑
-# (见 docs/research.md §5)。需要备份时走 GitHub Releases 附件(上限 2GB)。
+# 大型语料库通过 GitHub Releases 发布公开副本；在线目录见 out/corpus/README.md。
+# 本地原库和模型缓存不进入 Git。
 data/issues.db
 out/fetch.log
 __pycache__/
