@@ -1,0 +1,184 @@
+[
+  {
+    "product": "rekey",
+    "form": "cli",
+    "repository": "https://github.com/majiayu000/rekey",
+    "source_path": "/Users/lifcc/Desktop/code/AI/tools/rekey/README.md",
+    "source_revision": "e7b50943c1540f328675adc69dcc8074368cc9ac",
+    "source_dirty": false,
+    "input": "inputs/rekey.md",
+    "sha256": "d169b8a425e0c87f70f2c17863d1e688c0e8b06c8e1264dc44e2867fad3abf9e",
+    "characters": 15274,
+    "tests": [
+      {
+        "source_file": "crates/rekey-broker/tests/adversarial_http.rs",
+        "snapshot": "inputs/tests/rekey/crates/rekey-broker/tests/adversarial_http.rs",
+        "sha256": "ac314be4239a3db273a11d0db393a64361294fd7d1e420166eabaa2d161def34"
+      },
+      {
+        "source_file": "crates/rekey-broker/tests/reflected_secret.rs",
+        "snapshot": "inputs/tests/rekey/crates/rekey-broker/tests/reflected_secret.rs",
+        "sha256": "13b163c42e0c745e8ecd24e8e6dc5edd169a0503a10d4e46b433bb461c967f93"
+      },
+      {
+        "source_file": "crates/rekey-cli/tests/cli_blackbox.rs",
+        "snapshot": "inputs/tests/rekey/crates/rekey-cli/tests/cli_blackbox.rs",
+        "sha256": "0e421d7e788efe2841da7ea3ed43265a59af3bf6ef2f24653a96cf89d7b09f7b"
+      },
+      {
+        "source_file": "crates/rekey-vault/tests/backup_restore.rs",
+        "snapshot": "inputs/tests/rekey/crates/rekey-vault/tests/backup_restore.rs",
+        "sha256": "1a7a6fb89bba759671eb8124f542e8d3bbdbced8989ed6d3ae30707ab98bf0c7"
+      }
+    ]
+  },
+  {
+    "product": "remem",
+    "form": "cli",
+    "repository": "https://github.com/majiayu000/remem",
+    "source_path": "/Users/lifcc/Desktop/code/AI/tools/remem/README.md",
+    "source_revision": "a3481d7d1c8c7e0f817fed07ff600165cb2226c1",
+    "source_dirty": false,
+    "input": "inputs/remem.md",
+    "sha256": "bde1e3b4a03b48c096ddb2105c9521a2af7a0b624526d397e51eef2c242dcd55",
+    "characters": 49930,
+    "source_sha256": "5362e28a5c9006ba206541041bf5b61efdafe08e1ae28a6b75ee571dae62ec32",
+    "sections": [
+      "Commands",
+      "How It Works",
+      "Install",
+      "REST API",
+      "Search Architecture",
+      "Security",
+      "Success Check",
+      "Uninstall",
+      "What You Get"
+    ],
+    "tests": [
+      {
+        "source_file": "src/api/tests/read_resources.rs",
+        "snapshot": "inputs/tests/remem/src/api/tests/read_resources.rs",
+        "sha256": "c5bc994e5747ac130c8bd73dc609be62905e4f88fd0c7453b405da35fe2e7045"
+      },
+      {
+        "source_file": "src/context/tests/codex_hook_stdout.rs",
+        "snapshot": "inputs/tests/remem/src/context/tests/codex_hook_stdout.rs",
+        "sha256": "50885487044baf7abd9a731b9d0cee0210450de9b0d49b4650d41c463bc1712c"
+      },
+      {
+        "source_file": "src/cli/tests_raw.rs",
+        "snapshot": "inputs/tests/remem/src/cli/tests_raw.rs",
+        "sha256": "32553a77758f14164eb0e91d318636850afbc4086268bce2b8f0e02edb1af2a9"
+      },
+      {
+        "source_file": "npm/remem/scripts/install.test.js",
+        "snapshot": "inputs/tests/remem/npm/remem/scripts/install.test.js",
+        "sha256": "25b9883d4e2f865a71d2ef09dd31794aff33130f703351d8dd03d8ff1f313474"
+      }
+    ]
+  },
+  {
+    "product": "rclean",
+    "form": "cli",
+    "repository": "https://github.com/majiayu000/rclean",
+    "source_path": "/Users/lifcc/Desktop/code/AI/tools/rclean/README.md",
+    "source_revision": "05fec46f0713f83175a82e9a5f21d1d751155ac0",
+    "source_dirty": false,
+    "input": "inputs/rclean.md",
+    "sha256": "bea362dbc2b6edca917e1de67015dfdbd7e881a17bc6d63134e4adc00eec122e",
+    "characters": 33478,
+    "tests": [
+      {
+        "source_file": "src/plan/tests.rs",
+        "snapshot": "inputs/tests/rclean/src/plan/tests.rs",
+        "sha256": "75d1691fc27e917c81c3870c6b88f5ad7cdd96cf6bad7945f99fd52c99504b2b"
+      },
+      {
+        "source_file": "src/clean/tests.rs",
+        "snapshot": "inputs/tests/rclean/src/clean/tests.rs",
+        "sha256": "fd3d198a9886935cff2fbd11e7171918f2efb20bae052235331fd3c049109ec0"
+      },
+      {
+        "source_file": "tests/graveyard_subcommands.rs",
+        "snapshot": "inputs/tests/rclean/tests/graveyard_subcommands.rs",
+        "sha256": "b0af84d18cd41e780b23f7d48caaefa409b5962fb885f02fc8496a07909c4bbc"
+      },
+      {
+        "source_file": "tests/cli/pipe_output.rs",
+        "snapshot": "inputs/tests/rclean/tests/cli/pipe_output.rs",
+        "sha256": "5e2fd53eaeebee39ec593ced79a0d2045e7c87fc8b53c1f9d780e9e0860cd630"
+      },
+      {
+        "source_file": "tests/ignore_file.rs",
+        "snapshot": "inputs/tests/rclean/tests/ignore_file.rs",
+        "sha256": "8a80038869a7f36c56b191a24d77df956df29f688e432ba5c13b47a00374eeeb"
+      }
+    ]
+  },
+  {
+    "product": "quotabar",
+    "form": "desktop",
+    "repository": "https://github.com/majiayu000/quotabar",
+    "source_path": "/Users/lifcc/Desktop/code/AI/tools/quotabar/README.md",
+    "source_revision": "be367544f4b99ba62bc70e397aa0279b925741d6",
+    "source_dirty": false,
+    "input": "inputs/quotabar.md",
+    "sha256": "b1d2b520b7aa42e719bf14a3b37044b40a8c74657cbe545a190eb7a3b6b6f33a",
+    "characters": 16937,
+    "tests": [
+      {
+        "source_file": "tests/provider_refresh_races.test.tsx",
+        "snapshot": "inputs/tests/quotabar/tests/provider_refresh_races.test.tsx",
+        "sha256": "0637ac52f9a4bde2ea6e96041a93aa18f089a69abebb501b5e2221807e29f4d5"
+      },
+      {
+        "source_file": "tests/quota_overview.test.tsx",
+        "snapshot": "inputs/tests/quotabar/tests/quota_overview.test.tsx",
+        "sha256": "2c7aee19a6c413bb2b3bd2bf9de63a7308f3cf336492ecf37ffa1aed16f03a3a"
+      },
+      {
+        "source_file": "tests/notifications.test.ts",
+        "snapshot": "inputs/tests/quotabar/tests/notifications.test.ts",
+        "sha256": "9726972226f6c979191d50a164326df968a96946e12c9e4a51b7ccbca7260072"
+      },
+      {
+        "source_file": "tests/tray_visibility.test.ts",
+        "snapshot": "inputs/tests/quotabar/tests/tray_visibility.test.ts",
+        "sha256": "74582aa3eeacf3658ab562e931ed0b557f468e8ea28f017a24033628b7cffe1e"
+      },
+      {
+        "source_file": "tests/i18n.test.tsx",
+        "snapshot": "inputs/tests/quotabar/tests/i18n.test.tsx",
+        "sha256": "2d0162a15255a2d09287b691d154ccaff823b03c87b15e9a5e28266f014f550c"
+      }
+    ]
+  },
+  {
+    "product": "dsh-desk",
+    "form": "desktop",
+    "repository": "https://github.com/majiayu000/dsh-desk",
+    "source_path": "/Users/lifcc/Desktop/code/AI/tools/dsh-desk/README.md",
+    "source_revision": "99f0bdb7b2176297ff6625f73cded3e9cbf31326",
+    "source_dirty": false,
+    "input": "inputs/dsh-desk.md",
+    "sha256": "ea7ca5a70fde39a0f0425692faf41cd3f11c8d9ea3a24bab08ea33861d1c5cc8",
+    "characters": 7826,
+    "tests": [
+      {
+        "source_file": "src-tauri/src/runtime_supervisor_tests.rs",
+        "snapshot": "inputs/tests/dsh-desk/src-tauri/src/runtime_supervisor_tests.rs",
+        "sha256": "97cc49d14eb2f1aecf780227d82e41a58a5c07105734245ebac07664bf50bb14"
+      },
+      {
+        "source_file": "scripts/test-updater-contract.mjs",
+        "snapshot": "inputs/tests/dsh-desk/scripts/test-updater-contract.mjs",
+        "sha256": "921589359784e16c62c0a9141b2212399cf044e3a70f9066a7b4af7a8279609f"
+      },
+      {
+        "source_file": "scripts/test-plugin-catalog.mjs",
+        "snapshot": "inputs/tests/dsh-desk/scripts/test-plugin-catalog.mjs",
+        "sha256": "8ecb3d70ff847dcda226c0f14c412d5eedfd7e1f781647a676b2c4b4489e0e25"
+      }
+    ]
+  }
+]

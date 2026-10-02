@@ -1,0 +1,90 @@
+{
+  "product": "rclean",
+  "model": "gpt-6.1-sol",
+  "cli_version": "0.160.0",
+  "prd_sha256": "bea362dbc2b6edca917e1de67015dfdbd7e881a17bc6d63134e4adc00eec122e",
+  "prompt_sha256": "30fe4804b5a8abfdb2e2d79d4e13810d819700d3ce58917ed1f99f10cb3f53c2",
+  "test_inputs": [
+    {
+      "id": "T1",
+      "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/src/plan/tests.rs",
+      "sha256": "75d1691fc27e917c81c3870c6b88f5ad7cdd96cf6bad7945f99fd52c99504b2b"
+    },
+    {
+      "id": "T2",
+      "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/src/clean/tests.rs",
+      "sha256": "fd3d198a9886935cff2fbd11e7171918f2efb20bae052235331fd3c049109ec0"
+    },
+    {
+      "id": "T3",
+      "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/tests/graveyard_subcommands.rs",
+      "sha256": "b0af84d18cd41e780b23f7d48caaefa409b5962fb885f02fc8496a07909c4bbc"
+    },
+    {
+      "id": "T4",
+      "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/tests/cli/pipe_output.rs",
+      "sha256": "5e2fd53eaeebee39ec593ced79a0d2045e7c87fc8b53c1f9d780e9e0860cd630"
+    },
+    {
+      "id": "T5",
+      "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/tests/ignore_file.rs",
+      "sha256": "8a80038869a7f36c56b191a24d77df956df29f688e432ba5c13b47a00374eeeb"
+    }
+  ],
+  "requirement_themes": [
+    {
+      "id": "R1",
+      "title": "扫描范围与安全分类：仅识别规则匹配的可重建产物，保护用户数据并限制平台和扫描入口",
+      "quote": "User records are not cleanup candidates. The following paths are\ntreated as protected user data and refused at scan, plan replay, and\ndelete time — even if a custom rule or tampered ActionPlan points at\nthem:"
+    },
+    {
+      "id": "R2",
+      "title": "清理选择与计划重验证：禁止选择 blocked、report-only，谨慎项需显式启用，删除前验证链接和根路径",
+      "quote": "The action plan is the trust boundary: `clean --plan` re-validates every\npath against the live filesystem before deleting, refuses to follow new\nsymlinks, and rejects plans whose roots have changed shape since the\nscan."
+    },
+    {
+      "id": "R3",
+      "title": "目标空间提案与时间戳清扫：仅生成可审阅计划，正确处理目标不足、空结果和产物变化",
+      "quote": "`rclean free <size>` computes the smallest safe set that can meet a target\nreclaim amount and writes it as an ActionPlan for review. It never deletes by\nitself; replay the plan with `rclean clean --plan ... --dry-run` first.\n`free --json` emits a versioned proposal containing `targetBytes`,\n`selectedBytes`, `targetMet`, `planPath`, and the selected scan candidates.\nExit code `0` means the target was met; exit code `3` means the safe set was\nshort or empty. A short proposal still writes a reviewable plan, while an empty\nproposal reports `planPath: null` and writes none."
+    },
+    {
+      "id": "R4",
+      "title": "交互清理与恢复：确认后执行可恢复清理，恢复检查目标和链接，批次失败继续且预演无副作用",
+      "quote": "Restore one grave directly with `rclean restore --id <ID>`. Add `--to <PATH>` to\nchoose another destination. Running `rclean restore` without `--id` on a\nterminal opens a newest-first numbered selector that accepts numbers, ranges,\n`all`, or `q`, then asks for confirmation. Every selected item still passes\nthrough the same target-exists and symlink checks as a direct restore. A batch\ncontinues after an item is skipped or fails, prints restored/skipped/failed\ntotals, and exits non-zero when any item was not restored."
+    },
+    {
+      "id": "R5",
+      "title": "筛选、自定义规则与忽略配置：遵守分类后筛选、规则优先级及不同配置错误的失败或告警契约",
+      "quote": "Invalid `--ignore` globs fail the scan. Invalid `.rcleanignore` files are\nreported as scan warnings so the scan can continue while still marking the\nresult as potentially incomplete."
+    },
+    {
+      "id": "R6",
+      "title": "扫描报告与解释：人工和 JSON 输出呈现陈旧度、候选解释及一致的不完整结果告警",
+      "quote": "Scan reports include a top-level `warnings` list for recoverable scan\nproblems such as invalid `.rcleanignore` files or filesystem walk errors.\nThe table output prints the same warning summary; JSON consumers should\ntreat a non-empty `warnings` array as \"results may be incomplete.\""
+    },
+    {
+      "id": "R7",
+      "title": "管道与输出错误处理：提前关闭无崩溃，保留已确定退出状态，删除前断管必须停止清理",
+      "quote": "Non-interactive stdout is pipe-aware. If a downstream reader closes early\n(for example, `rclean rules | head -n 1`), rclean stops writing without a panic\nor backtrace and retains any command exit status already determined. Other\nstdout I/O errors still fail explicitly. For `clean`, a closed pipe before the\ndelete phase stops the command before any artifact is removed; if cleanup has\nalready completed, its computed success or failure status is preserved."
+    },
+    {
+      "id": "R8",
+      "title": "Docker 只读报告：子进程超时受限、参数使用数组，所有资源均不得进入清理计划或执行删除",
+      "quote": "`docker report` uses the official Docker CLI with bounded subprocess timeouts\nand array arguments. It does not call `docker system prune`, `docker builder\nprune`, `docker rm`, `docker rmi`, `docker volume rm`, or any other deletion\ncommand. Build cache and dangling-image categories may be classified as\n`caution` in the report taxonomy, while volumes, named resources, networks, and\ntagged images remain `report-only`; all Docker rows are `selected=false` in this\nrelease."
+    }
+  ],
+  "common_inputs": [
+    "prd",
+    "requirements",
+    "open_questions",
+    "tests",
+    "prompt",
+    "model",
+    "CLI settings"
+  ],
+  "variable": "sources: [] versus retrieved issue extractions and the bounded PR evidence from the optimized report",
+  "generation_calls_per_arm": 1,
+  "tool_access": false,
+  "draft_supplied": false,
+  "limitation": "One product, one fresh generation per arm; not a statistical or product-correctness benchmark."
+}

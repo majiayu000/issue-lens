@@ -80,7 +80,7 @@ python3 s05_plan.py --form cli --prd product.md --tests tests/test_paths.py \
   --tests tests/test_permissions.py --with-pr-evidence --out out/product-reviewed.md
 ```
 
-The plan command accepts a PRD or a coherent README scope of up to 80,000 characters. It extracts at most eight requirement themes with verbatim source quotes. Each theme has 1–3 alternative queries with 2–4 terms combined using AND; each query contributes up to eight matches. Up to 60 candidates, distributed across themes, are reviewed by Codex for shared failure mechanisms. The reviewer must supply a verbatim excerpt and may reject every candidate. Only selected issues are extracted, in batches of five, reusing cached extractions. This retrieval change applies to `s05_plan.py`; standalone search retains its existing behavior.
+The plan command accepts a PRD or a coherent README scope of up to 80,000 characters. It extracts at most eight requirement themes with verbatim source quotes. Each theme has 1–3 alternative queries with 2–4 terms combined using AND; each query contributes up to eight matches. Codex is asked to include a broad two-word query before more-specific alternatives, avoiding descriptive phrases that rarely occur verbatim. Up to 60 candidates, distributed across themes, are reviewed by Codex for shared failure mechanisms. The reviewer must supply a verbatim excerpt and may reject every candidate. Only selected issues are extracted, in batches of five, reusing cached extractions. This retrieval change applies to `s05_plan.py`; standalone search retains its existing behavior.
 
 The plan can also contain PRD-derived baseline cases with no historical source, so empty retrieval no longer forces a requirement to be skipped. Outputs are a new Markdown file and a matching JSON file with source links, evidence quotes, input hash, usage, and Codex thread IDs. Existing output files are never overwritten.
 
@@ -90,7 +90,7 @@ The plan can also contain PRD-derived baseline cases with no historical source, 
 
 The selected product text, issue excerpts, supplied test files and optional PR excerpts are sent to Codex using its existing login. Each call runs in a temporary directory with user config ignored, read-only sandboxing, project instructions excluded, and tools/hooks/memory features disabled. Calls time out after 300 seconds; failed calls or invalid/unattributed output fail the command. Earlier validated extraction batches remain cached. Plans prioritize 8–12 useful cases (at most 24) and short, unique test-source quotes. Model-generated test cases are **drafts, not executed results or proof of a product defect**.
 
-The five-product sample inputs and results live under [`out/five-products-20261001/`](out/five-products-20261001/). Those samples predate the retrieval/coverage/PR changes above and have not been regenerated. The input manifest records repository revisions and hashes; `remem` uses selected README sections rather than the entire document.
+The [updated five-product samples](out/five-products-20261002/README.md) contain 60 draft cases generated with fixed product documents, selected test-source snapshots and live PR evidence. The [rclean same-model comparison](out/five-products-20261002/comparison/README.md) found some additional boundary detail, but did not establish overall superiority to directly reading the PRD; the main risks appeared in both arms. The original [`2026-10-01` samples](out/five-products-20261001/) remain available for historical context. Input manifests record repository revisions and hashes; `remem` uses selected README sections rather than the entire document. No product test cases were executed.
 
 ## Configuration
 
@@ -115,8 +115,8 @@ Product forms, topic seeds and the initial bug taxonomies live in `config.py`. C
 
 ## Roadmap
 
-1. Evaluate incremental test value against a same-model PRD-only baseline; offline tests establish pipeline behavior, not improved model quality
-2. Regenerate and manually review the five-product sample plans with selected existing tests and PR evidence
+1. Extend the same-model comparison beyond rclean and measure which suggestions survive review and actual execution
+2. Improve PR evidence selection: recent cross-references can include unrelated forks or package updates
 3. More forms: web frontend, backend, mobile (mobile already has a ready-made taxonomy: DroidDefects, see research §2.1)
 
 ## Contributing

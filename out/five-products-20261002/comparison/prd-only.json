@@ -1,0 +1,604 @@
+{
+  "status": "draft_not_executed",
+  "form": "cli",
+  "prd_sha256": "bea362dbc2b6edca917e1de67015dfdbd7e881a17bc6d63134e4adc00eec122e",
+  "corpus_issue_count": 16054,
+  "source_limit": 12,
+  "requirements": [
+    {
+      "title": "扫描范围与安全分类：仅识别规则匹配的可重建产物，保护用户数据并限制平台和扫描入口",
+      "quote": "User records are not cleanup candidates. The following paths are\ntreated as protected user data and refused at scan, plan replay, and\ndelete time — even if a custom rule or tampered ActionPlan points at\nthem:",
+      "queries": [
+        [
+          "scan",
+          "delete"
+        ],
+        [
+          "cache",
+          "marker",
+          "missing"
+        ],
+        [
+          "plan",
+          "tampered",
+          "protected"
+        ]
+      ],
+      "id": "R1",
+      "candidate_ids": [],
+      "retrieved_source_ids": [],
+      "retrieval_evidence": []
+    },
+    {
+      "title": "清理选择与计划重验证：禁止选择 blocked、report-only，谨慎项需显式启用，删除前验证链接和根路径",
+      "quote": "The action plan is the trust boundary: `clean --plan` re-validates every\npath against the live filesystem before deleting, refuses to follow new\nsymlinks, and rejects plans whose roots have changed shape since the\nscan.",
+      "queries": [
+        [
+          "symlink",
+          "delete"
+        ],
+        [
+          "plan",
+          "root",
+          "changed"
+        ],
+        [
+          "selection",
+          "blocked"
+        ]
+      ],
+      "id": "R2",
+      "candidate_ids": [],
+      "retrieved_source_ids": [],
+      "retrieval_evidence": []
+    },
+    {
+      "title": "目标空间提案与时间戳清扫：仅生成可审阅计划，正确处理目标不足、空结果和产物变化",
+      "quote": "`rclean free <size>` computes the smallest safe set that can meet a target\nreclaim amount and writes it as an ActionPlan for review. It never deletes by\nitself; replay the plan with `rclean clean --plan ... --dry-run` first.\n`free --json` emits a versioned proposal containing `targetBytes`,\n`selectedBytes`, `targetMet`, `planPath`, and the selected scan candidates.\nExit code `0` means the target was met; exit code `3` means the safe set was\nshort or empty. A short proposal still writes a reviewable plan, while an empty\nproposal reports `planPath: null` and writes none.",
+      "queries": [
+        [
+          "plan",
+          "empty"
+        ],
+        [
+          "target",
+          "insufficient"
+        ],
+        [
+          "stamp",
+          "changed"
+        ]
+      ],
+      "id": "R3",
+      "candidate_ids": [],
+      "retrieved_source_ids": [],
+      "retrieval_evidence": []
+    },
+    {
+      "title": "交互清理与恢复：确认后执行可恢复清理，恢复检查目标和链接，批次失败继续且预演无副作用",
+      "quote": "Restore one grave directly with `rclean restore --id <ID>`. Add `--to <PATH>` to\nchoose another destination. Running `rclean restore` without `--id` on a\nterminal opens a newest-first numbered selector that accepts numbers, ranges,\n`all`, or `q`, then asks for confirmation. Every selected item still passes\nthrough the same target-exists and symlink checks as a direct restore. A batch\ncontinues after an item is skipped or fails, prints restored/skipped/failed\ntotals, and exits non-zero when any item was not restored.",
+      "queries": [
+        [
+          "restore",
+          "overwrite"
+        ],
+        [
+          "restore",
+          "batch",
+          "failure"
+        ],
+        [
+          "restore",
+          "dry-run",
+          "manifest"
+        ]
+      ],
+      "id": "R4",
+      "candidate_ids": [],
+      "retrieved_source_ids": [],
+      "retrieval_evidence": []
+    },
+    {
+      "title": "筛选、自定义规则与忽略配置：遵守分类后筛选、规则优先级及不同配置错误的失败或告警契约",
+      "quote": "Invalid `--ignore` globs fail the scan. Invalid `.rcleanignore` files are\nreported as scan warnings so the scan can continue while still marking the\nresult as potentially incomplete.",
+      "queries": [
+        [
+          "glob",
+          "invalid"
+        ],
+        [
+          "rule",
+          "duplicate"
+        ],
+        [
+          "ignore",
+          "negation"
+        ]
+      ],
+      "id": "R5",
+      "candidate_ids": [],
+      "retrieved_source_ids": [],
+      "retrieval_evidence": []
+    },
+    {
+      "title": "扫描报告与解释：人工和 JSON 输出呈现陈旧度、候选解释及一致的不完整结果告警",
+      "quote": "Scan reports include a top-level `warnings` list for recoverable scan\nproblems such as invalid `.rcleanignore` files or filesystem walk errors.\nThe table output prints the same warning summary; JSON consumers should\ntreat a non-empty `warnings` array as \"results may be incomplete.\"",
+      "queries": [
+        [
+          "scan",
+          "warning"
+        ],
+        [
+          "json",
+          "stalenessDays",
+          "missing"
+        ],
+        [
+          "filesystem",
+          "error",
+          "incomplete"
+        ]
+      ],
+      "id": "R6",
+      "candidate_ids": [],
+      "retrieved_source_ids": [],
+      "retrieval_evidence": []
+    },
+    {
+      "title": "管道与输出错误处理：提前关闭无崩溃，保留已确定退出状态，删除前断管必须停止清理",
+      "quote": "Non-interactive stdout is pipe-aware. If a downstream reader closes early\n(for example, `rclean rules | head -n 1`), rclean stops writing without a panic\nor backtrace and retains any command exit status already determined. Other\nstdout I/O errors still fail explicitly. For `clean`, a closed pipe before the\ndelete phase stops the command before any artifact is removed; if cleanup has\nalready completed, its computed success or failure status is preserved.",
+      "queries": [
+        [
+          "pipe",
+          "error"
+        ],
+        [
+          "stdout",
+          "closed",
+          "delete"
+        ],
+        [
+          "pipe",
+          "exit",
+          "status"
+        ]
+      ],
+      "id": "R7",
+      "candidate_ids": [],
+      "retrieved_source_ids": [],
+      "retrieval_evidence": []
+    },
+    {
+      "title": "Docker 只读报告：子进程超时受限、参数使用数组，所有资源均不得进入清理计划或执行删除",
+      "quote": "`docker report` uses the official Docker CLI with bounded subprocess timeouts\nand array arguments. It does not call `docker system prune`, `docker builder\nprune`, `docker rm`, `docker rmi`, `docker volume rm`, or any other deletion\ncommand. Build cache and dangling-image categories may be classified as\n`caution` in the report taxonomy, while volumes, named resources, networks, and\ntagged images remain `report-only`; all Docker rows are `selected=false` in this\nrelease.",
+      "queries": [
+        [
+          "subprocess",
+          "timeout"
+        ],
+        [
+          "report",
+          "delete"
+        ],
+        [
+          "arguments",
+          "injection"
+        ]
+      ],
+      "id": "R8",
+      "candidate_ids": [],
+      "retrieved_source_ids": [],
+      "retrieval_evidence": []
+    }
+  ],
+  "open_questions": [
+    "默认清理目的地存在冲突：Usage 明确描述无子命令交互清理移动到 rclean graveyard，Safety Model 则写“default clean mode moves to Trash when available.”。是否分别适用于不同入口？各入口的默认删除模式需明确。",
+    "产品边界限定为开发产物和工具链缓存，但规则目录包含浏览器缓存、壁纸视频、地图及媒体分析缓存。应将这些已列出的精确锚点视为明确范围例外，还是收窄规则目录？不能据“every cache”扩展到任意目录。",
+    "Current Status 的功能列表属于现状描述，不能据此推导新增需求；其中仅列名、缺少行为契约的诊断、优化、补全和手册功能是否另有验收要求？所链接文档内容未提供，无法据其补充要求。"
+  ],
+  "test_inputs": [
+    {
+      "id": "T1",
+      "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/src/plan/tests.rs",
+      "sha256": "75d1691fc27e917c81c3870c6b88f5ad7cdd96cf6bad7945f99fd52c99504b2b"
+    },
+    {
+      "id": "T2",
+      "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/src/clean/tests.rs",
+      "sha256": "fd3d198a9886935cff2fbd11e7171918f2efb20bae052235331fd3c049109ec0"
+    },
+    {
+      "id": "T3",
+      "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/tests/graveyard_subcommands.rs",
+      "sha256": "b0af84d18cd41e780b23f7d48caaefa409b5962fb885f02fc8496a07909c4bbc"
+    },
+    {
+      "id": "T4",
+      "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/tests/cli/pipe_output.rs",
+      "sha256": "5e2fd53eaeebee39ec593ced79a0d2045e7c87fc8b53c1f9d780e9e0860cd630"
+    },
+    {
+      "id": "T5",
+      "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/tests/ignore_file.rs",
+      "sha256": "8a80038869a7f36c56b191a24d77df956df29f688e432ba5c13b47a00374eeeb"
+    }
+  ],
+  "generated_at": "2026-10-02T15:28:01.788940+00:00",
+  "sources": [],
+  "cases": [
+    {
+      "requirement_id": "R1",
+      "category": "扫描识别与数据保护",
+      "title": "项目标记和虚拟环境标记限制候选识别",
+      "preconditions": [
+        "在隔离工作区准备有 Cargo.toml 的 target、有 package.json 的 node_modules，以及无项目标记的 build、dist、out、target、vendor。",
+        "准备有 Python 项目标记的项目，分别放置带虚拟环境标记的 venv 和仅同名的普通目录。",
+        "为所有目录写入可校验内容，扫描使用 --min-size 0。"
+      ],
+      "steps": [
+        "分别扫描项目根目录和工作区根目录，输出人工报告及 JSON。",
+        "对识别出的候选执行 explain。",
+        "比较扫描前后的文件内容和目录结构。"
+      ],
+      "expected_result": "有充分标记证据的可重建产物被识别，解释对应规则和恢复方式；缺少项目证据的通用目录及缺少虚拟环境标记的 venv 不成为可清理候选。扫描和解释不删除或修改测试内容。",
+      "source_ids": [],
+      "rationale": "直接覆盖 PRD 的识别基础契约；没有提供历史来源，不借用其他产品功能扩展识别范围。",
+      "coverage": "not_found",
+      "incremental_value": "补充标记存在与缺失的对照、根项目扫描及扫描无副作用检查；所给测试未发现同等覆盖。",
+      "existing_tests": [],
+      "id": "TC001"
+    },
+    {
+      "requirement_id": "R1",
+      "category": "扫描入口与平台边界",
+      "title": "home、tmp、system 和显式路径仅发现各自允许的精确锚点",
+      "preconditions": [
+        "在 macOS 隔离环境准备 PRD 列出的 home 缓存、Ollama 模型目录、受保护用户记录及名称相近的非锚点目录。",
+        "在实际 temp 根下准备带项目标记的 rclean-* 工作树、其中的 target，以及无项目标记的同名前缀目录。",
+        "准备 macOS system 精确锚点及 Chrome code-sign clone 的显式路径测试夹具；系统目录测试仅在可还原的隔离机器进行。",
+        "为 Linux、Windows 准备各自已列出的平台路径；不把 macOS 专属锚点作为其他平台的识别要求。"
+      ],
+      "steps": [
+        "分别执行 scan --home、scan --tmp、macOS 的 scan --system 和 Chrome clone 的显式路径扫描。",
+        "检查候选路径、规则、安全状态及 requiresSudo。",
+        "在 home 扫描根配置匹配用户记录名称的自定义规则，再扫描受保护记录。",
+        "比较扫描前后所有夹具内容；在 Linux、Windows 检查入口未产生 macOS 专属候选。"
+      ],
+      "expected_result": "仅发现入口和平台允许的规则锚点；缺失路径被静默过滤。模型目录为 report-only，system 精确锚点为 report-only 且 requiresSudo=true；受保护记录不能成为可清理候选。tmp 不整体清空，合格临时工作树为 caution，嵌套产物按规则分类；无标记同名前缀目录不满足工作树规则。默认 tmp 不因 Chrome clone 位于 X 桶而发现它。扫描无删除行为。",
+      "source_ids": [],
+      "rationale": "按 PRD 已明确列出的精确锚点设计范围测试，不把“every cache”理解为任意目录；规则目录与产品边界的冲突仍需澄清。",
+      "coverage": "not_found",
+      "incremental_value": "补充扫描入口隔离、平台限制、精确锚点负例及自定义规则不能绕过用户数据保护的边界。",
+      "existing_tests": [],
+      "id": "TC002"
+    },
+    {
+      "requirement_id": "R3",
+      "category": "目标空间提案",
+      "title": "free 的达标、不足和空集合均只生成提案",
+      "preconditions": [
+        "准备可测量的 safe 候选集合，使目标可由单个候选满足，并有更大候选作为对照。",
+        "另准备 safe 总量不足及没有 safe 候选的夹具；不足夹具中可放置大容量 caution 和 report-only 项。",
+        "使用不同且不存在的计划输出路径，记录全部产物内容。"
+      ],
+      "steps": [
+        "对三个夹具执行 free <size> --json --write-plan。",
+        "核对版本、targetBytes、selectedBytes、targetMet、planPath、所选候选和退出码。",
+        "检查达标夹具没有加入满足目标所不需要的候选。",
+        "检查计划是否存在，并对非空计划执行 clean --plan --dry-run；比较全部产物内容。"
+      ],
+      "expected_result": "达标提案使用可满足目标的最小 safe 集合，退出码为 0；safe 总量不足时 targetMet=false、退出码为 3，仍写出非空可审阅计划；空集合退出码为 3、planPath=null 且不写计划。caution、blocked、report-only 不用于弥补安全集合不足。free 和计划预演均不删除产物。",
+      "source_ids": [],
+      "rationale": "覆盖 PRD 明确的三个结果分支，不因缺少历史 issue 或 free 测试材料而省略。",
+      "coverage": "not_found",
+      "incremental_value": "补充 free 的安全集合、计划落盘、JSON 字段和退出码联合契约；不自行规定 PRD 未定义的组合优化或并列排序算法。",
+      "existing_tests": [],
+      "id": "TC003"
+    },
+    {
+      "requirement_id": "R3",
+      "category": "时间戳清扫",
+      "title": "stamp sweep 仅提议已盖章且未变化的产物",
+      "preconditions": [
+        "准备三个独立的规则匹配产物，其中两个先执行 stamp，第三个保持未盖章。",
+        "记录盖章后的状态，再修改其中一个已盖章产物的内容和大小。",
+        "使用新的计划输出路径。"
+      ],
+      "steps": [
+        "执行 stamp --sweep --write-plan，阈值设置为包含所有测试产物。",
+        "检查计划 selected 路径。",
+        "执行该计划的 clean --dry-run，比较所有产物内容和目录结构。"
+      ],
+      "expected_result": "计划仅包含已盖章且盖章后未变化的合格产物；变化产物及未盖章产物不被加入。sweep 仅生成计划，预演也不删除产物。",
+      "source_ids": [],
+      "rationale": "覆盖 PRD 明确的“previously stamped”及“have not changed”契约，不推定时间戳实现或指纹算法。",
+      "coverage": "not_found",
+      "incremental_value": "补充未盖章、未变化和已变化的最小对照集合。",
+      "existing_tests": [],
+      "id": "TC004"
+    },
+    {
+      "requirement_id": "R4",
+      "category": "交互可恢复清理",
+      "title": "无子命令流程在确认前不删除，确认后进入 graveyard",
+      "preconditions": [
+        "使用隔离 graveyard 和含 safe 产物的当前目录，在真实 TTY 或伪终端运行。",
+        "分别准备包含 tui 和不包含 tui、保留 graveyard 的构建。",
+        "记录候选内容及 graveyard manifest 初始状态。"
+      ],
+      "steps": [
+        "无子命令启动 rclean，选择候选后取消确认，检查产物和 manifest。",
+        "重新启动并确认清理；TUI 构建按 ? 查看当前候选解释，无 TUI 构建使用编号选择。",
+        "检查摘要中的保留窗口及恢复命令。",
+        "用摘要指引恢复该项并校验原始内容。"
+      ],
+      "expected_result": "取消确认不移动产物或写入墓地记录。确认后按 PRD 对无子命令入口的明确描述将候选移动至 rclean graveyard，摘要提供保留窗口和恢复指引，恢复后内容完整。TUI 解释与候选安全状态一致，无 TUI 构建使用编号选择器。",
+      "source_ids": [],
+      "rationale": "仅采用无子命令入口明确描述的 graveyard 行为；不把它推广为所有 clean 入口默认模式，其他入口的 Trash/graveyard 冲突保留为缺口。",
+      "coverage": "not_found",
+      "incremental_value": "补充 TTY 确认、取消、TUI 解释及无 TUI 回退；T3 的显式 --graveyard 非交互辅助流程不等同于本场景。",
+      "existing_tests": [],
+      "id": "TC005"
+    },
+    {
+      "requirement_id": "R8",
+      "category": "Docker 只读诊断",
+      "title": "Docker 报告仅执行有界只读调用且不生成清理候选",
+      "preconditions": [
+        "在隔离环境以可记录 argv 的 Docker CLI 测试替身提供 build cache、dangling image、tagged image、volume、network 和 named resource 数据。",
+        "替身可模拟正常响应、超过 --timeout 的挂起及 CLI 失败，并记录所有调用。",
+        "资源名称含空格和 shell 元字符，设置执行副作用哨兵。"
+      ],
+      "steps": [
+        "执行 docker report 人工及 JSON 输出，检查分类和 selected。",
+        "检查调用 argv 和哨兵，确认名称保持参数边界且未触发 shell 执行。",
+        "模拟子进程挂起，执行 docker report --json --timeout 5s，检查受限结束及可观察失败。",
+        "检查调用记录和报告，确认没有删除命令、文件系统清理候选或 ActionPlan 条目。"
+      ],
+      "expected_result": "所有 Docker 行 selected=false；build cache 和 dangling image 可为 caution，卷、命名资源、网络及 tagged image 为 report-only。调用使用参数数组且没有 shell 注入副作用；挂起调用在有界时间内结束并报告问题。没有 prune、rm、rmi、volume rm 或其他删除调用，Docker 资源不进入文件系统清理计划。",
+      "source_ids": [],
+      "rationale": "覆盖 PRD 明确的 Docker inspect-only 边界；不将 Docker 分类中的 caution 解释为可以启用删除。",
+      "coverage": "not_found",
+      "incremental_value": "补充报告分类、argv 边界、超时及删除调用负断言；所给 Docker 存储保护测试不等同于报告子进程测试。",
+      "existing_tests": [],
+      "id": "TC006"
+    },
+    {
+      "requirement_id": "R2",
+      "category": "清理选择策略",
+      "title": "批量清理仅选择允许的安全状态并拒绝篡改计划",
+      "preconditions": [
+        "准备 safe 产物、脏 Git 工作树中的 caution 产物、符号链接 blocked 候选及 report-only 模型目录。",
+        "准备受保护用户记录和 macOS requiresSudo 锚点的隔离夹具。",
+        "记录各目录内容；所有真实删除仅作用于隔离夹具。"
+      ],
+      "steps": [
+        "分别执行 clean --all --dry-run 和附加 --include-caution 的预演，使用 --include-blocked 显示被阻止项。",
+        "写出 ActionPlan，核对 selected 集合。",
+        "在独立计划副本中把受保护路径或 report-only 路径注入 selected，并伪造 safety=safe；尝试预演及执行。",
+        "对允许的 safe 夹具执行 --permanent --yes，比较清理范围。"
+      ],
+      "expected_result": "默认 --all 仅选择 safe；--include-caution 才增加 caution。blocked 和 report-only 始终不被选中，显示 blocked 不改变选择策略。篡改计划不能使保护路径变为可清理对象；requiresSudo 项被拒绝且不运行 sudo。预演不删除，永久清理仅删除允许选择的隔离产物。",
+      "source_ids": [],
+      "rationale": "覆盖 PRD 的分类后选择及计划信任边界；现有保护路径单元测试不能证明整个 CLI 选择流程已覆盖。",
+      "coverage": "partial",
+      "incremental_value": "新增 safe/caution/blocked/report-only 混合报告的 CLI 选择矩阵、脏工作树降级和伪造安全状态的执行边界。",
+      "existing_tests": [
+        {
+          "test_id": "T2",
+          "quote": "let err = validate_for_deletion_with_rule(&sessions, Some(\"go.build_cache\"))\n        .expect_err(\"Codex session history must never be cleanable\")\n        .to_string();\n\n    assert!(\n        err.contains(\"protected user data\"),\n        \"unexpected error: {err}\"\n    );",
+          "reason": "已有测试把 Codex sessions 传给全局规则的最终删除验证并断言拒绝；未覆盖混合安全状态的批量选择及 CLI 篡改计划执行。",
+          "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/src/clean/tests.rs",
+          "line": 334
+        }
+      ],
+      "id": "TC007"
+    },
+    {
+      "requirement_id": "R2",
+      "category": "计划重验证",
+      "title": "计划生成后祖先链接或根路径形态变化时停止越界清理",
+      "preconditions": [
+        "准备含可清理产物的项目、项目外的哨兵目录及其校验内容。",
+        "扫描并写出包含该产物的 ActionPlan。",
+        "在支持的 macOS、Linux、Windows 上使用相应目录链接机制；Windows 链接夹具需要创建权限。"
+      ],
+      "steps": [
+        "在独立夹具中保留候选末级目录名称，将其祖先目录替换为指向根外哨兵目录的链接。",
+        "在另一夹具中将计划根替换为文件或目录链接。",
+        "分别执行 clean --plan 的预演和实际执行，检查退出结果、错误及哨兵内容。",
+        "保留候选末级目录被替换为链接的已有回归场景作为对照。"
+      ],
+      "expected_result": "祖先链接造成的越界路径及根形态变化被拒绝，错误可观察且不删除外部哨兵内容。末级候选链接也不能被跟随；失败不能被报告为成功清理。",
+      "source_ids": [],
+      "rationale": "直接来自 PRD 的根边界和实时文件系统重验证契约；从已提供测试识别末级链接已有覆盖，补充祖先及根变化，不推断实际缺陷。",
+      "coverage": "partial",
+      "incremental_value": "新增祖先目录链接替换、根形态变化及 CLI 执行后的外部数据完整性断言。",
+      "existing_tests": [
+        {
+          "test_id": "T1",
+          "quote": "fs::remove_dir_all(&candidate).unwrap();\n    #[cfg(unix)]\n    std::os::unix::fs::symlink(&real, &candidate).unwrap();\n    #[cfg(windows)]\n    std::os::windows::fs::symlink_dir(&real, &candidate).unwrap();\n\n    assert!(revalidate_selected(&plan, selected).is_err());",
+          "reason": "已有测试将候选末级目录替换为链接并断言重验证失败；触发条件不等同于祖先链接或计划根改变，也没有 CLI 外部数据完整性断言。",
+          "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/src/plan/tests.rs",
+          "line": 239
+        }
+      ],
+      "id": "TC008"
+    },
+    {
+      "requirement_id": "R4",
+      "category": "交互批量恢复",
+      "title": "恢复预演无副作用，实际批次遇到冲突和链接仍继续",
+      "preconditions": [
+        "隔离 graveyard 中存在三条删除时间不同、内容可校验的 active 记录。",
+        "一条恢复目标不存在，一条目标已存在并含哨兵内容，一条目标祖先被替换为目录链接。",
+        "记录 payload、目标父目录及 manifest 的初始状态，在 TTY 中运行。"
+      ],
+      "steps": [
+        "执行 restore --dry-run，核对最新优先的编号列表，选择覆盖三项的编号或范围并确认。",
+        "检查 payload、manifest 和原先不存在的目标父目录均未变化。",
+        "执行实际 restore，选择相同三项并确认。",
+        "检查成功项内容、冲突目标哨兵、链接外部内容、摘要和退出码。"
+      ],
+      "expected_result": "预演仅展示操作，不移动 payload、不创建目标目录、不修改 manifest。实际批次恢复可恢复项，对已存在目标不覆盖，对链接路径不跟随；遇到跳过或失败仍处理后续项。摘要的 restored/skipped/failed 与实际结果一致，任何项未恢复时退出非零。",
+      "source_ids": [],
+      "rationale": "依据恢复批次的明确契约补充交互与混合结果，不引入强制覆盖、批量 --to 或其他已排除功能。",
+      "coverage": "partial",
+      "incremental_value": "新增交互批次预演、最新优先列表、混合冲突和链接、失败后继续及汇总退出状态。",
+      "existing_tests": [
+        {
+          "test_id": "T3",
+          "quote": ".args([\n            \"restore\",\n            \"--id\",\n            &id,\n            \"--to\",\n            alternate.to_str().unwrap(),\n            \"--dry-run\",\n        ])\n        .assert()\n        .success()\n        .stdout(predicate::str::contains(\"would attempt to restore\"))\n        .stdout(predicate::str::contains(\"payload\"))\n        .stdout(predicate::str::contains(alternate.to_str().unwrap()));\n\n    assert!(!original.exists());\n    assert!(!alternate.exists());\n    assert!(\n        !alternate.parent().unwrap().exists(),\n        \"dry-run must not create the target parent\"\n    );\n    assert_eq!(\n        fs::read(manifest_path(&graveyard)).unwrap(),\n        manifest_before\n    );\n    assert_eq!(active_records(&graveyard).len(), 1);",
+          "reason": "已有测试覆盖显式 ID 加 --to 的恢复预演，断言目标父目录、manifest 和 active 记录无变化；未覆盖 TTY 多项选择、混合失败和批次继续。",
+          "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/tests/graveyard_subcommands.rs",
+          "line": 249
+        }
+      ],
+      "id": "TC009"
+    },
+    {
+      "requirement_id": "R5",
+      "category": "配置与忽略契约",
+      "title": "规则优先级、忽略叠加和配置错误保持不同处理方式",
+      "preconditions": [
+        "准备内置 node_modules 候选、两个自定义候选，以及可排除后重新纳入的嵌套项目。",
+        "配置重复自定义 id、两个 OR parent_markers、非法 category、blocked safety、无 marker 的 caution 规则及覆盖 node_modules 的用户规则。",
+        "为独立运行准备有效忽略文件、非法 .rcleanignore 和非法 --ignore glob。"
+      ],
+      "steps": [
+        "扫描有效配置，核对内置规则优先、重复 id 首条生效、任一 marker 可启用规则以及无 marker 时不启用。",
+        "使用 .rcleanignore 的排除和否定规则重新纳入嵌套候选，再以 --ignore 排除该候选。",
+        "分别运行非法 .rcleanignore 和非法 --ignore glob 的扫描。",
+        "检查非法自定义规则的 stderr 警告及其余有效候选；移除 .rclean.toml 后检查没有缺失文件警告。"
+      ],
+      "expected_result": "内置匹配不被用户规则覆盖；重复 id 首条生效并警告；parent_markers 按 OR 处理。非法自定义规则被警告并丢弃，扫描继续。CLI 忽略叠加后仍可排除被文件否定规则纳入的候选。非法 .rcleanignore 产生不完整结果警告并继续；非法 --ignore 使扫描明确失败；缺少 .rclean.toml 不警告。",
+      "source_ids": [],
+      "rationale": "覆盖配置基础契约及错误分支；源码注释中的实现顺序不替代 PRD 的分类后筛选要求。",
+      "coverage": "partial",
+      "incremental_value": "新增自定义规则优先级、合法性、OR 标记和文件否定规则与 CLI 排除的组合；已有非法 CLI glob 分支无需另写重复用例。",
+      "existing_tests": [
+        {
+          "test_id": "T5",
+          "quote": ".args([\n            \"scan\",\n            temp.path().to_str().unwrap(),\n            \"--json\",\n            \"--min-size\",\n            \"0\",\n            \"--ignore\",\n            \"{a,b\",\n        ])\n        .assert()\n        .failure()\n        .stderr(predicate::str::contains(\"invalid --ignore glob\"));",
+          "reason": "已有测试提供非法 CLI glob 的实际输入并断言失败及错误文本；没有覆盖本用例的自定义规则及忽略否定组合。",
+          "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/tests/ignore_file.rs",
+          "line": 275
+        }
+      ],
+      "id": "TC010"
+    },
+    {
+      "requirement_id": "R6",
+      "category": "报告与解释",
+      "title": "陈旧度、候选解释和遍历不完整警告在输出中一致",
+      "preconditions": [
+        "准备项目活动年龄明显低于和高于配置 stale_after_days 的候选，避免临界时间误差。",
+        "在 macOS 或 Linux 非特权测试账户下准备部分可读、部分不可遍历的候选目录。",
+        "保留一个完全可读的候选作为输出对照。"
+      ],
+      "steps": [
+        "设置 stale_after_days，分别输出人工 scan 和 scan --json。",
+        "核对 Stale、staleAfterDays、可获得的 stalenessDays 和 Biggest wins 中的项目产物比例。",
+        "对候选执行 explain，核对规则、风险理由和恢复提示。",
+        "提高 --min-size 过滤掉部分计量候选，检查警告是否仍保留并标示结果可能不完整。"
+      ],
+      "expected_result": "人工与 JSON 表达一致的陈旧度和阈值，比例对应夹具统计；explain 对应当前候选分类。遍历问题在 JSON 顶层 warnings 和人工警告摘要中可观察，过滤候选不使扫描问题消失；不把部分计量结果表述为完整结果。",
+      "source_ids": [],
+      "rationale": "直接覆盖报告信任契约；权限触发仅在能够真实产生拒绝访问的环境执行，不能以管理员绕过权限的结果判定该边界。",
+      "coverage": "partial",
+      "incremental_value": "新增陈旧度阈值、人工/JSON 字段一致性、比例及 explain 对照；部分计量过滤后保留警告已有源码覆盖。",
+      "existing_tests": [
+        {
+          "test_id": "T5",
+          "quote": "let filtered = run_json(\"4097\");\n    assert_eq!(filtered.status.code(), Some(3));\n    let filtered_report: Value = serde_json::from_slice(&filtered.stdout).unwrap();\n    assert_eq!(filtered_report[\"summary\"][\"candidates\"], 0);\n    assert_eq!(filtered_report[\"warnings\"], first_report[\"warnings\"]);",
+          "reason": "已有测试在部分计量夹具上提高大小阈值，断言候选被过滤而 warnings 保留；不包含陈旧度、项目比例或 explain 断言。",
+          "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/tests/ignore_file.rs",
+          "line": 347
+        }
+      ],
+      "id": "TC011"
+    },
+    {
+      "requirement_id": "R7",
+      "category": "管道与输出错误",
+      "title": "区分删除前断管、清理完成后断管和其他 stdout 错误",
+      "preconditions": [
+        "准备隔离 safe 产物和能够控制读端关闭时机的管道测试程序。",
+        "准备可观察删除完成与最终输出阶段的同步手段；不以固定延时猜测阶段。",
+        "准备可注入非 BrokenPipe stdout 错误的测试装置，以及成功和已确定失败的命令结果。"
+      ],
+      "steps": [
+        "在 clean 首次删除前关闭 stdout 读端，运行 --all --permanent --yes。",
+        "在清理完成后、最终输出前关闭读端，分别检查已确定的成功和失败退出状态。",
+        "对只读输出命令关闭读端，检查 stderr。",
+        "注入其他 stdout I/O 错误，检查错误报告及退出结果。"
+      ],
+      "expected_result": "删除前断管停止清理且产物保留；断管不产生 panic 或 backtrace。清理完成后的断管保留已计算的成功或失败状态，不能掩盖失败。其他 stdout I/O 错误明确失败，不按正常断管静默处理。",
+      "source_ids": [],
+      "rationale": "按 PRD 明确区分输出阶段和错误类型；已有测试只覆盖启动时读端已关闭，不能推导清理完成后状态已覆盖。",
+      "coverage": "partial",
+      "incremental_value": "新增清理完成后断管的状态保留及非 BrokenPipe 错误；删除前断管保留为已有基线。",
+      "existing_tests": [
+        {
+          "test_id": "T4",
+          "quote": "let output = run_with_closed_stdout(&[\n        \"clean\",\n        &root,\n        \"--all\",\n        \"--yes\",\n        \"--permanent\",\n        \"--min-size\",\n        \"0\",\n    ])?;\n\n    assert_eq!(output.status.code(), Some(0));\n    assert_no_output_panic(&output);\n    assert!(\n        candidate.exists(),\n        \"closed pre-delete stdout must stop clean\"\n    );",
+          "reason": "辅助函数在启动前关闭读端；该片段断言 clean 无 panic、退出 0 且候选保留。没有清理完成后关闭或其他 stdout 错误触发。",
+          "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rclean/tests/cli/pipe_output.rs",
+          "line": 58
+        }
+      ],
+      "id": "TC012"
+    }
+  ],
+  "coverage_gaps": [
+    {
+      "requirement_id": "R1",
+      "reason": "方案优先覆盖识别和入口边界，尚未逐项覆盖全部项目生态、home 规则、编辑器旧版本识别和环境路径覆盖行为，包括 GOPATH 与 XDG override。规则目录包含非开发缓存与产品边界存在解释冲突；当前仅按已列精确锚点测试，不能扩展到任意应用数据。"
+    },
+    {
+      "requirement_id": "R2",
+      "reason": "尚未充分覆盖 --allow-broad-root 的默认拒绝与显式放行、放行后保护仍有效，以及重验证后至实际删除之间的祖先目录竞态。T1/T2 提供末级链接、文件替换及部分保护验证，但未执行这些源码测试，也不能据此证明整个删除链路安全。"
+    },
+    {
+      "requirement_id": "R3",
+      "reason": "“smallest safe set”的优化指标和并列选择规则未明确，方案只检查无须额外候选即可满足的明确夹具；不验收未定义算法。stamp 的变化判据、陈旧等待条件及空 sweep 输出契约未提供，尚缺同大小内容变化和时间临界点的确定验收依据。"
+    },
+    {
+      "requirement_id": "R4",
+      "reason": "无子命令入口明确使用 graveyard，但其他 clean 入口的默认 Trash/graveyard 模式存在冲突，需澄清后补默认目的地用例。恢复方案尚未覆盖 q、all、非法范围、全部批次结果组合、链接 payload，以及跨文件系统恢复；T3 的 graveyard 年龄筛选和不支持参数测试仅作为所给材料观察，未在本草稿展开。"
+    },
+    {
+      "requirement_id": "R5",
+      "reason": "尚未充分覆盖 depth、min-size 临界值、older-than、category、rule 的组合及 blocked 不被大小过滤的特殊契约。自定义规则默认字段、非法配置整体解析和所有 glob 语法也未逐项覆盖；现有用例集中于优先级及错误处理。"
+    },
+    {
+      "requirement_id": "R6",
+      "reason": "尚缺未知活动年龄的输出、陈旧度临界时间、多个遍历错误及不同根之间的告警汇总。诊断、优化、补全和手册仅有部分现状描述，缺少明确验收契约；未提供链接文档内容，无法补充这些要求。"
+    },
+    {
+      "requirement_id": "R7",
+      "reason": "方案已描述关键阶段，但输入未提供清理完成后输出同步点或非 BrokenPipe 错误注入设施，执行前需落实可控装置。尚未逐个输出子命令覆盖断管；T4 只能支持其提供的关闭时机和断言，不能代表全仓库已有覆盖。"
+    },
+    {
+      "requirement_id": "R8",
+      "reason": "尚未覆盖 Docker 未安装、daemon 不可达、无效 JSON、部分查询失败及 doctor --docker 的汇总行为；PRD 未定义这些情况的具体退出码和部分报告契约。CLI 替身验证不能替代各支持平台上的真实 Docker 兼容性检查。"
+    }
+  ],
+  "generation": {
+    "plan": {
+      "engine": "codex",
+      "requested_model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 46326,
+        "cached_input_tokens": 14976,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 6878,
+        "reasoning_output_tokens": 139
+      },
+      "thread_id": "01a0fd36-d8e5-7cd3-a9db-2f99a3daee1f"
+    }
+  },
+  "comparison_arm": "prd-only",
+  "pr_evidence_requested": false,
+  "seconds": 256.6
+}

@@ -1,0 +1,1627 @@
+{
+  "status": "draft_not_executed",
+  "form": "cli",
+  "generated_at": "2026-10-02T15:52:10.847997+00:00",
+  "prd_sha256": "d169b8a425e0c87f70f2c17863d1e688c0e8b06c8e1264dc44e2867fad3abf9e",
+  "corpus_issue_count": 16054,
+  "source_limit": 12,
+  "requirements": [
+    {
+      "title": "凭证隔离、加密存储与安全输入",
+      "quote": "Credentials never appear\n> in agent-facing APIs, process arguments, environment variables, logs, or audit\n> records. Same-user `ptrace`, process memory, and filesystem access are out of\n> G1.",
+      "queries": [
+        [
+          "secret",
+          "leak"
+        ],
+        [
+          "stdin",
+          "password"
+        ],
+        [
+          "encryption",
+          "zeroization"
+        ]
+      ],
+      "id": "R1",
+      "candidate_ids": [
+        4718244766,
+        4655347640,
+        4669024637,
+        2230603718,
+        3343831394
+      ],
+      "retrieved_source_ids": [
+        4718244766,
+        4655347640,
+        4669024637
+      ],
+      "retrieval_evidence": [
+        {
+          "requirement_id": "R1",
+          "source_id": 4718244766,
+          "quote": "Any future logging, debug output, or Agent-facing config introspection that calls `to_dict()` will leak `twitter_ct0` in plaintext.",
+          "reason": "共享机制是诊断或 Agent 可见的序列化出口遗漏凭证字段，导致明文泄露。适用于检查所有凭证类型是否进入 API、日志或审计输出；不能据此推断加密存储或安全输入的实现。"
+        },
+        {
+          "requirement_id": "R1",
+          "source_id": 4655347640,
+          "quote": "The deny rule targets `Read`/`cat`/`grep`; `rtk read .env` matches none of them.",
+          "reason": "共享机制是限制只覆盖部分读取入口，替代命令仍能把凭证交给 Agent。适用于验证隔离是否覆盖所有 Agent 可调用入口；同用户直接文件访问已被需求排除，不能把该案例扩展为对这类访问的防护要求。"
+        },
+        {
+          "requirement_id": "R1",
+          "source_id": 4669024637,
+          "quote": "dumped = cfg.to_dict()\n    assert all(v != \"secret\" for v in dumped.values())",
+          "reason": "该测试针对多个凭证字段经配置序列化后暴露原值的机制，可迁移为 Agent 可见配置出口的泄露回归检查。片段仅支持序列化脱敏检查，不证明加密、清零或输入通道安全。"
+        }
+      ]
+    },
+    {
+      "title": "固定 Action 执行、网络限制与响应防泄露",
+      "quote": "- The agent wire protocol has no secret-read operation and no way to choose\n  origin, method, path, auth headers, or redirects.\n- Responses are size-bounded, header-filtered, and scanned for reflected\n  secrets (raw, base64, base64url, percent-encoded) before the agent sees them.",
+      "queries": [
+        [
+          "response",
+          "leak"
+        ],
+        [
+          "DNS",
+          "private"
+        ],
+        [
+          "redirect",
+          "authorization"
+        ]
+      ],
+      "id": "R2",
+      "candidate_ids": [
+        3190344054,
+        3307873869,
+        1010509615,
+        4677521110,
+        2625200334,
+        4834206049,
+        3542390324,
+        4856795044,
+        4399425176,
+        4902678468,
+        5203882201
+      ],
+      "retrieved_source_ids": [
+        5203882201,
+        4902678468,
+        4399425176
+      ],
+      "retrieval_evidence": [
+        {
+          "requirement_id": "R2",
+          "source_id": 5203882201,
+          "quote": "providers: no fetch validates the resolved IP — a public hostname can point at a private address (DNS rebinding)",
+          "reason": "共享机制是只约束主机名却未验证实际解析地址，导致网络请求进入私有地址。适用于固定 Action 的目标解析和出站限制；候选触发条件是恶意本地配置或被攻陷的 DNS，不支持推断响应反射泄密。"
+        },
+        {
+          "requirement_id": "R2",
+          "source_id": 4902678468,
+          "quote": "`archive-posting.mjs` does **not** register any route interceptors or DNS resolution validators.",
+          "reason": "共享机制是某条请求执行路径遗漏网络安全检查，使内部地址可被访问。适用于检查固定 Action 执行路径是否完整落实网络限制；候选允许攻击者提供 URL，而需求禁止 Agent 选择目标，因此该输入触发条件不能直接照搬。"
+        },
+        {
+          "requirement_id": "R2",
+          "source_id": 4399425176,
+          "quote": "Every request that resolves to an IP in `is_restricted_ip`'s hardcoded deny list is rejected",
+          "reason": "共享机制是依据 DNS 解析结果实施私网拒绝，代理返回私有 fake IP 时会触发兼容性失败。可迁移为网络限制在代理环境下的边界案例；不能据此采用候选建议的放行开关，也不涉及响应脱敏。"
+        }
+      ]
+    },
+    {
+      "title": "恢复密钥与密码变更的原子性及存储版本边界",
+      "quote": "The recovery key can unlock the running broker, satisfy an explicit Admin\nstep-up with `--recovery`, or verify an offline backup restore. With the broker\nunlocked, `rekey password change` atomically replaces the password wrapper;\nadd `--recovery` when the current password is lost. `rekey recovery rotate`\nrequires the current password, replaces the recovery wrapper, and displays the\nnew recovery key once. Neither operation rotates the VRK or Credential data.",
+      "queries": [
+        [
+          "password",
+          "failure"
+        ],
+        [
+          "recovery",
+          "rotation"
+        ],
+        [
+          "backup",
+          "version",
+          "reject"
+        ]
+      ],
+      "id": "R3",
+      "candidate_ids": [
+        292245219,
+        4548630290,
+        20255320,
+        3908798161,
+        4648160483,
+        4394516271,
+        2286063833,
+        4238526971,
+        1117410971,
+        2727647285
+      ],
+      "retrieved_source_ids": [
+        292245219
+      ],
+      "retrieval_evidence": [
+        {
+          "requirement_id": "R3",
+          "source_id": 292245219,
+          "quote": "Because of this, the uninstall was only partially successful, however the switch back to original shell failed.",
+          "reason": "共享机制是密码认证失败时操作已完成部分修改，留下不一致状态。可迁移为密码包装替换的失败原子性检查：认证失败或后续步骤失败应保留原可用状态；不涉及恢复密钥轮换、VRK 或备份版本兼容。"
+        }
+      ]
+    },
+    {
+      "title": "锁定状态下的脱敏审计、稳定分页与安全导出",
+      "quote": "List results use a stable sequence snapshot and bounded pages. Export creates a\nnew mode-0600 JSONL file and never overwrites or follows a symlink. Audit output\nomits secrets, bodies, headers, capability tokens, resource IDs, and parameter\nhashes.",
+      "queries": [
+        [
+          "pagination",
+          "duplicate"
+        ],
+        [
+          "export",
+          "symlink"
+        ],
+        [
+          "audit",
+          "locked",
+          "secret"
+        ]
+      ],
+      "id": "R4",
+      "candidate_ids": [
+        5340950786,
+        5247018695,
+        5208763366
+      ],
+      "retrieved_source_ids": [],
+      "retrieval_evidence": []
+    },
+    {
+      "title": "签名策略与有界会话的验证、撤销及身份令牌防重放",
+      "quote": "The JWT is consumed once and replay denial persists across restart and any\nrestore whose backup already contains the consumption record. A new-version\npolicy activation revokes workload-minted sessions; an exact same-bundle retry\npreserves them.",
+      "queries": [
+        [
+          "token",
+          "replay"
+        ],
+        [
+          "policy",
+          "signature",
+          "version"
+        ],
+        [
+          "session",
+          "restart",
+          "revoke"
+        ]
+      ],
+      "id": "R5",
+      "candidate_ids": [
+        4395673355,
+        4840204314,
+        4403930839,
+        4512895518,
+        4856999409,
+        5047335323,
+        4397420761,
+        5130450524,
+        1635376785,
+        2368105373
+      ],
+      "retrieved_source_ids": [],
+      "retrieval_evidence": []
+    },
+    {
+      "title": "外部审批授权必须绑定确切请求并受有效期和次数限制",
+      "quote": "The grant is bound to the challenge, session, principal, exact Action/resource,\ncanonical parameters, determining rule, policy version/digest, validity window,\nand use limit. Rekey provides no hosted remote approval service, notification UI,\nhuman directory, private-key custody, or approval survival across lock/restart.",
+      "queries": [
+        [
+          "approval",
+          "replay"
+        ],
+        [
+          "grant",
+          "parameters",
+          "mismatch"
+        ],
+        [
+          "challenge",
+          "expired"
+        ]
+      ],
+      "id": "R6",
+      "candidate_ids": [
+        4916759683,
+        5142199048,
+        4626232536,
+        4658094001,
+        4605641550,
+        5433455195,
+        4382617304,
+        5449110251,
+        5032322504
+      ],
+      "retrieved_source_ids": [
+        5142199048
+      ],
+      "retrieval_evidence": [
+        {
+          "requirement_id": "R6",
+          "source_id": 5142199048,
+          "quote": "Only `approved once` or the exact approved retry policy may cross the gate.",
+          "reason": "共享机制是一次性审批及重试授权必须严格限制可执行范围，不能把失败、不可用或不同重试解释为批准。适用于授权次数和确切重试范围的检查；片段未证明 challenge、规范参数、策略摘要或有效期绑定。"
+        }
+      ]
+    },
+    {
+      "title": "封闭连接器的固定资源、单次读取与动态租约撤销",
+      "quote": "This archive also supports one closed one-shot Vault dynamic source. Each\nexecution performs one `GET /v1/MOUNT/creds/ROLE`, uses one selected string in\nthe fixed Action, and withholds the Action response until\n`POST /v1/sys/leases/revoke` succeeds for the exact lease with `sync: true`:",
+      "queries": [
+        [
+          "lease",
+          "revoke"
+        ],
+        [
+          "version",
+          "secret",
+          "retry"
+        ],
+        [
+          "repository",
+          "limit"
+        ]
+      ],
+      "id": "R7",
+      "candidate_ids": [
+        5140491813,
+        4669024637,
+        3485357822,
+        1501588513,
+        4916545394,
+        3531231441,
+        4006116191,
+        953364919,
+        299244837,
+        1974139212
+      ],
+      "retrieved_source_ids": [],
+      "retrieval_evidence": []
+    },
+    {
+      "title": "Linux Agent 启动器的默认拒绝出站与平台限制",
+      "quote": "Linux `rekey agent-run` (`linux-netns-v1`) is a separate deny-by-default IP\negress launcher. It requires bubblewrap, a disjoint `--agent-socket`, and does\nnot make macOS or general G2:",
+      "queries": [
+        [
+          "network",
+          "deny"
+        ],
+        [
+          "socket",
+          "isolation"
+        ],
+        [
+          "bubblewrap",
+          "missing"
+        ]
+      ],
+      "id": "R8",
+      "candidate_ids": [
+        4399425176,
+        5140491813,
+        5142199701,
+        4771213248,
+        4964014968
+      ],
+      "retrieved_source_ids": [],
+      "retrieval_evidence": []
+    }
+  ],
+  "sources": [
+    {
+      "id": 4718244766,
+      "title": "[SECURITY] `Config.to_dict()` leaks `twitter_ct0` in plaintext — masking logic misses CSRF token key name",
+      "url": "https://github.com/Panniantong/Agent-Reach/issues/412",
+      "repo": "Panniantong/Agent-Reach",
+      "extraction": {
+        "id": 4718244766,
+        "issue_kind": "bug",
+        "symptom": "配置转为字典用于展示时，twitter_ct0 的值以明文返回。",
+        "root_cause": "正文指出脱敏逻辑只匹配键名中的 key、token、password、proxy 子串，twitter_ct0 不包含这些子串，因此直接返回原值。",
+        "root_cause_category": "敏感信息脱敏遗漏",
+        "environment": [
+          "agent_reach/config.py 的 Config.to_dict()",
+          "配置中已设置 twitter_ct0"
+        ],
+        "evidence_quote": "- `twitter_ct0` → contains none of the above substrings → **returned in plaintext** ❌",
+        "test_ideas": [
+          "使用虚构凭据设置 twitter_auth_token 和 twitter_ct0，调用 to_dict()，断言两者均不返回完整凭据。",
+          "对包含敏感配置的字典执行诊断展示和序列化，断言输出中不存在完整虚构凭据。",
+          "分别测试敏感字段为空值和非空值，检查脱敏结果及普通配置字段的返回行为。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": "gpt-6.1-sol",
+          "usage": {
+            "input_tokens": 20088,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1373,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0fd44-709d-72f2-8588-d71561264edb"
+        }
+      },
+      "pr_evidence": {
+        "fetched_at": "2026-10-02T15:46:46.099160+00:00",
+        "timeline_may_be_truncated": false,
+        "pulls_truncated": false,
+        "pulls": [
+          {
+            "url": "https://github.com/Panniantong/Agent-Reach/pull/417",
+            "title": "fix(config): mask twitter ct0 in config output",
+            "body": "## Summary\n\n- Mask config keys containing `ct0` in `Config.to_dict()` so `twitter_ct0` is no longer returned in plaintext.\n- Add a regression test that verifies `twitter_ct0` follows the same masked output path as other credential keys.\n- Clean up pre-existing lint noise in the touched config test file.\n\n## Root Cause\n\n`Config.to_dict()` only treated keys containing `key`, `token`, `password`, or `proxy` as sensitive. The Twitter/X CSRF token key is named `twitter_ct0`, so it missed that substring check and could be exposed by diagnostic output.\n\nFixes #412.\n\n## Testing\n\n- `uv run pytest tests/test_config.py -q`\n- `uv run pytest tests/ -q`\n- `uv run ruff check agent_reach/config.py tests/test_config.py`\n- `uv run mypy agent_reach/config.py`\n\nNote: repo-wide `ruff check agent_reach tests` and `mypy agent_reach` still report pre-existing issues in unrelated files; the changed files pass the focused checks above and the full pytest suite passes.\n",
+            "body_truncated": false,
+            "state": "closed",
+            "merged": false,
+            "head_sha": "0ebe9f54c9c9ed8151151590b7b597d13acda3d4",
+            "base_sha": "22d7f03a59401b5740b380c3ad43e3ff7a9dc373",
+            "merge_commit_sha": "167279b1b06bf2fe2c16c8a304426e2d918d2398",
+            "relation": "cross_reference_not_verified_fix",
+            "files": [
+              {
+                "filename": "tests/test_config.py",
+                "status": "modified",
+                "patch": "@@ -1,12 +1,7 @@\n # -*- coding: utf-8 -*-\n \"\"\"Tests for Agent Reach config module.\"\"\"\n \n-import os\n-import tempfile\n-from pathlib import Path\n-\n import pytest\n-import yaml\n \n from agent_reach.config import Config\n \n@@ -21,7 +16,7 @@ def tmp_config(tmp_path):\n class TestConfig:\n     def test_init_creates_dir(self, tmp_path):\n         config_file = tmp_path / \"subdir\" / \"config.yaml\"\n-        config = Config(config_path=config_file)\n+        Config(config_path=config_file)\n         assert config_file.parent.exists()\n \n     def test_set_and_get(self, tmp_config):\n@@ -74,6 +69,11 @@ def test_to_dict_masks_sensitive(self, tmp_config):\n         assert masked[\"exa_api_key\"] == \"super-se...\"\n         assert masked[\"normal_setting\"] == \"visible\"\n \n+    def test_to_dict_masks_twitter_ct0(self, tmp_config):\n+        tmp_config.set(\"twitter_ct0\", \"csrf-secret-value-here\")\n+        masked = tmp_config.to_dict()\n+        assert masked[\"twitter_ct0\"] == \"csrf-sec...\"\n+\n     def test_save_creates_file_with_restricted_permissions(self, tmp_path):\n         import stat\n         import sys",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "agent_reach/config.py",
+                "status": "modified",
+                "patch": "@@ -103,7 +103,7 @@ def to_dict(self) -> dict:\n         \"\"\"Return config as dict (masks sensitive values).\"\"\"\n         masked = {}\n         for k, v in self.data.items():\n-            if any(s in k.lower() for s in (\"key\", \"token\", \"password\", \"proxy\")):\n+            if any(s in k.lower() for s in (\"key\", \"token\", \"password\", \"proxy\", \"ct0\")):\n                 masked[k] = f\"{str(v)[:8]}...\" if v else None\n             else:\n                 masked[k] = v",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              }
+            ],
+            "files_truncated": false
+          }
+        ]
+      }
+    },
+    {
+      "id": 5203882201,
+      "title": "providers: no fetch validates the resolved IP — a public hostname can point at a private address (DNS rebinding)",
+      "url": "https://github.com/career-ops-hq/career-ops/issues/3096",
+      "repo": "career-ops-hq/career-ops",
+      "extraction": {
+        "id": 5203882201,
+        "issue_kind": "bug",
+        "symptom": "公共域名解析到私有、回环或链路本地地址时，provider 仍可能连接该地址。",
+        "root_cause": "正文明确指出主机校验只限制域名，而没有校验域名解析后实际连接的 IP；禁止重定向不能阻止直接指向私有地址的 DNS 记录。",
+        "root_cause_category": "网络目标地址校验缺失",
+        "environment": [
+          "provider 使用原生 fetch()",
+          "用户 portals.yml 存在恶意条目或看板 DNS 被入侵",
+          "公共域名解析到非公共地址"
+        ],
+        "evidence_quote": "A hostname with an A record pointing at `127.0.0.1`, `169.254.169.254` or another private range gets connected to by native `fetch()`; `redirect:'error'` blocks redirect-based hops but not a direct malicious record.",
+        "test_ideas": [
+          "在隔离网络测试中让公共域名解析到 127.0.0.1、169.254.169.254 和私有 IPv4 地址，断言请求被拒绝且目标服务未收到连接。",
+          "覆盖 IPv6 ::1 和 IPv4 映射地址 ::ffff:127.0.0.1，断言同样被拒绝。",
+          "模拟预检时返回公共地址、连接时返回私有地址，验证校验约束实际连接地址。",
+          "使用受控公共地址作为对照，验证正常 provider 请求仍可完成。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": "gpt-6.1-sol",
+          "usage": {
+            "input_tokens": 20088,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1373,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0fd44-709d-72f2-8588-d71561264edb"
+        }
+      },
+      "pr_evidence": {
+        "fetched_at": "2026-10-02T15:46:58.115549+00:00",
+        "timeline_may_be_truncated": false,
+        "pulls_truncated": true,
+        "pulls": [
+          {
+            "url": "https://github.com/career-ops-hq/career-ops/pull/3748",
+            "title": "feat(providers): OCC Mundial — Mexico's dominant job board",
+            "body": "## What\n\nAdds a zero-auth scanner provider for **[occ.com.mx](https://www.occ.com.mx)** (OCC Mundial), the dominant general job board in Mexico, plus 18 offline tests.\n\nPer CONTRIBUTING, new zero-auth scanner providers go straight to a PR without an issue first. Happy to open one if you'd rather discuss direction.\n\n## Why\n\nA large share of Mexican employers never appear on Greenhouse, Lever, Ashby, Workday or SuccessFactors. Mid-size industrials and domestic groups post to OCC instead, so the scanner has a structural hole in Mexico that no amount of ATS probing closes.\n\nI hit this concretely: I resolved 30+ ATS tenants by hand (Workday, SuccessFactors, SmartRecruiters) to widen Mexico coverage, and the Mexican mid-market still did not show up. Checking a few directly — Xignux, Deacero — they publish on OCC, not on any international ATS.\n\nA live scan across 8 keywords × 6 states returned **1,136 postings, 95 of which survived `title_filter`, from 69 companies no ATS sweep had ever returned**. A sample:\n\n| Company | Role | Location |\n|---|---|---|\n| Tecnoap | Ingeniero en Automatización | San Nicolás de los Garza, NL |\n| AWL Automation | Service PLC Engineer | Colón, Querétaro |\n| IMVISION | Ingeniero de Aplicaciones — Visión Artificial | Querétaro |\n| SSS CARRIER | Técnico de mantenimiento PLC (Allen Bradley) | Santa Catarina, NL |\n| Kimberly Clark de México | Ing. procesos Mecatrónico/Robótico | Cuautitlán Izcalli |\n\n## How\n\nThere is no public JSON API — `/api/*` answers `403`. The search pages are server-rendered, so the provider parses the job cards out of the markup with the same tiny-tag-extractor approach already used by `weworkremotely.mjs` and `successfactors.mjs`. **No new dependencies.**\n\nConfig shape:\n\n```yaml\n  - name: OCC Mundial\n    provider: occ\n    queries: [automatizacion, robotica, mecatronica]\n    states: [nuevo-leon, jalisco]   # optional; omit for nationwide\n    max_pages: 3                    # optional, default 3, hard cap 10\n```\n\n## Two behaviours worth flagging\n\n**1. Pagination is a slug suffix, not a query parameter.** `?page=2`, `?pagina=2`, `?p=2`, `?start=20`, `?offset=20` and `/2/` all return `HTTP 200` with a full page of cards — from page 1. The failure is completely silent, so a naive implementation re-reads page 1 forever and looks like it is working. The only shape that advances is:\n\n```\nhttps://www.occ.com.mx/empleos/de-{keyword}-pagina-{N}/\n```\n\nBecause OCC also answers an out-of-range page with page 1 rather than an empty result, the fetch loop additionally stops as soon as a page yields no new ids. Both are covered by tests.\n\n**2. `\"Empresa confidencial\"` is OCC's own placeholder, not an employer name.** It is normalized to the locale-invariant `?` marker (#1596) so the Spanish string never reaches the tracker or a report.\n\n## Tests\n\n`tests/providers/occ.test.mjs` — 18 assertions, **all offline** against a fixture of the real card markup, so CI never depends on occ.com.mx being reachable.\n\nCovers: provider shape · page-1 URL has no suffix · pagination uses the `-pagina-N` slug · accent folding and the `en-{state}` segment · URLs cannot be steered off the `occ.com.mx` origin · entity decoding in title and location · posting URL built from `data-id` · malformed cards dropped · `\"Empresa confidencial\"` → `?` · empty input → `[]` · dedup when page 1 is re-served · loop stops on no new ids · normalized output shape · transport errors do not kill the board · `max_pages` capped at 10.\n\n```\n$ node test-all.mjs --only providers/occ\n📊 Results: 18 passed, 0 failed, 0 warnings\n```\n\n## Follow-up, not in this PR\n\nComputrabajo is the other portal with the same footprint in Mexico. Same argument, separate provider — happy to do it if this shape looks right to you.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nhttps://claude.ai/code/session_01Y8Udned64LVbEUQZNW8obB\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n## User impact\n\n- You can scan OCC Mundial by adding an explicit `provider: occ` entry with one or more required keyword queries. You can optionally filter by state and set a page limit. The provider defaults to 3 pages and caps requests at 10 pages per query/state pair. (`providers/occ.mjs:38-48`, `providers/occ.mjs:170-196`)\n- The provider parses and deduplicates job cards. It converts OCC’s “Empresa confidencial” label and missing employer names to `?`. (`providers/occ.mjs:129-163`, `providers/occ.mjs:246-265`)\n- The provider retries paginated requests and waits 750 ms between requests. It throws when all first-page searches fail or return unrecognized zero-card pages, rather than treating those cases as empty results. (`providers/occ.mjs:76-77`, `providers/occ.mjs:207-241`, `providers/occ.mjs:271-276`)\n- OCC’s Cloudflare challenge can block requests from outside Mexico. In that case, scans can fail instead of reporting no jobs. (`providers/occ.mjs:50-61`)\n- Offline tests were added, but the supplied evidence does not show that they ran or passed. (`tests/providers/occ.test.mjs:1-3`)\n\n## Files touched\n\n- `providers/occ.mjs`: Adds OCC search, parsing, pagination, pacing, retries, and failure handling.\n- `tests/providers/occ.test.mjs`: Adds offline tests for URL construction, parsing, pagination, and failure handling.\n- `docs/SUPPORTED_JOB_BOARDS.md`: Documents OCC support and its search constraints.\n- `templates/portals.example.yml`: Adds a sample OCC configuration.\n- `AGENTS.md`, `modes/`, `update-system.mjs`, `DATA_CONTRACT.md`, and `.github/`: No changes are listed in the supplied file summaries. The shell output also reports these paths as not changed; it reports `providers/` as not changed, which conflicts with the supplied summary listing `providers/occ.mjs` as added.\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+            "body_truncated": false,
+            "state": "closed",
+            "merged": true,
+            "head_sha": "7bc45ab5f82d92e43e8f94f2952d7c3657d43a8b",
+            "base_sha": "848ca440fb2d243ae08205ab3d0bc12903a36c65",
+            "merge_commit_sha": "5118d355553c25c6deb5f557f16930b9a9552b62",
+            "relation": "cross_reference_not_verified_fix",
+            "files": [
+              {
+                "filename": "tests/providers/occ.test.mjs",
+                "status": "added",
+                "patch": "@@ -0,0 +1,315 @@\n+// tests/providers/occ.test.mjs — OCC Mundial (occ.com.mx) provider.\n+// Offline only: every assertion runs against a fixture of the real card markup,\n+// so CI never depends on occ.com.mx being reachable.\n+import { pass, fail, ROOT } from '../helpers.mjs';\n+import { join } from 'path';\n+import { pathToFileURL } from 'url';\n+\n+console.log('\\nProvider — occ');\n+\n+try {\n+  const mod = await import(pathToFileURL(join(ROOT, 'providers/occ.mjs')).href);\n+  const occ = mod.default;\n+  const { buildSearchUrl, parseCards, isEmptyResultPage } = mod;\n+\n+  if (occ.id === 'occ') pass('occ.id is \"occ\"');\n+  else fail(`occ.id is ${JSON.stringify(occ.id)}`);\n+\n+  if (typeof occ.fetch === 'function') pass('occ.fetch is a function');\n+  else fail('occ.fetch is not a function');\n+\n+  // ── URL shape ────────────────────────────────────────────────────────────\n+  // Page 1 carries no suffix.\n+  if (buildSearchUrl('automatizacion', null, 1) === 'https://www.occ.com.mx/empleos/de-automatizacion/') {\n+    pass('buildSearchUrl() page 1 has no pagination suffix');\n+  } else {\n+    fail(`page 1 = ${buildSearchUrl('automatizacion', null, 1)}`);\n+  }\n+\n+  // Pagination is a SLUG suffix. ?page=N silently returns page 1 on the live\n+  // site, so this assertion guards the one shape that actually advances.\n+  if (buildSearchUrl('automatizacion', null, 3) === 'https://www.occ.com.mx/empleos/de-automatizacion-pagina-3/') {\n+    pass('buildSearchUrl() paginates via the -pagina-N slug, not a query param');\n+  } else {\n+    fail(`page 3 = ${buildSearchUrl('automatizacion', null, 3)}`);\n+  }\n+\n+  // Accents fold and the state becomes an en-{slug} path segment.\n+  if (buildSearchUrl('robótica', 'Nuevo León', 2) === 'https://www.occ.com.mx/empleos/de-robotica-pagina-2/en-nuevo-leon/') {\n+    pass('buildSearchUrl() folds accents and appends the state segment');\n+  } else {\n+    fail(`accented+state = ${buildSearchUrl('robótica', 'Nuevo León', 2)}`);\n+  }\n+\n+  // Hostile input must be neutralized by slugify(), not merely sit behind the\n+  // fixed origin prefix: `new URL(u).origin` passed with slugify removed and\n+  // resolves away the `..` it should catch, so check the raw built path.\n+  for (const [query, state] of [['../../evil', null], ['automatizacion', 'https://evil.example']]) {\n+    const u = buildSearchUrl(query, state, 1);\n+    const pathname = u.startsWith('https://www.occ.com.mx/') ? u.slice('https://www.occ.com.mx'.length) : u;\n+    if (!pathname.includes('..') && !pathname.includes('//') && /^\\/empleos\\/de-[a-z0-9-]+\\/(en-[a-z0-9-]+\\/)?$/.test(pathname)) {\n+      pass(`buildSearchUrl() slugifies ${JSON.stringify(state ?? query)} into [a-z0-9-] path segments`);\n+    } else {\n+      fail(`hostile input reached the URL unneutralized: ${u}`);\n+    }\n+  }\n+\n+  // ── Card parsing ─────────────────────────────────────────────────────────\n+  const FIXTURE = `\n+    <div class=\"card-job-offer is-highlighted\" data-id='21319670' id=\"jobcard-21319670\">\n+      <h2 class=\"text-grey-900\">INGENIERO DE AUTOMATIZACI&#xD3;N</h2>\n+      <span class=\"mr-2 text-grey-900 font-base font-light\">$ 40,000 - $ 50,000 Mensual</span>\n+      <div class=\"h-[21px] flex items-center gap-1\">\n+        <span class=\"text-grey-900 no-underline\"> Tecnoap </span>\n+      </div>\n+      <div class=\"no-alter-loc-text mt-1\">\n+        <span class=\"text-grey-900\"></span><p class=\"text-grey-900\">San Nicol&#xE1;s de los Garza, Nuevo Le&#xF3;n</p>\n+      </div>\n+    </div>\n+    <div class=\"card-job-offer\" data-id='21321698' id=\"jobcard-21321698\">\n+      <h2>T&#xE9;cnico de automatizaci&#xF3;n</h2>\n+      <div class=\"h-[21px] flex items-center gap-1\">\n+        <span class=\"text-grey-900\"> Empresa confidencial </span>\n+      </div>\n+      <div class=\"no-alter-loc-text mt-1\"><span></span><p>Apodaca, Nuevo Le&#xF3;n</p></div>\n+    </div>\n+    <div class=\"card-job-offer\" id=\"jobcard-broken\"><h2>Sin data-id</h2></div>\n+    <div class=\"card-job-offer\" data-id='999'><h2>   </h2></div>\n+  `;\n+  const cards = parseCards(FIXTURE);\n+\n+  if (cards.length === 2) pass('parseCards() drops cards missing data-id or a non-empty title');\n+  else fail(`parseCards() returned ${cards.length} cards, expected 2`);\n+\n+  const [a, b] = cards;\n+\n+  if (a?.title === 'INGENIERO DE AUTOMATIZACIÓN') pass('parseCards() decodes HTML entities in the title');\n+  else fail(`title = ${JSON.stringify(a?.title)}`);\n+\n+  if (a?.url === 'https://www.occ.com.mx/empleo/oferta/21319670/') pass('parseCards() builds the posting URL from data-id');\n+  else fail(`url = ${JSON.stringify(a?.url)}`);\n+\n+  if (a?.company === 'Tecnoap') pass('parseCards() extracts the company name');\n+  else fail(`company = ${JSON.stringify(a?.company)}`);\n+\n+  if (a?.location === 'San Nicolás de los Garza, Nuevo León') pass('parseCards() extracts and decodes the location');\n+  else fail(`location = ${JSON.stringify(a?.location)}`);\n+\n+  // \"Empresa confidencial\" is OCC's own placeholder, not an employer name.\n+  // It must become the locale-invariant \"?\" marker (#1596) so the Spanish\n+  // string never reaches the tracker or a report.\n+  if (b?.company === '?') pass('parseCards() normalizes \"Empresa confidencial\" to the \"?\" marker');\n+  else fail(`confidential company = ${JSON.stringify(b?.company)}`);\n+\n+  if (parseCards('').length === 0 && parseCards('<html></html>').length === 0) {\n+    pass('parseCards() returns [] for empty and card-less HTML');\n+  } else {\n+    fail('parseCards() did not return [] for empty input');\n+  }\n+\n+  // ── fetch() end-to-end against a stub ctx (no network) ───────────────────\n+  const pagesRequested = [];\n+  const optsSeen = [];\n+  const stubCtx = {\n+    // No-op clock: the provider paces requests (INTER_REQUEST_DELAY_MS) and\n+    // backs off on retry. Without this the suite would sleep for real.\n+    async sleep() {},\n+    async fetchText(url, opts) {\n+      pagesRequested.push(url);\n+      optsSeen.push(opts);\n+      // Mirror the live quirk: an out-of-range page re-serves page 1.\n+      return FIXTURE;\n+    },\n+  };\n+  const jobs = await occ.fetch({ name: 'OCC', queries: ['automatizacion'], states: ['nuevo-leon'], max_pages: 3 }, stubCtx);\n+\n+  if (optsSeen.length && optsSeen.every(o => o?.redirect === 'error')) pass('fetch() passes redirect: \"error\" on every request');\n+  else fail(`fetch() request opts = ${JSON.stringify(optsSeen)}`);\n+\n+  if (jobs.length === 2) pass('fetch() dedups by posting id when OCC re-serves page 1');\n+  else fail(`fetch() returned ${jobs.length} jobs, expected 2 after dedup`);\n+\n+  if (pagesRequested.length === 2) pass('fetch() stops after the first page that yields no new ids');\n+  else fail(`fetch() requested ${pagesRequested.length} pages: ${JSON.stringify(pagesRequested)}`);\n+\n+  if (jobs.every(j => j.title && j.url && typeof j.company === 'string' && typeof j.location === 'string')) {\n+    pass('fetch() returns the normalized {title, url, company, location} shape');\n+  } else {\n+    fail(`fetch() shape = ${JSON.stringify(jobs)}`);\n+  }\n+\n+  // ── Outage vs. empty board ───────────────────────────────────────────────\n+  // A board answering every request with a Cloudflare challenge (HTTP 403) must\n+  // NOT read downstream as a live board with no matching jobs, so a total\n+  // outage throws instead of returning [].\n+  const failingCtx = { async sleep() {}, async fetchText() { throw new Error('boom'); } };\n+  let outage = null;\n+  try {\n+    await occ.fetch({ name: 'OCC', queries: ['a', 'b'], max_pages: 2 }, failingCtx);\n+  } catch (err) { outage = err; }\n+  if (outage && /all \\d+ search request\\(s\\) failed/.test(outage.message)) {\n+    pass('fetch() throws on a total outage instead of returning an empty board');\n+  } else {\n+    fail(`total outage did not throw as expected: ${outage && outage.message}`);\n+  }\n+\n+  // Recall-first still holds for a PARTIAL failure: one dead keyword must not\n+  // take down a board that otherwise answered.\n+  let firstQuery = true;\n+  const partialCtx = {\n+    async sleep() {},\n+    async fetchText(url) {\n+      if (firstQuery && url.includes('de-dead')) throw new Error('boom');\n+      firstQuery = false;\n+      return FIXTURE;\n+    },\n+  };\n+  const partial = await occ.fetch({ name: 'OCC', queries: ['dead', 'alive'], max_pages: 1 }, partialCtx);\n+  if (Array.isArray(partial) && partial.length === 2) {\n+    pass('fetch() tolerates one failed keyword when another answers');\n+  } else {\n+    fail(`partial failure = ${JSON.stringify(partial)}`);\n+  }\n+\n+  // ── zero cards: empty search vs. broken scraper ──────────────────────────\n+  // A zero-card parse is ambiguous. Only OCC's own empty-result copy means\n+  // \"no matches\"; a challenge interstitial or a markup change must not be\n+  // laundered into a healthy empty board through an HTTP 200.\n+  const EMPTY_PAGE = '<html><body><h1>No hay empleos que coincidan con tu b&#xFA;squeda</h1></body></html>';\n+  const CHALLENGE_PAGE = '<html><head><title>Just a moment...</title></head><body><div id=\"cf-chl\"></div></body></html>';\n+\n+  if (isEmptyResultPage(EMPTY_PAGE) && !isEmptyResultPage(CHALLENGE_PAGE) && !isEmptyResultPage('')) {\n+    pass('isEmptyResultPage() recognizes OCC empty-result copy and nothing else');\n+  } else {\n+    fail('isEmptyResultPage() misclassified a page');\n+  }\n+\n+  // Accent folding: a copy tweak on \"busqueda\"/\"búsqueda\" must not break it.\n+  if (isEmptyResultPage('No hay empleos que coincidan con tu busqueda')) {\n+    pass('isEmptyResultPage() folds accents');\n+  } else {\n+    fail('isEmptyResultPage() is accent-sensitive');\n+  }\n+\n+  if (isEmptyResultPage('<p>No&nbsp;hay empleos que coincidan con tu b&#xFA;squeda</p>')) {\n+    pass('isEmptyResultPage() decodes entities before matching');\n+  } else {\n+    fail('isEmptyResultPage() missed an entity-encoded empty-result page');\n+  }\n+\n+  const emptyCtx = { async sleep() {}, async fetchText() { return EMPTY_PAGE; } };\n+  const emptyJobs = await occ.fetch({ name: 'OCC', queries: ['nada'], max_pages: 3 }, emptyCtx);\n+  if (Array.isArray(emptyJobs) && emptyJobs.length === 0) {\n+    pass('fetch() returns [] for a genuinely empty search without throwing');\n+  } else {\n+    fail(`empty search = ${JSON.stringify(emptyJobs)}`);\n+  }\n+\n+  // The bug this guards: HTTP 200 + unreadable body used to increment the\n+  // answered counter, so a fully challenged board slipped past the outage guard.\n+  const challengeCtx = { async sleep() {}, async fetchText() { return CHALLENGE_PAGE; } };\n+  let challenged = null;\n+  try {\n+    await occ.fetch({ name: 'OCC', queries: ['a', 'b'], max_pages: 2 }, challengeCtx);\n+  } catch (err) { challenged = err; }\n+  if (challenged && /all \\d+ search request\\(s\\) failed/.test(challenged.message)) {\n+    pass('fetch() throws when every page 1 is a challenge served with HTTP 200');\n+  } else {\n+    fail(`challenge HTML did not throw: ${challenged && challenged.message}`);\n+  }\n+\n+  // One broken keyword alongside a working one still degrades gracefully.\n+  const mixedCtx = {\n+    async sleep() {},\n+    async fetchText(url) { return url.includes('de-roto') ? CHALLENGE_PAGE : FIXTURE; },\n+  };\n+  const mixed = await occ.fetch({ name: 'OCC', queries: ['roto', 'bueno'], max_pages: 1 }, mixedCtx);\n+  if (Array.isArray(mixed) && mixed.length === 2) {\n+    pass('fetch() tolerates one challenged keyword when another parses');\n+  } else {\n+    fail(`mixed challenge/ok = ${JSON.stringify(mixed)}`);\n+  }\n+\n+  // ── queries is required ──────────────────────────────────────────────────\n+  // No DEFAULT_QUERIES: a built-in keyword list would be one user's search\n+  // profile silently applied to everyone else's scan.\n+  for (const badEntry of [{ name: 'OCC' }, { name: 'OCC', queries: [] }, { name: 'OCC', queries: ['  '] }]) {\n+    let threw = null;\n+    try {\n+      await occ.fetch(badEntry, stubCtx);\n+    } catch (err) { threw = err; }\n+    if (threw && /requires a non-empty queries/.test(threw.message)) {\n+      pass(`fetch() rejects ${JSON.stringify(badEntry.queries ?? null)} q",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "docs/SUPPORTED_JOB_BOARDS.md",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "providers/occ.mjs",
+                "status": "added",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "templates/portals.example.yml",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              }
+            ],
+            "files_truncated": false
+          },
+          {
+            "url": "https://github.com/career-ops-hq/career-ops/pull/3839",
+            "title": "fix(providers): radancy stops trusting totalResults, cache-busts JSON, retries every fetch",
+            "body": "## Summary\n\nLive-audited every Radancy (TalentBrew) tenant reachable from this session's `portals.yml` entry plus several found via web search, and found three independent, unrelated problems behind `radancy.mjs`'s `⚠️ truncated ... raise max_jobs/max_pages` warning: one tenant loses real postings to a caching bug, several tenants have a `totalResults` banner that simply overstates what their own search index serves on both transports, and one very large tenant hits a hard pagination-window ceiling at its backend. None of the three is fixed by raising `max_pages`/`max_jobs`, which is exactly the advice the current warning gives every time.\n\n## Problem 1 — a caching bug drops and duplicates postings on Munich Re Group\n\nWalking `careers.munichre.com`'s JSON fragment endpoint end-to-end and recording every `(page, id, title, location, url)` tuple showed the same posting reappearing on a second, distant page with byte-identical content, while a different posting never appeared on any page at all. Reproduced on 9 consecutive full walks with the same pages and the same magnitude every time (not random drift): 5 duplicated ids, always on the same page pairs.\n\nIsolated the cause by testing two independent changes against the same tenant: `Cache-Control: no-cache` + `Pragma: no-cache` request headers made no difference (9/9 runs still broken), but a random per-request query parameter — forcing a cache-key miss — made it 0/9 broken. Re-running the same walk through the `?p=N` HTML transport (the same underlying data, a different route) never showed the problem at all, which further narrows it to a caching layer in front of the JSON route specifically, not the tenant's own data.\n\n## Problem 2 — `totalResults` overstates reality on several tenants, and that's normal for this platform\n\nSeparately, four of nine fully-audited tenants (from a small board to Radancy's own corporate careers site) collected 10-56% fewer unique postings than their `data-total-results` banner claims, with zero duplicate rows anywhere. Re-walking two of them through the `?p=N` HTML transport reproduced the identical shortfall to the exact posting count, proving it isn't a transport bug — the tenant's own search index simply doesn't contain as many retrievable postings as its own counter claims. Cache-busting (the Problem 1 fix) made no difference to this shortfall on any of the affected tenants, confirming it's a separate issue.\n\n`data-total-pages`, unlike `data-total-results`, matched the walk's own natural end (a short or empty final page) in every one of the 9 tenants checked, so it stays a valid bound for the walk itself — only the results counter is untrustworthy.\n\n## Problem 3 — Walgreens hits a hard pagination-window ceiling at exactly 10,000\n\nWalgreens (22,813 claimed postings, the largest tenant checked) was excluded from the count above and audited separately: a full 229-page walk shows pages 1-100 each returning a full 100 rows (10,000 total, no duplicates anywhere), then every page from 101 through 229 returning a clean, structured \"no jobs\" response (`hasJobs: false`, an empty results fragment) rather than an error or a short page. The cutoff lands exactly at offset 10,000 — 100 pages of 100 — the textbook default `max_result_window` ceiling on an Elasticsearch/Solr-style backend (one tenant observed so far, not established across the platform the way `workday.mjs`'s analogous `WORKDAY_OFFSET_CEILING` is). This isn't a caching artifact (a 130-page gap of identical empty responses isn't a stale cache hit) and it isn't recoverable by pagination cleverness on our side, unlike workday's clamp: TalentBrew's JSON fragment API exposes no documented facet-style split to route around it, so the backend simply refuses to serve past that offset no matter how the walk asks.\n\nThis surfaced a real gap while testing the fix live: with the *default* `max_jobs` (2,000), the walk correctly stops there first — page 20, well before the backend's own 10,000 ceiling — and now correctly warns (`truncated at 2,000 of 22,813 jobs`, `stopReason: 'cap'`), because raising `max_jobs` genuinely would recover more, up to 10,000. Only past that point does the *other* behavior apply: with `max_jobs` raised above 10,000, the walk runs to the backend's own empty page at 101 and returns exactly 10,000 with no warning, because past there raising anything no longer helps. Verified both live.\n\n## The fix\n\n- `buildFragmentUrl()` now appends a random `_` query parameter to every JSON fragment request, unique per call. Verified against all 11 live tenants seen in this investigation (including the one that already fails for an unrelated reason) that this changes nothing for a tenant that didn't have the caching problem — page-1 output matched with and without it in every case.\n- The walk now tracks *why* it stopped (`stopReason`, matching the `workday.mjs`/`phenom.mjs` convention already used elsewhere in this file) instead of comparing the accumulated count against `totalResults`. The `raise max_jobs/max_pages` warning now fires only when `max_pages`/`max_jobs` demonstrably cut the walk short of the source's own larger page count — never when the walk ran to the source's own natural end and merely fell short of an inflated results counter, and never on a mid-walk fetch error (which now gets its own distinct, immediate log line instead of failing silently).\n- `resolveMaxJobs()` now clamps a user-supplied `max_jobs` the same way `resolveMaxPages()` already clamps `max_pages` — noticed while testing Walgreens live: `max_pages` was already defended against a garbage config value, `max_jobs` wasn't. Not a resource-safety fix (the page loop was always independently bounded by `max_pages`, so an unclamped `max_jobs` never risked an unbounded walk) — just closing a defensive-coding gap between the two, capped at the true ceiling the JSON transport can ever return (`MAX_PAGES * FRAGMENT_RECORDS_PER_PAGE`).\n- All three fetch call sites (the first JSON fragment req",
+            "body_truncated": true,
+            "state": "closed",
+            "merged": true,
+            "head_sha": "4849244142a41f6c199248fea18ed5a3b69033ae",
+            "base_sha": "2c76ca434555dee6bf6236573225f257bbbdca24",
+            "merge_commit_sha": "4086d4546b16b00d1de7b0b320933a83c7355835",
+            "relation": "cross_reference_not_verified_fix",
+            "files": [
+              {
+                "filename": "tests/providers/radancy.test.mjs",
+                "status": "modified",
+                "patch": "@@ -62,13 +62,18 @@ try {\n \n   // fetch — a mid-scan failure preserves jobs already collected, never\n   // discards earlier pages.\n+  // Non-retryable (a definitive 404, not a transient 5xx/network blip) — this\n+  // test is about partial-page preservation, not about how many times\n+  // fetchTextWithRetry itself attempts a retryable failure.\n   let partialCalls = 0;\n   const partialCtx = {\n     sleep: async () => {},\n     fetchText: async () => {\n       partialCalls++;\n       if (partialCalls === 1) return html; // 2 jobs\n-      throw new Error('network blip on page 2');\n+      const err = new Error('network blip on page 2');\n+      err.status = 404;\n+      throw err;\n     },\n   };\n   const partialJobs = await radancy.fetch({ name: 'Munich Re', api: 'https://careers.munichre.com/en/search-jobs' }, partialCtx);\n@@ -325,6 +330,358 @@ try {\n   } else {\n     fail(`radancy truncation warning: returned ${overshootJobs?.length}, warned \"${warned}\" (expected 4 / \"4\")`);\n   }\n+\n+  // ══════════════════════════════════════════════════════════════════════════\n+  // ctx.maxPages / verify-portals probe handling (ADDING_A_PROVIDER.md's\n+  // ctx.maxPages convention — SHOULD cap the walk, MUST propagate a\n+  // ctx.fetch* rejection unwrapped instead of swallowing it)\n+  // ══════════════════════════════════════════════════════════════════════════\n+\n+  // A non-string json.results on page 2+ must throw descriptively, not be\n+  // silently coerced to [] and read as a natural end — a real \"no more jobs\"\n+  // page is still a STRING (confirmed live: it can parse to zero rows\n+  // without being empty), so anything else is a malformed response.\n+  const malformedWarnings = [];\n+  const malformedCtx = {\n+    sleep: async () => {},\n+    fetchJson: async (u) => {\n+      const page = Number(new URL(u).searchParams.get('CurrentPage'));\n+      if (page === 2) return { results: { unexpected: 'shape' }, hasJobs: true };\n+      return {\n+        results: `<section data-total-results=\"500\" data-total-pages=\"5\">${rowFor(page * 10 + 1)}</section>`,\n+        hasJobs: true,\n+      };\n+    },\n+    fetchText: async () => { throw new Error('unused'); },\n+  };\n+  console.error = (m) => malformedWarnings.push(String(m));\n+  let malformedJobs;\n+  try {\n+    malformedJobs = await radancy.fetch({ name: 'MalformedResults', careers_url: 'https://t.example/search-jobs' }, malformedCtx);\n+  } finally {\n+    console.error = realConsoleError;\n+  }\n+  if (malformedJobs.length === 1 && malformedWarnings.some((m) => m.includes('unexpected fragment response shape'))) {\n+    pass('radancy.fetch() throws on a non-string json.results instead of reading it as a natural end');\n+  } else {\n+    fail(`radancy.fetch() malformed-results handling: jobs=${malformedJobs?.length} warnings=${JSON.stringify(malformedWarnings)}`);\n+  }\n+\n+  // ctx.maxPages caps the walk (SHOULD) — a source claiming far more pages\n+  // than the probe budget must not be walked past that budget, and no\n+  // \"raise max_pages\" advice fires for a limit that was the probe's own,\n+  // not the tenant's real config.\n+  let probeCapPage = 0;\n+  const probeCapWarnings = [];\n+  const probeCapCtx = {\n+    maxPages: 1,\n+    sleep: async () => {},\n+    fetchJson: async () => {\n+      probeCapPage++;\n+      return {\n+        results: `<section data-total-results=\"500\" data-total-pages=\"5\">${rowFor(probeCapPage * 10 + 1)}</section>`,\n+        hasJobs: true,\n+      };\n+    },\n+    fetchText: async () => { throw new Error('unused'); },\n+  };\n+  console.error = (m) => probeCapWarnings.push(String(m));\n+  let probeCapJobs;\n+  try {\n+    probeCapJobs = await radancy.fetch({ name: 'ProbeCapped', careers_url: 'https://s.example/search-jobs' }, probeCapCtx);\n+  } finally {\n+    console.error = realConsoleError;\n+  }\n+  if (probeCapJobs.length === 1 && probeCapPage === 1 && probeCapWarnings.length === 0) {\n+    pass('radancy.fetch() caps the walk to ctx.maxPages while probing, with no cap warning');\n+  } else {\n+    fail(`radancy.fetch() probe-cap handling: jobs=${probeCapJobs?.length} pages=${probeCapPage} warnings=${JSON.stringify(probeCapWarnings)}`);\n+  }\n+\n+  // A ctx.fetch* rejection while probing — the shape of verify-portals.mjs's\n+  // budget-exhaustion sentinel — must propagate unwrapped, not be absorbed\n+  // into a normal stopReason/partial-result path: a swallowed sentinel reads\n+  // to verify-portals as \"board is down\" instead of \"live, partial\".\n+  class FakeProbeBudgetReached extends Error {}\n+  const probeErrorCtx = {\n+    maxPages: 3,\n+    sleep: async () => {},\n+    fetchJson: async (u) => {\n+      const page = Number(new URL(u).searchParams.get('CurrentPage'));\n+      if (page === 2) throw new FakeProbeBudgetReached('budget exhausted');\n+      return {\n+        results: `<section data-total-results=\"500\" data-total-pages=\"5\">${rowFor(page * 10 + 1)}</section>`,\n+        hasJobs: true,\n+      };\n+    },\n+    fetchText: async () => { throw new Error('unused'); },\n+  };\n+  let probeErrorCaught = null;\n+  try {\n+    await radancy.fetch({ name: 'ProbeError', careers_url: 'https://r.example/search-jobs' }, probeErrorCtx);\n+  } catch (err) {\n+    probeErrorCaught = err;\n+  }\n+  if (probeErrorCaught instanceof FakeProbeBudgetReached) {\n+    pass('radancy.fetch() propagates a ctx.fetch* rejection unwrapped while probing (JSON transport)');\n+  } else {\n+    fail(`radancy.fetch() probe-error propagation (JSON): ${probeErrorCaught?.constructor?.name || probeErrorCaught}`);\n+  }\n+\n+  // Same propagation requirement on the HTML fallback transport.\n+  const probeErrorHtmlCtx = {\n+    maxPages: 3,\n+    sleep: async () => {},\n+    fetchText: async (u) => {\n+      const p = Number(new URL(u).searchParams.get('p'));\n+      if (p === 2) throw new FakeProbeBudgetReached('budget exhausted');\n+      return html; // page 1: 2 jobs, proves succeededOnce would otherwise apply\n+    },\n+  };\n+  let probeErrorHtmlCaught = null;\n+  try {\n+    await radancy.fetch({ name: 'ProbeErrorHtml', api: 'https://qh.example/search-jobs' }, probeErrorHtmlCtx);\n+  } catch (err) {\n+    probeErrorHtmlCaught = err;\n+  }\n+  if (probeErrorHtmlCaught instanceof FakeProbeBudgetReached) {\n+    pass('radancy.fetch() propagates a ctx.fetch* rejection unwrapped while probing (HTML transport)');\n+  } else {\n+    fail(`radancy.fetch() probe-error propagation (HTML): ${probeErrorHtmlCaught?.constructor?.name || probeErrorHtmlCaught}`);\n+  }\n+\n+  // ══════════════════════════════════════════════════════════════════════════\n+  // Cache-buster + total-mismatch handling (added after a live investigation\n+  // of 11 TalentBrew tenants — see the transport note at the top of the file)\n+  // ══════════════════════════════════════════════════════════════════════════\n+\n+  // jobs.length >= maxJobs alone is not proof max_jobs cut anything short —\n+  // a tenant whose real total exactly fills the page(s) already walked must\n+  // not false-positive into a 'cap' warning just because the count happens\n+  // to land exactly on max_jobs.\n+  const exactWarnings = [];\n+  const exactCtx = {\n+    sleep: async () => {},\n+    fetchJson: async () => ({\n+      results: `<section data-total-results=\"3\" data-total-pages=\"1\">${rowFor(1)}${rowFor(2)}${rowFor(3)}</section>`,\n+      hasJobs: true,\n+    }),\n+    fetchText: async () => { throw new Error('unused'); },\n+  };\n+  console.error = (m) => exactWarnings.push(String(m));\n+  let exactJobs;\n+  try {\n+    exactJobs = await radancy.fetch({ name: 'ExactFit', careers_url: 'https://u.example/search-jobs', max_jobs: 3 }, exactCtx);\n+  } finally {\n+    console.error = realConsoleError;\n+  }\n+  if (exactJobs.length === 3 && exactWarnings.length === 0) {\n+    pass('radancy.fetch() does not warn when max_jobs exactly matches a naturally-complete result');\n+  } else {\n+    fail(`radancy.fetch() exact-max_jobs handling: jobs=${exactJobs?.length} warnings=${JSON.stringify(exactWarnings)}`);\n+  }\n+\n+  // Every fetch call — both JSON fragment pages and the HTML fallback — must\n+  // refuse a redirect (#1440's mandatory SSRF guard, every peer provider\n+  // sets it; flagged as a pre-existing gap on radancy.mjs specifically in\n+  // review). A 3xx is still blocked at DNS resolution by the central\n+  // _ip-guard.mjs, so this is defense-in-depth, not a live bypass — but the\n+  // convention is per-provider, so it belongs here too.\n+  const redirectCallsJson = [];\n+  const redirectJsonCtx = {\n+    sleep: async () => {},\n+    fetchJson: async (u, o) => {\n+      redirectCallsJson.push(o?.redirect);\n+      const page = Number(new URL(u).searchParams.get('CurrentPage'));\n+      return page === 1\n+        ? { results: `<section data-total-results=\"4\" data-total-pages=\"2\">${rowFor(1)}${rowFor(2)}</section>`, hasJobs: true }\n+        : { results: `<section data-total-results=\"4\" data-total-pages=\"2\">${rowFor(3)}</section>`, hasJobs: true };\n+    },\n+    fetchText: async () => { throw new Error('unused'); },\n+  };\n+  await radancy.fetch({ name: 'RedirectCheckJson', careers_url: 'https://redirect-json.example/search-jobs' }, redirectJsonCtx);\n+  if (redirectCallsJson.length >= 2 && redirectCallsJson.every((r) => r === 'error')) {\n+    pass('radancy.fetch() sets redirect:\"error\" on every JSON fragment request');\n+  } else {\n+    fail(`radancy.fetch() JSON redirect option: ${JSON.stringify(redirectCallsJson)}`);\n+  }\n+\n+  const redirectCallsHtml = [];\n+  const redirectHtmlCtx = {\n+    sleep: async () => {},\n+    fetchText: async (u, o) => {\n+      redirectCallsHtml.push(o?.redirect);\n+      return redirectCallsHtml.length === 1 ? html : '<html></html>';\n+    },\n+  };\n+  await radancy.fetch({ name: 'RedirectCheckHtml', careers_url: 'https://redirect-html.example/search-jobs' }, redirectHtmlCtx);\n+  if (redirectCallsHtml.length >= 2 && redirectCallsHtml.every((r) => r === 'error')) {\n+    pass('radancy.fetch() sets redirect:\"error\" on every HTML ?p=N request');\n+  } else {\n+    fail(`radancy.fetch() HTML redirect option: ${JSON.stringify(redirectCallsHtml)}`);\n+  }\n+\n+  // max_jobs must be clamped the same way max_pages already is — a garbage\n+  // config value shouldn't be trusted just because it's a positive integer.\n+  // The clamp lands at MAX_PAGES * 100 (the JSON transport's true ceiling,\n+  // the more generous of the two transports), which happens to be\n+  // unobservable through fetch() itself (max_pages already produces the same\n+  // practical bound), so this is exercised directly.\n+  const { resolveMaxJobs } = radancyModule;\n+  if (resolveMaxJobs({ max_jobs: 999999999 }) === 20000) {\n+    pass('radancy.resolveMaxJobs() clamps an absurd max_jobs to the true JSON-transport ceiling');\n+  } else {\n+    fail(`radancy.resolveMaxJobs() did not clamp: ${resolveMaxJobs({ max_jobs: 999999999 })}`);\n+  }\n+  if (resolveMaxJobs({}) === 2000) {\n+    pass('radancy.resolveMaxJobs() defaults to 2000 when max_jobs is unset');\n+  } else {\n+    fail(`radancy.resolveMaxJobs() default wrong: ${resolveMaxJobs({})}`);\n+  }\n+\n+  // The cache-buster must vary per call — a caching layer keying on the URL\n+  // still produces a stable, wrong result if the extra parameter is itself\n+  // deterministic (e.g. derived from `page`, which repeats across fetch()\n+  // calls for the same page number).\n+  const cbUrl1 = new URL(buildFragmentUrl('https://x.example/search-jobs', 1));\n+  const cbUrl2 = new URL(buildFragmentUrl('https://x.example/search-jobs', 1));\n+  if (cbUrl1.searchParams.get('_') && cbUrl1.searchParams.get('_') !== cbUrl2.searchParams.get('_')) {\n+    pass('radancy.buildFragmentUrl() appends a per-call random cache-buster');\n+  } else {\n+    fail(`radancy.buildFragmentUrl() cache-buster missing or not unique: ${cbUrl1.searchParams.get('_')} / ${cbUrl2.searchParams.get('_')}`);\n+  }\n+\n+  // A source total overstating what pagination actually serves is routine\n+  // (verified live on 4 of 9 tenants) and must never fire the \"raise\n+  // max_pages\" warning — that advice cannot fix a source-side count, and\n+  // firing it here woul",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "providers/radancy.mjs",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              }
+            ],
+            "files_truncated": false
+          },
+          {
+            "url": "https://github.com/career-ops-hq/career-ops/pull/3117",
+            "title": "chore: release main",
+            "body": ":robot: I have created a release *beep* *boop*\n---\n\n\n<details><summary>career-ops: 1.29.0</summary>\n\n## [1.29.0](https://github.com/santifer/career-ops/compare/career-ops-v1.28.0...career-ops-v1.29.0) (2026-08-25)\n\n\n### Features\n\n* **anti-fabrication:** tier the Source-of-Truth boundary and add story-provenance-check ([#2947](https://github.com/santifer/career-ops/issues/2947)) ([498dd11](https://github.com/santifer/career-ops/commit/498dd112eb6fa35333aa6c00cef3f8cbce6944d0))\n* **contacts:** linkedin-join.mjs — warm-intro finder from a LinkedIn connections export ([ba1a3dd](https://github.com/santifer/career-ops/commit/ba1a3dd0b6630198b86bedad4ff642d88dc69ecb))\n* **cv:** optional url support for projects in HTML and LaTeX ([93e256c](https://github.com/santifer/career-ops/commit/93e256c416ced0127f22c8c4ae0302a6d7724a6f))\n* **detect-reposts:** skip multi-employer aggregator boards, and say why ([d6ac988](https://github.com/santifer/career-ops/commit/d6ac988c6655c64f2fcb1170a4561640562b624c))\n* **pdf:** declare CV section order in config/profile.yml ([#2533](https://github.com/santifer/career-ops/issues/2533)) ([c90b139](https://github.com/santifer/career-ops/commit/c90b13975c7e0ff3c724744608652929678e88a0))\n* **providers:** add jobbankca, Canada's federal Job Bank ([7e9feb4](https://github.com/santifer/career-ops/commit/7e9feb4a43b26e0b63aea66425195b7f85062dbd))\n* **providers:** job.description for recruitee, ashby, and opt-in smartrecruiters ([#3175](https://github.com/santifer/career-ops/issues/3175)) ([83d3ac6](https://github.com/santifer/career-ops/commit/83d3ac6afbd945cd101b319f4af3b885f445134d))\n* **providers:** mycareersfuture, Singapore's national job bank ([#230](https://github.com/santifer/career-ops/issues/230)) ([a726f53](https://github.com/santifer/career-ops/commit/a726f538b17f0d6f237295f5429be2fab3f4365d))\n* **scan:** add Hacker News scanner with optional AI enhancement ([f93b6e9](https://github.com/santifer/career-ops/commit/f93b6e9b3baf4122475e1492850591c917951eda))\n* **scan:** opt-in anchored keyword matching ([82be449](https://github.com/santifer/career-ops/commit/82be44956a41dcc7c406073902dd2ddcdc0338c8))\n* **verify-pipeline:** flag a malformed follow-ups.md instead of reading it as empty ([#2971](https://github.com/santifer/career-ops/issues/2971)) ([a5ffae2](https://github.com/santifer/career-ops/commit/a5ffae2accf300366df24cd9e853475f3d9bf22b))\n* **web:** restrict the local dashboard API to same-origin and loopback ([b3974e6](https://github.com/santifer/career-ops/commit/b3974e6104d83c2714fd0d071898a7c7b9f68726))\n\n\n### Bug Fixes\n\n* **add-entry:** delegate flag validation to shared validateFlags ([3507239](https://github.com/santifer/career-ops/commit/3507239f8fb495025c5d0d7abdcd5b17f7e57490))\n* **agent-inbox:** seed the queue under the lock, not before it ([e585853](https://github.com/santifer/career-ops/commit/e585853f60db86abd9802a53e6f3c10862e038e6))\n* **ashby:** stop retrying a permanent failure, and honour a clamped Retry-After ([#3072](https://github.com/santifer/career-ops/issues/3072)) ([27fcd48](https://github.com/santifer/career-ops/commit/27fcd48e60a3cf34edd97742e0656b2534c2b5af))\n* **ashby:** surface remote work model in the location string ([878e068](https://github.com/santifer/career-ops/commit/878e068bd1ba7fe8e0f2ca74909fc89096ca3f48))\n* **batch:** keep JD word count machine-readable under FORCE_COLOR ([bf9a6ae](https://github.com/santifer/career-ops/commit/bf9a6aec0713cfe067bd913355637924114006dc))\n* **classify-tier:** Associate + an academic rank is not entry-level ([#3178](https://github.com/santifer/career-ops/issues/3178)) ([ef347fb](https://github.com/santifer/career-ops/commit/ef347fb26c636a4d7dd84727744f34356311217e))\n* **cli:** close the missing-operand hole for value-taking flags ([#3087](https://github.com/santifer/career-ops/issues/3087)) ([201aeca](https://github.com/santifer/career-ops/commit/201aeca286784829062430e680089268e66d29e4))\n* **cli:** validate browser-extract flags and honour both value forms ([cfe50c3](https://github.com/santifer/career-ops/commit/cfe50c3458377f60754d52f684f25fb8f1a650f4))\n* **cli:** validate fix-slugs flags ([c4a0cc2](https://github.com/santifer/career-ops/commit/c4a0cc22306599dd7f238d6e3cf325f332011f12))\n* **cv:** honor Korean profile font theme ([70a062c](https://github.com/santifer/career-ops/commit/70a062cbfc1abe810b747773778feada524315de))\n* **dates:** seven more today-gates resolve in UTC ([2e4458e](https://github.com/santifer/career-ops/commit/2e4458ed8e067fb8af53f167e2324e25ad284c74))\n* **deps:** update web npm dependencies (major) ([1207eae](https://github.com/santifer/career-ops/commit/1207eae4b5799cb92602c99737fd2f0cee1319c9))\n* **detect-reposts:** concurrent openings were reported as reposts ([18ff33d](https://github.com/santifer/career-ops/commit/18ff33d92ad5e2a2b9a9af90b2018977fb845548))\n* **followup-cadence:** validate CLI flags via the shared helper ([#3196](https://github.com/santifer/career-ops/issues/3196)) ([ec800a2](https://github.com/santifer/career-ops/commit/ec800a2c7539ee394b89eb6d6434a3f2f61de84a))\n* **greenhouse:** populate job.description from the boards API content field ([#3175](https://github.com/santifer/career-ops/issues/3175)) ([f1c1c65](https://github.com/santifer/career-ops/commit/f1c1c6540f7f510bf8e7bce9ae9e9f00e75567fe))\n* **liveness:** a dead third-party host must not poison the whole verdict ([1389e6c](https://github.com/santifer/career-ops/commit/1389e6cb6186facf2fc847666d9ae85d2723d568))\n* **liveness:** add a LinkedIn rung so LinkedIn postings get a real verdict ([#3179](https://github.com/santifer/career-ops/issues/3179)) ([255bfc9](https://github.com/santifer/career-ops/commit/255bfc940479574da5ab363665b6a64a8dfdeadd))\n* **locks:** one recovery judgment, imported by all three copies ([638fdc4](https://github.com/santifer/career-ops/commit/638fdc4edf2dbce2e6e59c998520ce5962a23d47))\n* **locks:** share the waiting half of the protocol with the three lock copies ([39f87",
+            "body_truncated": true,
+            "state": "closed",
+            "merged": true,
+            "head_sha": "f3fcd8f0ec9975891f319e81d1bc1842bdc24f07",
+            "base_sha": "ba1a3dd0b6630198b86bedad4ff642d88dc69ecb",
+            "merge_commit_sha": "5e750d74818e55f69799884d4d652dd30ff266ee",
+            "relation": "cross_reference_not_verified_fix",
+            "files": [
+              {
+                "filename": ".claude-plugin/marketplace.json",
+                "status": "modified",
+                "patch": "@@ -2,7 +2,7 @@\n   \"name\": \"career-ops\",\n   \"metadata\": {\n     \"description\": \"AI job search command center — evaluate offers, tailor CVs, scan portals, track applications\",\n-    \"version\": \"1.28.0\"\n+    \"version\": \"1.29.0\"\n   },\n   \"owner\": {\n     \"name\": \"santifer\",\n@@ -14,7 +14,7 @@\n       \"source\": \"./\",\n       \"description\": \"AI job search pipeline — evaluate offers, tailor CVs, scan portals, track applications\",\n       \"category\": \"productivity\",\n-      \"version\": \"1.28.0\"\n+      \"version\": \"1.29.0\"\n     }\n   ]\n }",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": ".claude-plugin/plugin.json",
+                "status": "modified",
+                "patch": "@@ -1,6 +1,6 @@\n {\n   \"name\": \"career-ops\",\n-  \"version\": \"1.28.0\",\n+  \"version\": \"1.29.0\",\n   \"description\": \"AI job search command center — evaluate offers, tailor CVs, scan portals, track applications\",\n   \"author\": {\n     \"name\": \"santifer\",",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": ".github/plugin/plugin.json",
+                "status": "modified",
+                "patch": "@@ -1,6 +1,6 @@\n {\n   \"name\": \"career-ops\",\n-  \"version\": \"1.28.0\",\n+  \"version\": \"1.29.0\",\n   \"description\": \"AI job search command center — evaluate offers, tailor CVs, scan portals, track applications\",\n   \"author\": {\n     \"name\": \"santifer\",",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": ".release-please-manifest.json",
+                "status": "modified",
+                "patch": "@@ -1,4 +1,4 @@\n {\n-  \".\": \"1.28.0\",\n-  \"web\": \"0.7.1\"\n+  \".\": \"1.29.0\",\n+  \"web\": \"0.8.0\"\n }\n\\ No newline at end of file",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "CHANGELOG.md",
+                "status": "modified",
+                "patch": "@@ -1,5 +1,78 @@\n # Changelog\n \n+## [1.29.0](https://github.com/santifer/career-ops/compare/career-ops-v1.28.0...career-ops-v1.29.0) (2026-08-25)\n+\n+\n+### Features\n+\n+* **anti-fabrication:** tier the Source-of-Truth boundary and add story-provenance-check ([#2947](https://github.com/santifer/career-ops/issues/2947)) ([498dd11](https://github.com/santifer/career-ops/commit/498dd112eb6fa35333aa6c00cef3f8cbce6944d0))\n+* **contacts:** linkedin-join.mjs — warm-intro finder from a LinkedIn connections export ([ba1a3dd](https://github.com/santifer/career-ops/commit/ba1a3dd0b6630198b86bedad4ff642d88dc69ecb))\n+* **cv:** optional url support for projects in HTML and LaTeX ([93e256c](https://github.com/santifer/career-ops/commit/93e256c416ced0127f22c8c4ae0302a6d7724a6f))\n+* **detect-reposts:** skip multi-employer aggregator boards, and say why ([d6ac988](https://github.com/santifer/career-ops/commit/d6ac988c6655c64f2fcb1170a4561640562b624c))\n+* **pdf:** declare CV section order in config/profile.yml ([#2533](https://github.com/santifer/career-ops/issues/2533)) ([c90b139](https://github.com/santifer/career-ops/commit/c90b13975c7e0ff3c724744608652929678e88a0))\n+* **providers:** add jobbankca, Canada's federal Job Bank ([7e9feb4](https://github.com/santifer/career-ops/commit/7e9feb4a43b26e0b63aea66425195b7f85062dbd))\n+* **providers:** job.description for recruitee, ashby, and opt-in smartrecruiters ([#3175](https://github.com/santifer/career-ops/issues/3175)) ([83d3ac6](https://github.com/santifer/career-ops/commit/83d3ac6afbd945cd101b319f4af3b885f445134d))\n+* **providers:** mycareersfuture, Singapore's national job bank ([#230](https://github.com/santifer/career-ops/issues/230)) ([a726f53](https://github.com/santifer/career-ops/commit/a726f538b17f0d6f237295f5429be2fab3f4365d))\n+* **scan:** add Hacker News scanner with optional AI enhancement ([f93b6e9](https://github.com/santifer/career-ops/commit/f93b6e9b3baf4122475e1492850591c917951eda))\n+* **scan:** opt-in anchored keyword matching ([82be449](https://github.com/santifer/career-ops/commit/82be44956a41dcc7c406073902dd2ddcdc0338c8))\n+* **verify-pipeline:** flag a malformed follow-ups.md instead of reading it as empty ([#2971](https://github.com/santifer/career-ops/issues/2971)) ([a5ffae2](https://github.com/santifer/career-ops/commit/a5ffae2accf300366df24cd9e853475f3d9bf22b))\n+* **web:** restrict the local dashboard API to same-origin and loopback ([b3974e6](https://github.com/santifer/career-ops/commit/b3974e6104d83c2714fd0d071898a7c7b9f68726))\n+\n+\n+### Bug Fixes\n+\n+* **add-entry:** delegate flag validation to shared validateFlags ([3507239](https://github.com/santifer/career-ops/commit/3507239f8fb495025c5d0d7abdcd5b17f7e57490))\n+* **agent-inbox:** seed the queue under the lock, not before it ([e585853](https://github.com/santifer/career-ops/commit/e585853f60db86abd9802a53e6f3c10862e038e6))\n+* **ashby:** stop retrying a permanent failure, and honour a clamped Retry-After ([#3072](https://github.com/santifer/career-ops/issues/3072)) ([27fcd48](https://github.com/santifer/career-ops/commit/27fcd48e60a3cf34edd97742e0656b2534c2b5af))\n+* **ashby:** surface remote work model in the location string ([878e068](https://github.com/santifer/career-ops/commit/878e068bd1ba7fe8e0f2ca74909fc89096ca3f48))\n+* **batch:** keep JD word count machine-readable under FORCE_COLOR ([bf9a6ae](https://github.com/santifer/career-ops/commit/bf9a6aec0713cfe067bd913355637924114006dc))\n+* **classify-tier:** Associate + an academic rank is not entry-level ([#3178](https://github.com/santifer/career-ops/issues/3178)) ([ef347fb](https://github.com/santifer/career-ops/commit/ef347fb26c636a4d7dd84727744f34356311217e))\n+* **cli:** close the missing-operand hole for value-taking flags ([#3087](https://github.com/santifer/career-ops/issues/3087)) ([201aeca](https://github.com/santifer/career-ops/commit/201aeca286784829062430e680089268e66d29e4))\n+* **cli:** validate browser-extract flags and honour both value forms ([cfe50c3](https://github.com/santifer/career-ops/commit/cfe50c3458377f60754d52f684f25fb8f1a650f4))\n+* **cli:** validate fix-slugs flags ([c4a0cc2](https://github.com/santifer/career-ops/commit/c4a0cc22306599dd7f238d6e3cf325f332011f12))\n+* **cv:** honor Korean profile font theme ([70a062c](https://github.com/santifer/career-ops/commit/70a062cbfc1abe810b747773778feada524315de))\n+* **dates:** seven more today-gates resolve in UTC ([2e4458e](https://github.com/santifer/career-ops/commit/2e4458ed8e067fb8af53f167e2324e25ad284c74))\n+* **deps:** update web npm dependencies (major) ([1207eae](https://github.com/santifer/career-ops/commit/1207eae4b5799cb92602c99737fd2f0cee1319c9))\n+* **detect-reposts:** concurrent openings were reported as reposts ([18ff33d](https://github.com/santifer/career-ops/commit/18ff33d92ad5e2a2b9a9af90b2018977fb845548))\n+* **followup-cadence:** validate CLI flags via the shared helper ([#3196](https://github.com/santifer/career-ops/issues/3196)) ([ec800a2](https://github.com/santifer/career-ops/commit/ec800a2c7539ee394b89eb6d6434a3f2f61de84a))\n+* **greenhouse:** populate job.description from the boards API content field ([#3175](https://github.com/santifer/career-ops/issues/3175)) ([f1c1c65](https://github.com/santifer/career-ops/commit/f1c1c6540f7f510bf8e7bce9ae9e9f00e75567fe))\n+* **liveness:** a dead third-party host must not poison the whole verdict ([1389e6c](https://github.com/santifer/career-ops/commit/1389e6cb6186facf2fc847666d9ae85d2723d568))\n+* **liveness:** add a LinkedIn rung so LinkedIn postings get a real verdict ([#3179](https://github.com/santifer/career-ops/issues/3179)) ([255bfc9](https://github.com/santifer/career-ops/commit/255bfc940479574da5ab363665b6a64a8dfdeadd))\n+* **locks:** one recovery judgment, imported by all three copies ([638fdc4](https://github.com/santifer/career-ops/commit/638fdc4edf2dbce2e6e59c998520ce5962a23d47))\n+* **locks:** share the waiting half of the protocol with the three lock copies ([39f87cd](https://github.com/santifer/career-ops/commit/39f87cd7ad40825649ef930e2103911b88407f51))\n+* **pdf:** name both sides when the lexical containment check fires ([#3162](https://github.com/santifer/career-ops/issues/3162)) ([98cc650](https://github.com/santifer/career-ops/commit/98cc6501e739d992e83436b366020cebc1592819))\n+* **pdf:** name canonicalization failure separately from a real workspace escape ([e4a21ba](https://github.com/santifer/career-ops/commit/e4a21ba91c2dbbd96f01722b516a120cc7d56df2))\n+* **pdf:** stop the batch-evaluate fixture leaking its tracker env ([#3162](https://github.com/santifer/career-ops/issues/3162)) ([328fd38](https://github.com/santifer/career-ops/commit/328fd387df5b7f8f9ede17562c2dd7d932db7247))\n+* **pipeline-lock:** a vanished lock is not a lock you may delete ([680419f](https://github.com/santifer/career-ops/commit/680419f9d5316c0b8ec07f35fecfaa6c21b73e2b))\n+* **pipeline-lock:** carry the judged directory's identity to the rm ([7ada146](https://github.com/santifer/career-ops/commit/7ada14663a2e91d9cd927120f9f6e23e14df141f))\n+* **plugins:** discover a plugin directory that is symlinked into a plugin root ([b9fe775](https://github.com/santifer/career-ops/commit/b9fe7758af5e75b104be2c82d070e60f482f1dde))\n+* **portals.example:** name the support ROLE, not the whole domain ([d57a243](https://github.com/santifer/career-ops/commit/d57a24371113ef41d5caaf15b58490c84d7a1a44))\n+* **providers/lever:** fold categories.allLocations into location ([e3260d8](https://github.com/santifer/career-ops/commit/e3260d8a4aeca5cae8d486d1f3dbd61a0a583a1f))\n+* **providers:** retire echojobs, feed is gone behind bot protection ([2c42733](https://github.com/santifer/career-ops/commit/2c42733852db7cf6e779547e6b10df9bb7a3e7fc))\n+* **providers:** validate resolved addresses before connecting (DNS rebinding guard) ([#3096](https://github.com/santifer/career-ops/issues/3096)) ([d8d4d94](https://github.com/santifer/career-ops/commit/d8d4d94a550d18aea45c137a3afbd6475586b8d6))\n+* **rename-sync:** migrate 5 vulnerable call sites to renameSyncWithRetry ([#3046](https://github.com/santifer/career-ops/issues/3046)) ([213c281](https://github.com/santifer/career-ops/commit/213c2815a53560cc9764295c3a298a4e53d7f7fa))\n+* **salary-gap:** treat a period as thousands grouping, not a decimal point ([#3174](https://github.com/santifer/career-ops/issues/3174)) ([b8e5bcb](https://github.com/santifer/career-ops/commit/b8e5bcb3d81ae68b3dd8055e71c2c248ebd21867))\n+* **set-status:** resolve --report links from the Notes cell on customized layouts ([#3075](https://github.com/santifer/career-ops/issues/3075)) ([ae70a41](https://github.com/santifer/career-ops/commit/ae70a410bc77552b6a52ad15ab1ecb78f41f2fa3))\n+* **templates:** extend profile font_family override to ja and zh blocks ([5291cc7](https://github.com/santifer/career-ops/commit/5291cc79755caf249a73313b949b6763ef16e260))\n+* **templates:** keep a project's tech line with the description above it ([676efcd](https://github.com/santifer/career-ops/commit/676efcd32a26aa83d635098608851b0b2c986945))\n+* **tests:** assert flag echo by substring, not by unescaped RegExp ([6c2220f](https://github.com/santifer/career-ops/commit/6c2220fc6114cba3df74e9f1cb743afe60fef833))\n+* **tests:** assert the flag echo with includes instead of an unescaped RegExp ([743622d](https://github.com/santifer/career-ops/commit/743622d382c415761172ec0c5b304a62bf3ae70c))\n+* **tests:** guard the web/ mirror import behind existsSync ([e09e3cd](https://github.com/santifer/career-ops/commit/e09e3cd5cc98b42dd6040bfa7731b308cc4c6e8e))\n+* **tests:** keep the end of a failing script's output, not just the head ([#3035](https://github.com/santifer/career-ops/issues/3035)) ([a0f4622](https://github.com/santifer/career-ops/commit/a0f46223372a01730b74e16e7c0f89c26d1c41ea))\n+* **tests:** make the suite symlink-aware for externalized user layers ([7d97d14](https://github.com/santifer/career-ops/commit/7d97d147da0c0cc542a50dcbe174d57d71d196be))\n+* **update:** refuse non-canonical paths in the local declaration file ([764f20f](https://github.com/santifer/career-ops/commit/764f20f87df9a8c413b74d82626cc4c9c83209d6))\n+* **updater:** parse the SYSTEM_PATHS array instead of scraping it with a regex ([#3099](https://github.com/santifer/career-ops/issues/3099)) ([61f8850](https://github.com/santifer/career-ops/commit/61f8850d14e828567a3cc7f7a665e9e440c4eed0))\n+* **updater:** settle same-version SHA mismatch on tree content, not SHAs ([b00619d](https://github.com/santifer/career-ops/commit/b00619d6b562879f44798e9fa70cf67ecd1a696f))\n+* **update:** stop misreading upstream's own content as a local edit ([#3094](https://github.com/santifer/career-ops/issues/3094)) ([50c5400](https://github.com/santifer/career-ops/commit/50c54008c078b339e4da4f4427b5a253e28c95a1))\n+* **verify-portals:** decode the HTML entities a board page serves in its",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "VERSION",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "package.json",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "scaffolder/package.json",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "web/CHANGELOG.md",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "web/package-lock.json",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "web/package.json",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              }
+            ],
+            "files_truncated": false
+          }
+        ]
+      }
+    },
+    {
+      "id": 292245219,
+      "title": "Uninstalling ohmyzsh: must abort on invalid password",
+      "url": "https://github.com/ohmyzsh/ohmyzsh/issues/6581",
+      "repo": "ohmyzsh/ohmyzsh",
+      "extraction": {
+        "id": 292245219,
+        "issue_kind": "bug",
+        "symptom": "卸载时输入错误密码导致切回原 shell 失败，但程序仍显示卸载完成，且再次卸载找不到脚本。",
+        "root_cause": null,
+        "root_cause_category": "退出码与错误输出",
+        "environment": [
+          "uninstall_oh_my_zsh",
+          "切回 bash 时 chsh 要求密码",
+          "用户输入错误密码"
+        ],
+        "evidence_quote": "Because of this, the uninstall was only partially successful, however the switch back to original shell failed.",
+        "test_ideas": [
+          "在临时 HOME 和模拟 chsh 的环境中执行卸载，让 chsh 返回认证失败，检查退出码和输出是否准确报告未完成的 shell 切换。",
+          "记录模拟认证失败前后的配置与卸载文件状态，验证部分完成状态有明确提示，并可按提示恢复或重试。",
+          "让模拟 chsh 成功，验证正常卸载的完成提示与退出码。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": "gpt-6.1-sol",
+          "usage": {
+            "input_tokens": 20088,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1373,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0fd44-709d-72f2-8588-d71561264edb"
+        }
+      },
+      "pr_evidence": {
+        "fetched_at": "2026-10-02T15:47:43.199140+00:00",
+        "timeline_may_be_truncated": false,
+        "pulls_truncated": false,
+        "pulls": [
+          {
+            "url": "https://github.com/ohmyzsh/ohmyzsh/pull/10357",
+            "title": "Fix: abort uninstall when unable to change shell",
+            "body": "## Standards checklist:\r\n\r\n<!-- Fill with an x the ones that apply. Example: [x] -->\r\n\r\n- [X] The PR title is descriptive.\r\n- [X] The PR doesn't replicate another PR which is already open.\r\n- [X] I have read the contribution guide and followed all the instructions.\r\n- [X] The code follows the code style guide detailed in the wiki.\r\n- [X] The code is mine or it's from somewhere with an MIT-compatible license.\r\n- [X] The code is efficient, to the best of my ability, and does not waste computer resources.\r\n- [X] The code is stable and I have tested it myself, to the best of my abilities.\r\n\r\n## Changes:\r\n\r\nFixes https://github.com/ohmyzsh/ohmyzsh/issues/6581: when the system is unable to revert back to the previous shell, the uninstaller aborts the uninstall process.\r\n\r\n",
+            "body_truncated": false,
+            "state": "closed",
+            "merged": true,
+            "head_sha": "f296bbfca4a060708673ec4b494648de71b2c114",
+            "base_sha": "2e46b2a2dcb96cadd94283bdce95eca75bef1433",
+            "merge_commit_sha": "c08b925d282e35ea7bd9a8f4c29de2ece0debb49",
+            "relation": "cross_reference_not_verified_fix",
+            "files": [
+              {
+                "filename": "tools/uninstall.sh",
+                "status": "modified",
+                "patch": "@@ -1,3 +1,15 @@\n+if hash chsh >/dev/null 2>&1 && [ -f ~/.shell.pre-oh-my-zsh ]; then\n+  old_shell=$(cat ~/.shell.pre-oh-my-zsh)\n+  echo \"Switching your shell back to '$old_shell':\"\n+  if chsh -s \"$old_shell\"; then\n+    rm -f ~/.shell.pre-oh-my-zsh\n+  else\n+    echo \"Could not change default shell. Change it manually by running chsh\"\n+    echo \"or editing the /etc/passwd file.\"\n+    exit\n+  fi\n+fi\n+\n read -r -p \"Are you sure you want to remove Oh My Zsh? [y/N] \" confirmation\n if [ \"$confirmation\" != y ] && [ \"$confirmation\" != Y ]; then\n   echo \"Uninstall cancelled\"\n@@ -25,16 +37,5 @@ else\n   echo \"No original zsh config found\"\n fi\n \n-if hash chsh >/dev/null 2>&1 && [ -f ~/.shell.pre-oh-my-zsh ]; then\n-  old_shell=$(cat ~/.shell.pre-oh-my-zsh)\n-  echo \"Switching your shell back to '$old_shell':\"\n-  if chsh -s \"$old_shell\"; then\n-    rm -f ~/.shell.pre-oh-my-zsh\n-  else\n-    echo \"Could not change default shell. Change it manually by running chsh\"\n-    echo \"or editing the /etc/passwd file.\"\n-  fi\n-fi\n-\n echo \"Thanks for trying out Oh My Zsh. It's been uninstalled.\"\n echo \"Don't forget to restart your terminal!\"",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              }
+            ],
+            "files_truncated": false
+          }
+        ]
+      }
+    },
+    {
+      "id": 5142199048,
+      "title": "v0.9.8: make one-shot approval outcomes durable and fail-closed",
+      "url": "https://github.com/Hmbown/Codewhale/issues/5360",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 5142199048,
+        "issue_kind": "feature",
+        "symptom": "恢复会话时，无法从会话自身的持久记录重建准确的审批请求与结果配对。",
+        "root_cause": "正文说明审批证据分散在瞬时引擎事件和可选的 CODEWHALE_TOOL_AUDIT_LOG 投影中，会话自身缺少可重建完整请求与结果配对的持久记录。",
+        "root_cause_category": "审批记录持久化与恢复",
+        "environment": [
+          "Codewhale 审批引擎及工具执行路径",
+          "会话恢复或重放",
+          "可选 CODEWHALE_TOOL_AUDIT_LOG"
+        ],
+        "evidence_quote": "A resumed session cannot reconstruct the exact ask/outcome pair from its own durable record.",
+        "test_ideas": [
+          "分别模拟单次批准、拒绝、取消、通道关闭及带指定策略的重试，验证只有明确授权的工具调用可以执行。",
+          "持久化审批请求和最终结果后恢复会话，检查配对准确；在等待期间中断，检查恢复时能识别未完成请求。",
+          "注入最终审批记录写入失败，断言工具未执行。",
+          "提交格式错误、过期或对应其他工具调用的决定，断言不会获得执行授权。",
+          "关闭可选外部审计日志，验证会话记录仍能独立重建审批结果。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": "gpt-6.1-sol",
+          "usage": {
+            "input_tokens": 20088,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1373,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0fd44-709d-72f2-8588-d71561264edb"
+        }
+      },
+      "pr_evidence": {
+        "fetched_at": "2026-10-02T15:48:00.148466+00:00",
+        "timeline_may_be_truncated": false,
+        "pulls_truncated": false,
+        "pulls": [
+          {
+            "url": "https://github.com/Hmbown/Codewhale/pull/5491",
+            "title": "fix(tui): persist approval outcomes before execution",
+            "body": "## Summary\n\n- persist approval requests and terminal outcomes in a session-owned log before execution can proceed\n- deny execution when a terminal approval receipt cannot be persisted, and reject stale decisions\n- reconstruct closed and interrupted approval state when a session resumes\n\nCloses #5360\n\n## Verification\n\n- `cargo test -p codewhale-tui --lib approval` (257 passed)\n- `cargo test -p codewhale-tui --lib session_manager` (61 passed)\n- `cargo test -p codewhale-tui --all-targets --no-run`\n- `cargo fmt --all -- --check`\n- `git diff --check origin/main...HEAD`",
+            "body_truncated": false,
+            "state": "closed",
+            "merged": true,
+            "head_sha": "11717b48ff84d1133f5b52f20a63d88c0c220c36",
+            "base_sha": "ed39b04464815be586468efc24f68554fe3f9148",
+            "merge_commit_sha": "f2bd1b0e2f04ac96ac51773006307638b57a41e9",
+            "relation": "cross_reference_not_verified_fix",
+            "files": [
+              {
+                "filename": "crates/tui/src/runtime_api/tests.rs",
+                "status": "modified",
+                "patch": "@@ -231,6 +231,7 @@ fn saved_session_with_blocks(blocks: Vec<crate::models::ContentBlock>) -> SavedS\n         system_prompt: None,\n         context_references: Vec::new(),\n         artifacts: Vec::new(),\n+        approval_receipts: Vec::new(),\n         work_state: None,\n         last_auto_route: None,\n     }",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "crates/tui/src/tui/ui/tests.rs",
+                "status": "modified",
+                "patch": "@@ -5414,6 +5414,7 @@ fn saved_session_with_messages(messages: Vec<Message>) -> SavedSession {\n         system_prompt: None,\n         context_references: Vec::new(),\n         artifacts: Vec::new(),\n+        approval_receipts: Vec::new(),\n         work_state: None,\n         last_auto_route: None,\n     }",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "crates/tui/src/approval_log.rs",
+                "status": "added",
+                "patch": "@@ -0,0 +1,417 @@\n+use std::collections::{BTreeMap, BTreeSet};\n+use std::fs::{self, File, OpenOptions};\n+use std::io::{self, BufRead, BufReader, Write};\n+use std::path::PathBuf;\n+\n+use chrono::{DateTime, Utc};\n+use serde::{Deserialize, Serialize};\n+\n+use crate::sandbox::SandboxPolicy;\n+\n+const APPROVAL_LOG_FILE: &str = \"approval_receipts.jsonl\";\n+const APPROVAL_LOCK_FILE: &str = \"approval_receipts.lock\";\n+\n+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]\n+#[serde(tag = \"outcome\", rename_all = \"snake_case\")]\n+pub(crate) enum ApprovalOutcome {\n+    ApprovedOnce,\n+    Denied,\n+    Cancelled,\n+    Unavailable,\n+    RetryWithPolicy { policy: SandboxPolicy },\n+}\n+\n+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]\n+#[serde(tag = \"phase\", rename_all = \"snake_case\")]\n+pub(crate) enum ApprovalReceipt {\n+    Asked {\n+        approval_id: String,\n+        tool_call_id: String,\n+        tool_name: String,\n+        created_at: DateTime<Utc>,\n+    },\n+    Decided {\n+        approval_id: String,\n+        tool_call_id: String,\n+        outcome: ApprovalOutcome,\n+        created_at: DateTime<Utc>,\n+    },\n+}\n+\n+impl ApprovalReceipt {\n+    pub(crate) fn asked(tool_call_id: impl Into<String>, tool_name: impl Into<String>) -> Self {\n+        let tool_call_id = tool_call_id.into();\n+        Self::Asked {\n+            approval_id: tool_call_id.clone(),\n+            tool_call_id,\n+            tool_name: tool_name.into(),\n+            created_at: Utc::now(),\n+        }\n+    }\n+\n+    pub(crate) fn decided(tool_call_id: impl Into<String>, outcome: ApprovalOutcome) -> Self {\n+        let tool_call_id = tool_call_id.into();\n+        Self::Decided {\n+            approval_id: tool_call_id.clone(),\n+            tool_call_id,\n+            outcome,\n+            created_at: Utc::now(),\n+        }\n+    }\n+\n+    fn approval_id(&self) -> &str {\n+        match self {\n+            Self::Asked { approval_id, .. } | Self::Decided { approval_id, .. } => approval_id,\n+        }\n+    }\n+\n+    fn tool_call_id(&self) -> &str {\n+        match self {\n+            Self::Asked { tool_call_id, .. } | Self::Decided { tool_call_id, .. } => tool_call_id,\n+        }\n+    }\n+}\n+\n+#[derive(Debug, Clone, PartialEq, Eq)]\n+pub(crate) struct CompletedApproval {\n+    pub(crate) ask: ApprovalReceipt,\n+    pub(crate) outcome: ApprovalOutcome,\n+}\n+\n+#[derive(Debug, Clone, Default, PartialEq, Eq)]\n+pub(crate) struct ApprovalReplay {\n+    pub(crate) completed: Vec<CompletedApproval>,\n+    pub(crate) unmatched_asks: Vec<ApprovalReceipt>,\n+}\n+\n+impl ApprovalReplay {\n+    pub(crate) fn from_receipts(receipts: &[ApprovalReceipt]) -> Result<Self, String> {\n+        let mut open = BTreeMap::<String, ApprovalReceipt>::new();\n+        let mut closed = BTreeSet::<String>::new();\n+        let mut completed = Vec::new();\n+\n+        for receipt in receipts {\n+            let approval_id = receipt.approval_id();\n+            if approval_id.trim().is_empty() || receipt.tool_call_id().trim().is_empty() {\n+                return Err(\"approval receipt has an empty correlation id\".to_string());\n+            }\n+            match receipt {\n+                ApprovalReceipt::Asked {\n+                    approval_id,\n+                    tool_call_id,\n+                    tool_name,\n+                    ..\n+                } => {\n+                    if tool_name.trim().is_empty() {\n+                        return Err(format!(\n+                            \"approval ask '{approval_id}' has an empty tool name\"\n+                        ));\n+                    }\n+                    if approval_id != tool_call_id {\n+                        return Err(format!(\n+                            \"approval ask '{approval_id}' does not match tool call '{tool_call_id}'\"\n+                        ));\n+                    }\n+                    if closed.contains(approval_id) || open.contains_key(approval_id) {\n+                        return Err(format!(\"approval '{approval_id}' was asked more than once\"));\n+                    }\n+                    open.insert(approval_id.clone(), receipt.clone());\n+                }\n+                ApprovalReceipt::Decided {\n+                    approval_id,\n+                    tool_call_id,\n+                    outcome,\n+                    ..\n+                } => {\n+                    if approval_id != tool_call_id {\n+                        return Err(format!(\n+                            \"approval decision '{approval_id}' does not match tool call '{tool_call_id}'\"\n+                        ));\n+                    }\n+                    let Some(ask) = open.remove(approval_id) else {\n+                        return Err(format!(\n+                            \"approval decision '{approval_id}' has no unmatched ask\"\n+                        ));\n+                    };\n+                    closed.insert(approval_id.clone());\n+                    completed.push(CompletedApproval {\n+                        ask,\n+                        outcome: outcome.clone(),\n+                    });\n+                }\n+            }\n+        }\n+\n+        Ok(Self {\n+            completed,\n+            unmatched_asks: open.into_values().collect(),\n+        })\n+    }\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct ApprovalReceiptStore {\n+    sessions_dir: PathBuf,\n+}\n+\n+impl ApprovalReceiptStore {\n+    pub(crate) fn new(sessions_dir: PathBuf) -> Self {\n+        Self { sessions_dir }\n+    }\n+\n+    #[cfg_attr(test, allow(dead_code))]\n+    pub(crate) fn default_location() -> io::Result<Self> {\n+        crate::session_manager::default_sessions_dir().map(Self::new)\n+    }\n+\n+    fn validated_session_id(session_id: &str) -> io::Result<&str> {\n+        let trimmed = session_id.trim();\n+        if trimmed.is_empty()\n+            || !trimmed\n+                .chars()\n+                .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')\n+        {\n+            return Err(io::Error::new(\n+                io::ErrorKind::InvalidInput,\n+                format!(\"Invalid session id '{session_id}'\"),\n+            ));\n+        }\n+        Ok(trimmed)\n+    }\n+\n+    fn log_path(&self, session_id: &str) -> io::Result<PathBuf> {\n+        let session_id = Self::validated_session_id(session_id)?;\n+        Ok(self.sessions_dir.join(session_id).join(APPROVAL_LOG_FILE))\n+    }\n+\n+    fn lock_path(&self, session_id: &str) -> io::Result<PathBuf> {\n+        let session_id = Self::validated_session_id(session_id)?;\n+        Ok(self.sessions_dir.join(session_id).join(APPROVAL_LOCK_FILE))\n+    }\n+\n+    fn open_lock_file(&self, session_id: &str) -> io::Result<File> {\n+        let path = self.lock_path(session_id)?;\n+        let parent = path.parent().ok_or_else(|| {\n+            io::Error::new(io::ErrorKind::InvalidInput, \"approval lock has no parent\")\n+        })?;\n+        fs::create_dir_all(parent)?;\n+        OpenOptions::new()\n+            .create(true)\n+            .truncate(false)\n+            .read(true)\n+            .write(true)\n+            .open(path)\n+    }\n+\n+    fn open_existing_lock_file(&self, session_id: &str) -> io::Result<Option<File>> {\n+        let path = self.lock_path(session_id)?;\n+        match OpenOptions::new().read(true).open(path) {\n+            Ok(file) => Ok(Some(file)),\n+            Err(err) if err.kind() == io::ErrorKind::NotFound => Ok(None),\n+            Err(err) => Err(err),\n+        }\n+    }\n+\n+    fn load_unlocked(&self, session_id: &str) -> io::Result<Vec<ApprovalReceipt>> {\n+        let path = self.log_path(session_id)?;\n+        let file = match File::open(path) {\n+            Ok(file) => file,\n+            Err(err) if err.kind() == io::ErrorKind::NotFound => return Ok(Vec::new()),\n+            Err(err) => return Err(err),\n+        };\n+        let mut receipts = Vec::new();\n+        for (index, line) in BufReader::new(file).lines().enumerate() {\n+            let line = line?;\n+            let receipt = serde_json::from_str(&line).map_err(|err| {\n+                io::Error::new(\n+                    io::ErrorKind::InvalidData,\n+                    format!(\"invalid approval receipt at line {}: {err}\", index + 1),\n+                )\n+            })?;\n+            receipts.push(receipt);\n+        }\n+        ApprovalReplay::from_receipts(&receipts)\n+            .map_err(|err| io::Error::new(io::ErrorKind::InvalidData, err))?;\n+        Ok(receipts)\n+    }\n+\n+    pub(crate) fn load(&self, session_id: &str) -> io::Result<Vec<ApprovalReceipt>> {\n+        if !self.log_path(session_id)?.exists() {\n+            return Ok(Vec::new());\n+        }\n+        let Some(lock_file) = self.open_existing_lock_file(session_id)? else {\n+            // Imported or legacy snapshots can contain a receipt log without\n+            // its ephemeral lock file. Preserve read-only session loading;\n+            // live writers always publish the lock before creating the log.\n+            return self.load_unlocked(session_id);\n+        };\n+        let lock = fd_lock::RwLock::new(lock_file);\n+        let _guard = lock.read()?;\n+        self.load_unlocked(session_id)\n+    }\n+\n+    pub(crate) fn replay(&self, session_id: &str) -> io::Result<ApprovalReplay> {\n+        let receipts = self.load(session_id)?;\n+        ApprovalReplay::from_receipts(&receipts)\n+            .map_err(|err| io::Error::new(io::ErrorKind::InvalidData, err))\n+    }\n+\n+    pub(crate) fn append(&self, session_id: &str, receipt: &ApprovalReceipt) -> io::Result<()> {\n+        let lock_file = self.open_lock_file(session_id)?;\n+        let mut lock = fd_lock::RwLock::new(lock_file);\n+        let _guard = lock.write()?;\n+        let path = self.log_path(session_id)?;\n+        let mut candidate = self.load_unlocked(session_id)?;\n+        candidate.push(receipt.clone());\n+        ApprovalReplay::from_receipts(&candidate)\n+            .map_err(|err| io::Error::new(io::ErrorKind::InvalidData, err))?;\n+\n+        let parent = path.parent().ok_or_else(|| {\n+            io::Error::new(io::ErrorKind::InvalidInput, \"approval log has no parent\")\n+        })?;\n+        fs::create_dir_all(parent)?;\n+        let mut line = serde_json::to_vec(receipt)\n+            .map_err(|err| io::Error::new(io::ErrorKind::InvalidData, err))?;\n+        line.push(b'\\n');\n+        let mut file = OpenOptions::new().create(true).append(true).open(&path)?;\n+        file.write_all(&line)?;\n+        file.sync_all()?;\n+        if let Ok(dir) = File::open(parent) {\n+            let _ = dir.sync_all();\n+        }\n+        Ok(())\n+    }\n+\n+    #[cfg(test)]\n+    pub(crate) fn sessions_dir(&self) -> &std::path::Path {\n+        &self.sessions_dir\n+    }\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+\n+    fn completed_receipts(outcome: ApprovalOutcome) -> Vec<ApprovalReceipt> {\n+        vec![\n+            ApprovalReceipt::asked(\"tool-1\", \"exec_shell\"),\n+            ApprovalReceipt::decided(\"tool-1\", outcome),\n+        ]\n+    }\n+\n+    #[test]\n+    fn replay_reconstructs_every_closed_outcome() {\n+        let outcomes = [\n+            ApprovalOutcome::ApprovedOnce,\n+            ApprovalOutcome::Denied,\n+            ApprovalOutcome::Cancelled,\n+            ApprovalOutcome::Unavailable,\n+            ApprovalOutcome::RetryWithPolicy {\n+                policy: crate::sandbox::SandboxPolicy::DangerFullAccess,\n+            },\n+        ];\n+\n+        for outcome in outcomes {\n+            let replay = ApprovalReplay::from_receipts(&comp",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "crates/tui/src/core/engine.rs",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "crates/tui/src/core/engine/approval.rs",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "crates/tui/src/core/engine/turn_loop.rs",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "crates/tui/src/lib.rs",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "crates/tui/src/session_manager.rs",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              }
+            ],
+            "files_truncated": false
+          }
+        ]
+      }
+    },
+    {
+      "id": 4655347640,
+      "title": "Security: rtk native content-reading subcommands (read/grep/diff/log/smart) bypass .env read restrictions",
+      "url": "https://github.com/rtk-ai/rtk/issues/2428",
+      "repo": "rtk-ai/rtk",
+      "extraction": {
+        "id": 4655347640,
+        "issue_kind": "bug",
+        "symptom": "即使 Claude Code 拒绝读取 .env，rtk 的原生内容读取子命令仍可输出其中的秘密内容。",
+        "root_cause": "正文说明原生内容读取子命令没有权限门控，而现有拒绝规则针对 Read、cat、grep，无法匹配 rtk read .env。",
+        "root_cause_category": "文件系统与权限",
+        "environment": [
+          "rtk 0.42.2 / develop，正文报告的复现环境",
+          "Claude Code 配置 .env 读取拒绝规则",
+          "rtk read、grep、diff、log、smart 的文件路径参数"
+        ],
+        "evidence_quote": "The deny rule targets `Read`/`cat`/`grep`; `rtk read .env` matches none of them.",
+        "test_ideas": [
+          "在临时目录创建只含虚构秘密的 .env，启用读取拒绝规则，逐一运行 read、grep、diff、log、smart，验证标准输出和错误输出均不泄漏内容。",
+          "对被拒绝的内容读取检查退出码与错误提示，验证不会以成功状态返回秘密内容。",
+          "将 .env.example、.env.sample、.env.template 作为允许读取的对照，验证拒绝策略不会阻断这些模板文件。",
+          "运行 ls、tree、find，检查允许显示文件名的行为不会扩展为输出文件内容。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": "gpt-6.1-sol",
+          "usage": {
+            "input_tokens": 20088,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1373,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0fd44-709d-72f2-8588-d71561264edb"
+        }
+      },
+      "pr_evidence": {
+        "fetched_at": "2026-10-02T15:48:08.890415+00:00",
+        "timeline_may_be_truncated": false,
+        "pulls_truncated": false,
+        "pulls": [
+          {
+            "url": "https://github.com/irisTa56/dotfiles/pull/205",
+            "title": "feat(claude): disclose AI authorship in posts and share credential-read denials",
+            "body": "Two pieces of a personal AI-usage policy get support here: posts written with AI say so, and the agent's file tools cannot read secrets on any machine these dotfiles set up.\n\n## Disclosure\n\n`.claude/INSTRUCTIONS.md` gains one sub-bullet under the external-write rule: a comment, reply or message others will read says it was written with AI, unless the destination's own convention says otherwise.\nClaude Code attributes only commits and pull request bodies, so review replies and messages posted under the user's account carried no disclosure before.\nA fresh reader under the new line added the disclosure to review comments it drafted for the user to paste, and posted text the user dictated unchanged.\n\n## Shared read denials\n\n- `.claude/settings.base.json` holds permission rules every machine shares. It denies reads of names that are plainly secret (`.env` and its local variants, private keys, `credentials.json`, `client_secret*.json`, `.netrc`, Terraform state) and of credential directories (`~/.ssh`, `~/.aws`, gcloud, …), following the list rtk-ai/rtk#2827 curates. It asks before names that may or may not hold a secret (`*.pem`, `.npmrc`, `*.tfvars`). `.env.example`, `.env.sample` and `.env.template` stay readable through `!` carve-outs.\n- `mise run setup:claude-settings` merges the base into the machine's own `~/.claude/settings.json`, which stays machine-local because `rtk init` and the `/config` panel write into it. Each array gets the base's entries first in base order and keeps the machine's own after them, so a rerun changes nothing, a sorted list gets the carve-outs back behind `Read(.env.*)`, and a machine can add its own denials or carve-outs.\n- The README says what the rules do not do: they are not exhaustive, and on a machine running the rtk hook, `cat`, `head`, `tail` and `grep` are rewritten to `rtk read` and `rtk grep`, which the Read rules do not reach (rtk-ai/rtk#2428, closed without a fix). That gap is left to upstream rather than traded against rtk's savings.\n\nThe rules were checked by running `claude -p` against dummy files: each secret name was refused, the ambiguous ones raised a permission request, and templates, public keys and ordinary files were read. The merge script was run against missing, empty, sorted and hand-edited settings files, and fails on invalid JSON rather than overwriting it.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n",
+            "body_truncated": false,
+            "state": "closed",
+            "merged": true,
+            "head_sha": "f0492cce7c607a4e7b142e8668cdbd1a09ebdc76",
+            "base_sha": "139355f88ed75d9a456b0a219eb555480e83930b",
+            "merge_commit_sha": "171fa84b762384235d78f4cc1efcc9f67f9f413b",
+            "relation": "cross_reference_not_verified_fix",
+            "files": [
+              {
+                "filename": ".claude/INSTRUCTIONS.md",
+                "status": "modified",
+                "patch": "@@ -25,6 +25,7 @@\n ## Side-Effect Disciplines\n \n - Always ask the user for permission before any operation that writes to an external system, showing the content that will leave rather than describing it.\n+  - Where that content is a post others will read — a comment, a reply, a message — it says it was written with AI, unless the destination's own convention says otherwise.\n - A review of the change's own — `review-loop`'s, say, and not the review its pull request gets — closes before the pull request opens rather than after it.\n   - A body written earlier describes a state a later fix can falsify, and every rewrite is another external write to ask the user's permission for.\n - Don't force-push to a PR's branch after it has been marked ready.",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": ".claude/settings.base.json",
+                "status": "added",
+                "patch": "@@ -0,0 +1,46 @@\n+{\n+  \"permissions\": {\n+    \"deny\": [\n+      \"Read(//**/.env)\",\n+      \"Read(//**/.env.local)\",\n+      \"Read(//**/.env.*.local)\",\n+      \"Read(.env.*)\",\n+      \"Read(!.env.example)\",\n+      \"Read(!.env.sample)\",\n+      \"Read(!.env.template)\",\n+      \"Read(//**/*-key.pem)\",\n+      \"Read(//**/*.key)\",\n+      \"Read(//**/*.p12)\",\n+      \"Read(//**/*.pfx)\",\n+      \"Read(//**/*.kdbx)\",\n+      \"Read(//**/id_rsa)\",\n+      \"Read(//**/id_dsa)\",\n+      \"Read(//**/id_ecdsa)\",\n+      \"Read(//**/id_ed25519)\",\n+      \"Read(//**/credentials.json)\",\n+      \"Read(//**/client_secret*.json)\",\n+      \"Read(//**/.netrc)\",\n+      \"Read(//**/.git-credentials)\",\n+      \"Read(//**/.pgpass)\",\n+      \"Read(//**/.pypirc)\",\n+      \"Read(//**/.dockercfg)\",\n+      \"Read(//**/*.tfstate)\",\n+      \"Read(//**/*.tfstate.backup)\",\n+      \"Read(~/.ssh/**)\",\n+      \"Read(~/.aws/**)\",\n+      \"Read(~/.azure/**)\",\n+      \"Read(~/.kube/**)\",\n+      \"Read(~/.gnupg/**)\",\n+      \"Read(~/.docker/config.json)\",\n+      \"Read(~/.config/gcloud/**)\",\n+      \"Read(~/.config/rclone/**)\",\n+      \"Read(~/.config/gws/**)\",\n+      \"Read(~/.notebooklm/**)\"\n+    ],\n+    \"ask\": [\n+      \"Read(//**/*.pem)\",\n+      \"Read(//**/.npmrc)\",\n+      \"Read(//**/*.tfvars)\"\n+    ]\n+  }\n+}",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "README.md",
+                "status": "modified",
+                "patch": "@@ -62,6 +62,17 @@ EOF\n rtk init -g --auto-patch\n ```\n \n+`~/.claude/settings.json` stays machine-local, since `rtk init` and the `/config` panel write into it.\n+The part every machine shares, the permission rules, is `.claude/settings.base.json`.\n+These rules reach every project on the machine, and they catch common secret file names and credential directories rather than every tool's store; a store they miss goes in that machine's own file, which the merge leaves in place.\n+A name that does not show whether the file holds a secret, such as `*.pem` (a private key or a certificate) or `.npmrc` and `*.tfvars` (often plain project configuration), is asked about rather than denied.\n+On a machine running the rtk hook, `cat`, `head`, `tail` and `grep` are rewritten to `rtk read` and `rtk grep`, which these Read rules do not reach ([rtk-ai/rtk#2428](https://github.com/rtk-ai/rtk/issues/2428), closed without a fix), so the rules bind the file tools only.\n+Merge the base in, and again whenever it changes:\n+\n+```shell\n+mise run setup:claude-settings\n+```\n+\n ## Agent Skills\n \n Most skills live under `.claude/skills/`, managed by [APM](https://github.com/microsoft/apm), co-located with the instructions and rules above.",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "mise.toml",
+                "status": "modified",
+                "patch": "@@ -61,6 +61,10 @@ run = [\n description = \"Run initial dotfiles setup (dircolors, gitignore, zprofile, zshenv)\"\n run = \"scripts/setup_dotfiles.sh\"\n \n+[tasks.\"setup:claude-settings\"]\n+description = \"Merge .claude/settings.base.json into ~/.claude/settings.json (idempotent)\"\n+run = \"scripts/apply_claude_settings.sh\"\n+\n [tasks.link-check]\n description = \"Check if links are valid, showing redirects\"\n run = \"lychee -v .\"",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "scripts/apply_claude_settings.sh",
+                "status": "added",
+                "patch": "@@ -0,0 +1,41 @@\n+#!/usr/bin/env bash\n+# Merge the tracked .claude/settings.base.json into the machine's ~/.claude/settings.json.\n+# The machine file keeps whatever else it holds (hooks `rtk init` patched in, keys the\n+# /config panel wrote), which is why the base is merged rather than symlinked.\n+# Objects merge key by key; an array starts with the base's entries in the base's order\n+# and keeps the machine's own after them, so a `!` carve-out, the base's or the\n+# machine's, still follows the rules it carves from after the machine file was sorted;\n+# any other base value replaces the machine's. A rerun changes nothing.\n+# Removing an entry from the base does not remove it here; edit the machine file for that.\n+set -euo pipefail\n+\n+script_dir=$(cd \"$(dirname \"$0\")\" && pwd)\n+base=\"$script_dir/../.claude/settings.base.json\"\n+target=\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json\"\n+\n+# An empty file reads as {} so it is filled rather than reported as already merged.\n+current='{}'\n+[ -f \"$target\" ] && current=$(jq -s 'add // {}' \"$target\")\n+\n+merged=$(jq --argjson base \"$(cat \"$base\")\" '\n+  def merge($b):\n+    if type == \"object\" and ($b | type) == \"object\" then\n+      reduce ($b | keys_unsorted[]) as $k (.; .[$k] |= merge($b[$k]))\n+    elif type == \"array\" and ($b | type) == \"array\" then\n+      $b + (. - $b)\n+    else\n+      $b\n+    end;\n+  merge($base)\n+' <<<\"$current\")\n+\n+if [ \"$merged\" = \"$(jq . <<<\"$current\")\" ]; then\n+  echo \"$target already holds everything in the base\"\n+  exit 0\n+fi\n+\n+diff -u <(jq . <<<\"$current\") <(echo \"$merged\") || true\n+tmp=$(mktemp \"$target.XXXXXX\")\n+echo \"$merged\" >\"$tmp\"\n+mv \"$tmp\" \"$target\"\n+echo \"updated $target\"",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              }
+            ],
+            "files_truncated": false
+          },
+          {
+            "url": "https://github.com/rtk-ai/rtk/pull/2429",
+            "title": "fix(cmds): block .env reads in native content subcommands (#2428)",
+            "body": "Closes #2428. **Stacked on #2354** — please review/merge that first. Until #2354 lands, the diff here also includes its proxy commit; the native-reader change is the top commit (`781546d`).\n\n## Problem\nCompanion to #2345 (which fixed `rtk proxy`). rtk's own content-reading subcommands read `.env` with no gate:\n\n```\n$ printf 'PASSWORD=hunter2\\n' > .env\n$ rtk read .env\nPASSWORD=hunter2        # verbatim dump, exit 0\n```\n\nSo a `.env` deny is bypassed via `rtk read` / `grep` / `diff` / `log` / `smart` — the same credential-exfiltration class as CVE-2026-33068, via rtk itself rather than proxy.\n\n## Fix\nReuse the proxy `.env` guard through a shared `permissions::env_read_refusal` helper and refuse a `.env` file-path argument (before the file is opened) in the `read` / `grep` / `diff` / `log` / `smart` arms. Same semantics as proxy: `.env.example` / `.env.sample` / `.env.template` are allowed.\n\n- The grep search **pattern** is intentionally not inspected (only the path + file args), so `rtk grep .env Makefile` still works.\n- Directory listers (`ls` / `tree` / `find`) are name-only and left **unchanged**: rtk intentionally shows `.env` in listings (`src/cmds/system/constants.rs`). Name disclosure is out of scope here.\n\n## Verification\n- `cargo fmt --all -- --check` + `cargo clippy --all-targets`: clean (`warnings = \"deny\"`)\n- `cargo test --all`: 2164 passed, 0 failed (2 new helper tests)\n- End-to-end against a live `.env`: `rtk read/grep/diff/log/smart .env` are refused (exit 1) and the secret leaks **0 times**; `rtk read plain.txt` and `rtk read .env.example` still work.\n",
+            "body_truncated": false,
+            "state": "closed",
+            "merged": false,
+            "head_sha": "781546ddbd3bf1bbed1c7aeeb01a86687129a2b1",
+            "base_sha": "6785a6c7695d7273e722214a295249a84819b6f0",
+            "merge_commit_sha": null,
+            "relation": "cross_reference_not_verified_fix",
+            "files": [
+              {
+                "filename": "README.md",
+                "status": "modified",
+                "patch": "@@ -244,6 +244,8 @@ rtk summary <long command>      # Heuristic summary\n rtk proxy <command>             # Raw passthrough + tracking\n ```\n \n+> **Security:** `rtk proxy` enforces your Claude Code deny rules and blocks reads of `.env` secret files (`.env.example` / `.env.sample` / `.env.template` excepted), including via inline interpreter scripts (`sh -c ...`). This is best-effort: recursive readers (`grep -r PASSWORD .`), launcher-wrapped commands (`env`/`timeout`), and shell obfuscation can still reach `.env`, and rtk's own `read`/`grep`/`log` subcommands are not yet covered ([#2345](https://github.com/rtk-ai/rtk/issues/2345)).\n+\n ### Token Savings Analytics\n ```bash\n rtk gain                        # Summary stats",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "src/hooks/permissions.rs",
+                "status": "modified",
+                "patch": "@@ -114,6 +114,192 @@ pub(crate) fn check_command_with_rules(\n     }\n }\n \n+// --- Proxy permission gate (issue #2345 / CVE-2026-33068) -------------------\n+//\n+// `rtk proxy <cmd>` executes an arbitrary command. Without a gate it bypasses\n+// Claude Code's permission rules entirely, letting an agent read `.env` secrets\n+// (e.g. `rtk proxy grep -r PASSWORD .env`) even when `.env` reads are denied.\n+// `proxy_block_reason` is the gate the proxy handler calls before spawning.\n+\n+/// `.env.<suffix>` variants that conventionally hold placeholder values rather\n+/// than real secrets, so they stay readable through proxy (matches Claude\n+/// Code's allowance of `.env.example`). Matched case-sensitively.\n+const SAFE_ENV_SUFFIXES: &[&str] = &[\"example\", \"sample\", \"template\"];\n+\n+/// Command interpreters whose inline-eval payload rtk cannot inspect. Shells\n+/// treat `-c` as an inline command; the interpreters use `-c`/`-e`/`-E`.\n+const INLINE_EVAL_SHELLS: &[&str] = &[\"sh\", \"bash\", \"zsh\", \"dash\", \"ash\", \"ksh\", \"fish\", \"busybox\"];\n+const INLINE_EVAL_INTERPRETERS: &[&str] = &[\n+    \"python\", \"python2\", \"python3\", \"ruby\", \"perl\", \"node\", \"nodejs\", \"php\",\n+];\n+\n+/// True if `base` (already a path basename) names a sensitive `.env` file.\n+///\n+/// Bare `.env` matches case-insensitively (case-insensitive filesystems such as\n+/// default macOS map `.ENV` onto `.env`); the [`SAFE_ENV_SUFFIXES`] allowance\n+/// stays case-sensitive by design (so `.env.EXAMPLE` is treated as a secret).\n+fn env_basename_is_sensitive(base: &str) -> bool {\n+    if base.eq_ignore_ascii_case(\".env\") {\n+        return true;\n+    }\n+    match (base.get(..5), base.get(5..)) {\n+        (Some(prefix), Some(suffix)) if prefix.eq_ignore_ascii_case(\".env.\") => {\n+            !SAFE_ENV_SUFFIXES.contains(&suffix)\n+        }\n+        _ => false,\n+    }\n+}\n+\n+/// True if `token` (a command-line argument) references a `.env` secret file.\n+///\n+/// Inspects the token's path basename plus the value after `=` (`--env-file=.env`,\n+/// `dd if=.env`), a leading `@` (`curl @.env`), and a glued short-flag value\n+/// (`-f.env`). Matches `.env` and `.env.<suffix>` but not the placeholder variants\n+/// in [`SAFE_ENV_SUFFIXES`], nor lookalikes like `foo.env` or `.environment`. A\n+/// bare `.env` used as a non-file argument is conservatively flagged: blocking\n+/// credential exfiltration is preferred over a rare false positive (see #2345).\n+fn is_sensitive_env_path(token: &str) -> bool {\n+    let after_eq = token.rsplit_once('=').map(|(_, v)| v);\n+    let glued_flag = if token.starts_with('-') && !token.starts_with(\"--\") {\n+        token.get(2..)\n+    } else {\n+        None\n+    };\n+    [Some(token), after_eq, glued_flag]\n+        .into_iter()\n+        .flatten()\n+        .flat_map(|c| [c, c.strip_prefix('@').unwrap_or(c)])\n+        .map(|c| {\n+            std::path::Path::new(c)\n+                .file_name()\n+                .and_then(|s| s.to_str())\n+                .unwrap_or(c)\n+        })\n+        .any(env_basename_is_sensitive)\n+}\n+\n+/// First argument that references a `.env` secret file, or `None`.\n+fn first_sensitive_env_arg(args: &[String]) -> Option<&str> {\n+    args.iter()\n+        .map(String::as_str)\n+        .find(|&arg| is_sensitive_env_path(arg))\n+}\n+\n+// --- Native-command .env guard (issue #2428) --------------------------------\n+//\n+// rtk's own content-reading subcommands (read/grep/diff/log/smart) open file\n+// paths directly. Like `rtk proxy`, they must refuse `.env` secret files so a\n+// permission deny on `.env` cannot be bypassed via rtk itself.\n+\n+/// Refusal reason if `path` names a `.env` secret file, else `None`.\n+pub(crate) fn env_read_refusal(path: &str) -> Option<String> {\n+    is_sensitive_env_path(path).then(|| {\n+        format!(\n+            \"rtk refuses to read the secret file '{path}'. .env files are blocked to prevent \\\n+             credential exfiltration (issue #2428). Placeholder variants (.env.example, \\\n+             .env.sample, .env.template) are allowed.\"\n+        )\n+    })\n+}\n+\n+/// First refusal among `paths` (for commands that take several file args), else\n+/// `None`.\n+pub(crate) fn first_env_read_refusal<'a>(\n+    paths: impl IntoIterator<Item = &'a str>,\n+) -> Option<String> {\n+    paths.into_iter().find_map(env_read_refusal)\n+}\n+\n+/// Reason to refuse a proxied inline-interpreter eval (`sh -c ...`, `python -c\n+/// ...`, `perl -e ...`), or `None`. rtk cannot enforce the `.env` guard or deny\n+/// rules inside an interpreted payload, so such invocations are refused outright\n+/// (a bare `sh script.sh` with no inline flag is left alone).\n+fn interpreter_eval_block(cmd_name: &str, cmd_args: &[String]) -> Option<String> {\n+    let prog = std::path::Path::new(cmd_name)\n+        .file_name()\n+        .and_then(|s| s.to_str())\n+        .unwrap_or(cmd_name)\n+        .to_ascii_lowercase();\n+    let has_short_flag = |wanted: &[char]| {\n+        cmd_args.iter().any(|a| {\n+            a.starts_with('-')\n+                && !a.starts_with(\"--\")\n+                && a.chars().skip(1).any(|c| wanted.contains(&c))\n+        })\n+    };\n+    let inline = if INLINE_EVAL_SHELLS.contains(&prog.as_str()) {\n+        has_short_flag(&['c'])\n+    } else if INLINE_EVAL_INTERPRETERS.contains(&prog.as_str()) {\n+        has_short_flag(&['c', 'e', 'E'])\n+    } else {\n+        false\n+    };\n+    inline.then(|| {\n+        format!(\n+            \"rtk proxy refuses to run an inline interpreter script ('{prog} -c/-e ...'): rtk \\\n+             cannot enforce .env protection or deny rules inside an interpreted payload, so it \\\n+             would be a credential-exfiltration bypass (issue #2345). Run the underlying \\\n+             command directly through rtk proxy instead.\"\n+        )\n+    })\n+}\n+\n+/// Reason `rtk proxy` must refuse `cmd_name` + `cmd_args`, or `None` to allow.\n+/// Loads the host's permission rules; see [`proxy_block_reason_with_rules`].\n+pub fn proxy_block_reason(cmd_name: &str, cmd_args: &[String]) -> Option<String> {\n+    let (deny, ask, allow) = load_permission_rules();\n+    proxy_block_reason_with_rules(cmd_name, cmd_args, &deny, &ask, &allow)\n+}\n+\n+/// Rule-injecting core of [`proxy_block_reason`] (no file I/O, for tests).\n+///\n+/// Refuses when (1) any argument references a `.env` secret file, (2) the command\n+/// is an inline interpreter eval (`sh -c ...`), or (3) the reconstructed command\n+/// hits a `Deny` verdict. `Ask`/`Default`/`Allow` pass through: the host already\n+/// permitted the outer `rtk proxy` invocation, so proxy only enforces the hard\n+/// deny boundary plus the `.env` guard.\n+///\n+/// Best-effort by design (the issue accepts documenting residual bypasses):\n+/// process launchers (`env`/`timeout`/`nice <cmd>`), recursive readers that never\n+/// name `.env` (`grep -r PASSWORD .`, `find -exec cat`), and shell obfuscation can\n+/// still reach `.env`. rtk's own file-reading subcommands (`rtk read`/`grep`/`log`)\n+/// are outside this proxy guard.\n+pub(crate) fn proxy_block_reason_with_rules(\n+    cmd_name: &str,\n+    cmd_args: &[String],\n+    deny_rules: &[String],\n+    ask_rules: &[String],\n+    allow_rules: &[String],\n+) -> Option<String> {\n+    if let Some(arg) = first_sensitive_env_arg(cmd_args) {\n+        return Some(format!(\n+            \"rtk proxy refuses to access the secret file '{arg}'. .env files are blocked to \\\n+             prevent credential exfiltration (issue #2345 / CVE-2026-33068). Placeholder \\\n+             variants (.env.example, .env.sample, .env.template) are allowed.\"\n+        ));\n+    }\n+\n+    if let Some(reason) = interpreter_eval_block(cmd_name, cmd_args) {\n+        return Some(reason);\n+    }\n+\n+    let reconstructed = if cmd_args.is_empty() {\n+        cmd_name.to_string()\n+    } else {\n+        format!(\"{cmd_name} {}\", cmd_args.join(\" \"))\n+    };\n+    if check_command_with_rules(&reconstructed, deny_rules, ask_rules, allow_rules)\n+        == PermissionVerdict::Deny\n+    {\n+        return Some(format!(\n+            \"rtk proxy refuses to run '{reconstructed}': blocked by a Claude Code deny rule. \\\n+             rtk proxy honors deny rules from .claude/settings.json so it cannot bypass your \\\n+             permission policy (issue #2345).\"\n+        ));\n+    }\n+    None\n+}\n+\n /// Load deny, ask, and allow Bash rules from all Claude Code settings files.\n ///\n /// Files read (in order, later files do not override earlier ones — all are merged):\n@@ -977,6 +1163,246 @@ mod tests {\n         assert_eq!(out, vec![\"git\", \"npm test\", \"*\"]);\n     }\n \n+    // --- Proxy permission gate (#2345) ---\n+\n+    fn args(parts: &[&str]) -> Vec<String> {\n+        parts.iter().map(|s| s.to_string()).collect()\n+    }\n+\n+    #[test]\n+    fn test_env_file_flagged() {\n+        for t in [\n+            \".env\",\n+            \"./.env\",\n+            \"config/.env\",\n+            \"/srv/app/.env\",\n+            \".env.local\",\n+            \".env.production\",\n+            \".env.local.bak\",\n+            \".env.EXAMPLE\", // safe-suffix match is case-sensitive\n+        ] {\n+            assert!(is_sensitive_env_path(t), \"{t} should be flagged\");\n+        }\n+    }\n+\n+    #[test]\n+    fn test_env_safe_variants_not_flagged() {\n+        for t in [\n+            \".env.example\",\n+            \".env.sample\",\n+            \".env.template\",\n+            \"dir/.env.example\",\n+        ] {\n+            assert!(!is_sensitive_env_path(t), \"{t} should be allowed\");\n+        }\n+    }\n+\n+    #[test]\n+    fn test_env_lookalikes_not_flagged() {\n+        for t in [\n+            \"foo.env\",\n+            \".environment\",\n+            \"env\",\n+            \"environment\",\n+            \"PASSWORD\",\n+            \"-r\",\n+            \"envfile\",\n+        ] {\n+            assert!(!is_sensitive_env_path(t), \"{t} should not be flagged\");\n+        }\n+    }\n+\n+    #[test]\n+    fn test_first_sensitive_env_arg() {\n+        assert_eq!(\n+            first_sensitive_env_arg(&args(&[\"-r\", \"PASSWORD\", \".env\"])),\n+            Some(\".env\")\n+        );\n+        assert_eq!(\n+            first_sensitive_env_arg(&args(&[\"-r\", \"PASSWORD\", \"src/\"])),\n+            None\n+        );\n+    }\n+\n+    // Reproduction from issue #2345: grep into .env must be refused even with no\n+    // deny rules configured (the .env guard is unconditional).\n+    #[test]\n+    fn test_proxy_blocks_env_read_reproduction() {\n+        let reason = proxy_block_reason_with_rules(\n+            \"grep\",\n+            &args(&[\"-r\", \"PASSWORD\", \".env\"]),\n+            &[],\n+            &[],\n+            &[],\n+        );\n+        assert!(\n+            reason.is_some(),\n+            \"grep -r PASSWORD .env must be refused by proxy\"\n+        );\n+        assert!(reason.unwrap().contains(\".env\"));\n+    }\n+\n+    #[test]\n+    fn test_proxy_blocks_cat_env() {\n+        assert!(\n+            proxy_block_reason_with_rules(\"cat\", &args(&[\".env\"]), &[], &[], &[]).is_some(),\n+            \"cat .env must be refused\"\n+        );\n+    }\n+\n+    #[test]\n+    fn test_proxy_allows_env_example() {\n+        assert_eq!(\n+            proxy_block_reason_with_rules(\"cat\", &args(&[\".env.example\"]), &[], &[], &[]),\n+            None\n+        );\n+    }\n+\n+    #[test]\n+    fn test_proxy_allows_normal_command() {\n+        assert_eq!(\n+            proxy_block_reason_with_rules(\"echo\", &args(&[\"hi\"]), &[], &[], &[]),\n+        ",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "src/main.rs",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              }
+            ],
+            "files_truncated": false
+          }
+        ]
+      }
+    },
+    {
+      "id": 4902678468,
+      "title": "archive-posting.mjs lacks SSRF / private IP egress safeguards, exposing local network resources",
+      "url": "https://github.com/career-ops-hq/career-ops/issues/1956",
+      "repo": "career-ops-hq/career-ops",
+      "extraction": {
+        "id": 4902678468,
+        "issue_kind": "bug",
+        "symptom": "用户提供内网 URL 后，archive-posting.mjs 会访问内部服务并将其内容保存为 PDF，可能暴露内部信息。",
+        "root_cause": "正文明确指出 archive-posting.mjs 未注册请求路由拦截器或 DNS 解析校验器。",
+        "root_cause_category": "SSRF 与出站访问控制",
+        "environment": [
+          "Node.js 脚本 archive-posting.mjs",
+          "Playwright Chromium 无头浏览器",
+          "URL 来自 CLI 或 data/pipeline.md",
+          "PDF 保存到 jds/"
+        ],
+        "evidence_quote": "Chromium will navigate to them, render private/local services or credentials to a PDF, and save them in the `jds/` directory, exposing internal details.",
+        "test_ideas": [
+          "在隔离环境启动回环地址测试服务，分别通过 CLI 和 data/pipeline.md 提交其 URL，检查是否阻止访问且未生成包含服务内容的 PDF。",
+          "使用模拟 DNS 将测试域名解析到回环、私有和链路本地地址，检查请求是否被阻止。",
+          "让公开测试页面重定向至私有地址，或引用私有地址子资源，检查每次出站请求均受到访问控制。",
+          "使用公开地址页面作为对照，检查正常 PDF 归档仍可完成。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": "gpt-6.1-sol",
+          "usage": {
+            "input_tokens": 21818,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1090,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0fd46-31b0-77c3-8a37-d3969bc878fc"
+        }
+      }
+    },
+    {
+      "id": 4669024637,
+      "title": "Audit report",
+      "url": "https://github.com/Panniantong/Agent-Reach/issues/378",
+      "repo": "Panniantong/Agent-Reach",
+      "extraction": {
+        "id": 4669024637,
+        "issue_kind": "bug",
+        "symptom": "审计报告称工具存在安装时修改系统、配置输出泄露凭据、误识别域名，以及诊断和转录流程的副作用与资源问题。",
+        "root_cause": "正文列出多个原因：安全安装模式为可选项且部分子进程返回码被忽略；配置脱敏仅匹配有限关键词；平台路由使用 netloc 子串匹配；转录缺少大小和时长限制并保留临时目录；doctor 调用技能安装且异步状态处理直接调用同步诊断。",
+        "root_cause_category": "安全边界与副作用控制",
+        "environment": [
+          "Agent Reach CLI",
+          "系统依赖及外部工具安装",
+          "浏览器 cookie 提取与配置输出",
+          "yt-dlp 和 ffmpeg 转录流程",
+          "CI、MCP 与机器人循环",
+          "报告中的测试环境缺少部分静态审计工具",
+          "正文已截断"
+        ],
+        "evidence_quote": "users are likely to be surprised by filesystem mutations, auto-installs, silent fallbacks, and stale command docs.",
+        "test_ideas": [
+          "在一次性环境记录默认安装和 install --safe 的文件写入及子进程调用，注入安装失败，检查是否准确报告失败而非成功。",
+          "给 Config.to_dict() 输入合成的 cookie、ct0、sessdata 和 token 哨兵值，检查输出与日志是否泄露原值。",
+          "将 github.com.evil.test、notx.com 等正文给出的域名输入平台路由，与合法域名对照，检查是否误选平台处理器。",
+          "用受控播放列表和不同大小、时长的本地媒体测试转录资源行为；注入提供商错误，记录是否切换提供商以及结束后是否残留临时文件。",
+          "对 doctor 执行前后做文件系统快照；模拟慢速探测，检查诊断耗时、重复探测次数及 MCP 状态查询期间其他请求能否继续处理。"
+        ],
+        "body_truncated": true,
+        "generation": {
+          "engine": "codex",
+          "requested_model": "gpt-6.1-sol",
+          "usage": {
+            "input_tokens": 21818,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1090,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0fd46-31b0-77c3-8a37-d3969bc878fc"
+        }
+      }
+    },
+    {
+      "id": 4399425176,
+      "title": "fetch_url blocks all requests when DNS resolves to private IPs (fakeip proxy incompatible)",
+      "url": "https://github.com/Hmbown/Codewhale/issues/1071",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 4399425176,
+        "issue_kind": "bug",
+        "symptom": "在 fakeip 代理环境中，fetch_url 拒绝合法域名请求，依赖它的 web_search 等工具也无法正常使用。",
+        "root_cause": "正文明确指出 DNS 解析结果只要命中私有或保留地址拒绝列表就被阻止，该检查与域名网络策略串联且没有配置覆盖入口。",
+        "root_cause_category": "网络代理与 DNS 兼容",
+        "environment": [
+          "Linux（Gentoo）",
+          "DeepSeek CLI 0.8.16",
+          "deepseek-v4-flash",
+          "fish",
+          "Clash / sing-box fakeip 模式",
+          "系统 DNS 经代理解析",
+          "示例 fake-ip-range: 198.18.0.1/16"
+        ],
+        "evidence_quote": "Users behind fakeip proxies cannot use `fetch_url` at all.",
+        "test_ideas": [
+          "将测试域名的 DNS 结果模拟为 198.18.x.x，在受控 fakeip 代理下调用 fetch_url，检查是否出现正文中的 restricted address 错误，并与公开 IP 解析结果对照。",
+          "分别使用默认网络策略和 network.default = \"allow\" 重复请求，检查域名许可与 IP 检查的实际交互。",
+          "分别测试域名解析到私有地址和 URL 直接使用私有 IP 的路径，检查两者能否按预期区分；若实现代理兼容选项，验证该选项不会放行直接输入的私有 IP。",
+          "在同一 fakeip 环境调用 web_search，检查内部 fetch_url 拒绝是否被准确呈现，避免将其误报为其他搜索故障。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": "gpt-6.1-sol",
+          "usage": {
+            "input_tokens": 21818,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1090,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a0fd46-31b0-77c3-8a37-d3969bc878fc"
+        }
+      },
+      "pr_evidence": {
+        "fetched_at": "2026-10-02T15:48:15.522653+00:00",
+        "timeline_may_be_truncated": false,
+        "pulls_truncated": false,
+        "pulls": [
+          {
+            "url": "https://github.com/Hmbown/Codewhale/pull/1162",
+            "title": "fix(fetch_url): add allow_private_ip_hosts to skip DNS-resolved IP check",
+            "body": "## Problem\n\n`fetch_url` unconditionally rejects requests when a hostname resolves to a private/reserved IP address. This breaks users whose DNS is managed by a transparent proxy that returns virtual private-range addresses for all external domains — every outbound request fails with `resolved IP x.x.x.x is a restricted address`, and there is no way to override it. Fixes #1071.\n\n## Solution\n\nAdd `allow_private_ip_hosts = false` to the `[network]` config table. When set to `true`, the SSRF guard skips the check on **DNS-resolved** IPs, allowing the request to proceed through the proxy. Literal private-IP addresses typed directly into a URL (e.g. `http://10.0.0.1/admin`) are **always** blocked regardless of this setting, preserving the core SSRF protection.\n\nThe error message when a resolved IP is rejected now mentions the new option so users know how to unblock their setup.\n\n## Changes\n\n- `crates/tui/src/network_policy.rs` — add `allow_private_ip_hosts: bool` field to `NetworkPolicy`; expose `allows_private_ip_hosts()` on `NetworkPolicyDecider`\n- `crates/tui/src/config.rs` — add `allow_private_ip_hosts` to `NetworkPolicyToml` and propagate through `into_runtime()`\n- `crates/tui/src/tools/fetch_url.rs` — consult the flag before rejecting DNS-resolved private IPs; improve error message\n- `config.example.toml` — document the new option\n- `crates/tui/src/tools/web_run.rs`, `crates/tui/tests/skill_install.rs` — fill new field in existing `NetworkPolicy` literals\n\n## Testing\n\nAll existing tests pass (`cargo test --package deepseek-tui`).",
+            "body_truncated": false,
+            "state": "closed",
+            "merged": false,
+            "head_sha": "e7199d75cb01f41c47d06e5791cf32b887a1b75d",
+            "base_sha": "de4ecee41c999a36ad41f508a6ef7b6c26af45fc",
+            "merge_commit_sha": null,
+            "relation": "cross_reference_not_verified_fix",
+            "files": [
+              {
+                "filename": "crates/tui/tests/skill_install.rs",
+                "status": "modified",
+                "patch": "@@ -62,6 +62,7 @@ fn allow_all_policy() -> NetworkPolicy {\n         allow: Vec::new(),\n         deny: Vec::new(),\n         audit: false,\n+        allow_private_ip_hosts: false,\n     }\n }\n \n@@ -71,6 +72,7 @@ fn deny_all_policy() -> NetworkPolicy {\n         allow: Vec::new(),\n         deny: Vec::new(),\n         audit: false,\n+        allow_private_ip_hosts: false,\n     }\n }\n \n@@ -80,6 +82,7 @@ fn prompt_all_policy() -> NetworkPolicy {\n         allow: Vec::new(),\n         deny: Vec::new(),\n         audit: false,\n+        allow_private_ip_hosts: false,\n     }\n }\n ",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "config.example.toml",
+                "status": "modified",
+                "patch": "@@ -230,6 +230,9 @@ max_subagents = 10 # optional (1-20)\n # allow = [\"api.deepseek.com\", \"github.com\", \".githubusercontent.com\"]\n # deny = []\n # audit = true            # one line per call to ~/.deepseek/audit.log\n+# allow_private_ip_hosts = false  # set true when a trusted transparent proxy controls DNS\n+#                                 # and returns virtual private-range IPs for external domains.\n+#                                 # Direct private-IP literals in URLs remain blocked regardless.\n \n # ─────────────────────────────────────────────────────────────────────────────────\n # Skills (#140)",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "crates/tui/src/config.rs",
+                "status": "modified",
+                "patch": "@@ -925,6 +925,12 @@ pub struct NetworkPolicyToml {\n     /// Whether to record one audit-log line per outbound network call.\n     #[serde(default = \"default_network_audit\")]\n     pub audit: bool,\n+    /// Allow `fetch_url` to proceed when a hostname resolves to a private/reserved\n+    /// IP address. Off by default. Enable when a trusted transparent proxy\n+    /// controls DNS and returns virtual private-range IPs for external domains.\n+    /// Direct private-IP literals in URLs remain blocked regardless.\n+    #[serde(default)]\n+    pub allow_private_ip_hosts: bool,\n }\n \n fn default_network_decision() -> String {\n@@ -942,6 +948,7 @@ impl Default for NetworkPolicyToml {\n             allow: Vec::new(),\n             deny: Vec::new(),\n             audit: default_network_audit(),\n+            allow_private_ip_hosts: false,\n         }\n     }\n }\n@@ -956,6 +963,7 @@ impl NetworkPolicyToml {\n             allow: self.allow,\n             deny: self.deny,\n             audit: self.audit,\n+            allow_private_ip_hosts: self.allow_private_ip_hosts,\n         }\n     }\n }\n@@ -4110,6 +4118,21 @@ api_key = \"old-openrouter-key\"\n         assert_eq!(config.deepseek_base_url(), DEFAULT_DEEPSEEK_BASE_URL);\n     }\n \n+    #[test]\n+    fn deepseek_cn_legacy_alias_routes_to_beta_endpoint() {\n+        let config = Config {\n+            provider: Some(\"deepseek-cn\".to_string()),\n+            ..Default::default()\n+        };\n+\n+        assert_eq!(config.api_provider(), ApiProvider::DeepseekCN);\n+        assert_eq!(\n+            config.deepseek_base_url(),\n+            DEFAULT_DEEPSEEK_BASE_URL,\n+            \"deepseek-cn legacy alias must use the beta endpoint, not https://api.deepseek.com\"\n+        );\n+    }\n+\n     #[test]\n     fn explicit_deepseek_base_url_overrides_beta_default() {\n         let config = Config {",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "crates/tui/src/network_policy.rs",
+                "status": "modified",
+                "patch": "@@ -101,6 +101,13 @@ pub struct NetworkPolicy {\n     /// Whether to record one audit-log line per network call. Defaults to true.\n     #[serde(default = \"default_audit\")]\n     pub audit: bool,\n+    /// Allow `fetch_url` to proceed when a hostname resolves to a private/reserved\n+    /// IP address. Off by default (SSRF protection). Enable only when DNS is\n+    /// handled by a trusted transparent proxy that returns virtual private-range\n+    /// IPs for external domains. Direct private-IP literals in URLs are always\n+    /// blocked regardless of this setting.\n+    #[serde(default)]\n+    pub allow_private_ip_hosts: bool,\n }\n \n fn default_decision() -> DecisionToml {\n@@ -118,6 +125,7 @@ impl Default for NetworkPolicy {\n             allow: Vec::new(),\n             deny: Vec::new(),\n             audit: true,\n+            allow_private_ip_hosts: false,\n         }\n     }\n }\n@@ -448,6 +456,13 @@ impl NetworkPolicyDecider {\n         decision\n     }\n \n+    /// Whether DNS-resolved private IPs are allowed by this policy.\n+    /// See [`NetworkPolicy::allow_private_ip_hosts`].\n+    #[must_use]\n+    pub fn allows_private_ip_hosts(&self) -> bool {\n+        self.policy.allow_private_ip_hosts\n+    }\n+\n     /// Approve `host` for the rest of the session (one-shot). Audit log gets\n     /// `Prompt-Approved`.\n     pub fn approve_session(&self, host: &str, tool: &str) {\n@@ -497,6 +512,7 @@ mod tests {\n             allow: allow.iter().map(|s| (*s).to_string()).collect(),\n             deny: deny.iter().map(|s| (*s).to_string()).collect(),\n             audit: false,\n+            allow_private_ip_hosts: false,\n         }\n     }\n ",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "crates/tui/src/tools/fetch_url.rs",
+                "status": "modified",
+                "patch": "@@ -171,6 +171,15 @@ impl ToolSpec for FetchUrlTool {\n         // localhost services, and internal networks.\n         // Pin the validated IP via ClientBuilder::resolve() to close the DNS rebinding\n         // TOCTOU window — reqwest will use the pinned IP instead of re-resolving.\n+        //\n+        // Exception: when `network.allow_private_ip_hosts = true`, the DNS-resolved\n+        // IP check is skipped. This accommodates transparent-proxy setups where\n+        // DNS returns virtual private-range IPs for external domains.\n+        // Direct private-IP literals in URLs are always blocked.\n+        let allow_private_ip_hosts = context\n+            .network_policy\n+            .as_ref()\n+            .map_or(false, |p| p.allows_private_ip_hosts());\n         let mut dns_pinning = None; // (hostname, validated_ip)\n         if let Some(host) = &url_host {\n             if host == \"localhost\" || host == \"localhost.localdomain\" {\n@@ -179,6 +188,7 @@ impl ToolSpec for FetchUrlTool {\n                 ));\n             }\n             if let Ok(ip) = host.parse::<std::net::IpAddr>() {\n+                // Always block literal private-IP URLs regardless of proxy config.\n                 if is_restricted_ip(&ip) {\n                     return Err(ToolError::permission_denied(format!(\n                         \"IP {ip} is a restricted address (private/loopback/link-local)\"\n@@ -187,9 +197,11 @@ impl ToolSpec for FetchUrlTool {\n             } else if let Ok(addrs) = tokio::net::lookup_host((&**host, 0u16)).await {\n                 let mut first_valid: Option<std::net::IpAddr> = None;\n                 for addr in addrs {\n-                    if is_restricted_ip(&addr.ip()) {\n+                    if !allow_private_ip_hosts && is_restricted_ip(&addr.ip()) {\n                         return Err(ToolError::permission_denied(format!(\n-                            \"resolved IP {} is a restricted address (private/loopback/link-local)\",\n+                            \"resolved IP {} is a restricted address (private/loopback/link-local); \\\n+                             if your DNS is managed by a transparent proxy, set \\\n+                             allow_private_ip_hosts = true under [network] in config.toml\",\n                             addr.ip()\n                         )));\n                     }\n@@ -496,6 +508,7 @@ mod tests {\n             allow: vec![\"api.deepseek.com\".to_string()],\n             deny: vec![],\n             audit: false,\n+            allow_private_ip_hosts: false,\n         };\n         let decider = NetworkPolicyDecider::new(policy, None);\n         let ctx = ToolContext::new(PathBuf::from(\".\")).with_network_policy(decider);",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "crates/tui/src/tools/web_run.rs",
+                "status": "modified",
+                "patch": "@@ -1815,6 +1815,7 @@ mod tests {\n             allow: vec![\"api.deepseek.com\".to_string()],\n             deny: vec![],\n             audit: false,\n+            allow_private_ip_hosts: false,\n         };\n         let decider = NetworkPolicyDecider::new(policy, None);\n         let ctx = ToolContext::new(PathBuf::from(\".\")).with_network_policy(decider);",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              }
+            ],
+            "files_truncated": false
+          },
+          {
+            "url": "https://github.com/Hmbown/Codewhale/pull/1103",
+            "title": "fix(fetch_url): add proxy DNS opt-in",
+            "body": "  ## Summary\r\n\r\n  Adds an explicit `[network] proxy = [...]` opt-in for fake-IP proxy DNS setups.\r\n\r\n  This keeps the default SSRF behavior strict:\r\n  - restricted DNS results are denied unless the hostname is explicitly configured in `network.proxy`\r\n  - literal restricted IP URLs remain blocked even when `network.proxy` is configured\r\n  - `localhost` remains blocked\r\n  - `network.deny` takes precedence over `network.proxy`\r\n  - trusted proxy DNS allowances are audit logged as `TrustedProxyFakeIp-Allow`\r\n\r\n  Related to #1071.\r\n\r\n  ## Testing\r\n\r\n  - [x] `cargo test --all-features`\r\n  - [x] `cargo fmt --all -- --check`\r\n  - [x] `cargo clippy --all-targets --all-features`\r\n\r\n  ## Checklist\r\n\r\n  - [x] Updated docs or comments as needed\r\n  - [x] Added or updated tests where relevant\r\n  - [x] Verified TUI behavior manually if UI changes (N/A: no UI changes)",
+            "body_truncated": false,
+            "state": "closed",
+            "merged": true,
+            "head_sha": "a55e7b07fb6fa184077d353bec06942704c86df2",
+            "base_sha": "200b4f4d157b25d918e93c08b8e5e61e9230711e",
+            "merge_commit_sha": "73f92bfb5a1abd9a326c66c5d455667684f36b7c",
+            "relation": "cross_reference_not_verified_fix",
+            "files": [
+              {
+                "filename": "crates/tui/tests/skill_install.rs",
+                "status": "modified",
+                "patch": "@@ -61,6 +61,7 @@ fn allow_all_policy() -> NetworkPolicy {\n         default: DecisionToml::Allow,\n         allow: Vec::new(),\n         deny: Vec::new(),\n+        proxy: Vec::new(),\n         audit: false,\n     }\n }\n@@ -70,6 +71,7 @@ fn deny_all_policy() -> NetworkPolicy {\n         default: DecisionToml::Deny,\n         allow: Vec::new(),\n         deny: Vec::new(),\n+        proxy: Vec::new(),\n         audit: false,\n     }\n }\n@@ -79,6 +81,7 @@ fn prompt_all_policy() -> NetworkPolicy {\n         default: DecisionToml::Prompt,\n         allow: Vec::new(),\n         deny: Vec::new(),\n+        proxy: Vec::new(),\n         audit: false,\n     }\n }",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "crates/config/src/lib.rs",
+                "status": "modified",
+                "patch": "@@ -250,6 +250,10 @@ pub struct NetworkPolicyToml {\n     /// Hosts that are always denied. Deny entries win over allow entries.\n     #[serde(default)]\n     pub deny: Vec<String>,\n+    /// Hostnames whose DNS may resolve to fake-IP/private proxy ranges in an\n+    /// explicitly trusted proxy setup. Literal IP URLs remain blocked.\n+    #[serde(default)]\n+    pub proxy: Vec<String>,\n     /// Whether to record one audit-log line per outbound network call.\n     #[serde(default = \"default_network_audit\")]\n     pub audit: bool,\n@@ -269,6 +273,7 @@ impl Default for NetworkPolicyToml {\n             default: default_network_decision(),\n             allow: Vec::new(),\n             deny: Vec::new(),\n+            proxy: Vec::new(),\n             audit: default_network_audit(),\n         }\n     }\n@@ -1404,6 +1409,21 @@ mod tests {\n         LOCK.get_or_init(|| Mutex::new(())).lock().unwrap()\n     }\n \n+    #[test]\n+    fn network_policy_toml_deserializes_proxy_hosts() {\n+        let policy: NetworkPolicyToml = toml::from_str(\n+            r#\"\n+            default = \"allow\"\n+            proxy = [\"github.com\", \".githubusercontent.com\"]\n+            \"#,\n+        )\n+        .expect(\"network policy toml\");\n+\n+        assert_eq!(policy.default, \"allow\");\n+        assert_eq!(policy.proxy, [\"github.com\", \".githubusercontent.com\"]);\n+        assert!(policy.audit);\n+    }\n+\n     struct EnvGuard {\n         deepseek_api_key: Option<OsString>,\n         deepseek_base_url: Option<OsString>,",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "crates/tui/src/config.rs",
+                "status": "modified",
+                "patch": "@@ -919,6 +919,10 @@ pub struct NetworkPolicyToml {\n     /// Hosts that are always denied. Deny entries win over allow entries.\n     #[serde(default)]\n     pub deny: Vec<String>,\n+    /// Hostnames whose DNS may resolve to fake-IP/private proxy ranges in an\n+    /// explicitly trusted proxy setup. Literal IP URLs remain blocked.\n+    #[serde(default)]\n+    pub proxy: Vec<String>,\n     /// Whether to record one audit-log line per outbound network call.\n     #[serde(default = \"default_network_audit\")]\n     pub audit: bool,\n@@ -938,6 +942,7 @@ impl Default for NetworkPolicyToml {\n             default: default_network_decision(),\n             allow: Vec::new(),\n             deny: Vec::new(),\n+            proxy: Vec::new(),\n             audit: default_network_audit(),\n         }\n     }\n@@ -952,6 +957,7 @@ impl NetworkPolicyToml {\n             default: crate::network_policy::Decision::parse(&self.default).into(),\n             allow: self.allow,\n             deny: self.deny,\n+            proxy: self.proxy,\n             audit: self.audit,\n         }\n     }\n@@ -3130,6 +3136,23 @@ mod tests {\n     use std::os::unix::fs::PermissionsExt;\n     use std::time::{SystemTime, UNIX_EPOCH};\n \n+    #[test]\n+    fn network_policy_toml_maps_proxy_hosts_to_runtime_policy() {\n+        let policy: NetworkPolicyToml = toml::from_str(\n+            r#\"\n+            default = \"allow\"\n+            proxy = [\"github.com\", \".githubusercontent.com\"]\n+            \"#,\n+        )\n+        .expect(\"network policy toml\");\n+\n+        let runtime = policy.into_runtime();\n+\n+        assert_eq!(runtime.proxy, [\"github.com\", \".githubusercontent.com\"]);\n+        assert!(runtime.trusts_proxy_fakeip_host(\"github.com\"));\n+        assert!(runtime.trusts_proxy_fakeip_host(\"raw.githubusercontent.com\"));\n+    }\n+\n     struct EnvGuard {\n         home: Option<OsString>,\n         userprofile: Option<OsString>,",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "crates/tui/src/network_policy.rs",
+                "status": "modified",
+                "patch": "@@ -33,7 +33,7 @@\n //! # Audit-log format\n //!\n //! ```text\n-//! <RFC3339-timestamp> network <host> <tool> <Allow|Deny|Prompt-Approved|Prompt-Denied>\n+//! <RFC3339-timestamp> network <host> <tool> <Allow|Deny|Prompt-Approved|Prompt-Denied|TrustedProxyFakeIp-Allow>\n //! ```\n //!\n //! Plaintext, one line per call, appended to `<audit_path>` (defaults to\n@@ -98,6 +98,10 @@ pub struct NetworkPolicy {\n     /// Hosts that should always be denied.\n     #[serde(default)]\n     pub deny: Vec<String>,\n+    /// Hostnames whose DNS may resolve to fake-IP/private proxy ranges in an\n+    /// explicitly trusted proxy setup. This does not affect literal IP URLs.\n+    #[serde(default)]\n+    pub proxy: Vec<String>,\n     /// Whether to record one audit-log line per network call. Defaults to true.\n     #[serde(default = \"default_audit\")]\n     pub audit: bool,\n@@ -117,6 +121,7 @@ impl Default for NetworkPolicy {\n             default: DecisionToml::Prompt,\n             allow: Vec::new(),\n             deny: Vec::new(),\n+            proxy: Vec::new(),\n             audit: true,\n         }\n     }\n@@ -205,6 +210,26 @@ impl NetworkPolicy {\n     pub fn audit_enabled(&self) -> bool {\n         self.audit\n     }\n+\n+    /// Whether `host` is explicitly trusted to resolve through a local\n+    /// fake-IP proxy. Deny entries still win over this list.\n+    #[must_use]\n+    pub fn trusts_proxy_fakeip_host(&self, host: &str) -> bool {\n+        let normalized = normalize_host(host);\n+        if normalized.is_empty() {\n+            return false;\n+        }\n+        if self\n+            .deny\n+            .iter()\n+            .any(|entry| host_matches(entry, &normalized))\n+        {\n+            return false;\n+        }\n+        self.proxy\n+            .iter()\n+            .any(|entry| host_matches(entry, &normalized))\n+    }\n }\n \n /// Normalize a host for matching: lowercase, trim whitespace, strip a single\n@@ -471,6 +496,19 @@ impl NetworkPolicyDecider {\n         &self.policy\n     }\n \n+    /// Whether this host is explicitly configured for trusted proxy fake-IP\n+    /// DNS handling.\n+    #[must_use]\n+    pub fn trusts_proxy_fakeip_host(&self, host: &str) -> bool {\n+        self.policy.trusts_proxy_fakeip_host(host)\n+    }\n+\n+    /// Record that a restricted DNS result was allowed because the host is in\n+    /// the trusted proxy fake-IP list.\n+    pub fn record_trusted_proxy_fakeip_allow(&self, host: &str, tool: &str) {\n+        self.audit_record(host, tool, \"TrustedProxyFakeIp-Allow\");\n+    }\n+\n     fn audit_record(&self, host: &str, tool: &str, label: &str) {\n         if let Some(auditor) = self.auditor.as_ref() {\n             auditor.record(host, tool, label);\n@@ -496,6 +534,7 @@ mod tests {\n             default: default.into(),\n             allow: allow.iter().map(|s| (*s).to_string()).collect(),\n             deny: deny.iter().map(|s| (*s).to_string()).collect(),\n+            proxy: Vec::new(),\n             audit: false,\n         }\n     }\n@@ -573,6 +612,29 @@ mod tests {\n         assert_eq!(p.allow[0], \"example.com\");\n     }\n \n+    #[test]\n+    fn trusted_proxy_fakeip_hosts_match_exact_and_subdomains() {\n+        let mut p = mk(Decision::Deny, &[], &[]);\n+        p.proxy = vec![\n+            \"github.com\".to_string(),\n+            \".githubusercontent.com\".to_string(),\n+        ];\n+\n+        assert!(p.trusts_proxy_fakeip_host(\"github.com\"));\n+        assert!(p.trusts_proxy_fakeip_host(\"raw.githubusercontent.com\"));\n+        assert!(!p.trusts_proxy_fakeip_host(\"githubusercontent.com\"));\n+        assert!(!p.trusts_proxy_fakeip_host(\"example.com\"));\n+    }\n+\n+    #[test]\n+    fn trusted_proxy_fakeip_hosts_respect_deny_precedence() {\n+        let mut p = mk(Decision::Allow, &[], &[\"raw.githubusercontent.com\"]);\n+        p.proxy = vec![\".githubusercontent.com\".to_string()];\n+\n+        assert!(!p.trusts_proxy_fakeip_host(\"raw.githubusercontent.com\"));\n+        assert!(p.trusts_proxy_fakeip_host(\"avatars.githubusercontent.com\"));\n+    }\n+\n     #[test]\n     fn host_from_url_extracts_host() {\n         assert_eq!(",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "crates/tui/src/tools/fetch_url.rs",
+                "status": "modified",
+                "patch": "@@ -10,7 +10,7 @@\n use super::spec::{\n     ApprovalRequirement, ToolCapability, ToolContext, ToolError, ToolResult, ToolSpec, optional_u64,\n };\n-use crate::network_policy::{Decision, host_from_url};\n+use crate::network_policy::{Decision, NetworkPolicyDecider, host_from_url};\n use async_trait::async_trait;\n use regex::Regex;\n use serde::Serialize;\n@@ -187,12 +187,7 @@ impl ToolSpec for FetchUrlTool {\n             } else if let Ok(addrs) = tokio::net::lookup_host((&**host, 0u16)).await {\n                 let mut first_valid: Option<std::net::IpAddr> = None;\n                 for addr in addrs {\n-                    if is_restricted_ip(&addr.ip()) {\n-                        return Err(ToolError::permission_denied(format!(\n-                            \"resolved IP {} is a restricted address (private/loopback/link-local)\",\n-                            addr.ip()\n-                        )));\n-                    }\n+                    validate_dns_resolved_ip(host, &addr.ip(), context.network_policy.as_ref())?;\n                     if first_valid.is_none() {\n                         first_valid = Some(addr.ip());\n                     }\n@@ -332,6 +327,27 @@ fn is_restricted_ip(ip: &std::net::IpAddr) -> bool {\n     }\n }\n \n+fn validate_dns_resolved_ip(\n+    host: &str,\n+    ip: &std::net::IpAddr,\n+    decider: Option<&NetworkPolicyDecider>,\n+) -> Result<(), ToolError> {\n+    if !is_restricted_ip(ip) {\n+        return Ok(());\n+    }\n+\n+    if let Some(decider) = decider\n+        && decider.trusts_proxy_fakeip_host(host)\n+    {\n+        decider.record_trusted_proxy_fakeip_allow(host, \"fetch_url\");\n+        return Ok(());\n+    }\n+\n+    Err(ToolError::permission_denied(format!(\n+        \"resolved IP {ip} is a restricted address (private/loopback/link-local)\"\n+    )))\n+}\n+\n /// Strip `<script>` / `<style>` blocks, drop remaining tags, and collapse\n /// whitespace. Good enough for \"let the model read this page\" — not a full\n /// HTML-to-Markdown converter.\n@@ -495,6 +511,7 @@ mod tests {\n             default: Decision::Deny.into(),\n             allow: vec![\"api.deepseek.com\".to_string()],\n             deny: vec![],\n+            proxy: Vec::new(),\n             audit: false,\n         };\n         let decider = NetworkPolicyDecider::new(policy, None);\n@@ -506,4 +523,101 @@ mod tests {\n         let err = res.expect_err(\"blocked host should fail\");\n         assert!(format!(\"{err}\").contains(\"blocked\"));\n     }\n+\n+    #[test]\n+    fn restricted_dns_result_is_denied_without_proxy_opt_in() {\n+        let ip = \"198.18.0.1\".parse().unwrap();\n+\n+        let err = validate_dns_resolved_ip(\"github.com\", &ip, None)\n+            .expect_err(\"fake-IP DNS result must be denied by default\");\n+\n+        assert!(format!(\"{err}\").contains(\"resolved IP 198.18.0.1 is a restricted address\"));\n+    }\n+\n+    #[test]\n+    fn proxy_opt_in_allows_restricted_dns_for_matching_host() {\n+        use crate::network_policy::{Decision, NetworkPolicy, NetworkPolicyDecider};\n+\n+        let policy = NetworkPolicy {\n+            default: Decision::Allow.into(),\n+            allow: Vec::new(),\n+            deny: Vec::new(),\n+            proxy: vec![\"github.com\".to_string()],\n+            audit: false,\n+        };\n+        let decider = NetworkPolicyDecider::new(policy, None);\n+        let ip = \"198.18.0.1\".parse().unwrap();\n+\n+        validate_dns_resolved_ip(\"github.com\", &ip, Some(&decider))\n+            .expect(\"proxy opt-in should allow fake-IP DNS for matching host\");\n+    }\n+\n+    #[test]\n+    fn proxy_opt_in_does_not_allow_unlisted_host() {\n+        use crate::network_policy::{Decision, NetworkPolicy, NetworkPolicyDecider};\n+\n+        let policy = NetworkPolicy {\n+            default: Decision::Allow.into(),\n+            allow: Vec::new(),\n+            deny: Vec::new(),\n+            proxy: vec![\"github.com\".to_string()],\n+            audit: false,\n+        };\n+        let decider = NetworkPolicyDecider::new(policy, None);\n+  ",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "crates/tui/src/tools/web_run.rs",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              }
+            ],
+            "files_truncated": false
+          }
+        ]
+      }
+    }
+  ],
+  "open_questions": [
+    "本次 CLI 测试针对已发布 alpha.2（存储格式 9），还是开发源码（格式 10）？原文同时描述两者；源码独有的 JWKS、Keycloak exchange、MCP 和本地审批签名工具不能直接作为 alpha.2 要求。",
+    "“Credentials never appear in ... process arguments, environment variables”与示例通过 STEP_UP_PROOF、CAPABILITY_FROM_SECURE_STORAGE 等 shell 变量传值之间，需明确普通未导出的 shell 变量是否允许，以及 step-up proof 包含密码或恢复密钥时的适用边界。",
+    "当前输入指定 cli；源码独有的 macOS 14+ Admin UI 是否明确排除在本次测试范围外？其人工认证后显示、复制凭证的能力不应被误判为 Agent API 可读取凭证。"
+  ],
+  "generation": {
+    "queries": {
+      "engine": "codex",
+      "requested_model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 21072,
+        "cached_input_tokens": 8832,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1379,
+        "reasoning_output_tokens": 169
+      },
+      "thread_id": "01a0fd42-23a6-79c3-a8a2-21a1305c096c"
+    },
+    "retrieval": {
+      "engine": "codex",
+      "requested_model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 29796,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 957,
+        "reasoning_output_tokens": 116
+      },
+      "thread_id": "01a0fd43-4be0-7be0-8d41-2840c03e97ee"
+    },
+    "plan": {
+      "engine": "codex",
+      "requested_model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 47815,
+        "cached_input_tokens": 14976,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 6739,
+        "reasoning_output_tokens": 17
+      },
+      "thread_id": "01a0fd47-634e-73c3-a904-f1d3ae3f6195"
+    },
+    "pr_review": {
+      "engine": "codex",
+      "requested_model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 91389,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 7131,
+        "reasoning_output_tokens": 48
+      },
+      "thread_id": "01a0fd4d-488d-7191-8785-aed6cd24d7ef"
+    }
+  },
+  "pr_evidence_requested": true,
+  "test_inputs": [
+    {
+      "id": "T1",
+      "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rekey/crates/rekey-broker/tests/adversarial_http.rs",
+      "sha256": "ac314be4239a3db273a11d0db393a64361294fd7d1e420166eabaa2d161def34"
+    },
+    {
+      "id": "T2",
+      "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rekey/crates/rekey-broker/tests/reflected_secret.rs",
+      "sha256": "13b163c42e0c745e8ecd24e8e6dc5edd169a0503a10d4e46b433bb461c967f93"
+    },
+    {
+      "id": "T3",
+      "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rekey/crates/rekey-cli/tests/cli_blackbox.rs",
+      "sha256": "0e421d7e788efe2841da7ea3ed43265a59af3bf6ef2f24653a96cf89d7b09f7b"
+    },
+    {
+      "id": "T4",
+      "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rekey/crates/rekey-vault/tests/backup_restore.rs",
+      "sha256": "1a7a6fb89bba759671eb8124f542e8d3bbdbced8989ed6d3ae30707ab98bf0c7"
+    }
+  ],
+  "cases": [
+    {
+      "requirement_id": "R3",
+      "category": "存储版本",
+      "title": "按目标二进制拒绝旧状态及备份，保留原数据",
+      "preconditions": [
+        "执行前确定 alpha.2/格式 9 或开发源码/格式 10；结论分别记录。",
+        "准备由相应历史二进制创建的旧状态和备份、非空 v1 状态目录及同格式备份，并保存内容快照。"
+      ],
+      "steps": [
+        "开发格式 10 二进制尝试打开旧格式状态及恢复旧格式备份；若选择 alpha.2，只验证其明确不支持的 alpha.1 原地升级。",
+        "尝试初始化或打开非空 v1 状态目录。",
+        "使用目标二进制创建的同格式备份及正确 proof 完成恢复对照，比较被拒绝输入的内容。"
+      ],
+      "expected_result": "目标版本明确不支持的旧状态、备份或 legacy 目录被拒绝，不迁移、不回填，原数据不变；同格式有效备份可恢复。不得将格式 10 源码结果作为 alpha.2 兼容证据。",
+      "source_ids": [],
+      "rationale": "覆盖 PRD 的破坏性版本边界；alpha.2 对旧备份的具体规则未明确，不从源码格式 10 要求外推。",
+      "coverage": "not_found",
+      "incremental_value": "所给文件未发现旧格式或非空 v1 的实际触发及断言；T4 的格式 10 同格式恢复、损坏布局拒绝不能替代版本边界。",
+      "existing_tests": [],
+      "id": "TC001"
+    },
+    {
+      "requirement_id": "R5",
+      "category": "策略与 capability",
+      "title": "签名策略生命周期及会话有界撤销",
+      "preconditions": [
+        "使用外部 Ed25519 签名器，broker 不持有签名私钥。",
+        "准备合法连续版本、错误签名、跳版本和其他信任根的策略包；创建短 TTL、小 max-uses 会话。"
+      ],
+      "steps": [
+        "安装信任根、激活合法策略；尝试替换根及激活错误签名或非连续版本。",
+        "在 TTL 和次数内执行成功对照，再分别验证到期和次数耗尽。",
+        "分别锁定及重启 broker，尝试使用旧 capability；成功解锁后检查持久策略重新验证和加载。",
+        "在隔离副本篡改持久策略签名或生命周期封印，检查解锁后的授权行为。"
+      ],
+      "expected_result": "只接受合法签名和连续版本，信任根不可替换。会话超时或耗尽后拒绝；锁定、重启撤销旧会话。策略只在成功解锁并重新验证后加载，篡改状态不能取得执行授权。",
+      "source_ids": [],
+      "rationale": "来自 PRD 的基础授权契约，不增加签名私钥托管或远程签名功能。",
+      "coverage": "not_found",
+      "incremental_value": "所给 T1–T4 未发现实际策略签名、版本、封印及会话 TTL/次数撤销的同等触发和断言。",
+      "existing_tests": [],
+      "id": "TC002"
+    },
+    {
+      "requirement_id": "R6",
+      "category": "外部审批",
+      "title": "确切请求绑定、有效期和次数限制",
+      "preconditions": [
+        "策略包含 require-approval 规则，并明确一份或两份 grant 要求。",
+        "外部 approver 签署独立 challenge 的 grant；可控制时间并观察上游请求计数。"
+      ],
+      "steps": [
+        "为原 typed request 准备 challenge，使用有效 grant 执行成功对照。",
+        "用独立 challenge 逐项改变 session、principal、Action/resource、规范参数、determining rule 或策略版本/摘要，尝试复用不匹配 grant。",
+        "提交缺失、格式错误、过期或次数耗尽的 grant；双 grant 规则只提供一份。",
+        "分别锁定和重启后尝试使用原授权；对执行失败进行重试，验证不能超出已签署的授权范围和次数。"
+      ],
+      "expected_result": "只有满足全部绑定、有效期和次数要求的请求能触达上游。不匹配、缺失或失效授权拒绝；锁定、重启后旧 challenge/grant 不能继续授权。失败不得被解释为额外批准。",
+      "source_ids": [
+        5142199048
+      ],
+      "rationale": "迁移一次性审批不能被陈旧决定或不匹配重试扩大授权的条件。其他产品的持久审批恢复不属于 Rekey；所给关联补丁截断，不能据此认定它没有回归测试。",
+      "coverage": "not_found",
+      "incremental_value": "所给 Rekey 测试文件未发现 challenge/grant 的请求绑定、有效期和使用次数断言；新增实际授权门控验证。",
+      "existing_tests": [],
+      "id": "TC003"
+    },
+    {
+      "requirement_id": "R7",
+      "category": "封闭 Vault 来源",
+      "title": "固定版本 KV 单次读取与动态租约撤销门控",
+      "preconditions": [
+        "使用公开 HTTPS Vault fixture 和固定 Action；不启用私网例外。",
+        "KV profile 固定 mount、path、非零版本和字符串 key；动态 profile 固定 mount、role 和选定字段。",
+        "可记录来源读取、Action 与 revoke 请求顺序，控制 lease 时长及撤销结果。"
+      ],
+      "steps": [
+        "执行 KV Action，核对指定版本只读取一次；让来源返回错误或非字符串值，检查无自动重试且不执行目标 Action。",
+        "执行动态 Action，核对单次 GET、选定值注入和 exact lease 的 sync:true revoke。",
+        "延迟及拒绝 revoke，观察 Agent 响应；再执行撤销成功的独立对照。",
+        "检查 lease 时长 5、300 秒接受，区间外拒绝；让来源 token 或解析值反射到响应中。"
+      ],
+      "expected_result": "KV 不查询 latest、不重试，只使用固定版本的指定字符串。动态执行只获取一次；撤销确切 lease 成功前不释放 Action 响应，撤销失败不报告成功。只接受 5–300 秒租约且不续租；source token 和解析值不暴露给 Agent。",
+      "source_ids": [],
+      "rationale": "覆盖封闭来源契约；不扩展为通用 Vault、后台租约管理或进程/主机崩溃后的清理保证。",
+      "coverage": "not_found",
+      "incremental_value": "所给文件未发现 Vault 来源请求次数、固定版本、租约时长或撤销后释放响应的实际断言。",
+      "existing_tests": [],
+      "id": "TC004"
+    },
+    {
+      "requirement_id": "R1",
+      "category": "凭证隔离与安全输入",
+      "title": "stdin 输入、敏感输出及双 socket 权限隔离",
+      "preconditions": [
+        "记录目标二进制版本；使用 macOS/Linux 临时环境、虚构密码和凭证，仅验证 CLI 与默认 G1 范围。",
+        "配置权限分离的 admin.sock 和 agent.sock；测试输入通过 stdin 传递，不导出为环境变量。"
+      ],
+      "steps": [
+        "通过 stdin 添加并轮换凭证，第一行提供 step-up proof，第二行提供新秘密；检查 CLI、broker 的参数、环境、标准输出、错误输出及日志。",
+        "经 agent.sock 尝试凭证读取和 Admin 修改请求，检查返回数据和审计。",
+        "不给有效 stdin proof，验证调用不能通过环境变量获得密码或凭证，也不报告修改成功。",
+        "检查合法凭证列表及可用诊断输出，特别检查名称不包含 token、password、key 的敏感字段。"
+      ],
+      "expected_result": "合法 stdin 操作完成；Agent 通道不能读取凭证或执行 Admin 修改。密码、凭证和恢复 proof 不进入参数、环境、Agent 输出、日志或审计；输入失败不报告成功。初始化和恢复轮换允许的 Admin 一次性恢复密钥展示单独识别。",
+      "source_ids": [
+        4718244766,
+        4655347640
+      ],
+      "rationale": "借用敏感字段命名导致输出遗漏、替代入口绕过权限限制的触发条件。4718244766 的关联 PR 未合并，只能作为拟议回归思路；4655347640 不用于要求防御 G1 排除的同用户直接文件读取。历史提炼不是 Rekey 根因证据。",
+      "coverage": "partial",
+      "incremental_value": "补充凭证添加与轮换的进程边界、双 socket 越权请求及诊断出口检查；已有源码的进程检查主要用于密码变更和恢复轮换。",
+      "existing_tests": [
+        {
+          "test_id": "T3",
+          "quote": "    let process = Command::new(\"ps\")\n        .args([\"-eww\", \"-o\", \"command=\", \"-p\", &child.id().to_string()])\n        .output()\n        .expect(\"inspect process boundary\");\n    assert!(process.status.success(), \"cannot inspect CLI process\");\n    for canary in secret_canaries {\n        assert!(\n            !process\n                .stdout\n                .windows(canary.len())\n                .any(|part| part == canary.as_bytes()),\n            \"secret appeared in CLI argv or environment\"\n        );\n    }",
+          "reason": "实际检查子进程参数和环境中的哨兵；调用点用于密码变更和恢复轮换，不等于覆盖全部凭证入口或 socket 权限。",
+          "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rekey/crates/rekey-cli/tests/cli_blackbox.rs",
+          "line": 83
+        }
+      ],
+      "id": "TC005"
+    },
+    {
+      "requirement_id": "R2",
+      "category": "固定 Action",
+      "title": "合法固定请求及 Agent 越权字段拒绝",
+      "preconditions": [
+        "注册固定 HTTPS Action，明确方法、路径、认证头、额外头白名单和请求大小限制。",
+        "创建有效 capability；受控上游记录实际请求。"
+      ],
+      "steps": [
+        "通过 CLI 执行合法请求，核对实际目标、方法、路径和认证头。",
+        "经 Agent IPC 加入 origin、method、path、authorization、redirect 等字段。",
+        "提交认证头覆盖、非白名单头、CRLF 头值及超过 Action 限制的请求体。"
+      ],
+      "expected_result": "合法请求遵循管理员固定配置。未知元数据返回 INVALID_FRAME；非法头和 Action 请求体超限返回 REQUEST_DENIED，均不触达上游；CLI 不报告成功。",
+      "source_ids": [],
+      "rationale": "直接覆盖 PRD 基础契约，Agent 没有任意 URL、方法或认证配置能力。",
+      "coverage": "partial",
+      "incremental_value": "补充真实 CLI 到 HTTPS 上游的合法固定配置对照；已有源码覆盖模拟传输下的拒绝路径。",
+      "existing_tests": [
+        {
+          "test_id": "T1",
+          "quote": "    meta[\"authorization\"] = serde_json::json!(\"Bearer attacker-token\");\n    meta[\"redirect\"] = serde_json::json!(true);\n\n    let response = execute_with_meta(&broker, meta, b\"{}\").await;\n    assert_eq!(response.err_code(), \"INVALID_FRAME\");\n    assert!(broker.fake.take_requests().is_empty());",
+          "reason": "明确触发未知授权及重定向字段并断言拒绝、模拟上游未调用；未核验真实合法请求的固定配置。",
+          "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rekey/crates/rekey-broker/tests/adversarial_http.rs",
+          "line": 47
+        }
+      ],
+      "id": "TC006"
+    },
+    {
+      "requirement_id": "R2",
+      "category": "生产网络限制",
+      "title": "实际连接筛查、fake DNS 与重定向失败关闭",
+      "preconditions": [
+        "使用生产传输、受控 DNS 和 HTTPS 上游，不用 FakeTransport 替代地址筛查。",
+        "管理员固定 Action 域名；测试设施可观察实际连接和代理请求，非公共目标位于隔离环境。"
+      ],
+      "steps": [
+        "将固定域名分别解析到回环、私网、链路本地、IPv6 回环及 IPv4 映射非公共地址，设置公共地址成功对照。",
+        "使预检与连接阶段的 DNS 回答不同，检查是否可能实际连接到未经验证的非公共地址。",
+        "将 DNS 回答设为 198.18.0.0/15，分别在未设置和设置 HTTP/HTTPS 代理环境变量时执行；再仅为该主机恢复真实公共 DNS 后重试。",
+        "让公共上游返回重定向，观察是否请求重定向目标。"
+      ],
+      "expected_result": "非公共地址和重定向被阻止，被拒绝目标无请求。fake DNS 下失败关闭，代理环境变量不改变限制；恢复真实公共 DNS 后合法请求可完成。网络阻断保留 UPSTREAM_FAILED 错误契约，不报告成功。",
+      "source_ids": [
+        5203882201,
+        4399425176
+      ],
+      "rationale": "迁移域名解析到非公共地址和代理 fake DNS 的条件；二次解析差异是待验证边界。交叉引用和发行记录不证明所给 PR 修复了原 issue；其他产品的代理放行功能不适用于 Rekey。",
+      "coverage": "partial",
+      "incremental_value": "新增真实 DNS、实际连接、fake-IP、代理环境和重定向验证；现有模拟错误映射不证明生产传输筛查有效。",
+      "existing_tests": [
+        {
+          "test_id": "T1",
+          "quote": "    broker\n        .fake\n        .push_response(Err(UpstreamError::Blocked(\"private-address\")));\n    let meta = common::execute_meta(&token, &action_id, version);\n    let response = execute_with_meta(&broker, meta, b\"{}\").await;\n    assert_eq!(response.err_code(), \"UPSTREAM_FAILED\");",
+          "reason": "仅注入已发生的阻断错误并检查映射，没有触发 DNS 或实际连接。",
+          "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rekey/crates/rekey-broker/tests/adversarial_http.rs",
+          "line": 129
+        }
+      ],
+      "id": "TC007"
+    },
+    {
+      "requirement_id": "R2",
+      "category": "响应安全",
+      "title": "编码反射封堵、响应头过滤与真实流式大小限制",
+      "preconditions": [
+        "固定 Action 使用虚构凭证，包含适合区分 base64 与 base64url 的字节。",
+        "受控 HTTPS 上游可生成响应体、响应头和分块响应；明确 response_max_bytes。"
+      ],
+      "steps": [
+        "返回干净合法响应及非白名单头，验证成功对照和头过滤。",
+        "在响应体和白名单头中分别反射原文、base64、base64url、完整及选择性 percent 编码凭证。",
+        "返回恰好达到上限及超过上限的响应，包含分块跨边界的响应和秘密反射。"
+      ],
+      "expected_result": "干净且大小合法的响应可见，非白名单头被移除。秘密反射返回 RESPONSE_SECURITY_VIOLATION，Agent 看不到泄露内容；真实超限返回 RESPONSE_TOO_LARGE，不释放超限内容。",
+      "source_ids": [],
+      "rationale": "由 PRD 的响应扫描和大小限制直接导出；不借用网络 issue 证明反射泄密。",
+      "coverage": "partial",
+      "incremental_value": "新增能区分编码的哨兵及真实分块响应的累计大小和跨块扫描边界；现有源码已覆盖多种模拟响应反射。",
+      "existing_tests": [
+        {
+          "test_id": "T2",
+          "quote": "    let body = SECRET\n        .iter()\n        .flat_map(|byte| format!(\"%{byte:02x}\").into_bytes())\n        .collect();\n    assert_eq!(\n        run_with_reflection(body).await,\n        \"RESPONSE_SECURITY_VIOLATION\"\n    );",
+          "reason": "构造完整 percent 编码并断言安全拒绝；没有实际流式传输触发。",
+          "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rekey/crates/rekey-broker/tests/reflected_secret.rs",
+          "line": 91
+        },
+        {
+          "test_id": "T1",
+          "quote": "    broker\n        .fake\n        .push_response(Err(UpstreamError::ResponseTooLarge));\n    let meta = common::execute_meta(&token, &action_id, version);\n    let response = execute_with_meta(&broker, meta, b\"{}\").await;\n    assert_eq!(response.err_code(), \"RESPONSE_TOO_LARGE\");",
+          "reason": "检查注入超限错误后的映射，不等于读取真实响应并实施上限。",
+          "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rekey/crates/rekey-broker/tests/adversarial_http.rs",
+          "line": 136
+        }
+      ],
+      "id": "TC008"
+    },
+    {
+      "requirement_id": "R3",
+      "category": "密码与恢复",
+      "title": "包装替换成功及失败原子性",
+      "preconditions": [
+        "已解锁含虚构凭证的 vault，保存当前密码和恢复密钥。",
+        "隔离环境可在包装提交前注入写入或事务失败；预先记录 VRK 标识或可验证的不变性证据、凭证密文和可用 Action。"
+      ],
+      "steps": [
+        "以错误当前密码尝试密码变更和恢复轮换，检查退出状态及持久状态。",
+        "使用正确 proof，在包装事务提交前注入失败；移除故障并重启，检查原材料仍能解锁。",
+        "正常变更密码并轮换恢复密钥，验证旧材料拒绝、新材料可用且新恢复密钥只显示一次。",
+        "使用新恢复密钥完成丢失密码后的密码替换，并执行原 Action；比较 VRK 和凭证数据。"
+      ],
+      "expected_result": "认证失败或提交前失败不报告成功，原包装仍完整可用。正常提交后旧材料失效，新材料有效；恢复轮换要求当前密码。新恢复密钥只展示一次，VRK 与 Credential 数据未轮换，原 Action 保持可用。",
+      "source_ids": [
+        292245219
+      ],
+      "rationale": "只迁移认证失败后部分修改及错误完成提示的故障条件。所给补丁将 shell 切换移到卸载之前，但裸 exit 不能作为正确非零退出码的依据；Rekey 仍按自己的错误契约验收。",
+      "coverage": "partial",
+      "incremental_value": "新增错误 proof、提交前失败及内部数据不变性验证；已有 CLI 源码主要覆盖成功替换后的旧、新材料行为。",
+      "existing_tests": [
+        {
+          "test_id": "T3",
+          "quote": "    let output = run(\n        &rekey_bin(),\n        &[\"--state-dir\", state, \"unlock\", \"--password-stdin\"],\n        Some(&format!(\"{PASSWORD}\\n\")),\n    );\n    assert_eq!(output.status, 3, \"stderr: {}\", output.stderr);\n    let output = run(\n        &rekey_bin(),\n        &[\"--state-dir\", state, \"unlock\", \"--password-stdin\"],\n        Some(&format!(\"{NEW_PASSWORD}\\n\")),\n    );\n    assert_eq!(output.status, 0, \"{}\", output.stderr);",
+          "reason": "验证成功变更后旧密码拒绝、新密码成功；没有注入包装替换失败，也没有直接断言 VRK 不变。",
+          "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rekey/crates/rekey-cli/tests/cli_blackbox.rs",
+          "line": 568
+        }
+      ],
+      "id": "TC009"
+    },
+    {
+      "requirement_id": "R4",
+      "category": "审计",
+      "title": "锁定可读、并发追加下稳定分页与安全导出",
+      "preconditions": [
+        "存在多页审计事件，独立操作可持续追加事件；测试请求含虚构 body、header、凭证和 capability 哨兵。",
+        "准备新导出路径、已有非空文件和指向非空文件的符号链接。"
+      ],
+      "steps": [
+        "获取第一页及快照序号，在读取后续页期间追加事件；固定快照完整遍历并核对预先记录的事件集合。",
+        "锁定 broker 后继续查询和导出，检查页面上限及敏感字段。",
+        "导出到新路径，检查 JSONL 与权限；对已有文件和符号链接重复导出并比较内容。"
+      ],
+      "expected_result": "锁定状态可读脱敏审计。固定快照无重复、无遗漏，新增事件不混入旧快照，页面有界。输出不含秘密、body、header、capability、resource ID 或参数哈希；新文件为 0600 JSONL，已有文件及链接目标保持不变，拒绝时不报告导出成功。",
+      "source_ids": [],
+      "rationale": "直接验证基础契约，缺少历史来源不影响需求优先级。",
+      "coverage": "partial",
+      "incremental_value": "新增分页期间并发追加及完整集合核对、body/header 哨兵和非空导出目标保留；已有源码覆盖静态快照序号约束及安全导出的一部分。",
+      "existing_tests": [
+        {
+          "test_id": "T3",
+          "quote": "    assert_eq!(continued_page[\"snapshot_max_sequence\"], snapshot);\n    assert!(\n        continued_page[\"events\"]\n            .as_array()\n            .unwrap()\n            .iter()\n            .all(|event| {\n                event[\"sequence\"].as_u64().unwrap() < before\n                    && event[\"sequence\"].as_u64().unwrap() <= snapshot\n            })\n    );",
+          "reason": "检查续页属于原快照；没有在分页期间追加事件，也未核对完整集合的重复和遗漏。",
+          "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rekey/crates/rekey-cli/tests/cli_blackbox.rs",
+          "line": 354
+        }
+      ],
+      "id": "TC010"
+    },
+    {
+      "requirement_id": "R5",
+      "category": "工作负载身份",
+      "title": "JWT 精确映射、防重放及策略更新撤销",
+      "preconditions": [
+        "使用静态 Ed25519 或 RS256 公钥与精确身份映射，不默认纳入源码独有 JWKS。",
+        "准备合法、错误签名及映射不匹配 JWT；备份在合法 JWT 已消费后创建，格式匹配目标二进制。"
+      ],
+      "steps": [
+        "经 agent.sock 使用合法 JWT 铸造有界会话，不提供 Admin step-up；错误签名和不匹配身份作为拒绝对照。",
+        "重复提交已消费 JWT；重启并解锁后重复提交；恢复含消费记录的备份后再提交。",
+        "以另一个合法 JWT 铸造会话，重试完全相同策略包后执行，再激活合法新版本后执行。"
+      ],
+      "expected_result": "仅有效签名和精确身份匹配可铸造有界会话。已消费 JWT 在运行中、重启及包含消费记录的备份恢复后均拒绝；同包重试保留会话，新版本激活撤销工作负载会话。",
+      "source_ids": [],
+      "rationale": "直接覆盖身份契约；不要求恢复消费前备份仍保留未来消费记录。",
+      "coverage": "partial",
+      "incremental_value": "新增 JWT 验签、身份映射、重启和策略激活端到端边界；已有恢复测试直接操作消费摘要。",
+      "existing_tests": [
+        {
+          "test_id": "T4",
+          "quote": "    let replay = handle\n        .consume_workload_token_before(\n            [0x5a; 32],\n            4_102_444_800_000,\n            AuditDraft {\n                request_id: None,\n                session_id: None,\n                action_id: None,\n                action_version: None,\n                credential_id: None,\n                credential_version: None,\n                authorization: None,\n                approval: None,\n                event_type: event_type::SESSION_CREATED,\n                outcome: outcome::SUCCESS,\n                reason_code: \"workload-attested\".to_owned(),\n                upstream_status: None,\n                latency_ms: None,\n            },\n            None,\n        )\n        .await\n        .unwrap_err();\n    assert!(matches!(replay, AuthorityError::WorkloadIdentityInvalid));",
+          "reason": "恢复后重复消费相同摘要并断言拒绝；不提交实际 JWT，也不验证身份映射或策略变更。",
+          "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rekey/crates/rekey-vault/tests/backup_restore.rs",
+          "line": 127
+        }
+      ],
+      "id": "TC011"
+    },
+    {
+      "requirement_id": "R8",
+      "category": "Linux Agent 启动器",
+      "title": "默认拒绝出站与启动前置条件失败关闭",
+      "preconditions": [
+        "仅在支持该 launcher 的 Linux 目标版本验证 linux-netns-v1，准备 bubblewrap 和独立 agent socket。",
+        "子进程及后代可写启动标记、尝试网络和 IPC；另备缺失 bubblewrap 环境及默认共址 socket 配置。"
+      ],
+      "steps": [
+        "以有效独立 socket 启动子进程，尝试未经允许的 IP 出站，并执行合法 Agent IPC 对照。",
+        "让子进程及后代尝试访问 Admin socket，检查可见性和权限。",
+        "在默认共址 socket 和缺失 bubblewrap 条件下分别启动，检查退出状态及启动标记。"
+      ],
+      "expected_result": "有效 Linux 拓扑阻止未经允许的 IP 出站，Agent IPC 可用且不取得 Admin 权限。共址 socket 或缺失 bubblewrap 时不执行子命令、不退回普通启动；已给出的默认共址配置保持退出码 2。结论仅适用于该 Linux 参考拓扑。",
+      "source_ids": [],
+      "rationale": "来自 PRD 的 Linux 专用启动器契约，不要求 macOS launcher 或通用 G2。",
+      "coverage": "partial",
+      "incremental_value": "新增有效拓扑中的实际网络、后代隔离及缺失依赖验证；已有源码只覆盖默认共址 socket 拒绝。",
+      "existing_tests": [
+        {
+          "test_id": "T3",
+          "quote": "            \"agent-run\",\n            \"--\",\n            \"/bin/echo\",\n            \"blocked\",\n        ],\n        None,\n    );\n    assert_eq!(output.status, 2, \"stderr: {}\", output.stderr);\n    assert!(\n        output.stderr.contains(\"disjoint\")\n            || output.stderr.contains(\"INVALID_INPUT\")\n            || output.stderr.contains(\"invalid launch plan\"),\n        \"stderr: {}\",\n        output.stderr\n    );\n    assert!(!output.stdout.contains(\"blocked\"));",
+          "reason": "未提供独立 socket，断言退出 2 且子命令未输出标记；没有建立有效 namespace 或触发出站连接。",
+          "path": "/Users/lifcc/Desktop/code/AI/tools/test/issue-lens/out/five-products-20261002/inputs/tests/rekey/crates/rekey-cli/tests/cli_blackbox.rs",
+          "line": 811
+        }
+      ],
+      "id": "TC012"
+    }
+  ],
+  "coverage_gaps": [
+    {
+      "requirement_id": "R1",
+      "reason": "本方案是待执行草稿，coverage 仅比较本次提供的 T1–T4 源码，不代表整个仓库，也不表示测试已运行。尚缺 AES-256-GCM 与二进制 AAD 的 vault/credential/version/purpose 绑定、授权及审计检查后才解密、每请求解密一次和使用后清零的直接验证；明文哨兵检查不足以证明这些内部契约。"
+    },
+    {
+      "requirement_id": "R1",
+      "reason": "尚未完整覆盖隐藏交互密码提示、全部凭证类型和诊断出口。未导出 shell 变量与包含密码/恢复密钥的 proof 的边界仍未澄清，本草稿以直接 stdin 输入规避该歧义。macOS Admin UI 不纳入 CLI 范围，其人工认证后的 reveal/copy 不作为 Agent 泄密。"
+    },
+    {
+      "requirement_id": "R2",
+      "reason": "尚缺全部 IPv4/IPv6 非公共范围、混合 DNS 回答、超时及并发资源限制矩阵；编码反射尚未覆盖每种连接器生成值。现有方案优先验证代表性生产传输边界。"
+    },
+    {
+      "requirement_id": "R3",
+      "reason": "目标二进制尚未确定，alpha.2 格式 9 与源码格式 10 必须分别验收；alpha.2 旧备份接受规则未明确。尚缺独立的离线恢复密钥验收、错误 proof、哈希不匹配、后续凭证损坏及恢复中断用例；T4 已有其中若干实际断言，不能把它们视为缺失或已执行。提交后确认丢失的故障结果尚未由 PRD 明确，不应一律要求旧密码仍有效。"
+    },
+    {
+      "requirement_id": "R4",
+      "reason": "尚缺导出中断、磁盘错误、过滤交集精确性、分页异常参数及 vault 生命周期内 append-only 验证。不增加未实现的审计删除、配置保留期、远程投递、SIEM、WORM 或法律保全要求。"
+    },
+    {
+      "requirement_id": "R5",
+      "reason": "尚缺并发使用次数竞争、全部 OIDC/SPIFFE/Kubernetes/CI-cloud 身份映射和 Ed25519/RS256 验签边界，以及策略封印详细篡改矩阵。源码独有 GitHub JWKS 需明确选择开发版本后另行规划；失败授权是否消耗次数应按目标版本实际契约确认。"
+    },
+    {
+      "requirement_id": "R6",
+      "reason": "尚缺双 grant 独立性、并发消耗次数、规范参数等价与不等价矩阵，以及执行失败对使用次数的精确定义。不规划跨锁定/重启审批恢复、托管审批、通知 UI 或私钥托管；本地签名、pending/get 工具仅在开发源码范围明确后补充。"
+    },
+    {
+      "requirement_id": "R7",
+      "reason": "尚缺 GitHub App 的 1–16 精确仓库边界、有界 issue 创建、typed rotation、Admin 转发签名仓库 delta、只读有界重试及其 lease 生命周期。Vault 来源尚缺 Action 失败后的撤销处理和更完整的 revoke 故障矩阵；fixture 验证不等于公开动态租约实测，崩溃后清理不在承诺范围。源码独有 Keycloak、MCP 和 IO-free SDK 投影不自动纳入 alpha.2 CLI 要求。"
+    },
+    {
+      "requirement_id": "R8",
+      "reason": "尚缺 Linux 依赖版本、显式允许出站规则及 launcher 生命周期清理验收；需确认目标二进制是否包含该 launcher。macOS 不执行 Linux 隔离用例，参考拓扑结果不得提升为默认 G1 产品的通用 G2 保证。"
+    }
+  ]
+}
