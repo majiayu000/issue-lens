@@ -6,9 +6,12 @@ import copy
 import http.client
 import json
 from pathlib import Path
+import signal
 import sqlite3
 import subprocess
+import sys
 import tempfile
+import time
 import unittest
 from unittest.mock import Mock, patch
 import urllib.error
@@ -111,56 +114,104 @@ def extraction(iid=3, quote="UnicodeDecodeError on UTF-8 filenames"):
 
 
 class ModelBoundaryTests(unittest.TestCase):
+    @staticmethod
+    def completed(stdout='', stderr='', returncode=0):
+        process = Mock(returncode=returncode)
+        process.communicate.return_value = (stdout, stderr)
+        process.__enter__ = Mock(return_value=process)
+        process.__exit__ = Mock(return_value=False)
+        return process
+
     @patch.dict(os.environ, {"ISSUE_LENS_LLM_ENGINE": "codex"})
-    @patch("llm.subprocess.run")
+    @patch("llm.subprocess.Popen")
     def test_nonzero_exit_does_not_echo_provider_credentials(self, run):
-        run.return_value = subprocess.CompletedProcess([], 2, "private-token", "private-token")
+        run.return_value = self.completed('private-token', 'private-token', 2)
         with self.assertRaises(ModelError) as error:
             generate_json("hello", {})
         self.assertNotIn("private-token", str(error.exception))
         self.assertIn("exit 2", str(error.exception))
 
     @patch.dict(os.environ, {"ISSUE_LENS_LLM_ENGINE": "codex"})
-    @patch("llm.subprocess.run")
+    @patch("llm.subprocess.Popen")
     def test_truncated_response_is_rejected_even_with_parseable_json(self, run):
-        run.return_value = subprocess.CompletedProcess([], 0, json.dumps(
-            {"type": "turn.failed", "error": {"message": "truncated"}}), "")
+        run.return_value = self.completed(json.dumps(
+            {"type": "turn.failed", "error": {"message": "truncated"}}))
         with self.assertRaises(ModelError):
             generate_json("hello", {})
 
     @patch.dict(os.environ, {"ISSUE_LENS_LLM_ENGINE": "codex"})
-    @patch("llm.subprocess.run", side_effect=subprocess.TimeoutExpired("codex", 300))
-    def test_timeout_is_a_failure(self, run):
+    @patch("llm.os.killpg")
+    @patch("llm.subprocess.Popen")
+    def test_timeout_is_a_failure(self, run, killpg):
+        process = self.completed()
+        process.pid = 123
+        process.communicate.side_effect = [subprocess.TimeoutExpired('codex', 300), ('', '')]
+        run.return_value = process
         with self.assertRaisesRegex(ModelError, "300-second"):
             generate_json("hello", {})
+        killpg.assert_called_once_with(123, signal.SIGKILL)
 
     @patch.dict(os.environ, {"ISSUE_LENS_LLM_ENGINE": "codex"})
-    @patch("llm.subprocess.run")
+    def test_timeout_stops_launcher_and_its_child(self):
+        real_popen = subprocess.Popen
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            child_pid = root/'child.pid'
+            launcher = root/'codex'
+            launcher.write_text(
+                f'#!{sys.executable}\nimport subprocess, sys, time\nfrom pathlib import Path\n'
+                'p = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])\n'
+                f'Path({str(child_pid)!r}).write_text(str(p.pid))\n'
+                'time.sleep(60)\n')
+            launcher.chmod(0o700)
+
+            def start(*args, **kwargs):
+                process = real_popen([sys.executable, str(launcher)], **kwargs)
+                deadline = time.monotonic() + 5
+                while not child_pid.exists() and process.poll() is None and time.monotonic() < deadline:
+                    time.sleep(0.01)
+                communicate = process.communicate
+                process.communicate = lambda input=None, timeout=None: communicate(
+                    input=input, timeout=0.1 if timeout else None)
+                return process
+
+            with patch('llm.subprocess.Popen', side_effect=start), \
+                    self.assertRaisesRegex(ModelError, '300-second'):
+                generate_json('hello', {})
+            pid = int(child_pid.read_text())
+            status = subprocess.run(['ps', '-p', str(pid), '-o', 'stat='],
+                                    capture_output=True, text=True).stdout.strip()
+            if status and not status.startswith('Z'):
+                os.kill(pid, signal.SIGKILL)
+                self.fail('Timed-out Codex child is still running')
+
+    @patch.dict(os.environ, {"ISSUE_LENS_LLM_ENGINE": "codex"})
+    @patch("llm.subprocess.Popen")
     def test_tool_events_are_rejected_even_after_success(self, run):
         events = [{"type": "item.completed", "item": {"type": "command_execution"}},
                   {"type": "turn.completed"}]
-        run.return_value = subprocess.CompletedProcess([], 0, "\n".join(map(json.dumps, events)), "")
+        run.return_value = self.completed("\n".join(map(json.dumps, events)))
         with self.assertRaisesRegex(ModelError, "tool call"):
             generate_json("hello", {})
 
     @patch.dict(os.environ, {"ISSUE_LENS_LLM_ENGINE": "codex"})
-    @patch("llm.subprocess.run")
+    @patch("llm.subprocess.Popen")
     def test_invalid_output_is_rejected_even_after_success(self, run):
         def complete(command, **kwargs):
             Path(command[command.index("--output-last-message") + 1]).write_text('{"partial":')
-            return subprocess.CompletedProcess(command, 0, '{"type":"turn.completed"}', "")
+            return self.completed('{"type":"turn.completed"}')
         run.side_effect = complete
         with self.assertRaisesRegex(ModelError, "invalid JSON"):
             generate_json("hello", {})
 
     @patch.dict(os.environ, {"ISSUE_LENS_LLM_ENGINE": "codex"})
-    @patch("llm.subprocess.run")
+    @patch("llm.subprocess.Popen")
     def test_success_preserves_provenance_without_inventing_cost(self, run):
         def complete(command, **kwargs):
             Path(command[command.index("--output-last-message") + 1]).write_text('{"ok":true}')
             events = [{"type": "thread.started", "thread_id": "real-session"},
                       {"type": "turn.completed", "usage": {"input_tokens": 20}}]
-            return subprocess.CompletedProcess(command, 0, "\n".join(map(json.dumps, events)), "")
+            return self.completed("\n".join(map(json.dumps, events)))
         run.side_effect = complete
         data, provenance = generate_json("hello", {})
         self.assertEqual(data, {"ok": True})

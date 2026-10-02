@@ -2,6 +2,7 @@
 import json
 import os
 from pathlib import Path
+import signal
 import subprocess
 import tempfile
 
@@ -34,18 +35,26 @@ def generate_json(instruction: str, data: dict) -> tuple[dict, dict]:
             command.extend(["--model", model])
         command.append("-")
         try:
-            result = subprocess.run(command, input=prompt, capture_output=True, text=True,
-                                    timeout=300, check=False)
-        except subprocess.TimeoutExpired:
-            raise ModelError("Codex exceeded the 300-second call limit.") from None
+            with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE, text=True, start_new_session=True) as process:
+                try:
+                    stdout, _ = process.communicate(prompt, timeout=300)
+                except subprocess.TimeoutExpired:
+                    # Codex's launcher may spawn the actual CLI as a child.
+                    try:
+                        os.killpg(process.pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    process.communicate()
+                    raise ModelError("Codex exceeded the 300-second call limit.") from None
         except OSError:
             raise ModelError("Cannot start Codex; install it and check PATH and login.") from None
-        if result.returncode:
+        if process.returncode:
             # Provider output may contain the prompt or credentials; never echo it.
-            raise ModelError(f"Codex failed (exit {result.returncode}); check its login/service.")
+            raise ModelError(f"Codex failed (exit {process.returncode}); check its login/service.")
         json_stage = "event stream"
         try:
-            events = [json.loads(line) for line in result.stdout.splitlines() if line.strip()]
+            events = [json.loads(line) for line in stdout.splitlines() if line.strip()]
             completed = [event for event in events if event.get("type") == "turn.completed"]
             if not completed or any(event.get("type") in ("error", "turn.failed") for event in events):
                 raise ModelError("Codex did not finish normally; no output was accepted.")

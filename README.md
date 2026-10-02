@@ -68,6 +68,8 @@ python3 s04_search.py --form cli --top 5
 
 Use an installed, authenticated Codex CLI (verified with 0.160.0). No separate model API key or Python package is required. The commands below use the CLI's default model; an explicit model must be supported by your CLI account.
 
+The Codex integration currently targets macOS/Linux and uses a separate process group so a timeout also stops the launcher's child processes.
+
 ```bash
 export ISSUE_LENS_LLM_ENGINE=codex
 python3 extract.py --form cli --q "permission" --limit 5
