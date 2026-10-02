@@ -33,6 +33,17 @@ class GitHub:
     def __init__(self, token: str | None = None):
         self.token = token or get_token()
 
+    def graphql(self, query: str, variables: dict) -> dict:
+        request = self._request(f"{API}/graphql")
+        request.add_header("Content-Type", "application/json")
+        request.data = json.dumps({"query": query, "variables": variables}).encode()
+        with urllib.request.urlopen(request, timeout=60) as response:
+            result = json.loads(response.read())
+        if result.get("errors") or not isinstance(result.get("data"), dict):
+            # GraphQL may return HTTP 200 for permission/schema errors.
+            raise RuntimeError("GitHub GraphQL evidence query failed.")
+        return result["data"]
+
     # ---- 内部 ----
 
     def _request(self, url: str) -> urllib.request.Request:

@@ -1,0 +1,13 @@
+{
+  "product_repository": "majiayu000/rclean",
+  "product_commit": "a74990df1635869efcd3a0737247091c0d8678ca",
+  "diff_paths": [
+    "src/free.rs",
+    "src/stdio.rs"
+  ],
+  "sha256": {
+    "inputs/pipe-change.diff": "18f6b0c142e2a638f694106435041f6aa626b898fa5319d3bc6c95c4be992371",
+    "inputs/pipe-tests.rs": "5e2fd53eaeebee39ec593ced79a0d2045e7c87fc8b53c1f9d780e9e0860cd630",
+    "inputs/rclean.md": "f449dfa495c45bfe58e15334c57415d32cd87832a77e6b6c5e6a0e18d53c5d51"
+  }
+}

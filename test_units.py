@@ -4,6 +4,7 @@
 import os
 import copy
 import http.client
+import hashlib
 import json
 from pathlib import Path
 import signal
@@ -17,6 +18,9 @@ from unittest.mock import Mock, patch
 import urllib.error
 
 from config import FORMS
+from gh import GitHub
+from s02_fetch_issues import fetch_form
+from s06_curate import group_sources, select_issues
 from evidence import EvidenceError, attach_pr_evidence, fetch_pr_evidence, load_tests as load_test_files
 from extract import enrich, extract_batch, extract_issue, find_issues
 from llm import ModelError, generate_json
@@ -326,7 +330,7 @@ class PlanGroundingTests(unittest.TestCase):
     def test_render_resolves_links_from_database_sources_and_marks_unexecuted(self):
         validate_plan(self.plan, self.requirements, self.sources)
         report = {"form": "cli", "corpus_issue_count": 1, "requirements": self.requirements,
-                  "sources": self.sources, "open_questions": [], **self.plan}
+                  "sources": self.sources, "open_questions": [], "diff_sha256": None, **self.plan}
         rendered = render_markdown(report)
         self.assertIn("https://github.com/example/tool/issues/3", rendered)
         self.assertIn("未执行", rendered)
@@ -417,64 +421,102 @@ class CoverageEvidenceTests(unittest.TestCase):
         self.assertEqual(len(loaded[0]['sha256']), 64)
 
 
+def evidence_fixture(closing_url=None, refs=()):
+    events = [] if closing_url is None else [{
+        'createdAt': '2026-01-01T00:00:00Z',
+        'closer': {'__typename': 'PullRequest', 'url': closing_url}}]
+    return {'repository': {'issue': {
+        'state': 'CLOSED', 'closedAt': '2026-01-01T00:00:00Z',
+        'timelineItems': {'nodes': events},
+        'closedByPullRequestsReferences': {'totalCount': len(refs), 'nodes': list(refs)},
+        'comments': {'totalCount': 0, 'nodes': []}}}}
+
+
 class PullEvidenceTests(unittest.TestCase):
     def setUp(self):
         self.source = {'id': 1, 'url': 'https://github.com/owner/repo/issues/9'}
-        self.event = {'event': 'cross-referenced', 'source': {'issue': {
-            'html_url': 'https://github.com/another/project/pull/7', 'pull_request': {'url': 'unused'}}}}
+        self.url = 'https://github.com/another/project/pull/7'
         self.pr = {'title': 'Patch', 'body': 'Proposed fix', 'state': 'open', 'merged': False,
                    'head': {'sha': 'head'}, 'base': {'sha': 'base'}, 'changed_files': 101}
 
-    def test_cross_repo_reference_and_partial_patches_are_not_claimed_as_fixed(self):
+    def test_explicit_reference_and_partial_patches_are_not_claimed_as_fixed(self):
         client = Mock()
-        client.get.side_effect = [[self.event, self.event], self.pr,
+        client.graphql.return_value = evidence_fixture(refs=[{'url': self.url, 'merged': False}])
+        client.get.side_effect = [self.pr,
                                   [{'filename': 'test_paths.rs', 'status': 'added', 'patch': '+' * 13000},
                                    {'filename': 'binary.png', 'status': 'modified'}]]
         evidence = fetch_pr_evidence(self.source, client)
         self.assertEqual(len(evidence['pulls']), 1)
         pr = evidence['pulls'][0]
         self.assertFalse(pr['merged'])
-        self.assertEqual(pr['relation'], 'cross_reference_not_verified_fix')
+        self.assertEqual(pr['relation'], 'closing_reference_not_verified_fix')
         self.assertTrue(pr['files_truncated'])
         self.assertTrue(pr['files'][0]['patch_truncated'])
         self.assertTrue(pr['files'][1]['patch_unavailable'])
-        self.assertEqual(client.get.call_args_list[1].args[0], '/repos/another/project/pulls/7')
+        self.assertEqual(client.get.call_args_list[0].args[0], '/repos/another/project/pulls/7')
 
-    def test_timeline_paginates_and_flags_cap_without_fake_completeness(self):
+    def test_actual_closing_event_precedes_other_references_and_is_deduplicated(self):
         client = Mock()
-        client.get.return_value = [{'event': 'commented'}] * 100
+        refs = [{'url': self.url, 'merged': True},
+                {'url': 'https://github.com/owner/repo/pull/1', 'merged': False}]
+        client.graphql.return_value = evidence_fixture(self.url, refs)
+        client.get.side_effect = [self.pr, [], self.pr, []]
         evidence = fetch_pr_evidence(self.source, client)
-        self.assertEqual(client.get.call_count, 3)
-        self.assertTrue(evidence['timeline_may_be_truncated'])
+        self.assertEqual(len(evidence['pulls']), 2)
+        self.assertEqual(evidence['pulls'][0]['url'], self.url)
+        self.assertEqual(evidence['pulls'][0]['relation'], 'closed_by_pull_request')
+        self.assertEqual(evidence['pulls'][1]['relation'], 'closing_reference_not_verified_fix')
+
+    def test_old_close_event_does_not_prove_current_issue_closure(self):
+        client = Mock()
+        data = evidence_fixture(self.url)
+        data['repository']['issue']['state'] = 'OPEN'
+        client.graphql.return_value = data
+        evidence = fetch_pr_evidence(self.source, client)
         self.assertEqual(evidence['pulls'], [])
+        client.get.assert_not_called()
+
+    def test_comment_and_reference_caps_are_explicit(self):
+        client = Mock()
+        data = evidence_fixture()
+        issue = data['repository']['issue']
+        issue['closedByPullRequestsReferences']['totalCount'] = 4
+        issue['comments'] = {'totalCount': 20, 'nodes': [
+            {'url': 'https://github.com/owner/repo/issues/9#issuecomment-1',
+             'body': 'x' * 1100, 'authorAssociation': 'MEMBER', 'createdAt': 'date', 'updatedAt': 'date'}]}
+        client.graphql.return_value = data
+        evidence = fetch_pr_evidence(self.source, client)
+        self.assertTrue(evidence['comments_truncated'])
+        self.assertTrue(evidence['pulls_truncated'])
+        self.assertTrue(evidence['comments'][0]['body_truncated'])
+        self.assertEqual(len(evidence['comments'][0]['body']), 1000)
 
     def test_foreign_origin_reference_is_never_requested(self):
-        self.event['source']['issue']['html_url'] = 'https://evil.invalid/owner/repo/pull/7'
         client = Mock()
-        client.get.return_value = [self.event]
+        client.graphql.return_value = evidence_fixture('https://evil.invalid/owner/repo/pull/7')
         with self.assertRaises(EvidenceError):
             fetch_pr_evidence(self.source, client)
-        self.assertEqual(client.get.call_count, 1)
+        client.get.assert_not_called()
 
     @patch('evidence.GitHub')
     def test_only_cited_sources_are_fetched(self, github):
-        github.return_value.get.return_value = []
+        github.return_value.graphql.return_value = evidence_fixture()
         other = {'id': 2, 'url': 'https://github.com/owner/repo/issues/10'}
         attach_pr_evidence([self.source, other], {1})
         self.assertIn('pr_evidence', self.source)
         self.assertNotIn('pr_evidence', other)
-        self.assertEqual(github.return_value.get.call_count, 1)
+        self.assertEqual(github.return_value.graphql.call_count, 1)
 
     @patch('evidence.GitHub')
-    def test_malformed_timeline_fails_with_evidence_error(self, github):
-        github.return_value.get.return_value = [None]
+    def test_missing_issue_fails_with_evidence_error(self, github):
+        github.return_value.graphql.return_value = {'repository': {'issue': None}}
         with self.assertRaises(EvidenceError):
             attach_pr_evidence([self.source], {1})
         self.assertNotIn('pr_evidence', self.source)
 
     @patch('evidence.GitHub')
     def test_fetch_failure_is_not_silently_recorded_as_no_prs(self, github):
-        github.return_value.get.side_effect = urllib.error.HTTPError(
+        github.return_value.graphql.side_effect = urllib.error.HTTPError(
             'https://api.github.com/path', 403, 'private-token', {}, None)
         with self.assertRaises(EvidenceError) as error:
             attach_pr_evidence([self.source], {1})
@@ -484,11 +526,18 @@ class PullEvidenceTests(unittest.TestCase):
 
     @patch('evidence.GitHub')
     def test_incomplete_http_response_fails_without_exposing_payload(self, github):
-        github.return_value.get.side_effect = http.client.IncompleteRead(b'private-token')
+        github.return_value.graphql.side_effect = http.client.IncompleteRead(b'private-token')
         with self.assertRaises(EvidenceError) as error:
             attach_pr_evidence([self.source], {1})
         self.assertNotIn('private-token', str(error.exception))
         self.assertNotIn('pr_evidence', self.source)
+
+    @patch('gh.urllib.request.urlopen')
+    def test_graphql_http_200_with_errors_is_not_accepted(self, urlopen):
+        urlopen.return_value.__enter__.return_value.read.return_value = b'{"errors":[{"message":"private-token"}],"data":{}}'
+        with self.assertRaises(RuntimeError) as error:
+            GitHub(token='test-placeholder').graphql('query {}', {})
+        self.assertNotIn('private-token', str(error.exception))
 
 
 class ImprovementIntegrationTests(unittest.TestCase):
@@ -517,8 +566,8 @@ class ImprovementIntegrationTests(unittest.TestCase):
         select_model.return_value = ({'matches': [{'requirement_id': 'R1', 'source_id': 3,
             'quote': SEED[2][3], 'reason': '相同输入边界'}]}, {})
         extract_model.return_value = ({'issues': [extraction()]}, {'engine': 'codex'})
-        github.return_value.get.side_effect = [[{'event': 'cross-referenced', 'source': {'issue': {
-            'html_url': 'https://github.com/example/yt-dlp/pull/4', 'pull_request': { 'url': 'unused'}}}}],
+        github.return_value.graphql.return_value = evidence_fixture('https://github.com/example/yt-dlp/pull/4')
+        github.return_value.get.side_effect = [
             {'title': 'Unicode fix', 'body': 'Fix', 'state': 'closed', 'merged': True,
              'head': {'sha': 'head'}, 'base': {'sha': 'base'}, 'changed_files': 1},
             [{'filename': 'tests/test.py', 'status': 'modified', 'patch': '+assert filename'}]]
@@ -535,7 +584,7 @@ class ImprovementIntegrationTests(unittest.TestCase):
         self.assertIn('补充边界', rendered)
         self.assertIn('/tests/unicode.py:1', rendered)
         self.assertIn('https://github.com/example/yt-dlp/pull/4', rendered)
-        self.assertIn('交叉引用不等于确认修复', rendered)
+        self.assertIn('GitHub 记录的关闭 PR', rendered)
 
     @patch('evidence.GitHub')
     @patch('s05_plan.generate_json')
@@ -583,6 +632,92 @@ class ImprovementIntegrationTests(unittest.TestCase):
             build.assert_not_called()
             self.assertFalse(output.exists())
             self.assertFalse(output.with_suffix('.json').exists())
+
+
+class ExpansionTests(unittest.TestCase):
+    @patch('s06_curate.generate_json')
+    def test_grouping_keeps_all_source_ids_and_can_reject_irrelevant_items(self, model):
+        sources = [{'id': n} for n in [1, 2, 3]]
+        grouped = {'groups': [{'title': '恢复冲突', 'mechanism': '目标存在时不覆盖',
+                              'source_ids': [1, 2], 'test_ideas': ['检查两份内容']}],
+                   'excluded': [{'source_id': 3, 'reason': '无关网络错误'}]}
+        model.return_value = (grouped, {})
+        actual, _ = group_sources('restore', sources)
+        self.assertEqual(actual, grouped)
+        self.assertEqual(sources, [{'id': 1}, {'id': 2}, {'id': 3}])
+
+    @patch('s06_curate.generate_json')
+    def test_grouping_rejects_silent_omission_fabrication_or_double_counting(self, model):
+        for ids in [[1], [1, 99], [1, 1, 2]]:
+            with self.subTest(ids=ids):
+                model.return_value = ({'groups': [{'title': 'group', 'mechanism': 'trigger',
+                    'source_ids': ids, 'test_ideas': ['test']}], 'excluded': []}, {})
+                with self.assertRaises(ModelError):
+                    group_sources('restore', [{'id': 1}, {'id': 2}])
+
+    @patch('s06_curate.generate_json')
+    def test_empty_selection_does_not_call_model(self, model):
+        result, _ = group_sources('restore', [])
+        self.assertEqual(result['groups'], [])
+        model.assert_not_called()
+
+    def test_curation_query_ands_terms_and_filters_exact_repository(self):
+        db = memory_db()
+        self.assertEqual([s['id'] for s in select_issues(db, 'desktop', 'crash startup', ['vscode'], 5)], [1])
+        self.assertEqual(select_issues(db, 'desktop', 'crash menu', [], 5), [])
+        self.assertEqual(select_issues(db, 'desktop', 'crash startup', ['other'], 5), [])
+
+    @patch('s05_plan.generate_json')
+    def test_diff_reaches_requirement_and_plan_calls_with_trusted_hash(self, model):
+        model.side_effect = [({'requirements': [{'title': 'scope', 'quote': 'requirements',
+            'queries': [['missingword', 'absentword']]}], 'open_questions': []}, {}),
+            ({'cases': [], 'coverage_gaps': [{'requirement_id': 'R1', 'reason': 'manual check'}]}, {})]
+        diff = '-old behavior\n+new behavior'
+        report = build_plan(memory_db(), 'requirements', 'cli', 3, diff=diff)
+        for call in model.call_args_list:
+            self.assertEqual(call.args[1]['diff'], diff)
+        self.assertEqual(report['diff_sha256'], hashlib.sha256(diff.encode()).hexdigest())
+        self.assertIn(report['diff_sha256'], render_markdown(report))
+
+    @patch('s05_plan.build_plan')
+    def test_empty_diff_is_rejected_before_model_call(self, build):
+        from s05_plan import main
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root/'prd.md').write_text('requirements')
+            (root/'change.diff').write_text('')
+            with patch('sys.argv', ['s05_plan.py', '--form', 'cli', '--prd', str(root/'prd.md'),
+                        '--diff', str(root/'change.diff'), '--out', str(root/'result.md')]), \
+                    patch('sys.stderr'), self.assertRaises(SystemExit) as error:
+                main()
+            self.assertEqual(error.exception.code, 2)
+            build.assert_not_called()
+            self.assertFalse((root/'result.json').exists())
+
+    @patch('s05_plan.generate_json')
+    def test_unrelated_diff_does_not_invent_requirements_or_call_plan_model(self, model):
+        model.return_value = ({'requirements': [], 'open_questions': ['Only comment spelling changed.']}, {})
+        report = build_plan(memory_db(), 'requirements', 'cli', 3, diff='-tyop\n+typo')
+        self.assertEqual(model.call_count, 1)
+        self.assertEqual(report['cases'], [])
+        self.assertEqual(report['sources'], [])
+        self.assertTrue(report['open_questions'])
+
+    def test_explicit_repository_fetch_is_search_scoped_and_idempotent(self):
+        db = memory_db()
+        client = Mock()
+        item = {'id': 100, 'number': 4, 'title': 'restore', 'body': 'test body',
+                'html_url': 'https://github.com/restic/restic/issues/4'}
+        client.search_issues.return_value = ([item], 7)
+        repo = {'full_name': 'restic/restic', 'stars': 100, 'language': 'Go', 'description': '', 'topics': []}
+        with patch('builtins.print'):
+            fetch_form(client, db, 'cli', None, 1, False, [repo])
+            fetch_form(client, db, 'cli', None, 1, False, [repo])
+        self.assertEqual(client.search_issues.call_count, 1)
+        self.assertIn('repo:restic/restic ', client.search_issues.call_args.args[0])
+        self.assertEqual(db.execute('SELECT count(*) FROM issues WHERE id=100').fetchone()[0], 1)
+        self.assertEqual(db.execute('SELECT count(*) FROM issues_fts WHERE issue_id=100').fetchone()[0], 1)
+        self.assertEqual(db.execute('SELECT truncated FROM repos WHERE full_name=?', ('restic/restic',)).fetchone()[0], 1)
 
 
 if __name__ == "__main__":

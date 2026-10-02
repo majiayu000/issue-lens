@@ -1,4 +1,4 @@
-"""Explicit local test inputs and bounded GitHub PR snapshots; no code execution."""
+"""Explicit local test inputs and bounded GitHub discussion/PR snapshots."""
 import datetime
 import hashlib
 import http.client
@@ -12,6 +12,22 @@ from gh import GitHub
 
 class EvidenceError(RuntimeError):
     pass
+
+
+ISSUE_EVIDENCE_QUERY = """query($owner:String!,$name:String!,$number:Int!) {
+  repository(owner:$owner,name:$name) { issue(number:$number) {
+    state closedAt
+    timelineItems(last:1,itemTypes:[CLOSED_EVENT]) { nodes { ... on ClosedEvent {
+      createdAt closer { __typename ... on PullRequest { url } }
+    } } }
+    closedByPullRequestsReferences(first:3,includeClosedPrs:true) {
+      totalCount nodes { url merged }
+    }
+    comments(last:8) { totalCount nodes {
+      url body authorAssociation createdAt updatedAt
+    } }
+  } }
+}"""
 
 
 def load_tests(paths: list[Path]) -> list[dict]:
@@ -44,24 +60,26 @@ def github_path(url: str, kind: str) -> str:
 
 
 def fetch_pr_evidence(source: dict, client: GitHub) -> dict:
-    """Cross-references are relationships, never automatic proof of a fix."""
+    """Prefer the actual closing event, then explicit closing references."""
     path = github_path(source["url"], "issues")
+    _, _, owner, name, _, number = path.split("/")
+    issue = client.graphql(ISSUE_EVIDENCE_QUERY, {
+        "owner": owner, "name": name, "number": int(number)})["repository"]["issue"]
+    if not isinstance(issue, dict):
+        raise EvidenceError("GitHub issue evidence is unavailable.")
     links = {}
-    for page in range(1, 4):
-        events = client.get(path + "/timeline", {"per_page": 100, "page": page})
-        if not isinstance(events, list):
-            raise EvidenceError("Invalid GitHub timeline response.")
-        for event in events:
-            linked = (event.get("source") or {}).get("issue") or {}
-            if event.get("event") == "cross-referenced" and linked.get("pull_request"):
-                url = linked["html_url"]
-                github_path(url, "pull")
-                links[url] = None
-        if len(events) < 100:
-            break
+    for event in issue["timelineItems"]["nodes"]:
+        closer = event.get("closer") or {}
+        if (issue["state"] == "CLOSED" and event["createdAt"] == issue["closedAt"]
+                and closer.get("__typename") == "PullRequest"):
+            links[closer["url"]] = "closed_by_pull_request"
+    refs = issue["closedByPullRequestsReferences"]
+    for ref in sorted(refs["nodes"], key=lambda ref: not ref["merged"]):
+        links.setdefault(ref["url"], "closing_reference_not_verified_fix")
+    for url in links:
+        github_path(url, "pull")
     pulls = []
-    # Latest observed references first; explicitly record both kinds of cap.
-    for url in list(links)[-3:][::-1]:
+    for url in list(links)[:3]:
         pr_path = github_path(url, "pull")
         pr = client.get(pr_path)
         files = client.get(pr_path + "/files", {"per_page": 100, "page": 1})
@@ -82,11 +100,18 @@ def fetch_pr_evidence(source: dict, client: GitHub) -> dict:
                       "body_truncated": len(body) > 6000, "state": pr["state"],
                       "merged": pr["merged"], "head_sha": pr["head"]["sha"],
                       "base_sha": pr["base"]["sha"], "merge_commit_sha": pr.get("merge_commit_sha"),
-                      "relation": "cross_reference_not_verified_fix", "files": patches,
+                      "relation": links[url], "files": patches,
                       "files_truncated": pr["changed_files"] > len(files)})
+    comments = []
+    for comment in issue["comments"]["nodes"]:
+        body = comment["body"]
+        comments.append({**comment, "body": body[:1000], "body_truncated": len(body) > 1000})
     return {"fetched_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            "timeline_may_be_truncated": len(events) == 100,
-            "pulls_truncated": len(links) > 3, "pulls": pulls}
+            "selection": "current closing event, then explicit closing references; latest 8 comments",
+            "pulls_truncated": refs["totalCount"] > len(refs["nodes"]) or len(links) > 3,
+            "pulls": pulls, "comments": comments,
+            "comments_total": issue["comments"]["totalCount"],
+            "comments_truncated": issue["comments"]["totalCount"] > len(comments)}
 
 
 def attach_pr_evidence(sources: list[dict], cited_ids: set[int]) -> None:

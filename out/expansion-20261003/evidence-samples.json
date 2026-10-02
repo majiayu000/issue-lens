@@ -1,0 +1,516 @@
+[
+  {
+    "url": "https://github.com/cli/cli/issues/2661",
+    "evidence": {
+      "fetched_at": "2026-10-02T18:34:24.050740+00:00",
+      "selection": "current closing event, then explicit closing references; latest 8 comments",
+      "pulls_truncated": false,
+      "pulls": [
+        {
+          "url": "https://github.com/cli/cli/pull/4241",
+          "title": "Suggest to re-authenticate to fix \"SAML enforcement\" error",
+          "body": "As far as I can put together, this error appears when someone has authenticated GitHub CLI with a PAT that isn't authorized to access a certain org. It can also happen if someone has authorized GitHub CLI using the legacy \"GitHub CLI (dev)\" OAuth app instead of our production OAuth app.\r\n\r\nDoing `gh auth refresh` will re-authenticate the user using our production \"GitHub CLI\" OAuth app which will not have problems accessing resources in different GitHub organizations.\r\n\r\nFixes #2661",
+          "body_truncated": false,
+          "state": "closed",
+          "merged": true,
+          "head_sha": "b0b67014f124a8eeeb74c8a921fd79f69f66a576",
+          "base_sha": "e6ff77ce73c201b0ee36d2b802ea45e9e1ad1822",
+          "merge_commit_sha": "8f3b6749d7dd7ceafa1a15d211a5cb4d32422b22",
+          "relation": "closed_by_pull_request",
+          "files": [
+            {
+              "filename": "cmd/gh/main.go",
+              "status": "modified",
+              "patch": "@@ -217,13 +217,15 @@ func mainRun() exitCode {\n \n \t\tif strings.Contains(err.Error(), \"Incorrect function\") {\n \t\t\tfmt.Fprintln(stderr, \"You appear to be running in MinTTY without pseudo terminal support.\")\n-\t\t\tfmt.Fprintln(stderr, \"To learn about workarounds for this error, run: gh help mintty\")\n+\t\t\tfmt.Fprintln(stderr, \"To learn about workarounds for this error, run:  gh help mintty\")\n \t\t\treturn exitError\n \t\t}\n \n \t\tvar httpErr api.HTTPError\n \t\tif errors.As(err, &httpErr) && httpErr.StatusCode == 401 {\n-\t\t\tfmt.Fprintln(stderr, \"hint: try authenticating with `gh auth login`\")\n+\t\t\tfmt.Fprintln(stderr, \"Try authenticating with:  gh auth login\")\n+\t\t} else if strings.Contains(err.Error(), \"Resource protected by organization SAML enforcement\") {\n+\t\t\tfmt.Fprintln(stderr, \"Try re-authenticating with:  gh auth refresh\")\n \t\t}\n \n \t\treturn exitError",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            }
+          ],
+          "files_truncated": false
+        }
+      ],
+      "comments": [
+        {
+          "url": "https://github.com/cli/cli/issues/2661#issuecomment-1997732259",
+          "body": "This is not fixed.  Re-open please.",
+          "authorAssociation": "NONE",
+          "createdAt": "2024-03-14T15:31:31Z",
+          "updatedAt": "2024-03-14T15:31:31Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/cli/cli/issues/2661#issuecomment-2155628868",
+          "body": "for posterity, I'm explicitly linking this back to #5054 where the original solution was reworked to give users direction to authorize the organization associated with the PAT within the web browser:\n\nhttps://github.com/cli/cli/blob/6f558c9e0a3f8ec1b4168cbb2d0c0c9a3a42bb26/cmd/gh/main.go#L158-L166",
+          "authorAssociation": "CONTRIBUTOR",
+          "createdAt": "2024-06-07T22:01:46Z",
+          "updatedAt": "2024-06-07T22:01:46Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/cli/cli/issues/2661#issuecomment-2155630750",
+          "body": "> This is not fixed. Re-open please.\n\n@zyrain : Please create a new issue including terminal commands, output, `gh` version, and any verbose / debug information so we can triage and prioritize! ❤",
+          "authorAssociation": "CONTRIBUTOR",
+          "createdAt": "2024-06-07T22:03:54Z",
+          "updatedAt": "2024-06-07T22:03:54Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/cli/cli/issues/2661#issuecomment-2498499259",
+          "body": "Fixed my issue as well 👍 ",
+          "authorAssociation": "NONE",
+          "createdAt": "2024-11-25T16:33:48Z",
+          "updatedAt": "2024-11-25T16:33:48Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/cli/cli/issues/2661#issuecomment-2673969358",
+          "body": "Thanks 🚀",
+          "authorAssociation": "NONE",
+          "createdAt": "2025-02-21T08:59:18Z",
+          "updatedAt": "2025-02-21T08:59:18Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/cli/cli/issues/2661#issuecomment-2844803587",
+          "body": "This should not be closed yet, as you still get this error without any hint to use `gh auth login` or `gh auth refresh`. But thanks, at least Google is helpful to guide us to this (unresolved) issue.",
+          "authorAssociation": "NONE",
+          "createdAt": "2025-05-01T12:58:21Z",
+          "updatedAt": "2025-05-01T12:58:21Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/cli/cli/issues/2661#issuecomment-3228096617",
+          "body": "I totally agree that this should be reopened. While I get the message and use the browser to \"authorize\", it has no effect on gh cli. Even running `gh auth refresh` does nothing. In the browser I can access the repo, but not from gh cli.\n\nDoes anyone have other hints?",
+          "authorAssociation": "NONE",
+          "createdAt": "2025-08-27T12:54:06Z",
+          "updatedAt": "2025-08-27T13:01:39Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/cli/cli/issues/2661#issuecomment-3228165076",
+          "body": "Update: I was able to address this by going to my ssh key settings and enabling SSO access for it, something that the current error message does not say. I assume it assumes that you tried HTTP token approach, which was not the case.",
+          "authorAssociation": "NONE",
+          "createdAt": "2025-08-27T13:14:09Z",
+          "updatedAt": "2025-08-27T13:14:09Z",
+          "body_truncated": false
+        }
+      ],
+      "comments_total": 15,
+      "comments_truncated": true
+    }
+  },
+  {
+    "url": "https://github.com/BurntSushi/ripgrep/issues/3376",
+    "evidence": {
+      "fetched_at": "2026-10-02T18:34:30.380984+00:00",
+      "selection": "current closing event, then explicit closing references; latest 8 comments",
+      "pulls_truncated": false,
+      "pulls": [
+        {
+          "url": "https://github.com/BurntSushi/ripgrep/pull/3380",
+          "title": "Fix multi-root .gitignore bug (issues #3376 and #3320)",
+          "body": "## Summary\n\nWhen multiple search paths are provided to ripgrep (e.g., `rg pattern src/ tests/`), the compiled gitignore cache was keyed only by parent directory path. This caused entries cached from the first search path to be incorrectly reused when processing subsequent paths, even though the `absolute_base` (the root search directory) was different.\n\nThis resulted in `.gitignore` rules from the first path's root being applied with incorrect path prefixes to files in later paths' roots, causing files that should be ignored to instead be searched.\n\n## Root Cause\n\nIn `crates/ignore/src/dir.rs`, the `add_parents()` function used `parent.as_os_str()` as the cache key. When the same parent directory (e.g., the repo root) was encountered while processing different root paths, the cached `Ignore` from the first path was reused, but it had the wrong `absolute_base` value.\n\n## Fix\n\nChange the cache key from just the parent path to a tuple of `(parent_path, absolute_base_path)`. This ensures different root paths get distinct cache entries.\n\n**Before:**\n\n\n**After:**\n\n\n## Test Results\n\nAll tests pass (329 tests), and manual testing confirms:\n\n| Command | Before fix | After fix |\n|---------|------------|-----------|\n| `rg this src/ tests/` | src/invalid found (buggy) | src/invalid excluded (correct) |\n| `rg this tests/ src/` | Correct | Correct |\n| `rg this src tests` | Correct | Correct |\n\n## References\n\n- Fixes #3376\n- Fixes #3320",
+          "body_truncated": false,
+          "state": "closed",
+          "merged": false,
+          "head_sha": "eae7cf9bf43480d3e048687dcfcbe8d83af4cf8f",
+          "base_sha": "4519153e5e461527f4bca45b042fff45c4ec6fb9",
+          "merge_commit_sha": "59b298aeec799dfece1020a79ab4707e6d97508c",
+          "relation": "closing_reference_not_verified_fix",
+          "files": [
+            {
+              "filename": "crates/ignore/src/dir.rs",
+              "status": "modified",
+              "patch": "@@ -101,7 +101,10 @@ struct IgnoreInner {\n     /// Note that this is never used during matching, only when adding new\n     /// parent directory matchers. This avoids needing to rebuild glob sets for\n     /// parent directories if many paths are being searched.\n-    compiled: Arc<RwLock<HashMap<OsString, Weak<IgnoreInner>>>>,\n+    ///\n+    /// The key is a Vec\\<OsString\\> = [parent_path, absolute_base_path]\n+    /// to ensure different root paths get distinct cache entries.\n+    compiled: Arc<RwLock<HashMap<Vec<OsString>, Weak<IgnoreInner>>>>,\n     /// The path to the directory that this matcher was built from.\n     dir: PathBuf,\n     /// An override matcher (default is empty).\n@@ -212,7 +215,15 @@ impl Ignore {\n         let mut ig = self.clone();\n         for parent in parents.into_iter().rev() {\n             let mut compiled = self.0.compiled.write().unwrap();\n-            if let Some(weak) = compiled.get(parent.as_os_str()) {\n+            // Use (parent, absolute_base) as cache key so different root paths\n+            // get distinct cache entries. This fixes the multi-root gitignore\n+            // bug where cached entries from earlier search paths had stale\n+            // absolute_base values pointing to a different root directory.\n+            let cache_key = vec![\n+                parent.as_os_str().to_os_string(),\n+                (**absolute_base).as_os_str().to_os_string(),\n+            ];\n+            if let Some(weak) = compiled.get(&cache_key) {\n                 if let Some(prebuilt) = weak.upgrade() {\n                     ig = Ignore(prebuilt);\n                     continue;\n@@ -230,10 +241,7 @@ impl Ignore {\n                 };\n             let ig_arc = Arc::new(igtmp);\n             ig = Ignore(ig_arc.clone());\n-            compiled.insert(\n-                parent.as_os_str().to_os_string(),\n-                Arc::downgrade(&ig_arc),\n-            );\n+            compiled.insert(cache_key, Arc::downgrade(&ig_arc));\n         }\n         (ig, errs.into_error_option())\n     }",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            }
+          ],
+          "files_truncated": false
+        },
+        {
+          "url": "https://github.com/BurntSushi/ripgrep/pull/3417",
+          "title": "fix(ignore): respect .gitignore with multiple search paths",
+          "body": "## Summary\n\nWhen ripgrep is given multiple search paths (e.g. `rg pattern src/ tests/`), compiled parent-directory ignore matchers were cached keyed only by the parent directory path. Reusing those entries for later search roots could leave a stale `absolute_base`, causing `.gitignore` rules to be applied incorrectly.\n\nThis change keys the cache by `(parent_path, absolute_base_path)` and adds a regression test reproducing the order-dependent behavior from the issue.\n\nFixes #3376\n\nRelated: #3320\n\n## Test plan\n\n- [x] `cargo test -p ignore multi_root_gitignore_absolute_base`\n- [x] `cargo test -p ignore`",
+          "body_truncated": false,
+          "state": "closed",
+          "merged": false,
+          "head_sha": "2694ee871ba3eeb435ecd8a53047c71677ebc750",
+          "base_sha": "f0cec341ab95c25c691ad3d5754d4bd9eedde21f",
+          "merge_commit_sha": null,
+          "relation": "closing_reference_not_verified_fix",
+          "files": [
+            {
+              "filename": "crates/ignore/src/dir.rs",
+              "status": "modified",
+              "patch": "@@ -101,7 +101,10 @@ struct IgnoreInner {\n     /// Note that this is never used during matching, only when adding new\n     /// parent directory matchers. This avoids needing to rebuild glob sets for\n     /// parent directories if many paths are being searched.\n-    compiled: Arc<RwLock<HashMap<OsString, Weak<IgnoreInner>>>>,\n+    ///\n+    /// The key is a `Vec<OsString>` of `[parent_path, absolute_base_path]`\n+    /// to ensure different root paths get distinct cache entries.\n+    compiled: Arc<RwLock<HashMap<Vec<OsString>, Weak<IgnoreInner>>>>,\n     /// The path to the directory that this matcher was built from.\n     dir: PathBuf,\n     /// An override matcher (default is empty).\n@@ -212,7 +215,15 @@ impl Ignore {\n         let mut ig = self.clone();\n         for parent in parents.into_iter().rev() {\n             let mut compiled = self.0.compiled.write().unwrap();\n-            if let Some(weak) = compiled.get(parent.as_os_str()) {\n+            // Use (parent, absolute_base) as cache key so different root paths\n+            // get distinct cache entries. This fixes the multi-root gitignore\n+            // bug where cached entries from earlier search paths had stale\n+            // absolute_base values pointing to a different root directory.\n+            let cache_key = vec![\n+                parent.as_os_str().to_os_string(),\n+                (**absolute_base).as_os_str().to_os_string(),\n+            ];\n+            if let Some(weak) = compiled.get(&cache_key) {\n                 if let Some(prebuilt) = weak.upgrade() {\n                     ig = Ignore(prebuilt);\n                     continue;\n@@ -230,10 +241,7 @@ impl Ignore {\n                 };\n             let ig_arc = Arc::new(igtmp);\n             ig = Ignore(ig_arc.clone());\n-            compiled.insert(\n-                parent.as_os_str().to_os_string(),\n-                Arc::downgrade(&ig_arc),\n-            );\n+            compiled.insert(cache_key, Arc::downgrade(&ig_arc));\n         }\n         (ig, errs.into_error_option())\n     }\n@@ -1238,6 +1246,30 @@ mod tests {\n         assert!(ig2.matched(\"bar\", false).is_ignore());\n     }\n \n+    #[test]\n+    fn multi_root_gitignore_absolute_base() {\n+        let td = tmpdir();\n+        mkdirp(td.path().join(\".git\"));\n+        mkdirp(td.path().join(\"src\"));\n+        mkdirp(td.path().join(\"tests\"));\n+        wfile(td.path().join(\".gitignore\"), \"src/invalid\");\n+\n+        let ig0 = IgnoreBuilder::new().build();\n+        let src = td.path().join(\"src\");\n+        let tests = td.path().join(\"tests\");\n+\n+        // Simulate searching `src/` then `tests/` (order from issue #3376).\n+        let (_, err) = ig0.add_parents(&src);\n+        assert!(err.is_none());\n+        let (_, err) = ig0.add_parents(&tests);\n+        assert!(err.is_none());\n+        let (ig_src_root, err) = ig0.add_parents(&src);\n+        assert!(err.is_none());\n+        let (ig_src, err) = ig_src_root.add_child(\"src\");\n+        assert!(err.is_none());\n+        assert!(ig_src.matched(\"invalid\", false).is_ignore());\n+    }\n+\n     #[test]\n     fn absolute_parent_anchored() {\n         let td = tmpdir();",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            }
+          ],
+          "files_truncated": false
+        }
+      ],
+      "comments": [
+        {
+          "url": "https://github.com/BurntSushi/ripgrep/issues/3376#issuecomment-4318666599",
+          "body": "## Update: Fix identified and PR submitted\n\nI've identified the root cause and submitted PR #3380 that fixes this issue.\n\n### Root Cause\nIn `crates/ignore/src/dir.rs`, the `add_parents()` function's compiled cache was keyed only by parent directory path. When multiple search paths are provided, the cache entry from the first path (e.g., `src/`) was incorrectly reused for the second path (e.g., `tests/`), but with the wrong `absolute_base` value — pointing to `src/` instead of `tests/`. This caused `.gitignore` rules to be applied with incorrect path prefixes.\n\n### Fix\nThe cache key is now `(parent_path, absolute_base_path)` instead of just `parent_path`. This ensures different root search paths get distinct cache entries.\n\n### Test Results\n- `rg this src/ tests/`: Before fix = src/invalid found (buggy); After fix = src/invalid correctly excluded ✅\n- `rg this tests/ src/`: Always correct ✅\n\nAll 329 tests pass.\n",
+          "authorAssociation": "NONE",
+          "createdAt": "2026-04-25T09:44:17Z",
+          "updatedAt": "2026-04-25T09:44:17Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/BurntSushi/ripgrep/issues/3376#issuecomment-4916024118",
+          "body": "Fixed by https://github.com/BurntSushi/ripgrep/pull/3420",
+          "authorAssociation": "OWNER",
+          "createdAt": "2026-07-08T14:46:19Z",
+          "updatedAt": "2026-07-08T14:46:19Z",
+          "body_truncated": false
+        }
+      ],
+      "comments_total": 2,
+      "comments_truncated": false
+    }
+  },
+  {
+    "url": "https://github.com/career-ops-hq/career-ops/issues/2495",
+    "evidence": {
+      "fetched_at": "2026-10-02T18:34:34.495729+00:00",
+      "selection": "current closing event, then explicit closing references; latest 8 comments",
+      "pulls_truncated": false,
+      "pulls": [
+        {
+          "url": "https://github.com/career-ops-hq/career-ops/pull/2763",
+          "title": "fix(workday): key the cap-hit warning on entry provenance, not on --since",
+          "body": "## What does this PR do?\n\n`providers/workday.mjs` picked between its two cap-hit warnings by testing `sinceMs === null`. That was a proxy for the real question — *\"does this caller have a `portals.yml` `tracked_companies` entry the user could edit?\"* — and since #2418 the proxy no longer holds, so a `scan.mjs --since` run loses the `raise max_pages on this entry for more` advice on a tracked company. This states provenance explicitly instead of inferring it: `scan-ats-full.mjs` sets `ctx.syntheticEntries`, and the message is keyed on that.\n\n## Related issue\n\nFixes #2495\n\n## Reproducing it\n\nDriving `workday.fetch()` directly with a mock transport, one `tracked_companies` entry with `max_pages: 3`, `total: 200`, every posting `Posted Today` (so the `--since` early-stop never pre-empts the cap). The **only** difference between the two runs is `ctx.sinceMs`:\n\n| run | warning | actionable? |\n|---|---|---|\n| `node scan.mjs` (`sinceMs = null`) | `⚠️  workday: AcmeCorp truncated at max_pages=3 (60 of 200 jobs) — raise max_pages on this entry for more` | ✅ |\n| `node scan.mjs --since 7d` (`sinceMs = now-7d`) | `⚠️  workday: AcmeCorp truncated at 3 pages (60 of 200 jobs)` | ❌ |\n\nAfter this change both runs emit the first line, and a reverse scan still gets the second.\n\nYou mentioned on the issue that you don't mark anything `confirmed` until you've reproduced the exact branch — this is a provider-level reproduction against a mock transport, not a live tenant, so it pins the branch rather than the field report. Happy to adjust if you'd rather see it framed differently.\n\n## Why the change touches a second file\n\n`workday.mjs` on its own can only *infer* provenance, which is the bug. The one caller that both synthesizes entries and can reach the cap has to say so — `scan-ats-full.mjs` is a one-line `ctx` addition. `discover-ats.mjs` and `verify-portals.mjs` also call `workday.fetch()` with synthesized/tracked entries, but both probe with `ctx.maxPages: 1`, which never sets `stopReason` to `'cap'`, so neither needs to opt in. Absence of the flag therefore means \"tracked\", which keeps the next caller that starts setting `sinceMs` from re-coupling the two concerns — the shape you and @LayerC0de both landed on in the issue.\n\n## Before / after\n\n```diff\n-    if (sinceMs === null) {\n+    const syntheticEntries = ctx?.syntheticEntries === true;\n+    if (!syntheticEntries) {\n```\n\nBoth message strings are unchanged; only the condition selecting between them moved. The `(total may be Workday-capped, not real)` tag is about the tenant's `total`, not about provenance, so it stays on the terse line — pinned by a test so the rekey can't quietly drop it.\n\n## Tests\n\nFour assertions in `tests/providers/workday.test.mjs`, pinning which warning fires for which caller:\n\n- a full `scan.mjs` run gets the advice\n- a `scan.mjs --since` run **keeps** the advice ← fails on `main`, passes here\n- a reverse scan (synthesized entries) stays terse, no advice\n- the Workday-capped-total tag survives on the reverse-scan line\n\nThree existing tests encoded the old proxy (they simulated \"reverse-scan context\" with `sinceMs` alone); they now declare `syntheticEntries: true`, which is what they were always describing in their comments.\n\n`node test-all.mjs`: **3434 passed, 0 failed** (3430 on `main` — the +4 are the new assertions). The single warning is the pre-existing `cv-sync-check.mjs exited with error (expected without user data)`, present on `main` too.\n\n## Type of change\n\n- [x] Bug fix\n- [ ] New feature\n- [ ] Documentation / translation\n- [ ] Refactor (no behavior change)\n\n## Checklist\n\n- [x] I have read [CONTRIBUTING.md](https://github.com/santifer/career-ops/blob/main/CONTRIBUTING.md)\n- [x] If this is a new feature or architecture change, I opened an issue first (bug fixes, providers, docs & translations are exempt — send those straight in)\n- [x] My PR does not include personal data (CV, email, real names, scan results, or pipeline data)\n- [x] I ran `node test-all.mjs` and all tests pass\n- [x] My changes respect the [Data Contract](https://github.com/santifer/career-ops/blob/main/DATA_CONTRACT.md) (no modifications to user-layer files)\n- [x] My changes align with the [project roadmap](https://github.com/santifer/career-ops/discussions/156)\n\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n\n## Summary by CodeRabbit\n\n* **Bug Fixes**\n  * Improved pagination-limit warnings for tracked job listings, including clearer guidance to increase the maximum page limit when results may be incomplete.\n  * Refined warnings for externally sourced listings to provide more relevant messaging without suggesting portal-specific changes.\n  * Preserved existing indicators when Workday reports a capped total of available results.\n\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+          "body_truncated": false,
+          "state": "closed",
+          "merged": true,
+          "head_sha": "51d3b83d989b1f8e58585bc4226a4c7835889af3",
+          "base_sha": "03fc92bb04e1fc8821ff4ec71b26bcc6f0da1182",
+          "merge_commit_sha": "7f067bce916a964411e27948b06227c4ca39bfd2",
+          "relation": "closed_by_pull_request",
+          "files": [
+            {
+              "filename": "tests/providers/workday.test.mjs",
+              "status": "modified",
+              "patch": "@@ -224,6 +224,70 @@ try {\n     fail(`workday fetch cap: expected a truncation warning, got ${JSON.stringify(capturedWarnings)}`);\n   }\n \n+  // Which cap warning fires is keyed on ENTRY PROVENANCE, not on the date\n+  // bound (#2495). \"raise max_pages on this entry for more\" is only actionable\n+  // when the caller has a real portals.yml tracked_companies entry to edit;\n+  // scan-ats-full.mjs synthesizes its entries from an external dataset and has\n+  // nothing to point at, so it gets the terser line.\n+  //\n+  // `sinceMs === null` used to stand in for that distinction because\n+  // scan-ats-full.mjs was the only caller setting it. Since #2418 `scan.mjs\n+  // --since` sets ctx.sinceMs too, so the proxy silently mislabels a tracked\n+  // entry as synthesized. These three cases pin the two messages to provenance\n+  // so the next caller to start setting sinceMs cannot re-couple them.\n+  const capEntry = { name: 'CappedCo', careers_url: 'https://cappedco.wd5.myworkdayjobs.com/careers', max_pages: 3 };\n+  // total=200 → 10 pages available, capped at 3. Every posting is \"Posted\n+  // Today\" so the --since early-stop never pre-empts the cap.\n+  const capPage = () => ({\n+    total: 200,\n+    jobPostings: Array.from({ length: 20 }, (_, i) => ({ title: `Job ${i}`, externalPath: `/job/board/${i}`, postedOn: 'Posted Today' })),\n+  });\n+  const runCapCase = async (ctxExtra) => {\n+    const { errors } = await captureConsoleErrors(() =>\n+      workday.fetch(capEntry, mkWorkdayCtx(async () => capPage(), ctxExtra)));\n+    return errors.map(String);\n+  };\n+  const ADVICE = /raise max_pages on this entry for more/;\n+  const sevenDaysAgo = Date.now() - 7 * 86_400_000;\n+\n+  // scan.mjs without --since — the case that always worked.\n+  const capFullRun = await runCapCase({});\n+  if (capFullRun.some(w => ADVICE.test(w))) {\n+    pass('workday.fetch() cap warning: a full scan.mjs run gets the \"raise max_pages\" advice');\n+  } else {\n+    fail(`workday cap warning (full run): expected the raise-max_pages advice, got ${JSON.stringify(capFullRun)}`);\n+  }\n+\n+  // scan.mjs --since — same tracked entry, same cap; only the date bound differs.\n+  const capSinceRun = await runCapCase({ sinceMs: sevenDaysAgo, includeUndated: true });\n+  if (capSinceRun.some(w => ADVICE.test(w))) {\n+    pass('workday.fetch() cap warning: a scan.mjs --since run keeps the \"raise max_pages\" advice');\n+  } else {\n+    fail(`workday cap warning (--since run): expected the raise-max_pages advice, got ${JSON.stringify(capSinceRun)}`);\n+  }\n+\n+  // scan-ats-full.mjs — synthesized entries, nothing for the user to edit.\n+  const capReverseScan = await runCapCase({ sinceMs: sevenDaysAgo, syntheticEntries: true });\n+  if (capReverseScan.some(w => /truncated at 3 pages/.test(w)) && !capReverseScan.some(w => ADVICE.test(w))) {\n+    pass('workday.fetch() cap warning: a reverse scan (synthesized entries) stays terse, no advice');\n+  } else {\n+    fail(`workday cap warning (reverse scan): expected the terse line without advice, got ${JSON.stringify(capReverseScan)}`);\n+  }\n+\n+  // The \"total may be Workday-capped\" tag rides on the terse line and is about\n+  // the tenant's total, not about provenance — it must survive the rekey.\n+  const suspectEntry = { name: 'SuspectCo', careers_url: 'https://suspectco.wd5.myworkdayjobs.com/careers', max_pages: 3 };\n+  const { errors: suspectWarnings } = await captureConsoleErrors(() =>\n+    workday.fetch(suspectEntry, mkWorkdayCtx(async () => ({\n+      total: 60, // exactly max_pages * PAGE_SIZE → the suspicious shape\n+      jobPostings: Array.from({ length: 20 }, (_, i) => ({ title: `Job ${i}`, externalPath: `/job/board/${i}`, postedOn: 'Posted Today' })),\n+    }), { sinceMs: sevenDaysAgo, syntheticEntries: true })));\n+  if (suspectWarnings.some(w => /total may be Workday-capped, not real/.test(String(w)))) {\n+    pass('workday.fetch() cap warning: the Workday-capped-total tag survives on the reverse-scan line');\n+  } else {\n+    fail(`workday cap warning (suspect total): expected the capped-total tag, got ${JSON.stringify(suspectWarnings)}`);\n+  }\n+\n   // fetch() pagination cap — entry.max_pages raises the cap for a genuinely\n   // large tenant (e.g. Deutsche Bank-scale postings)\n   let overriddenWorkdayRequests = 0;\n@@ -470,8 +534,8 @@ try {\n     fail(`workday wide-since: requests=${wideRequests}, jobs=${wideJobs.length} (expected 2/40)`);\n   }\n \n-  // fetch() cap-hit warning — reverse-scan context (ctx.sinceMs set, as\n-  // scan-ats-full.mjs always does) where entries are synthesized from an\n+  // fetch() cap-hit warning — reverse-scan context (ctx.syntheticEntries set,\n+  // as scan-ats-full.mjs does) where entries are synthesized from an\n   // external dataset, not portals.yml: there's no portal entry to edit, and\n   // — per the \"no fixed cap can guarantee full coverage\" conclusion — no\n   // fix to advise at all, so the message is just the short fact, with\n@@ -483,7 +547,7 @@ try {\n     workday.fetch(entry, mkWorkdayCtx(async () => ({\n       total: 1_000_000,\n       jobPostings: Array.from({ length: 20 }, (_, i) => ({ title: `NoDate ${i}`, externalPath: `/job/board/nodate-${i}` })), // no postedOn\n-    }), { sinceMs: noDateSinceMs, includeUndated: true })));\n+    }), { sinceMs: noDateSinceMs, includeUndated: true, syntheticEntries: true })));\n   if (noDateWarnings.some(w => /truncated at \\d+ pages/.test(w))) {\n     pass('workday.fetch() cap-hit warning fires in reverse-scan context (tenant has no dates, includeUndated on)');\n   } else {\n@@ -554,7 +618,7 @@ try {\n     workday.fetch(entry, mkWorkdayCtx(async () => ({\n       total: 1_000_000,\n       jobPostings: Array.from({ length: 20 }, (_, i) => ({ title: `Fresh ${i}`, externalPath: `/job/board/fresh-${i}`, postedOn: 'Posted Today' })),\n-    }), { sinceMs: datedCapSinceMs })));\n+    }), { sinceMs: datedCapSinceMs, syntheticEntries: true })));\n   if (datedCapWarnings.some(w => /truncated at \\d+ pages \\(2000 of 1000000 jobs\\)/.test(w))) {\n     pass('workday.fetch() cap-hit warning reports the short \"truncated at N pages\" form');\n   } else {\n@@ -577,7 +641,7 @@ try {\n     workday.fetch(entry, mkWorkdayCtx(async () => ({\n       total: 2000, // === DEFAULT_MAX_PAGES (100) * PAGE_SIZE (20)\n       jobPostings: Array.from({ length: 20 }, (_, i) => ({ title: `Suspect ${i}`, externalPath: `/job/board/suspect-${i}`, postedOn: 'Posted Today' })),\n-    }), { sinceMs: suspectCapSinceMs })));\n+    }), { sinceMs: suspectCapSinceMs, syntheticEntries: true })));\n   if (suspectCapWarnings.some(w => /\\(total may be Workday-capped, not real\\)/.test(w))) {\n     pass('workday.fetch() cap-hit warning flags a suspected Workday-side total cap when total === maxPages*PAGE_SIZE');\n   } else {",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            },
+            {
+              "filename": "providers/workday.mjs",
+              "status": "modified",
+              "patch": "@@ -168,7 +168,7 @@ export default {\n    * as providers/glints.mjs's firewall).\n    *\n    * @param {{ name?: string, api?: string, careers_url?: string, max_pages?: number }} entry\n-   * @param {{ fetchJson: (url: string, opts?: object) => Promise<any>, sinceMs?: number, maxPages?: number }} ctx\n+   * @param {{ fetchJson: (url: string, opts?: object) => Promise<any>, sinceMs?: number, maxPages?: number, syntheticEntries?: boolean }} ctx\n    * @returns {Promise<Array<{title: string, url: string, company: string, location: string, postedAt?: number}>>}\n    */\n   async fetch(entry, ctx) {\n@@ -283,15 +283,22 @@ export default {\n     // portal entry to point at, and no fixed cap can guarantee full coverage of\n     // an unbounded company directory anyway; nothing else to suggest there.\n     //\n-    // The branch below keys on `sinceMs === null` as a proxy for that\n-    // distinction. Since #2418 the proxy is no longer exact: `scan.mjs --since`\n-    // also sets ctx.sinceMs, so those runs take the else branch and get the\n-    // terser message even though they DO have a portals.yml entry to raise.\n-    // Harmless (the cap is still surfaced, just without the suggestion) but\n-    // worth knowing before trusting the proxy — see #2495.\n+    // The branch below used to key on `sinceMs === null` as a proxy for that\n+    // distinction, which held only because scan-ats-full.mjs was the sole\n+    // caller setting it. #2418 broke the proxy — `scan.mjs --since` sets\n+    // ctx.sinceMs too, so a tracked entry lost the actionable half of the\n+    // message on every --since run (#2495). Provenance is now stated by the\n+    // caller instead of inferred from an unrelated flag, so a future caller\n+    // that starts setting sinceMs cannot re-couple the two concerns.\n+    //\n+    // Absence means \"tracked\": scan-ats-full.mjs is the only caller that\n+    // synthesizes entries AND can reach the cap (discover-ats.mjs and\n+    // verify-portals.mjs both probe with ctx.maxPages: 1, which never sets\n+    // stopReason to 'cap'), so it is the one place that opts out.\n+    const syntheticEntries = ctx?.syntheticEntries === true;\n     if (stopReason === 'cap') {\n       const jobsSummary = `${jobs.length}${total !== null ? ` of ${total}` : ''} jobs`;\n-      if (sinceMs === null) {\n+      if (!syntheticEntries) {\n         console.error(`⚠️  workday: ${entry.name} truncated at max_pages=${maxPages} (${jobsSummary}) — raise max_pages on this entry for more`);\n       } else {\n         // Workday's CXS backend can report `total` as exactly",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            },
+            {
+              "filename": "scan-ats-full.mjs",
+              "status": "modified",
+              "patch": "@@ -641,7 +641,14 @@ async function main() {\n   // sinceMs once postings are confidently past the --since window, and\n   // includeUndated (when false) for a tenant that exposes no postedOn at\n   // all, since its postings would all be dropped as undated below anyway.\n-  const ctx = { ...makeHttpCtx(), sinceMs: cutoff, includeUndated: opts.includeUndated };\n+  //\n+  // syntheticEntries states what this scanner's entries ARE: built from the\n+  // external ATS dataset, not read from portals.yml tracked_companies.\n+  // workday.mjs picks its cap-hit warning from it — there is no portal entry\n+  // here for the user to edit, so \"raise max_pages on this entry\" would be\n+  // inactionable. It used to infer that from sinceMs being set, which stopped\n+  // being true once #2418 taught scan.mjs --since to set it too (#2495).\n+  const ctx = { ...makeHttpCtx(), sinceMs: cutoff, includeUndated: opts.includeUndated, syntheticEntries: true };\n   const date = new Date().toISOString().slice(0, 10);\n \n   // Same defensive default as completedSources/counters below: a version-1",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            }
+          ],
+          "files_truncated": false
+        }
+      ],
+      "comments": [
+        {
+          "url": "https://github.com/career-ops-hq/career-ops/issues/2495#issuecomment-5244590191",
+          "body": "Thanks for splitting this out cleanly, @LayerC0de — the behavioral half deserves its own issue exactly as you said. The branch in `providers/workday.mjs` on `sinceMs === null` was a fine proxy for 'is this a --since run' before #2418, but once #2418 changed how the since window is derived, `sinceMs` stops being a clean stand-in for that intent, so the cap warning can print the wrong variant. That's a real correctness-of-diagnostics bug: a misleading warning sends someone chasing the wrong cause.\n\nLabeling `bug`. It's a well-scoped, single-file fix with a clear before/after (the two warning branches) — good candidate for a focused PR with a test that pins which warning fires for a --since run vs a full run. Not marking `confirmed` until I've reproduced the exact branch, but the reasoning holds on a read.",
+          "authorAssociation": "MEMBER",
+          "createdAt": "2026-08-10T18:54:16Z",
+          "updatedAt": "2026-08-10T18:54:16Z",
+          "body_truncated": false
+        }
+      ],
+      "comments_total": 1,
+      "comments_truncated": false
+    }
+  },
+  {
+    "url": "https://github.com/restic/restic/issues/407",
+    "evidence": {
+      "fetched_at": "2026-10-02T18:34:44.584183+00:00",
+      "selection": "current closing event, then explicit closing references; latest 8 comments",
+      "pulls_truncated": false,
+      "pulls": [
+        {
+          "url": "https://github.com/restic/restic/pull/4838",
+          "title": "restore: skip unchanged files and add `--overwrite if-changed` option",
+          "body": "<!--\r\nThank you very much for contributing code or documentation to restic! Please\r\nfill out the following questions to make it easier for us to review your\r\nchanges.\r\n-->\r\n\r\nWhat does this PR change? What problem does it solve?\r\n-----------------------------------------------------\r\nBased on https://github.com/restic/restic/pull/4837 .\r\n\r\nOn startup, the `restore` command now checks existing files to determine whether these have to be updated. By default, it verifies the full file content. To only checks whether the file size and modification time (mtime) match with those in the snapshot, use `--overwrite if-changed`. Files with matching file content will not be downloaded during the restore operation. Only their file metadata is updated.\r\n\r\n<!--\r\nDescribe the changes and their purpose here, as detailed as needed.\r\n-->\r\n\r\nWas the change previously discussed in an issue or on the forum?\r\n----------------------------------------------------------------\r\nSee #4817\r\nFixes https://github.com/restic/restic/issues/407\r\nFixes https://github.com/restic/restic/issues/2662\r\n\r\n<!--\r\nLink issues and relevant forum posts here.\r\n\r\nIf this PR resolves an issue on GitHub, use \"Closes #1234\" so that the issue\r\nis closed automatically when this PR is merged.\r\n-->\r\n\r\nChecklist\r\n---------\r\n\r\n<!--\r\nYou do not need to check all the boxes below all at once. Feel free to take\r\nyour time and add more commits. If you're done and ready for review, please\r\ncheck the last box. Enable a checkbox by replacing [ ] with [x].\r\n-->\r\n\r\n- [x] I have read the [contribution guidelines](https://github.com/restic/restic/blob/master/CONTRIBUTING.md#providing-patches).\r\n- [x] I have [enabled maintainer edits](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/allowing-changes-to-a-pull-request-branch-created-from-a-fork).\r\n- [x] I have added tests for all code changes.\r\n- [x] I have added documentation for relevant changes (in the manual).\r\n- [x] There's a new file in `changelog/unreleased/` that describes the changes for our users (see [template](https://github.com/restic/restic/blob/master/changelog/TEMPLATE)).\r\n- [x] I have run `gofmt` on the code in all commits.\r\n- [x] All commit messages are formatted in the same style as [the other commits in the repo](https://github.com/restic/restic/blob/master/CONTRIBUTING.md#git-commits).\r\n- [x] I'm done! This pull request is ready for review.\r\n",
+          "body_truncated": false,
+          "state": "closed",
+          "merged": true,
+          "head_sha": "d890bfff7ca95585bcf90ecd139be29ff1fb1ee1",
+          "base_sha": "63ea017e676844005db6c4f6757d962dbb927e73",
+          "merge_commit_sha": "267cd62ae43124c80b3bed0106695eff6f7585dd",
+          "relation": "closed_by_pull_request",
+          "files": [
+            {
+              "filename": "internal/restorer/restorer_test.go",
+              "status": "modified",
+              "patch": "@@ -10,6 +10,7 @@ import (\n \t\"path/filepath\"\n \t\"runtime\"\n \t\"strings\"\n+\t\"syscall\"\n \t\"testing\"\n \t\"time\"\n \n@@ -894,6 +895,44 @@ func TestRestorerSparseFiles(t *testing.T) {\n \t\tlen(zeros), blocks, 100*sparsity)\n }\n \n+func TestRestorerSparseOverwrite(t *testing.T) {\n+\tbaseSnapshot := Snapshot{\n+\t\tNodes: map[string]Node{\n+\t\t\t\"foo\": File{Data: \"content: new\\n\"},\n+\t\t},\n+\t}\n+\tvar zero [14]byte\n+\tsparseSnapshot := Snapshot{\n+\t\tNodes: map[string]Node{\n+\t\t\t\"foo\": File{Data: string(zero[:])},\n+\t\t},\n+\t}\n+\n+\trepo := repository.TestRepository(t)\n+\ttempdir := filepath.Join(rtest.TempDir(t), \"target\")\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tdefer cancel()\n+\n+\t// base snapshot\n+\tsn, id := saveSnapshot(t, repo, baseSnapshot, noopGetGenericAttributes)\n+\tt.Logf(\"base snapshot saved as %v\", id.Str())\n+\n+\tres := NewRestorer(repo, sn, Options{Sparse: true})\n+\terr := res.RestoreTo(ctx, tempdir)\n+\trtest.OK(t, err)\n+\n+\t// sparse snapshot\n+\tsn, id = saveSnapshot(t, repo, sparseSnapshot, noopGetGenericAttributes)\n+\tt.Logf(\"base snapshot saved as %v\", id.Str())\n+\n+\tres = NewRestorer(repo, sn, Options{Sparse: true, Overwrite: OverwriteAlways})\n+\terr = res.RestoreTo(ctx, tempdir)\n+\trtest.OK(t, err)\n+\tfiles, err := res.VerifyFiles(ctx, tempdir)\n+\trtest.OK(t, err)\n+\trtest.Equals(t, 1, files, \"unexpected number of verified files\")\n+}\n+\n func TestRestorerOverwriteBehavior(t *testing.T) {\n \tbaseTime := time.Now()\n \tbaseSnapshot := Snapshot{\n@@ -929,6 +968,13 @@ func TestRestorerOverwriteBehavior(t *testing.T) {\n \t\t\t\t\"dirtest/file\": \"content: file2\\n\",\n \t\t\t},\n \t\t},\n+\t\t{\n+\t\t\tOverwrite: OverwriteIfChanged,\n+\t\t\tFiles: map[string]string{\n+\t\t\t\t\"foo\":          \"content: new\\n\",\n+\t\t\t\t\"dirtest/file\": \"content: file2\\n\",\n+\t\t\t},\n+\t\t},\n \t\t{\n \t\t\tOverwrite: OverwriteIfNewer,\n \t\t\tFiles: map[string]string{\n@@ -982,3 +1028,88 @@ func TestRestorerOverwriteBehavior(t *testing.T) {\n \t\t})\n \t}\n }\n+\n+func TestRestoreModified(t *testing.T) {\n+\t// overwrite files between snapshots and also change their filesize\n+\tsnapshots := []Snapshot{\n+\t\t{\n+\t\t\tNodes: map[string]Node{\n+\t\t\t\t\"foo\": File{Data: \"content: foo\\n\", ModTime: time.Now()},\n+\t\t\t\t\"bar\": File{Data: \"content: a\\n\", ModTime: time.Now()},\n+\t\t\t},\n+\t\t},\n+\t\t{\n+\t\t\tNodes: map[string]Node{\n+\t\t\t\t\"foo\": File{Data: \"content: a\\n\", ModTime: time.Now()},\n+\t\t\t\t\"bar\": File{Data: \"content: bar\\n\", ModTime: time.Now()},\n+\t\t\t},\n+\t\t},\n+\t}\n+\n+\trepo := repository.TestRepository(t)\n+\ttempdir := filepath.Join(rtest.TempDir(t), \"target\")\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tdefer cancel()\n+\n+\tfor _, snapshot := range snapshots {\n+\t\tsn, id := saveSnapshot(t, repo, snapshot, noopGetGenericAttributes)\n+\t\tt.Logf(\"snapshot saved as %v\", id.Str())\n+\n+\t\tres := NewRestorer(repo, sn, Options{Overwrite: OverwriteIfChanged})\n+\t\trtest.OK(t, res.RestoreTo(ctx, tempdir))\n+\t\tn, err := res.VerifyFiles(ctx, tempdir)\n+\t\trtest.OK(t, err)\n+\t\trtest.Equals(t, 2, n, \"unexpected number of verified files\")\n+\t}\n+}\n+\n+func TestRestoreIfChanged(t *testing.T) {\n+\torigData := \"content: foo\\n\"\n+\tmodData := \"content: bar\\n\"\n+\trtest.Equals(t, len(modData), len(origData), \"broken testcase\")\n+\tsnapshot := Snapshot{\n+\t\tNodes: map[string]Node{\n+\t\t\t\"foo\": File{Data: origData, ModTime: time.Now()},\n+\t\t},\n+\t}\n+\n+\trepo := repository.TestRepository(t)\n+\ttempdir := filepath.Join(rtest.TempDir(t), \"target\")\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tdefer cancel()\n+\n+\tsn, id := saveSnapshot(t, repo, snapshot, noopGetGenericAttributes)\n+\tt.Logf(\"snapshot saved as %v\", id.Str())\n+\n+\tres := NewRestorer(repo, sn, Options{})\n+\trtest.OK(t, res.RestoreTo(ctx, tempdir))\n+\n+\t// modify file but maintain size and timestamp\n+\tpath := filepath.Join(tempdir, \"foo\")\n+\tf, err := os.OpenFile(path, os.O_RDWR, 0)\n+\trtest.OK(t, err)\n+\tfi, err := f.Stat()\n+\trtest.OK(t, err)\n+\t_, err = f.Write([]byte(modData))\n+\trtest.OK(t, err)\n+\trtest.OK(t, f.Close())\n+\tvar utimes = [...]syscall.Timespec{\n+\t\tsyscall.NsecToTimespec(fi.ModTime().UnixNano()),\n+\t\tsyscall.NsecToTimespec(fi.ModTime().UnixNano()),\n+\t}\n+\trtest.OK(t, syscall.UtimesNano(path, utimes[:]))\n+\n+\tfor _, overwrite := range []OverwriteBehavior{OverwriteIfChanged, OverwriteAlways} {\n+\t\tres = NewRestorer(repo, sn, Options{Overwrite: overwrite})\n+\t\trtest.OK(t, res.RestoreTo(ctx, tempdir))\n+\t\tdata, err := os.ReadFile(path)\n+\t\trtest.OK(t, err)\n+\t\tif overwrite == OverwriteAlways {\n+\t\t\t// restore should notice the changed file content\n+\t\t\trtest.Equals(t, origData, string(data), \"expected original file content\")\n+\t\t} else {\n+\t\t\t// restore should not have noticed the changed file content\n+\t\t\trtest.Equals(t, modData, string(data), \"expeced modified file content\")\n+\t\t}\n+\t}\n+}",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            },
+            {
+              "filename": "internal/restorer/restorer_unix_test.go",
+              "status": "modified",
+              "patch": "@@ -5,6 +5,7 @@ package restorer\n \n import (\n \t\"context\"\n+\t\"io/fs\"\n \t\"os\"\n \t\"path/filepath\"\n \t\"syscall\"\n@@ -118,3 +119,34 @@ func TestRestorerProgressBar(t *testing.T) {\n \t\tAllBytesSkipped: 0,\n \t}, mock.s)\n }\n+\n+func TestRestorePermissions(t *testing.T) {\n+\tsnapshot := Snapshot{\n+\t\tNodes: map[string]Node{\n+\t\t\t\"foo\": File{Data: \"content: foo\\n\", Mode: 0o600, ModTime: time.Now()},\n+\t\t},\n+\t}\n+\n+\trepo := repository.TestRepository(t)\n+\ttempdir := filepath.Join(rtest.TempDir(t), \"target\")\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tdefer cancel()\n+\n+\tsn, id := saveSnapshot(t, repo, snapshot, noopGetGenericAttributes)\n+\tt.Logf(\"snapshot saved as %v\", id.Str())\n+\n+\tres := NewRestorer(repo, sn, Options{})\n+\trtest.OK(t, res.RestoreTo(ctx, tempdir))\n+\n+\tfor _, overwrite := range []OverwriteBehavior{OverwriteIfChanged, OverwriteAlways} {\n+\t\t// tamper with permissions\n+\t\tpath := filepath.Join(tempdir, \"foo\")\n+\t\trtest.OK(t, os.Chmod(path, 0o700))\n+\n+\t\tres = NewRestorer(repo, sn, Options{Overwrite: overwrite})\n+\t\trtest.OK(t, res.RestoreTo(ctx, tempdir))\n+\t\tfi, err := os.Stat(path)\n+\t\trtest.OK(t, err)\n+\t\trtest.Equals(t, fs.FileMode(0o600), fi.Mode().Perm(), \"unexpected permissions\")\n+\t}\n+}",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            },
+            {
+              "filename": "changelog/unreleased/issue-4817",
+              "status": "modified",
+              "patch": "@@ -1,11 +1,22 @@\n Enhancement: Make overwrite behavior of `restore` customizable\n \n The `restore` command now supports an `--overwrite` option to configure whether\n-already existing files are overwritten. The default is `--overwrite always`,\n-which overwrites existing files. `--overwrite if-newer` only restores files\n-from the snapshot that are newer than the local state. And `--overwrite never`\n-does not modify existing files.\n+already existing files are overwritten. This behavior can now be configured via\n+the `--overwrite` option. The following values are supported:\n+\n+* `--overwrite always` (default): always overwrites already existing files. `restore`\n+  will verify the existing file content and only restore mismatching parts to minimize\n+  downloads. Updates the metadata of all files.\n+* `--overwrite if-changed`: like the previous case, but speeds up the file content check\n+  by assuming that files with matching size and modification time (mtime) are already up to date.\n+  In case of a mismatch, the full file content is verified. Updates the metadata of all files.\n+* `--overwrite if-newer`: only overwrite existing files if the file in the snapshot has a\n+  newer modification time (mtime).\n+* `--overwrite never`: never overwrite existing files.\n \n https://github.com/restic/restic/issues/4817\n https://github.com/restic/restic/issues/200\n+https://github.com/restic/restic/issues/407\n+https://github.com/restic/restic/issues/2662\n https://github.com/restic/restic/pull/4837\n+https://github.com/restic/restic/pull/4838",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            },
+            {
+              "filename": "cmd/restic/cmd_restore.go",
+              "status": "modified",
+              "patch": "@@ -66,7 +66,7 @@ func init() {\n \tinitSingleSnapshotFilter(flags, &restoreOptions.SnapshotFilter)\n \tflags.BoolVar(&restoreOptions.Sparse, \"sparse\", false, \"restore files as sparse\")\n \tflags.BoolVar(&restoreOptions.Verify, \"verify\", false, \"verify restored files content\")\n-\tflags.Var(&restoreOptions.Overwrite, \"overwrite\", \"overwrite behavior, one of (always|if-newer|never) (default: always)\")\n+\tflags.Var(&restoreOptions.Overwrite, \"overwrite\", \"overwrite behavior, one of (always|if-changed|if-newer|never) (default: always)\")\n }\n \n func runRestore(ctx context.Context, opts RestoreOptions, gopts GlobalOptions,",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            },
+            {
+              "filename": "doc/050_restore.rst",
+              "status": "modified",
+              "patch": "@@ -91,11 +91,26 @@ stored explicitly.\n Restoring in-place\n ------------------\n \n-By default, the ``restore`` command overwrites already existing files in the target\n-directory. This behavior can be configured via the ``--overwrite`` option. The\n-default is ``--overwrite always``. To only overwrite existing files if the file in\n-the snapshot is newer, use ``--overwrite if-newer``. To never overwrite existing files,\n-use ``--overwrite never``.\n+.. note::\n+\n+    Restoring data in-place can leave files in a partially restored state if the ``restore``\n+    operation is interrupted. To ensure you can revert back to the previous state, create\n+    a current ``backup`` before restoring a different snapshot.\n+\n+By default, the ``restore`` command overwrites already existing files at the target\n+directory. This behavior can be configured via the ``--overwrite`` option. The following\n+values are supported:\n+\n+* ``--overwrite always`` (default): always overwrites already existing files. ``restore``\n+  will verify the existing file content and only restore mismatching parts to minimize\n+  downloads. Updates the metadata of all files.\n+* ``--overwrite if-changed``: like the previous case, but speeds up the file content check\n+  by assuming that files with matching size and modification time (mtime) are already up to date.\n+  In case of a mismatch, the full file content is verified. Updates the metadata of all files.\n+* ``--overwrite if-newer``: only overwrite existing files if the file in the snapshot has a\n+  newer modification time (mtime).\n+* ``--overwrite never``: never overwrite existing files.\n+\n \n Restore using mount\n ===================",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            },
+            {
+              "filename": "internal/restic/node_windows.go",
+              "status": "modified",
+              "patch": "@@ -275,17 +275,20 @@ func fixEncryptionAttribute(path string, attrs *uint32, pathPointer *uint16) (er\n \t\t// File should be encrypted.\n \t\terr = encryptFile(pathPointer)\n \t\tif err != nil {\n-\t\t\tif fs.IsAccessDenied(err) {\n+\t\t\tif fs.IsAccessDenied(err) || errors.Is(err, windows.ERROR_FILE_READ_ONLY) {\n \t\t\t\t// If existing file already has readonly or system flag, encrypt file call fails.\n-\t\t\t\t// We have already cleared readonly flag, clearing system flag if needed.\n \t\t\t\t// The readonly and system flags will be set again at the end of this func if they are needed.\n+\t\t\t\terr = fs.ResetPermissions(path)\n+\t\t\t\tif err != nil {\n+\t\t\t\t\treturn fmt.Errorf(\"failed to encrypt file: failed to reset permissions: %s : %v\", path, err)\n+\t\t\t\t}\n \t\t\t\terr = fs.ClearSystem(path)\n \t\t\t\tif err != nil {\n \t\t\t\t\treturn fmt.Errorf(\"failed to encrypt file: failed to clear system flag: %s : %v\", path, err)\n \t\t\t\t}\n \t\t\t\terr = encryptFile(pathPointer)\n \t\t\t\tif err != nil {\n-\t\t\t\t\treturn fmt.Errorf(\"failed to encrypt file: %s : %v\", path, err)\n+\t\t\t\t\treturn fmt.Errorf(\"failed retry to encrypt file: %s : %v\", path, err)\n \t\t\t\t}\n \t\t\t} else {\n \t\t\t\treturn fmt.Errorf(\"failed to encrypt file: %s : %v\", path, err)\n@@ -300,17 +303,20 @@ func fixEncryptionAttribute(path string, attrs *uint32, pathPointer *uint16) (er\n \t\t\t// File should not be encrypted, but its already encrypted. Decrypt it.\n \t\t\terr = decryptFile(pathPointer)\n \t\t\tif err != nil {\n-\t\t\t\tif fs.IsAccessDenied(err) {\n+\t\t\t\tif fs.IsAccessDenied(err) || errors.Is(err, windows.ERROR_FILE_READ_ONLY) {\n \t\t\t\t\t// If existing file already has readonly or system flag, decrypt file call fails.\n-\t\t\t\t\t// We have already cleared readonly flag, clearing system flag if needed.\n \t\t\t\t\t// The readonly and system flags will be set again after this func if they are needed.\n+\t\t\t\t\terr = fs.ResetPermissions(path)\n+\t\t\t\t\tif err != nil {\n+\t\t\t\t\t\treturn fmt.Errorf(\"failed to encrypt file: failed to reset permissions: %s : %v\", path, err)\n+\t\t\t\t\t}\n \t\t\t\t\terr = fs.ClearSystem(path)\n \t\t\t\t\tif err != nil {\n \t\t\t\t\t\treturn fmt.Errorf(\"failed to decrypt file: failed to clear system flag: %s : %v\", path, err)\n \t\t\t\t\t}\n \t\t\t\t\terr = decryptFile(pathPointer)\n \t\t\t\t\tif err != nil {\n-\t\t\t\t\t\treturn fmt.Errorf(\"failed to decrypt file: %s : %v\", path, err)\n+\t\t\t\t\t\treturn fmt.Errorf(\"failed retry to decrypt file: %s",
+              "patch_unavailable": false,
+              "patch_truncated": true
+            },
+            {
+              "filename": "internal/restorer/filerestorer.go",
+              "status": "modified",
+              "patch": "",
+              "patch_unavailable": false,
+              "patch_truncated": true
+            },
+            {
+              "filename": "internal/restorer/fileswriter.go",
+              "status": "modified",
+              "patch": "",
+              "patch_unavailable": false,
+              "patch_truncated": true
+            },
+            {
+              "filename": "internal/restorer/restorer.go",
+              "status": "modified",
+              "patch": "",
+              "patch_unavailable": false,
+              "patch_truncated": true
+            }
+          ],
+          "files_truncated": false
+        },
+        {
+          "url": "https://github.com/restic/restic/pull/672",
+          "title": "Only restore blobs which don't exist locally",
+          "body": "* If we can, calculate the hash of the part of the local file that the blob corresponds to\r\n  * If it matches then we already have the data and can skip fetching it\r\n  * This should significantly improve the speed of remote restores when a local dataset already exists\r\n\r\nThis should allow for resumable restores, which resolves #407 and possibly also #200 (if I understand it correctly)",
+          "body_truncated": false,
+          "state": "closed",
+          "merged": false,
+          "head_sha": "86a4634ee9ee5243aed165fcf2b516ac508e7785",
+          "base_sha": "190673b24ad93ddf1b897665293d250b3a77f9ed",
+          "merge_commit_sha": "f3d113fab7c85d98a8bb126739c8349507e51d5c",
+          "relation": "closing_reference_not_verified_fix",
+          "files": [
+            {
+              "filename": "src/restic/node.go",
+              "status": "modified",
+              "patch": "@@ -192,7 +192,7 @@ func (node Node) createDirAt(path string) error {\n }\n \n func (node Node) createFileAt(path string, repo Repository) error {\n-\tf, err := fs.OpenFile(path, os.O_CREATE|os.O_WRONLY, 0600)\n+\tf, err := fs.OpenFile(path, os.O_CREATE|os.O_RDWR, 0600)\n \tdefer f.Close()\n \n \tif err != nil {\n@@ -206,6 +206,24 @@ func (node Node) createFileAt(path string, repo Repository) error {\n \t\t\treturn err\n \t\t}\n \n+\t\t// Skip loading if the data already exists locally\n+\t\texistingData := make([]byte, size)\n+\n+\t\treadSize, _ := f.Read(existingData)\n+\t\tif readSize == int(size) {\n+\t\t\tif Hash(existingData) == id {\n+\t\t\t\tcontinue\n+\t\t\t}\n+\t\t}\n+\n+\t\tdebug.Log(\"Fetching blob %v (size: %v)\", id, size)\n+\n+\t\t// Move the write offset back to where it was\n+\t\t_, err = f.Seek(int64(-readSize), os.SEEK_CUR)\n+\t\tif err != nil {\n+\t\t\treturn err\n+\t\t}\n+\n \t\tbuf = buf[:cap(buf)]\n \t\tif uint(len(buf)) < size {\n \t\t\tbuf = make([]byte, size)",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            }
+          ],
+          "files_truncated": false
+        },
+        {
+          "url": "https://github.com/restic/restic/pull/3425",
+          "title": "Make restore resumable",
+          "body": "What does this PR change? What problem does it solve?\r\n-----------------------------------------------------\r\n\r\nWith this PR, `restic resume` checks if existing files (partly) match the files to be restored. If matching blobs exist, they are no longer downloaded for restore.\r\n\r\nWith this change, `restic restore` is now resumable.\r\n\r\nNote, that before checking the file contents of an existing file, it size is checked. This means if you use this PR on a platform that doesn't support pre-allocation of files, partly resumed files will need a complete download.\r\nHowever fully restored files never need to be saved again.\r\n\r\nWas the change discussed in an issue or in the forum before?\r\n------------------------------------------------------------\r\n\r\ncloses #407 \r\ncloses #2662\r\nSee https://forum.restic.net/t/22tb-restore-mistakes-were-made-lessons-learned/4042\r\n\r\nChecklist\r\n---------\r\n\r\n- [x] I have read the [Contribution Guidelines](https://github.com/restic/restic/blob/master/CONTRIBUTING.md#providing-patches)\r\n- [x] I have enabled [maintainer edits for this PR](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/allowing-changes-to-a-pull-request-branch-created-from-a-fork)\r\n- [ ] I have added tests for all changes in this PR\r\n- [ ] I have added documentation for the changes (in the manual)\r\n- [ ] There's a new file in `changelog/unreleased/` that describes the changes for our users (template [here](https://github.com/restic/restic/blob/master/changelog/TEMPLATE))\r\n- [x] I have run `gofmt` on the code in all commits\r\n- [x] All commit messages are formatted in the same style as [the other commits in the repo](https://github.com/restic/restic/blob/master/CONTRIBUTING.md#git-commits)\r\n- [ ] I'm done, this Pull Request is ready for review\r\n",
+          "body_truncated": false,
+          "state": "closed",
+          "merged": false,
+          "head_sha": "c1ebfe976010aa6ca1b6462b89372b71a271d659",
+          "base_sha": "fdbd65485e1d8b4f56159f7120a3277979921f4e",
+          "merge_commit_sha": "dedaa89a81b18e935d008430af195813b8a7a8e5",
+          "relation": "closing_reference_not_verified_fix",
+          "files": [
+            {
+              "filename": "internal/restorer/filerestorer_test.go",
+              "status": "modified",
+              "patch": "@@ -118,10 +118,12 @@ func newTestRepo(content []TestFile) *TestRepo {\n \tvar files []*fileInfo\n \tfor _, file := range content {\n \t\tcontent := restic.IDs{}\n+\t\texists := []bool{}\n \t\tfor _, blob := range file.blobs {\n \t\t\tcontent = append(content, restic.Hash([]byte(blob.data)))\n+\t\t\texists = append(exists, false)\n \t\t}\n-\t\tfiles = append(files, &fileInfo{location: file.name, blobs: content})\n+\t\tfiles = append(files, &fileInfo{location: file.name, blobs: content, exists: exists})\n \t}\n \n \trepo := &TestRepo{",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            },
+            {
+              "filename": "internal/restorer/filerestorer.go",
+              "status": "modified",
+              "patch": "@@ -35,6 +35,7 @@ type fileInfo struct {\n \tsize       int64\n \tlocation   string      // file on local filesystem relative to restorer basedir\n \tblobs      interface{} // blobs of the file\n+\texists     []bool      // indicates blobs that already exist in file before resuming\n }\n \n type fileBlobInfo struct {\n@@ -76,25 +77,37 @@ func newFileRestorer(dst string,\n \t}\n }\n \n-func (r *fileRestorer) addFile(location string, content restic.IDs, size int64) {\n-\tr.files = append(r.files, &fileInfo{location: location, blobs: content, size: size})\n+func (r *fileRestorer) addFile(location string, content restic.IDs, matches []bool, size int64) {\n+\tfileExists := false\n+\tblobsOpen := false\n+\tfor i := range content {\n+\t\tif matches[i] {\n+\t\t\tfileExists = true\n+\t\t} else {\n+\t\t\tblobsOpen = true\n+\t\t}\n+\t}\n+\n+\tif blobsOpen {\n+\t\tr.files = append(r.files, &fileInfo{location: location, blobs: content, size: size, inProgress: fileExists, exists: matches})\n+\t}\n }\n \n func (r *fileRestorer) targetPath(location string) string {\n \treturn filepath.Join(r.dst, location)\n }\n \n-func (r *fileRestorer) forEachBlob(blobIDs []restic.ID, fn func(packID restic.ID, packBlob restic.Blob)) error {\n+func (r *fileRestorer) forEachBlob(blobIDs []restic.ID, fn func(packID restic.ID, packBlob restic.Blob, i int)) error {\n \tif len(blobIDs) == 0 {\n \t\treturn nil\n \t}\n \n-\tfor _, blobID := range blobIDs {\n+\tfor i, blobID := range blobIDs {\n \t\tpacks := r.idx(restic.BlobHandle{ID: blobID, Type: restic.DataBlob})\n \t\tif len(packs) == 0 {\n \t\t\treturn errors.Errorf(\"Unknown blob %s\", blobID.String())\n \t\t}\n-\t\tfn(packs[0].PackID, packs[0].Blob)\n+\t\tfn(packs[0].PackID, packs[0].Blob, i)\n \t}\n \n \treturn nil\n@@ -117,10 +130,14 @@ func (r *fileRestorer) restoreFiles(ctx context.Context) error {\n \t\t\tpacksMap = make(map[restic.ID][]fileBlobInfo)\n \t\t}\n \t\tfileOffset := int64(0)\n-\t\terr := r.forEachBlob(fileBlobs, func(packID restic.ID, blob restic.Blob) {\n-\t\t\tif largeFile {\n+\t\terr := r.forEachBlob(fileBlobs, func(packID restic.ID, blob restic.Blob, i int) {\n+\t\t\tif largeFile && !file.exists[i] {\n \t\t\t\tpacksMap[packID] = append(packsMap[packID], fileBlobInfo{id: blob.ID, offset: fileOffset})\n-\t\t\t\tfileOffset += int64(blob.Length) - crypto.Extension\n+\t\t\t}\n+\t\t\tfileOffset += int64(blob.Length) - crypto.Extension\n+\t\t\tif file.exists[i] {\n+\t\t\t\tdebug.Log(\"file %v: ignoring blob %v as it already exists\", file.location, blob.ID)\n+\t\t\t\treturn\n \t\t\t}\n \t\t\tpack, ok := packs[packID]\n \t\t\tif !ok {\n@@ -205,8 +222,8 @@ func (r *fileRestorer) downloadPack(ctx context.Context, pack *packInfo) error {\n \t\t}\n \t\tif fileBlobs, ok := file.blobs.(restic.IDs); ok {\n \t\t\tfileOffset := int64(0)\n-\t\t\terr := r.forEachBlob(fileBlobs, func(packID restic.ID, blob restic.Blob) {\n-\t\t\t\tif packID.Equal(pack.id) {\n+\t\t\terr := r.forEachBlob(fileBlobs, func(packID restic.ID, blob restic.Blob, i int) {\n+\t\t\t\tif packID.Equal(pack.id) && !file.exists[i] {\n \t\t\t\t\taddBlob(blob, fileOffset)\n \t\t\t\t}\n \t\t\t\tfileOffset += int64(blob.Length) - crypto.Extension",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            },
+            {
+              "filename": "internal/restorer/restorer.go",
+              "status": "modified",
+              "patch": "@@ -253,7 +253,9 @@ func (res *Restorer) RestoreTo(ctx context.Context, dst string) error {\n \t\t\t\tidx.Add(node.Inode, node.DeviceID, location)\n \t\t\t}\n \n-\t\t\tfilerestorer.addFile(location, node.Content, int64(node.Size))\n+\t\t\t// Check if target exists and has the right contents\n+\t\t\tmatches, _ := res.verifyFile(target, node)\n+\t\t\tfilerestorer.addFile(location, node.Content, matches, int64(node.Size))\n \n \t\t\treturn nil\n \t\t},\n@@ -305,6 +307,59 @@ func (res *Restorer) RestoreTo(ctx context.Context, dst string) error {\n \treturn err\n }\n \n+// verifyFile checks if the given target file's contents match the\n+// blobs given in node\n+// It first checks the file size and then checks all file blobs\n+// It always returns the successfully checked blobs\n+func (res *Restorer) verifyFile(target string, node *restic.Node) (matchingBlobs []bool, err error) {\n+\tdebug.Log(\"calling verifyFile\")\n+\n+\tmatchingBlobs = make([]bool, len(node.Content))\n+\tstat, err := os.Stat(target)\n+\tif err != nil {\n+\t\treturn\n+\t}\n+\tif int64(node.Size) != stat.Size() {\n+\t\treturn matchingBlobs, errors.Errorf(\"Invalid file size: expected %d got %d\", node.Size, stat.Size())\n+\t}\n+\n+\tfile, err := os.Open(target)\n+\tif err != nil {\n+\t\treturn\n+\t}\n+\n+\toffset := int64(0)\n+\twrongOffset := offset\n+\tfoundNotMatch := false\n+\tfor i, blobID := range node.Content {\n+\t\tlength, _ := res.repo.LookupBlobSize(blobID, restic.DataBlob)\n+\t\tbuf := make([]byte, length) // TODO do I want to reuse the buffer somehow?\n+\t\t_, err = file.ReadAt(buf, offset)\n+\t\tif err != nil {\n+\t\t\t_ = file.Close()\n+\t\t\treturn\n+\t\t}\n+\n+\t\tswitch {\n+\t\tcase blobID.Equal(restic.Hash(buf)):\n+\t\t\tmatchingBlobs[i] = true\n+\t\tcase !foundNotMatch:\n+\t\t\twrongOffset = offset\n+\t\t\tfoundNotMatch = true\n+\t\t}\n+\n+\t\toffset += int64(length)\n+\t}\n+\n+\tdebug.Log(\"file %v matching blobs: %v\", target, matchingBlobs)\n+\n+\tif foundNotMatch {\n+\t\treturn matchingBlobs, errors.Errorf(\"Unexpected contents starting at offset %d\", wrongOffset)\n+\t}\n+\n+\treturn matchingBlobs, file.Close()\n+}\n+\n // Snapshot returns the snapshot this restorer is configured to use.\n func (res *Restorer) Snapshot() *restic.Snapshot {\n \treturn res.sn\n@@ -323,36 +378,8 @@ func (res *Restorer) VerifyFiles(ctx context.Context, dst string) (int, error) {\n \t\t\t}\n \n \t\t\tcount++\n-\t\t\tstat, err := os.Stat(target)\n-\t\t\tif err != nil {\n-\t\t\t\treturn err\n-\t\t\t}\n-\t\t\tif int64(node.Size) != stat.Size() {\n-\t\t\t\treturn errors.Errorf(\"Invalid file size: expected %d got %d\", node.Size, stat.Size())\n-\t\t\t}\n-\n-\t\t\tfile, err := os.Open(target)\n-\t\t\tif err != nil {\n-\t\t\t\treturn err\n-\t\t\t}\n-\n-\t\t\toffset := int64(0)\n-\t\t\tfor _, blobID := range node.Content {\n-\t\t\t\tlength, _ := res.repo.LookupBlobSize(blobID, restic.DataBlob)\n-\t\t\t\tbuf := make([]byte, length) // TODO do I want to reuse the buffer somehow?\n-\t\t\t\t_, err = file.ReadAt(buf, offset)\n-\t\t\t\tif err != nil {\n-\t\t\t\t\t_ = file.Close()\n-\t\t\t\t\treturn err\n-\t\t\t\t}\n-\t\t\t\tif !blobID.Equal(restic.Hash(buf)) {\n-\t\t\t\t\t_ = file.Close()\n-\t\t\t\t\treturn errors.Errorf(\"Unexpected contents starting at offset %d\", offset)\n-\t\t\t\t}\n-\t\t\t\toffset += int64(length)\n-\t\t\t}\n-\n-\t\t\treturn file.Close()\n+\t\t\t_, err := res.verifyFile(target, node)\n+\t\t\treturn err\n \t\t},\n \t\tleaveDir: func(node *restic.Node, target, location string) error { return nil },\n \t})",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            }
+          ],
+          "files_truncated": false
+        }
+      ],
+      "comments": [
+        {
+          "url": "https://github.com/restic/restic/issues/407#issuecomment-1113616496",
+          "body": "I'd love this funcitonality as well. I'm very surprised it isn't already the default! I hope #3425 can get merged soon!\r\n\r\nIn lieu of that, I used restic mount [(described here)](https://restic.readthedocs.io/en/stable/050_restore.html?highlight=mount#restore-using-mount) and rclone sync [(described here)](https://rclone.org/commands/rclone_sync/) and it seems to work quite well - only downloading files that are different, and removing ones that don't exist in the restic repo.",
+          "authorAssociation": "NONE",
+          "createdAt": "2022-04-29T18:46:20Z",
+          "updatedAt": "2022-04-29T19:12:16Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/restic/restic/issues/407#issuecomment-1199035797",
+          "body": "> In lieu of that, I used restic mount [(described here)](https://restic.readthedocs.io/en/stable/050_restore.html?highlight=mount#restore-using-mount) and rclone sync [(described here)](https://rclone.org/commands/rclone_sync/) and it seems to work quite well - only downloading files that are different, and removing ones that don't exist in the restic repo.\r\n\r\nNote that `rclone sync` does only checks the file size and mtime to skip files.\r\nAlso, that way whole files are skipped or totally restored. This doesn't help with finishing the restore of an already half-restored large file.",
+          "authorAssociation": "CONTRIBUTOR",
+          "createdAt": "2022-07-29T08:52:42Z",
+          "updatedAt": "2022-07-29T08:52:42Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/restic/restic/issues/407#issuecomment-1199196316",
+          "body": "@aawsome yeah, fair enough. But I'm less concerned about resuming partial restores (which, for me and most others, should never really be a big or common issue) as I am about skipping the countless whole files that are sure to already exist in every restore operation. The current behaviour is an enormous waste of bandwidth and time. ",
+          "authorAssociation": "NONE",
+          "createdAt": "2022-07-29T12:01:31Z",
+          "updatedAt": "2022-07-29T12:04:31Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/restic/restic/issues/407#issuecomment-1250412429",
+          "body": "I'd be interested in resumes as well. Especially with large backup files where the connection could be interrupted before completing.\nThank you.",
+          "authorAssociation": "NONE",
+          "createdAt": "2022-09-18T23:41:18Z",
+          "updatedAt": "2022-09-18T23:41:18Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/restic/restic/issues/407#issuecomment-1254017295",
+          "body": "@Jarvar04 Take a look at [Rustic](https://github.com/rustic-rs/rustic), which @aawsome created. It is quite impressive - it does this and many other things that Restic still does not.",
+          "authorAssociation": "NONE",
+          "createdAt": "2022-09-21T17:32:51Z",
+          "updatedAt": "2022-09-21T17:33:47Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/restic/restic/issues/407#issuecomment-2167130807",
+          "body": "Thank you michael this is a big one ! 🙌 ",
+          "authorAssociation": "NONE",
+          "createdAt": "2024-06-14T03:08:58Z",
+          "updatedAt": "2024-06-14T03:08:58Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/restic/restic/issues/407#issuecomment-2167416423",
+          "body": "Great news, thank you @MichaelEischer!",
+          "authorAssociation": "NONE",
+          "createdAt": "2024-06-14T07:34:26Z",
+          "updatedAt": "2024-06-14T07:34:26Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/restic/restic/issues/407#issuecomment-2167562828",
+          "body": "Good to see that restic is catching up! Nice work @MichaelEischer ",
+          "authorAssociation": "CONTRIBUTOR",
+          "createdAt": "2024-06-14T08:50:50Z",
+          "updatedAt": "2024-06-14T08:50:50Z",
+          "body_truncated": false
+        }
+      ],
+      "comments_total": 26,
+      "comments_truncated": true
+    }
+  },
+  {
+    "url": "https://github.com/electron-userland/electron-builder/issues/5029",
+    "evidence": {
+      "fetched_at": "2026-10-02T18:34:49.162400+00:00",
+      "selection": "current closing event, then explicit closing references; latest 8 comments",
+      "pulls_truncated": false,
+      "pulls": [
+        {
+          "url": "https://github.com/electron-userland/electron-builder/pull/5354",
+          "title": "electron-updater: don't clean temp directory if cached update file doesn't exist",
+          "body": "This fixes #5029. I tested using DMG, NSIS, and AppImage.",
+          "body_truncated": false,
+          "state": "closed",
+          "merged": true,
+          "head_sha": "be51ed1c09d2174d25fa411e661f8d71892592c8",
+          "base_sha": "ede6d50ddb6c23fe6bbb056bd80509c8f2ea0116",
+          "merge_commit_sha": "552f1a4ed6f4bb83c3c548ed962c21142f07a9b4",
+          "relation": "closed_by_pull_request",
+          "files": [
+            {
+              "filename": "packages/electron-updater/src/DownloadedUpdateHelper.ts",
+              "status": "modified",
+              "patch": "@@ -133,8 +133,7 @@ export class DownloadedUpdateHelper {\n \n     const updateFile = path.join(this.cacheDirForPendingUpdate, cachedInfo.fileName)\n     if (!(await pathExists(updateFile))) {\n-      logger.info(\"Cached update file doesn't exist, directory for cached update will be cleaned\")\n-      await this.cleanCacheDirForPendingUpdate()\n+      logger.info(\"Cached update file doesn't exist\")\n       return null\n     }\n ",
+              "patch_unavailable": false,
+              "patch_truncated": false
+            }
+          ],
+          "files_truncated": false
+        }
+      ],
+      "comments": [
+        {
+          "url": "https://github.com/electron-userland/electron-builder/issues/5029#issuecomment-667697477",
+          "body": "Is this still relevant? If so, what is blocking it? Is there anything you can do to help move it forward?\n\nThis issue has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs.",
+          "authorAssociation": "NONE",
+          "createdAt": "2020-08-02T16:48:16Z",
+          "updatedAt": "2020-08-02T16:48:16Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/electron-userland/electron-builder/issues/5029#issuecomment-668447113",
+          "body": "Yes",
+          "authorAssociation": "CONTRIBUTOR",
+          "createdAt": "2020-08-04T08:03:13Z",
+          "updatedAt": "2020-08-04T08:03:13Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/electron-userland/electron-builder/issues/5029#issuecomment-703113411",
+          "body": "Is this still relevant? If so, what is blocking it? Is there anything you can do to help move it forward?\n\nThis issue has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs.",
+          "authorAssociation": "NONE",
+          "createdAt": "2020-10-03T14:35:40Z",
+          "updatedAt": "2020-10-03T14:35:40Z",
+          "body_truncated": false
+        },
+        {
+          "url": "https://github.com/electron-userland/electron-builder/issues/5029#issuecomment-703480656",
+          "body": "Yes",
+          "authorAssociation": "CONTRIBUTOR",
+          "createdAt": "2020-10-05T08:21:11Z",
+          "updatedAt": "2020-10-05T08:21:11Z",
+          "body_truncated": false
+        }
+      ],
+      "comments_total": 4,
+      "comments_truncated": false
+    }
+  }
+]

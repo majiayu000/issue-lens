@@ -946,5 +946,33 @@
     "matched_topics": [
       "electron"
     ]
+  },
+  {
+    "full_name": "electron-userland/electron-builder",
+    "stars": 14669,
+    "language": "TypeScript",
+    "description": "A complete solution to package and build a ready for distribution Electron app with “auto update” support out of the box",
+    "topics": [
+      "appx",
+      "auto-update",
+      "builder",
+      "contributions-welcome",
+      "deb",
+      "distribution-electron",
+      "dmg",
+      "electron",
+      "electron-builder",
+      "electron-updater",
+      "help-wanted",
+      "linux",
+      "macos",
+      "msi",
+      "muon",
+      "nsis",
+      "pkg",
+      "rpm",
+      "snap",
+      "squirrel"
+    ]
   }
 ]

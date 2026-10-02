@@ -11,6 +11,7 @@ import argparse
 import datetime
 import json
 import os
+import re
 import sqlite3
 
 import config
@@ -25,9 +26,11 @@ def init_db(db: sqlite3.Connection) -> None:
 
 
 def fetch_form(gh: GitHub, db: sqlite3.Connection, form: str,
-               limit_repos: int | None, max_issues: int | None, refresh: bool) -> None:
-    with open(config.repos_path(form), encoding="utf-8") as f:
-        repos = json.load(f)
+               limit_repos: int | None, max_issues: int | None, refresh: bool,
+               repos: list[dict] | None = None) -> None:
+    if repos is None:
+        with open(config.repos_path(form), encoding="utf-8") as f:
+            repos = json.load(f)
     if limit_repos:
         repos = repos[:limit_repos]
     cap = max_issues or config.MAX_ISSUES
@@ -92,7 +95,14 @@ def main() -> None:
     ap.add_argument("--limit-repos", type=int, default=None)
     ap.add_argument("--max-issues", type=int, default=None)
     ap.add_argument("--refresh", action="store_true", help="重抓已完成的仓库")
+    ap.add_argument("--repos", nargs="+", help="显式补充 owner/repo；须指定一种 --forms")
     args = ap.parse_args()
+    if args.repos and (len(args.forms) != 1 or any(
+            not re.fullmatch(r"[A-Za-z0-9_-]+/[A-Za-z0-9_.-]+", name)
+            or name.split("/")[1] in (".", "..") for name in args.repos)):
+        ap.error("--repos requires valid owner/repo names and exactly one --forms value")
+    if args.max_issues is not None and not 1 <= args.max_issues <= 1000:
+        ap.error("--max-issues must be between 1 and 1000")
 
     os.makedirs(config.DATA_DIR, exist_ok=True)
     db = sqlite3.connect(config.DB_PATH)
@@ -100,7 +110,22 @@ def main() -> None:
         init_db(db)
         gh = GitHub()
         for form in args.forms:
-            fetch_form(gh, db, form, args.limit_repos, args.max_issues, args.refresh)
+            selected = None
+            if args.repos:
+                selected = []
+                for name in dict.fromkeys(args.repos):
+                    repo = gh.get(f"/repos/{name}")
+                    selected.append({"full_name": repo["full_name"], "stars": repo["stargazers_count"],
+                                     "language": repo["language"], "description": repo["description"],
+                                     "topics": repo["topics"]})
+            fetch_form(gh, db, form, args.limit_repos, args.max_issues, args.refresh, selected)
+            if selected:
+                with open(config.repos_path(form), encoding="utf-8") as f:
+                    saved = {repo["full_name"]: repo for repo in json.load(f)}
+                saved.update((repo["full_name"], repo) for repo in selected)
+                with open(config.repos_path(form), "w", encoding="utf-8") as f:
+                    json.dump(list(saved.values()), f, ensure_ascii=False, indent=2)
+                    f.write("\n")
     finally:
         db.close()
 

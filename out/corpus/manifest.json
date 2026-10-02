@@ -1,24 +1,24 @@
 {
-  "snapshot_date": "2026-09-23",
-  "exported_at": "2026-10-02T17:20:10+00:00",
-  "repository_count": 79,
-  "issue_count": 30784,
+  "snapshot_date": "2026-10-03",
+  "exported_at": "2026-10-02T18:32:44+00:00",
+  "repository_count": 82,
+  "issue_count": 31084,
   "by_form": {
     "cli": {
-      "repositories": 39,
-      "issues": 16054
+      "repositories": 41,
+      "issues": 16254
     },
     "desktop": {
-      "repositories": 40,
-      "issues": 14730
+      "repositories": 41,
+      "issues": 14830
     }
   },
   "fetch_started_at": "2026-09-23T06:15:14+00:00",
-  "fetch_finished_at": "2026-09-23T06:52:59+00:00",
+  "fetch_finished_at": "2026-10-02T18:13:55+00:00",
   "selection": "is:issue is:closed linked:pr reason:completed; highest reactions first; at most 1000 per repository",
-  "truncated_repository_count": 15,
-  "source_database_sha256": "bbea7818bb0963c44b1d4c796ca88be3ffce7c925c1519bb90b18371b57d5480",
-  "public_database_sha256": "01ee3239039c7739945005675425ef3c976064753865d2d6e0d668a4621484bc",
+  "truncated_repository_count": 18,
+  "source_database_sha256": "ab4bf139510f128918235a9f3271b3957cd72ab045e817ec097d29ecec2b6e87",
+  "public_database_sha256": "dc9003a410e1798bd1b9aa4c9db018001727c436894bfbfd709dcf4ddeb49d79",
   "local_model_cache_included": false,
   "comment_bodies_included": false,
   "credential_like_fields_redacted": [
@@ -55,6 +55,11 @@
     {
       "id": 4077698468,
       "url": "https://github.com/docmirror/dev-sidecar/issues/579",
+      "field": "body"
+    },
+    {
+      "id": 3239235422,
+      "url": "https://github.com/electron-userland/electron-builder/issues/9207",
       "field": "body"
     },
     {
@@ -145,19 +150,19 @@
   ],
   "redaction_note": "Whole fields with recognizable token/key-like text are replaced. Patterns may match inert examples; this is not a determination that the original text was an active credential.",
   "license_note": "Issue text remains attributable to its original authors; the project MIT license does not relicense the collected third-party text.",
-  "release_url": "https://github.com/majiayu000/issue-lens/releases/tag/corpus-2026-09-23",
+  "release_url": "https://github.com/majiayu000/issue-lens/releases/tag/corpus-2026-10-03",
   "assets": [
     {
-      "name": "issue-lens-corpus-2026-09-23.sqlite3.gz",
-      "bytes": 59555168,
-      "sha256": "3348d28531fe2f6a78cddde0de3732ca7f0766e7baafa787c4b25d049eec389a",
-      "url": "https://github.com/majiayu000/issue-lens/releases/download/corpus-2026-09-23/issue-lens-corpus-2026-09-23.sqlite3.gz"
+      "name": "issue-lens-corpus-2026-10-03.sqlite3.gz",
+      "bytes": 60151539,
+      "sha256": "9af55cb1a8d11b0429e896d003c2a2992f6e0225da030d58ed7a79da6fc4a5d5",
+      "url": "https://github.com/majiayu000/issue-lens/releases/download/corpus-2026-10-03/issue-lens-corpus-2026-10-03.sqlite3.gz"
     },
     {
-      "name": "issue-lens-corpus-2026-09-23.jsonl.gz",
-      "bytes": 17363598,
-      "sha256": "eb2849cd96c65b578aa4fa5eb585a9cbe5a66f0e7e841fad655ae514a7ac88fd",
-      "url": "https://github.com/majiayu000/issue-lens/releases/download/corpus-2026-09-23/issue-lens-corpus-2026-09-23.jsonl.gz"
+      "name": "issue-lens-corpus-2026-10-03.jsonl.gz",
+      "bytes": 17551867,
+      "sha256": "8ffb52810c4c91fbad6506b381b2ae752e419fd26bab9a5ea015ca35fd36e088",
+      "url": "https://github.com/majiayu000/issue-lens/releases/download/corpus-2026-10-03/issue-lens-corpus-2026-10-03.jsonl.gz"
     }
   ]
 }

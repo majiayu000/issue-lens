@@ -1,14 +1,14 @@
 # 全部 GitHub issue 目录
 
-这里列出实际收集的 **79 个仓库、30,784 条 issue**，快照抓取于 **2026-09-23**。点击下表的「已收集 issue」查看该仓库的完整标题列表，再点击标题打开 GitHub 原文。
+这里列出实际收集的 **82 个仓库、31,084 条 issue**，快照更新于 **2026-10-03**（原 79 库来自 9 月 23 日，新增 3 库各 100 条）。点击下表的「已收集 issue」查看该仓库的完整标题列表，再点击标题打开 GitHub 原文。
 
-**[下载完整公开数据包（GitHub Release）](https://github.com/majiayu000/issue-lens/releases/tag/corpus-2026-09-23)** · [SQLite 数据库](https://github.com/majiayu000/issue-lens/releases/download/corpus-2026-09-23/issue-lens-corpus-2026-09-23.sqlite3.gz) · [JSONL 正文数据](https://github.com/majiayu000/issue-lens/releases/download/corpus-2026-09-23/issue-lens-corpus-2026-09-23.jsonl.gz) · [校验文件](https://github.com/majiayu000/issue-lens/releases/download/corpus-2026-09-23/SHA256SUMS)
+**[下载完整公开数据包（GitHub Release）](https://github.com/majiayu000/issue-lens/releases/tag/corpus-2026-10-03)** · [SQLite 数据库](https://github.com/majiayu000/issue-lens/releases/download/corpus-2026-10-03/issue-lens-corpus-2026-10-03.sqlite3.gz) · [JSONL 正文数据](https://github.com/majiayu000/issue-lens/releases/download/corpus-2026-10-03/issue-lens-corpus-2026-10-03.jsonl.gz) · [校验文件](https://github.com/majiayu000/issue-lens/releases/download/corpus-2026-10-03/SHA256SUMS)
 
 | 类型 | 仓库数 | issue 数 |
 |---|---:|---:|
-| 命令行工具 | 39 | 16,054 |
-| 桌面应用 | 40 | 14,730 |
-| 合计 | 79 | 30,784 |
+| 命令行工具 | 41 | 16,254 |
+| 桌面应用 | 41 | 14,830 |
+| 合计 | 82 | 31,084 |
 
 ## 全部来源仓库
 
@@ -37,6 +37,8 @@
 | 命令行工具 | [Panniantong/Agent-Reach](https://github.com/Panniantong/Agent-Reach) | [68 条](repos/Panniantong--Agent-Reach.md) | 该次查询结果已收齐 |
 | 命令行工具 | [PowerShell/PowerShell](https://github.com/PowerShell/PowerShell) | [1,000 条](repos/PowerShell--PowerShell.md) | 按热度截取前 1,000 条 |
 | 命令行工具 | [Raphire/Win11Debloat](https://github.com/Raphire/Win11Debloat) | [20 条](repos/Raphire--Win11Debloat.md) | 该次查询结果已收齐 |
+| 命令行工具 | [rclone/rclone](https://github.com/rclone/rclone) | [100 条](repos/rclone--rclone.md) | 按热度截取前 100 条 |
+| 命令行工具 | [restic/restic](https://github.com/restic/restic) | [100 条](repos/restic--restic.md) | 按热度截取前 100 条 |
 | 命令行工具 | [rtk-ai/rtk](https://github.com/rtk-ai/rtk) | [257 条](repos/rtk-ai--rtk.md) | 该次查询结果已收齐 |
 | 命令行工具 | [sharkdp/bat](https://github.com/sharkdp/bat) | [287 条](repos/sharkdp--bat.md) | 该次查询结果已收齐 |
 | 命令行工具 | [sharkdp/fd](https://github.com/sharkdp/fd) | [157 条](repos/sharkdp--fd.md) | 该次查询结果已收齐 |
@@ -61,6 +63,7 @@
 | 桌面应用 | [DevToys-app/DevToys](https://github.com/DevToys-app/DevToys) | [203 条](repos/DevToys-app--DevToys.md) | 该次查询结果已收齐 |
 | 桌面应用 | [docmirror/dev-sidecar](https://github.com/docmirror/dev-sidecar) | [33 条](repos/docmirror--dev-sidecar.md) | 该次查询结果已收齐 |
 | 桌面应用 | [electron-react-boilerplate/electron-react-boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) | [45 条](repos/electron-react-boilerplate--electron-react-boilerplate.md) | 该次查询结果已收齐 |
+| 桌面应用 | [electron-userland/electron-builder](https://github.com/electron-userland/electron-builder) | [100 条](repos/electron-userland--electron-builder.md) | 按热度截取前 100 条 |
 | 桌面应用 | [electron/electron](https://github.com/electron/electron) | [1,000 条](repos/electron--electron.md) | 按热度截取前 1,000 条 |
 | 桌面应用 | [farion1231/cc-switch](https://github.com/farion1231/cc-switch) | [333 条](repos/farion1231--cc-switch.md) | 该次查询结果已收齐 |
 | 桌面应用 | [GitSquared/edex-ui](https://github.com/GitSquared/edex-ui) | [14 条](repos/GitSquared--edex-ui.md) | 该次查询结果已收齐 |
@@ -96,9 +99,9 @@
 
 ## 数据范围
 
-- 附件包含全部 30,784 条记录的标题、正文、原文 URL、标签、作者账号、时间、反应数和评论数；SQLite 附件还包含来源仓库信息和全文检索索引。JSONL 解压后每行一条 issue，方便其他工具读取。
-- 不包含评论正文。筛选条件为已关闭、以 completed 结束且有关联 PR；其中包含功能请求。15 个仓库超过抓取上限，因此这不是这些仓库所有历史 issue 的全集。
-- 公开副本保留全部记录，其中 **24 条 issue 的正文**因命中疑似凭证格式而整体遮盖，并保留原文链接；可能包含无效示例。具体条目见 [manifest.json](manifest.json)。本地模型缓存未发布，SQLite 的 extract_json 为空。
+- 附件包含全部 31,084 条记录的标题、正文、原文 URL、标签、作者账号、时间、反应数和评论数；SQLite 附件还包含来源仓库信息和全文检索索引。JSONL 解压后每行一条 issue，方便其他工具读取。
+- 不包含评论正文。筛选条件为已关闭、以 completed 结束且有关联 PR；其中包含功能请求。18 个仓库超过各自抓取上限（原 15 个最多 1,000 条，新增 3 个最多 100 条），因此这不是这些仓库所有历史 issue 的全集。
+- 公开副本保留全部记录，其中 **25 条 issue 的正文**因命中疑似凭证格式而整体遮盖，并保留原文链接；可能包含无效示例。具体条目见 [manifest.json](manifest.json)。本地模型缓存未发布，SQLite 的 extract_json 为空。
 - 原始 issue 内容归原作者，项目代码的 MIT 许可不改变第三方内容的权利归属。
 - 仓库目录、公开数据库和 JSONL 的记录一一对应。快照不自动更新；这些记录不等同于已经过模型分析的测试建议。
 
@@ -107,13 +110,13 @@
 在 issue-lens 仓库根目录执行，以下示例把附件下载并解压到独立目录。
 
 ```bash
-mkdir -p /tmp/issue-lens-corpus-2026-09-23
-gh release download corpus-2026-09-23 --repo majiayu000/issue-lens \
-  --dir /tmp/issue-lens-corpus-2026-09-23 \
-  --pattern issue-lens-corpus-2026-09-23.sqlite3.gz --pattern issue-lens-corpus-2026-09-23.jsonl.gz \
+mkdir -p /tmp/issue-lens-corpus-2026-10-03
+gh release download corpus-2026-10-03 --repo majiayu000/issue-lens \
+  --dir /tmp/issue-lens-corpus-2026-10-03 \
+  --pattern issue-lens-corpus-2026-10-03.sqlite3.gz --pattern issue-lens-corpus-2026-10-03.jsonl.gz \
   --pattern manifest.json --pattern SHA256SUMS
-(cd /tmp/issue-lens-corpus-2026-09-23 && shasum -a 256 -c SHA256SUMS)
-gzip -dk /tmp/issue-lens-corpus-2026-09-23/issue-lens-corpus-2026-09-23.sqlite3.gz
-ISSUE_LENS_DB=/tmp/issue-lens-corpus-2026-09-23/issue-lens-corpus-2026-09-23.sqlite3 \
+(cd /tmp/issue-lens-corpus-2026-10-03 && shasum -a 256 -c SHA256SUMS)
+gzip -dk /tmp/issue-lens-corpus-2026-10-03/issue-lens-corpus-2026-10-03.sqlite3.gz
+ISSUE_LENS_DB=/tmp/issue-lens-corpus-2026-10-03/issue-lens-corpus-2026-10-03.sqlite3 \
   python3 s04_search.py --form all --q "permission" --limit 30
 ```

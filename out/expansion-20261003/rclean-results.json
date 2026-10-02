@@ -1,0 +1,197 @@
+{
+  "binary_version": "rclean 0.2.0",
+  "binary_sha256": "c2b58c86726e9a7b8126797f02fe49abf1764fac305a7eae6d090b8aed34f900",
+  "platform": "macOS-26.5.1-arm64-arm-64bit",
+  "cases": [
+    {
+      "case": "project_name_exchange",
+      "status": "passed",
+      "seconds": 1.101,
+      "commands": [
+        {
+          "args": [
+            "scan",
+            "<fixture>/workspace",
+            "--json",
+            "--min-size",
+            "0",
+            "--ignore",
+            "not-present/**"
+          ],
+          "closed_stdout": false,
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "args": [
+            "scan",
+            "<fixture>/workspace",
+            "--json",
+            "--min-size",
+            "0",
+            "--ignore",
+            "not-present/**"
+          ],
+          "closed_stdout": false,
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "case": "age_filter_preserves_warning",
+      "status": "passed",
+      "seconds": 0.663,
+      "commands": [
+        {
+          "args": [
+            "scan",
+            "<fixture>/project",
+            "--json",
+            "--min-size",
+            "0"
+          ],
+          "closed_stdout": false,
+          "exit_code": 0,
+          "stderr": "failed to load .rcleanignore path=<fixture>/project/.rcleanignore error=<fixture>/project/.rcleanignore: line 1: error parsing glob '{invalid,glob': unclosed alternate group; missing '}' (maybe escape '{' with '[{]'?)\n"
+        },
+        {
+          "args": [
+            "scan",
+            "<fixture>/project",
+            "--json",
+            "--min-size",
+            "0",
+            "--older-than",
+            "30d"
+          ],
+          "closed_stdout": false,
+          "exit_code": 3,
+          "stderr": "failed to load .rcleanignore path=<fixture>/project/.rcleanignore error=<fixture>/project/.rcleanignore: line 1: error parsing glob '{invalid,glob': unclosed alternate group; missing '}' (maybe escape '{' with '[{]'?)\n"
+        }
+      ]
+    },
+    {
+      "case": "closed_pipe_preserves_shortfall",
+      "status": "passed",
+      "seconds": 0.63,
+      "commands": [
+        {
+          "args": [
+            "free",
+            "1gb",
+            "<fixture>/project",
+            "--json",
+            "--min-size",
+            "0",
+            "--write-plan",
+            "<fixture>/normal-plan.json"
+          ],
+          "closed_stdout": false,
+          "exit_code": 3,
+          "stderr": ""
+        },
+        {
+          "args": [
+            "free",
+            "1gb",
+            "<fixture>/project",
+            "--json",
+            "--min-size",
+            "0",
+            "--write-plan",
+            "<fixture>/pipe-plan.json"
+          ],
+          "closed_stdout": true,
+          "exit_code": 3,
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "case": "restore_conflict_keeps_both_copies",
+      "status": "passed",
+      "seconds": 0.277,
+      "commands": [
+        {
+          "args": [
+            "clean",
+            "<fixture>/project",
+            "--all",
+            "--graveyard",
+            "--yes",
+            "--min-size",
+            "0"
+          ],
+          "closed_stdout": false,
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "args": [
+            "graveyard",
+            "list",
+            "--json"
+          ],
+          "closed_stdout": false,
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "args": [
+            "restore",
+            "--id",
+            "01A0FDD5BFCC00000000"
+          ],
+          "closed_stdout": false,
+          "exit_code": 1,
+          "stderr": "graveyard restore target <fixture>/project/node_modules already exists; refuse to overwrite\n"
+        }
+      ]
+    },
+    {
+      "case": "restore_dry_run_has_no_writes",
+      "status": "passed",
+      "seconds": 0.291,
+      "commands": [
+        {
+          "args": [
+            "clean",
+            "<fixture>/project",
+            "--all",
+            "--graveyard",
+            "--yes",
+            "--min-size",
+            "0"
+          ],
+          "closed_stdout": false,
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "args": [
+            "graveyard",
+            "list",
+            "--json"
+          ],
+          "closed_stdout": false,
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "args": [
+            "restore",
+            "--id",
+            "01A0FDD5C0DB00000000",
+            "--to",
+            "<fixture>/absent-parent/restored",
+            "--dry-run"
+          ],
+          "closed_stdout": false,
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    }
+  ]
+}

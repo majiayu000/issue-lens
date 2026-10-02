@@ -33,6 +33,9 @@ QUERY_PROMPT = """把 PRD 中明确的用户功能/质量要求整理成最多 8
 不要把整个 PRD 翻译成搜索词，不要捏造产品功能。返回 JSON：
 {"requirements":[{"title":"需求主题","quote":"PRD 逐字引文",
 "queries":[["mechanism","failure"]]}],"open_questions":["待澄清事项"]}。
+若给出了 diff，只选与该改动直接相关的 PRD 要求，quote 仍必须来自 PRD。
+改动未在 PRD 说明的行为放入 open_questions，不能把代码差异自动当成产品要求。
+diff 与任何已声明要求无关时，requirements=[] 并在 open_questions 说明原因。
 """
 
 PLAN_PROMPT = """基于 PRD 明确的要求和所给历史 issue 提炼结果，生成中文测试方案草稿。
@@ -57,6 +60,9 @@ incremental_value 说明具体新增边界；covered 则明确无新增。不要
 若提供 pr_evidence，可依据 PR 正文和补丁收敛步骤。交叉引用不证明 PR 修复该问题，
 未合并 PR 只是提案，缺失/截断补丁不等于没有回归测试，不声称源码测试已经执行。
 若输入含 draft，依据补充证据修订草稿，只能引用本次给出的 sources。
+若提供 diff，只围绕改动和受其影响的契约给出 3–5 条优先测试，不扩大到整个产品。
+若提供 issue 评论，可用来澄清复现条件；作者讨论不等于根因已经验证。
+closed_by_pull_request 只证明 GitHub 记录了关闭关系，不证明该补丁适用于目标产品。
 返回 JSON：{"cases":[{"requirement_id":"R1","category":"测试分组",
 "title":"测试标题","preconditions":["条件"],"steps":["动作"],
 "expected_result":"可观察的结果","source_ids":[整数],"rationale":"为何适用",
@@ -66,11 +72,12 @@ incremental_value 说明具体新增边界；covered 则明确无新增。不要
 """
 
 
-def get_requirements(prd: str, form: str) -> tuple[list[dict], list[str], dict]:
-    result, provenance = generate_json(QUERY_PROMPT, {"prd": prd, "form": form})
+def get_requirements(prd: str, form: str, diff: str = "") -> tuple[list[dict], list[str], dict]:
+    result, provenance = generate_json(QUERY_PROMPT, {"prd": prd, "form": form, "diff": diff})
     requirements = result.get("requirements")
-    if not isinstance(requirements, list) or not 1 <= len(requirements) <= 8:
-        raise ModelError("Expected 1–8 PRD requirement themes.")
+    if not isinstance(requirements, list) or not (0 if diff else 1) <= len(requirements) <= 8:
+        raise ModelError("Expected up to 8 PRD requirement themes; an unrelated diff may have none.")
+    questions = text_list(result, "open_questions", nonempty=not requirements)
     for index, requirement in enumerate(requirements, 1):
         if not isinstance(requirement, dict):
             raise ModelError("Invalid PRD requirement.")
@@ -86,7 +93,7 @@ def get_requirements(prd: str, form: str) -> tuple[list[dict], list[str], dict]:
             if not 2 <= len(terms) <= 4:
                 raise ModelError("Each query needs 2–4 search terms.")
         requirement["id"] = f"R{index}"
-    return requirements, text_list(result, "open_questions"), provenance
+    return requirements, questions, provenance
 
 
 def validate_plan(plan: dict, requirements: list[dict], sources: list[dict],
@@ -159,26 +166,31 @@ def validate_coverage(case: dict, tests: list[dict]) -> None:
 
 
 def build_plan(db: sqlite3.Connection, prd: str, form: str, limit: int,
-               tests: list[dict] = (), with_pr_evidence: bool = False) -> dict:
-    requirements, questions, query_run = get_requirements(prd, form)
+               tests: list[dict] = (), with_pr_evidence: bool = False, diff: str = "") -> dict:
+    requirements, questions, query_run = get_requirements(prd, form, diff)
     issues, retrieval_run = retrieve(db, form, requirements, limit)
     sources = enrich(db, issues, form)
     inputs = {"prd": prd, "form": form, "requirements": requirements,
-              "open_questions": questions, "sources": sources, "tests": tests}
-    plan, plan_run = generate_json(PLAN_PROMPT, inputs)
+              "open_questions": questions, "sources": sources, "tests": tests, "diff": diff}
+    if requirements:
+        plan, plan_run = generate_json(PLAN_PROMPT, inputs)
+    else:
+        plan, plan_run = {"cases": [], "coverage_gaps": []}, {}
     validate_plan(plan, requirements, sources, tests)
     pr_review_run = {}
     if with_pr_evidence:
         cited = {iid for case in plan["cases"] for iid in case["source_ids"]}
         attach_pr_evidence(sources, cited)
         reviewed_sources = [source for source in sources if source["id"] in cited]
-        if any(source["pr_evidence"]["pulls"] for source in reviewed_sources):
+        if any(source["pr_evidence"]["pulls"] or source["pr_evidence"]["comments"]
+               for source in reviewed_sources):
             plan, pr_review_run = generate_json(PLAN_PROMPT, {
                 **inputs, "sources": reviewed_sources, "draft": plan})
             validate_plan(plan, requirements, reviewed_sources, tests)
     return {"status": "draft_not_executed", "form": form,
             "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             "prd_sha256": hashlib.sha256(prd.encode()).hexdigest(),
+            "diff_sha256": hashlib.sha256(diff.encode()).hexdigest() if diff else None,
             "corpus_issue_count": db.execute(
                 "SELECT COUNT(*) FROM issues WHERE form=?", (form,)).fetchone()[0],
             "source_limit": limit, "requirements": requirements, "sources": sources,
@@ -201,9 +213,11 @@ def render_markdown(report: dict) -> str:
              "状态：**待评审、未执行**。以下是依据 PRD 和同类产品历史问题生成的测试建议，不是目标产品的已确认缺陷。", "",
              f"产品形态：{report['form']}；语料：{report['corpus_issue_count']} 条；"
              f"本次选入：{len(report['sources'])} 条；测试建议：{len(report['cases'])} 条。", "",
-             "基础用例来自 PRD，历史启发用例附 issue 来源。PR 证据按来源单独标注；未采集评论。", "",
+             "基础用例来自 PRD，历史启发用例附 issue 来源。启用证据补充时同时采集有界 PR 和评论。", "",
              "已有覆盖只指所提供测试文件中的源码断言，未执行测试；未检出不等于全仓库无覆盖。", "",
              "## 需求与检索范围", ""]
+    if report["diff_sha256"]:
+        lines += [f"本报告按代码改动限定范围；diff SHA-256：`{report['diff_sha256']}`。", ""]
     for req in report["requirements"]:
         lines += [f"- **{req['id']} {escape(req['title'])}**：{escape(req['quote'])}",
                   f"  组合检索：{escape(' OR '.join(' AND '.join(q) for q in req['queries']))}；"
@@ -238,15 +252,18 @@ def render_markdown(report: dict) -> str:
                     lines += ["  PR 证据：未采集。"]
                 else:
                     for pr in evidence["pulls"]:
-                        lines += [f"  关联 PR：[{escape(pr['title'])}]({pr['url']})；"
-                                  f"{'已合并' if pr['merged'] else '未合并'}，交叉引用不等于确认修复。"]
+                        relation = ("GitHub 记录的关闭 PR" if pr["relation"] == "closed_by_pull_request"
+                                    else "关联关闭候选，未确认修复")
+                        lines += [f"  {relation}：[{escape(pr['title'])}]({pr['url']})；"
+                                  f"{'已合并' if pr['merged'] else '未合并'}。"]
                         if (pr["body_truncated"] or pr["files_truncated"] or any(
                                 f["patch_truncated"] or f["patch_unavailable"] for f in pr["files"])):
                             lines += ["  PR 正文/补丁存在截断或缺失；完整范围见 JSON 标记。"]
                     if not evidence["pulls"]:
-                        lines += ["  本次扫描的时间线中未发现 PR 交叉引用；不能断言不存在关联 PR。"]
-                    if evidence["timeline_may_be_truncated"] or evidence["pulls_truncated"]:
-                        lines += ["  PR 关联扫描达到数量上限，结果可能不完整。"]
+                        lines += ["  本次未发现关闭 PR 或显式关闭候选；不能断言不存在修复。"]
+                    lines += [f"  已采集评论 {len(evidence['comments'])}/{evidence['comments_total']} 条，详见 JSON。"]
+                    if evidence["comments_truncated"] or evidence["pulls_truncated"]:
+                        lines += ["  PR/评论采集达到数量上限，结果可能不完整。"]
     lines += ["", "## 覆盖缺口与待确认事项", "",
               "这不是完整的 PRD 覆盖率统计：当前仅抽取最多 8 个主题，受形态语料、关键词和候选数量限制。", ""]
     lines += [f"- {gap['requirement_id']}：{escape(gap['reason'])}" for gap in report["coverage_gaps"]]
@@ -265,8 +282,9 @@ def main() -> None:
     ap.add_argument("--limit", type=int, default=12, help="Maximum candidate issues (1–30; default 12)")
     ap.add_argument("--tests", type=Path, action="append", default=[],
                     help="Existing test source file; repeat for more files (120k characters total)")
+    ap.add_argument("--diff", type=Path, help="Explicit UTF-8 diff to focus review (up to 60k characters)")
     ap.add_argument("--with-pr-evidence", action="store_true",
-                    help="Fetch bounded PR evidence for cited issues and review the draft")
+                    help="Fetch bounded closing-PR/comment evidence for cited issues and review the draft")
     args = ap.parse_args()
     if not 1 <= args.limit <= 30:
         ap.error("--limit must be between 1 and 30")
@@ -279,8 +297,11 @@ def main() -> None:
         if not prd.strip() or len(prd) > 80000:
             ap.error("PRD must contain 1–80,000 characters; select a coherent scope for longer documents")
         tests = load_tests(args.tests)
+        diff = args.diff.read_text(encoding="utf-8") if args.diff else ""
+        if args.diff and (not diff.strip() or len(diff) > 60000):
+            ap.error("Diff must contain 1–60,000 characters; select a narrower change")
         with sqlite3.connect(Path(config.DB_PATH).resolve().as_uri() + "?mode=rw", uri=True) as db:
-            report = build_plan(db, prd, args.form, args.limit, tests, args.with_pr_evidence)
+            report = build_plan(db, prd, args.form, args.limit, tests, args.with_pr_evidence, diff)
         args.out.parent.mkdir(parents=True, exist_ok=True)
         with args.out.with_suffix(".json").open("x", encoding="utf-8") as output:
             json.dump(report, output, ensure_ascii=False, indent=2)
