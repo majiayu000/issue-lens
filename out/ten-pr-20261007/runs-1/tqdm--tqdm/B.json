@@ -1,0 +1,190 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R1",
+        "category": "错误契约边界",
+        "title": "未知长度回退不吞掉工作函数异常",
+        "preconditions": [
+          "使用不提供长度提示的非空生成器，不传 total。",
+          "准备顶层工作函数，在指定元素上抛出 ValueError('worker-failure-marker')。",
+          "各映射接口及其序列化条件满足运行要求。"
+        ],
+        "steps": [
+          "分别调用三个可用映射接口，捕获调用方收到的异常。",
+          "检查异常类型和标识消息，区分工作函数错误与 min() 空输入错误。"
+        ],
+        "expected_result": "映射调用向调用方传播带有 worker-failure-marker 的 ValueError，不返回伪成功列表；不因未知长度回退吞掉真实工作错误，也不先抛出 min() 空输入异常。",
+        "source_ids": [
+          5065463834
+        ],
+        "rationale": "所给 Mole 案例及未合并 PR 提案区分统计信息不可用与真实操作失败。仅借用这一故障边界，验证 tqdm 的 total 回退不改变工作异常传播；不迁移退出码、清理行为或超时容忍策略，也不据此认定 tqdm 已有该故障。",
+        "coverage": "not_found",
+        "incremental_value": "新增未知长度回退与真实工作异常同时出现时的错误传播验证。",
+        "existing_tests": [],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "基础契约",
+        "title": "单个非空生成器映射成功并采用未知总量",
+        "preconditions": [
+          "分别使用 thread_map、process_map 和 interpreter_map；interpreter_map 仅在 Python 3.14+ 且相关接口可用时执行。",
+          "工作函数为可导入、可序列化的顶层函数 dummy_func(x)，返回 x + 1。",
+          "使用全新的生成器，不传 total；准备进度参数记录器和 stderr 捕获。"
+        ],
+        "steps": [
+          "将生成器 (i for i in range(9)) 传给 _min_map_len，记录返回值。",
+          "为每个映射接口重新创建生成器，执行 dummy_func 映射。",
+          "记录进度对象初始化时收到的 total、映射结果和进度输出。"
+        ],
+        "expected_result": "_min_map_len 返回 0；进度对象收到 total=0；映射返回 [1,2,3,4,5,6,7,8,9]，不抛出最小值计算异常。进度能够报告完成计数；不把固定输出片段作为新增产品格式要求。",
+        "source_ids": [],
+        "rationale": "直接验证 PRD 的主要契约。所给测试分别覆盖辅助函数返回 0、三种映射接口的生成器结果及计数输出，但未直接断言进度对象收到 total=0。",
+        "coverage": "partial",
+        "incremental_value": "新增 total=0 从长度计算传递到进度对象的直接断言；生成器结果与计数输出已有覆盖。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "assert concurrent._min_map_len([(i for i in range(9))]) == 0",
+            "reason": "直接覆盖单个未知长度生成器的回退值。",
+            "path": "tests/tests_concurrent.py",
+            "line": 16
+          },
+          {
+            "test_id": "T1",
+            "quote": "@mark.parametrize(\"mapper\", [interpreter_map, process_map, thread_map])\ndef test_concurrent_map_unknown_len(mapper, caperr):\n    b = [i + 1 for i in range(9)]\n    try:\n        assert mapper(dummy_func, (i for i in range(9))) == b\n    except ImportError as err:\n        skip(str(err))\n    err = caperr()\n    assert '9it [' in err",
+            "reason": "覆盖三种接口的非空生成器映射和计数输出；ImportError 会跳过，且未直接检查 total 参数。",
+            "path": "tests/tests_concurrent.py",
+            "line": 32
+          }
+        ],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "多输入边界",
+        "title": "多个输入均无长度且元素数不等",
+        "preconditions": [
+          "按各接口运行时要求准备可导入、可序列化的二元加法函数。",
+          "两个全新生成器分别产生 [0,1,2] 和 [10,11,12,13,14]，均不提供长度提示。",
+          "不传 total，记录进度对象初始化参数。"
+        ],
+        "steps": [
+          "分别调用可用的三个映射接口，将两个生成器作为独立输入传入。",
+          "记录返回列表、初始化 total 和异常。"
+        ],
+        "expected_result": "三个可用接口均以 total=0 初始化进度，返回 [10,12,14]，遵循最短输入结束的映射语义；不抛出最小值计算异常。",
+        "source_ids": [],
+        "rationale": "PRD 明确针对所有输入长度未知，而现有回归测试只有一个输入。多个生成器验证过滤后仍为空的实际触发条件，并检查映射语义。",
+        "coverage": "partial",
+        "incremental_value": "新增多个未知长度输入及最短输入截断边界。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "assert mapper(dummy_func, (i for i in range(9))) == b",
+            "reason": "已有单个未知长度输入的结果断言，未触发多个未知长度输入或长度不等的场景。",
+            "path": "tests/tests_concurrent.py",
+            "line": 36
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "空数据边界",
+        "title": "空生成器仍走未知总量回退",
+        "preconditions": [
+          "准备一个不提供长度提示且不产出元素的全新生成器。",
+          "准备可用于各执行器的工作函数和进度参数记录器，不传 total。"
+        ],
+        "steps": [
+          "对空生成器调用 _min_map_len。",
+          "分别为三个可用映射接口创建新的空生成器并执行映射。",
+          "记录回退值、进度初始化参数及返回列表。"
+        ],
+        "expected_result": "_min_map_len 返回 0，进度对象收到 total=0，各可用接口返回空列表；不抛出最小值计算异常，也不产生虚假的已完成元素。",
+        "source_ids": [],
+        "rationale": "空生成器同样属于 PRD 的无已知长度输入。它与没有传入任何 iterable 不同，仍是合法的单输入映射边界。",
+        "coverage": "partial",
+        "incremental_value": "新增有输入但无元素的端到端边界；避免将辅助函数的空参数列表测试误认为空生成器覆盖。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "assert concurrent._min_map_len([]) == 0\n    assert concurrent._min_map_len([(i for i in range(9))]) == 0",
+            "reason": "前者是没有输入对象，后者是非空生成器；两者均未验证空生成器的实际映射。",
+            "path": "tests/tests_concurrent.py",
+            "line": 15
+          }
+        ],
+        "id": "TC004"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "受影响契约回归",
+        "title": "混合已知与未知长度时保留已知长度估算",
+        "preconditions": [
+          "准备产生 [0,1,2,3,4,5,6,7,8] 的生成器和 range(5)。",
+          "准备顶层二元加法函数，不传 total，记录进度初始化参数。"
+        ],
+        "steps": [
+          "调用 _min_map_len 检查两个输入的估算值。",
+          "分别使用三个可用映射接口执行二元映射，记录 total 和返回结果。"
+        ],
+        "expected_result": "辅助函数返回 5，进度对象收到 total=5，映射返回 [0,2,4,6,8]；新增 default=0 不覆盖已有的有效长度。",
+        "source_ids": [],
+        "rationale": "这是所给 diff 已明确增加的辅助函数回归边界，属于长度计算改动影响的既有行为，不将其表述为 PRD 新增功能。",
+        "coverage": "partial",
+        "incremental_value": "辅助函数已有同等覆盖；新增混合输入到进度初始化和映射结果的集成验证。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "assert concurrent._min_map_len([(i for i in range(9)), range(5)]) == 5",
+            "reason": "覆盖混合输入的辅助函数返回值，未检查映射接口收到的 total 或二元映射结果。",
+            "path": "tests/tests_concurrent.py",
+            "line": 17
+          }
+        ],
+        "id": "TC005"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "仅静态比较了提供的 tests/tests_concurrent.py、实现文本和 diff，未执行测试。实际平台与执行器可用性尚未验证；现有测试遇到 ImportError 会跳过，不能据此认定三种接口均已获得运行覆盖。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "显式 total 的优先级尚未纳入这五条优先用例。源码显示 _executor_map 仅在缺少 total 时估算长度，但 process_map 默认 chunksize 的预检查也会调用 _min_map_len；所给测试未验证该组合。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "无输入对象时 _min_map_len([])==0 已有直接断言，但 PRD 未规定不传任何 iterable 的公开映射行为；本草稿不将辅助函数回退扩展为公开接口必须成功。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "自定义 iterable 的 __length_hint__、长度探测自身抛出异常及输入迭代过程中失败尚未覆盖；这些与普通无长度生成器不同，不能仅凭 default=0 推定应被容忍。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "未知总量显示仅按回退参数和计数行为验收，不新增固定 '9it [' 格式要求。PRD 未规定该精确格式；多进程分块时完成计数的边界也未纳入本轮优先用例。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 32217,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2549,
+      "reasoning_output_tokens": 102
+    },
+    "thread_id": "01a116c6-1827-75a3-96e9-8c9a9ca88446"
+  },
+  "input_sha256": "7e0793e657ee80a3d7c971c4da28c996d8846966e9ba74290eb72a0056d5d075",
+  "common_input_sha256": "794e115ee3f2690e525665f06a4a9cdfc9f278d8d48e7f8df4ca3843832b0192",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

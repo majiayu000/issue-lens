@@ -1,0 +1,18 @@
+{
+  "sources": [],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 20778,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 38,
+      "reasoning_output_tokens": 27
+    },
+    "thread_id": "01a116be-8f0c-7580-b8a1-2c0d36cd4586"
+  },
+  "target_repo_excluded": "tox-dev/filelock",
+  "issue_creation_cutoff": "2026-09-28T15:49:34Z",
+  "pr_evidence_note": "Current bounded GitHub snapshots, not time-travel evidence."
+}

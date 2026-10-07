@@ -1,0 +1,176 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R1",
+        "category": "空字符串解析边界",
+        "title": "引号包裹的空值仍按空字符串成功返回",
+        "preconditions": [
+          "已安装 CLI 依赖。",
+          "分别准备内容为 a=\"\" 和 a='' 的可读临时 .env 文件。"
+        ],
+        "steps": [
+          "分别执行 dotenv --file <临时文件路径> get a。",
+          "记录每次退出码和保留换行的输出。"
+        ],
+        "expected_result": "两种引号形式均返回退出码 0，输出恰好为一个换行符。",
+        "source_ids": [],
+        "rationale": "PRD 明确认可双引号空值，文件格式也支持单引号值；验证这些合法形式解析后进入相同的空字符串成功分支，不引入其他功能。",
+        "coverage": "partial",
+        "incremental_value": "补充引号空值进入 get 成功分支的边界；已有未加引号用例不能证明这些解析形式已有同等覆盖。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "dotenv_path.write_text(\"a=\\n\")\n\n    result = cli.invoke(dotenv_cli, [\"--file\", dotenv_path, \"get\", \"a\"])\n\n    assert (result.exit_code, result.output) == (0, \"\\n\")",
+            "reason": "已有测试验证空字符串结果，但输入没有引号；所给文件未发现 get 对引号空值的对应断言。",
+            "path": "tests/test_cli.py",
+            "line": 73
+          }
+        ],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R2",
+        "category": "缺失键失败契约",
+        "title": "文件可读但目标键不存在时继续失败",
+        "preconditions": [
+          "已安装 CLI 依赖。",
+          "可读的临时 .env 文件内容为 b=value，确认不包含键 a。"
+        ],
+        "steps": [
+          "执行 dotenv --file <临时文件路径> get a。",
+          "记录退出码和输出。"
+        ],
+        "expected_result": "退出码为 1，输出为空；不得返回其他键的值或空白行。",
+        "source_ids": [],
+        "rationale": "直接验证修改后的键不存在分支，并明确区分缺失键与文件无法打开。",
+        "coverage": "partial",
+        "incremental_value": "补充显式包含其他键的文件前置条件，避免依赖未提供的 dotenv_path fixture 内容。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "def test_get_non_existent_value(cli, dotenv_path):\n    result = cli.invoke(dotenv_cli, [\"--file\", dotenv_path, \"get\", \"a\"])\n\n    assert (result.exit_code, result.output) == (1, \"\")",
+            "reason": "已有失败断言，但本次未提供 fixture 定义，无法仅凭该片段确认文件初始内容；因此不认定显式构造的缺失键场景已有同等覆盖。",
+            "path": "tests/test_cli.py",
+            "line": 88
+          }
+        ],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "空字符串成功契约",
+        "title": "未加引号的空值输出一个空白行并成功退出",
+        "preconditions": [
+          "已安装 CLI 依赖。",
+          "可读的临时 .env 文件内容为 a= 后接换行。"
+        ],
+        "steps": [
+          "执行 dotenv --file <临时文件路径> get a。",
+          "记录退出码和原始输出，保留换行字符。"
+        ],
+        "expected_result": "退出码为 0，输出恰好为一个换行符，不输出键名、引号或 None。",
+        "source_ids": [],
+        "rationale": "直接验证 R1 和本次修改针对的空字符串真假值判断边界；不依赖历史 issue。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给测试已有相同输入、命令和退出码及输出断言。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "dotenv_path.write_text(\"a=\\n\")\n\n    result = cli.invoke(dotenv_cli, [\"--file\", dotenv_path, \"get\", \"a\"])\n\n    assert (result.exit_code, result.output) == (0, \"\\n\")",
+            "reason": "test_get_empty_string_value 明确触发未加引号的空值，并同时断言成功退出和单个空白行。仅依据源码判断，未执行。",
+            "path": "tests/test_cli.py",
+            "line": 73
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R2",
+        "category": "无值失败契约",
+        "title": "无等号的裸键继续返回退出码 1",
+        "preconditions": [
+          "已安装 CLI 依赖。",
+          "可读的临时 .env 文件只包含裸键 a，没有等号和值。"
+        ],
+        "steps": [
+          "执行 dotenv --file <临时文件路径> get a。",
+          "记录退出码和输出。"
+        ],
+        "expected_result": "退出码为 1，输出为空；不得将裸键当作空字符串输出空白行。",
+        "source_ids": [],
+        "rationale": "直接验证 R2 的 None 分支，确保修复空字符串后仍保留裸键的失败契约。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给新增测试已有同等触发条件和断言。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "dotenv_path.write_text(\"a\")\n\n    result = cli.invoke(dotenv_cli, [\"--file\", dotenv_path, \"get\", \"a\"])\n\n    assert (result.exit_code, result.output) == (1, \"\")",
+            "reason": "test_get_value_without_equals 明确构造裸键，断言退出码 1 和空输出。仅依据源码判断，未执行。",
+            "path": "tests/test_cli.py",
+            "line": 81
+          }
+        ],
+        "id": "TC004"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "成功分支回归",
+        "title": "普通非空值仍原样输出并成功退出",
+        "preconditions": [
+          "已安装 CLI 依赖。",
+          "可读的临时 .env 文件内容为 a=b。"
+        ],
+        "steps": [
+          "执行 dotenv --file <临时文件路径> get a。",
+          "记录退出码和原始输出。"
+        ],
+        "expected_result": "退出码为 0，输出为 b 后接一个换行符。",
+        "source_ids": [],
+        "rationale": "本次补丁调整了成功分支的判断和输出位置；PRD 要求既有 get 行为保持正常，因此保留最小非空值回归。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给测试已有同等覆盖。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "dotenv_path.write_text(\"a=b\")\n\n    result = cli.invoke(dotenv_cli, [\"--file\", dotenv_path, \"get\", \"a\"])\n\n    assert (result.exit_code, result.output) == (0, \"b\\n\")",
+            "reason": "test_get_existing_value 明确验证非空值的成功退出和原样输出。仅依据源码判断，未执行。",
+            "path": "tests/test_cli.py",
+            "line": 64
+          }
+        ],
+        "id": "TC005"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "上述用例未覆盖带空白或行内注释的空值，以及变量展开后得到空字符串的路径；这些可能影响进入 get 分支的解析结果。为遵守 diff 场景的 3–5 条限制，本轮未展开。所给 sources 为空，不能将这些边界归因于历史 issue。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "所给空值测试使用 cli.invoke；未发现真实子进程通过默认 .env 路径获取空值的对应断言。已有默认路径测试使用非空值，不能证明空值的进程退出码和标准输出已有同等覆盖。"
+      },
+      {
+        "requirement_id": "R2",
+        "reason": "缺失键已有失败断言，但 dotenv_path fixture 定义未提供，文件前置条件仍不明确；本草稿补充了显式文件内容，尚未执行验证。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 25095,
+      "cached_input_tokens": 7680,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2082,
+      "reasoning_output_tokens": 126
+    },
+    "thread_id": "01a116b8-57a6-7260-b636-8d5d33565a47"
+  },
+  "input_sha256": "41cadd6aad933a1df72b69eddf60b501d1f645d789c7a2a8e1e32929104be932",
+  "common_input_sha256": "726c07c9238e9efd31712e65015320912a719300b7eaf31eee2617c42a334d54",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

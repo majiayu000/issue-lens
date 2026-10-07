@@ -1,0 +1,48 @@
+Processing /Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Ignoring tomli: markers 'python_version < "3.11"' don't match your environment
+Collecting coverage>=7.2.0 (from coverage[toml]>=7.2.0)
+  Using cached coverage-7.16.2-cp312-cp312-macosx_11_0_arm64.whl.metadata (8.2 kB)
+Collecting hypothesis>=6.0.0
+  Downloading hypothesis-6.168.5-cp312-cp312-macosx_11_0_arm64.whl.metadata (5.7 kB)
+Requirement already satisfied: pip>=21.1 in /Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/pypa--packaging/lib/python3.12/site-packages (25.0.1)
+Collecting pretend
+  Downloading pretend-1.0.9-py2.py3-none-any.whl.metadata (4.4 kB)
+Collecting pytest>=6.2.0
+  Using cached pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+Collecting tomli_w
+  Downloading tomli_w-1.2.0-py3-none-any.whl.metadata (5.7 kB)
+Collecting sortedcontainers<3.0.0,>=2.1.0 (from hypothesis>=6.0.0)
+  Using cached sortedcontainers-2.4.0-py2.py3-none-any.whl.metadata (10 kB)
+Collecting iniconfig>=1.0.1 (from pytest>=6.2.0)
+  Using cached iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+Collecting pluggy<2,>=1.5 (from pytest>=6.2.0)
+  Using cached pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest>=6.2.0)
+  Using cached pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+Using cached coverage-7.16.2-cp312-cp312-macosx_11_0_arm64.whl (224 kB)
+Downloading hypothesis-6.168.5-cp312-cp312-macosx_11_0_arm64.whl (784 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 784.8/784.8 kB 673.8 kB/s eta 0:00:00
+Downloading pretend-1.0.9-py2.py3-none-any.whl (3.8 kB)
+Using cached pytest-9.1.1-py3-none-any.whl (386 kB)
+Downloading tomli_w-1.2.0-py3-none-any.whl (6.7 kB)
+Using cached iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+Using cached pluggy-1.6.0-py3-none-any.whl (20 kB)
+Using cached pygments-2.21.0-py3-none-any.whl (1.3 MB)
+Using cached sortedcontainers-2.4.0-py2.py3-none-any.whl (29 kB)
+Building wheels for collected packages: packaging
+  Building wheel for packaging (pyproject.toml): started
+  Building wheel for packaging (pyproject.toml): finished with status 'done'
+  Created wheel for packaging: filename=packaging-26.4.dev0-py3-none-any.whl size=129386 sha256=5a3b6886a9f2b6acd4cdd62d66f195e6cfbd9f55d33ad4d2d543f3d971ed99e9
+  Stored in directory: /Users/apple/Library/Caches/pip/wheels/6d/71/be/9b9e2489f6f3b930e24f8dca4f073cf1c53e56712fbb7f3067
+Successfully built packaging
+Installing collected packages: sortedcontainers, pretend, tomli_w, pygments, pluggy, packaging, iniconfig, hypothesis, coverage, pytest
+Successfully installed coverage-7.16.2 hypothesis-6.168.5 iniconfig-2.3.1 packaging-26.4.dev0 pluggy-1.6.0 pretend-1.0.9 pygments-2.21.0 pytest-9.1.1 sortedcontainers-2.4.0 tomli_w-1.2.0
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.1
+[notice] To update, run: /Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/pypa--packaging/bin/python -m pip install --upgrade pip

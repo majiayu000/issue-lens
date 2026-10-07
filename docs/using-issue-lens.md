@@ -68,3 +68,15 @@ python3 experiments/rclean_acceptance.py \
 脚本在临时目录内创建测试文件，并隔离 HOME、配置、缓存和 graveyard。它实际执行受控恢复操作，不扫描工作目录或用户文件。当前脚本支持 macOS/Linux；传入的二进制必须可信。
 
 每次验收分别记录：不适用、已有覆盖、补充边界、执行通过、实际缺陷。一个场景通过，说明当前夹具没有触发错误；不能据此证明产品没有其他问题。
+
+## 验证历史材料有没有增量：固定 PR 对照
+
+[10 项目真实 PR 实验](../out/ten-pr-20261007/README.md)保存固定 head、diff、代码与测试输入，以及 A/B 生成、原生执行和逐建议复核。两组使用同一模型请求与提示词，B 仅增加历史来源；无适用来源时如实记录，不把随机生成差异归因于历史材料。
+
+```bash
+ISSUE_LENS_LLM_ENGINE=codex ISSUE_LENS_MODEL=gpt-6.1-sol \
+python3 experiments/ten_pr_comparison.py --inputs out/ten-pr-20261007 \
+  --db /absolute/path/issues.db --out /absolute/path/new-run
+```
+
+语料库保持只读，输出目录必须尚不存在。阶段失败保留 `status.json` 并以非零退出，失败配对不进入收益统计。脚本只生成待评审建议，执行结果和真实维护者评价分别记录；模型耗时不能替代维护者额外审查时间。[固定条件与评价口径](../out/ten-pr-20261007/PROTOCOL.md)解释完整范围、来源时间限制、截断及费用边界。

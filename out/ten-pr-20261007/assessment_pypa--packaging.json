@@ -1,0 +1,698 @@
+{
+  "id": "pypa--packaging",
+  "repo": "pypa/packaging",
+  "pr": 1430,
+  "head_sha": "45473a150d4181513543f16bcb23ba870fc98241",
+  "selected_pair_directory": "runs-2/pypa--packaging",
+  "reviewer": "agent technical review; no human maintainer judgment",
+  "human_maintainer_adoption": null,
+  "cases": [
+    {
+      "arm": "A",
+      "case_id": "TC001",
+      "title": "Specifier 不把操作符后的纯空白当作任意版本",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_specifiers.py",
+            "start_line": 58,
+            "end_line": 66,
+            "quote": "            # Operator-less specifier\n            \"2.0\",\n            # Invalid operator\n            \"=>2.0\",\n            # Version-less specifier\n            \"==\",\n            \"===\",\n            \"=== \",\n            # Local segment on operators which don't support them"
+          },
+          {
+            "path": "tests/test_specifiers.py",
+            "start_line": 109,
+            "end_line": 111,
+            "quote": "        with pytest.raises(InvalidSpecifier):\n            Specifier(specifier)\n"
+          }
+        ],
+        "assessment": "===和===空格已覆盖；补制表符及前后空白组合。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "pypa--packaging",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/pypa--packaging/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/pypa--packaging/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging",
+          "exit_code": 0,
+          "elapsed_seconds": 1.744,
+          "log": "logs/model-checks/pypa--packaging/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/pypa--packaging/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_whitespace_not_version[===\\t]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_whitespace_not_version[ \\t=== \\t]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+            "start_line": 5,
+            "end_line": 6,
+            "quote": "def test_whitespace_not_version(s):\n    with pytest.raises(InvalidSpecifier):Specifier(s)"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "===和===空格已覆盖；补制表符及前后空白组合。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "whitespace-empty-version"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC002",
+      "title": "SpecifierSet 拒绝集合任意位置的空任意版本",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_specifiers.py",
+            "start_line": 1255,
+            "end_line": 1259,
+            "quote": "class TestSpecifierSet:\n    @pytest.mark.parametrize(\"specifier\", [\"===\", \">=1,===\", \"===,===x\"])\n    def test_empty_arbitrary_version_invalid(self, specifier: str) -> None:\n        with pytest.raises(InvalidSpecifier):\n            SpecifierSet(specifier)"
+          }
+        ],
+        "assessment": "集合首末位置已有覆盖；补中间空===和含tab/相邻有效约束。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "pypa--packaging",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/pypa--packaging/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/pypa--packaging/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging",
+          "exit_code": 0,
+          "elapsed_seconds": 1.744,
+          "log": "logs/model-checks/pypa--packaging/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/pypa--packaging/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_empty_arbitrary_all_set_positions[>=1,===,<=2]",
+            "result": "passed",
+            "seconds": 0.001,
+            "message": null
+          },
+          {
+            "name": "test_empty_arbitrary_all_set_positions[===x,===]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_empty_arbitrary_all_set_positions[=== \\t,>=1]",
+            "result": "passed",
+            "seconds": 0.225,
+            "message": null
+          },
+          {
+            "name": "test_empty_arbitrary_all_set_positions[>=1, ===\\t ,<=2]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+            "start_line": 8,
+            "end_line": 9,
+            "quote": "def test_empty_arbitrary_all_set_positions(s):\n    with pytest.raises(InvalidSpecifier):SpecifierSet(s)"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "集合首末位置已有覆盖；补中间空===和含tab/相邻有效约束。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "empty-set-positions"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC003",
+      "title": "收紧非空规则后仍接受非空任意版本和合法混合约束",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_requirements.py",
+            "start_line": 272,
+            "end_line": 277,
+            "quote": "    @pytest.mark.parametrize(\n        \"specifier\", [\"===bar===\", \"===arbitrarystring,>=1\", \">=1,===arbitrarystring\"]\n    )\n    def test_nonempty_arbitrary_version(self, specifier: str) -> None:\n        req = Requirement(f\"foo{specifier}\")\n        assert req.specifier == specifier"
+          },
+          {
+            "path": "tests/test_requirements.py",
+            "start_line": 100,
+            "end_line": 103,
+            "quote": "        (\"git+https://git.example.com/MyProject.git@refs/pull/123/head\", \"\"),\n        (\"gopher:/foo/com\", \"\"),\n        (None, \"==={ws}arbitrarystring\"),\n        (None, \"({ws}==={ws}arbitrarystring{ws})\"),"
+          }
+        ],
+        "assessment": "Requirement已有非空任意版本及混合顺序，补Specifier.operator/version与SpecifierSet成员一致性。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "pypa--packaging",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/pypa--packaging/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/pypa--packaging/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging",
+          "exit_code": 0,
+          "elapsed_seconds": 1.744,
+          "log": "logs/model-checks/pypa--packaging/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/pypa--packaging/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_nonempty_three_entries[===bar===]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_nonempty_three_entries[===arbitrarystring]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_nonempty_mixed_entries[===arbitrarystring,>=1]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_nonempty_mixed_entries[>=1,===arbitrarystring]",
+            "result": "passed",
+            "seconds": 0.001,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+            "start_line": 11,
+            "end_line": 14,
+            "quote": "def test_nonempty_three_entries(s):\n    spec=Specifier(s);assert spec.operator=='===';assert spec.version==s[3:]\n    assert {str(x) for x in SpecifierSet(s)}=={s}\n    assert {str(x) for x in Requirement('foo'+s).specifier}=={s}"
+          },
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+            "start_line": 16,
+            "end_line": 19,
+            "quote": "def test_nonempty_mixed_entries(s):\n    expected={'===arbitrarystring','>=1'}\n    assert {str(x) for x in SpecifierSet(s)}==expected\n    assert {str(x) for x in Requirement('foo'+s).specifier}==expected"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "Requirement已有非空任意版本及混合顺序，补Specifier.operator/version与SpecifierSet成员一致性。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "nonempty-three-api-entries"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC004",
+      "title": "Requirement 拒绝裸空任意版本及被语法分隔符包围的空版本",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "covered",
+        "references": [
+          {
+            "path": "tests/test_requirements.py",
+            "start_line": 691,
+            "end_line": 707,
+            "quote": "    @pytest.mark.parametrize(\n        \"requirement_string\",\n        [\n            \"foo===\",\n            \"foo === \",\n            \"foo (=== )\",\n            'foo=== ; python_version >= \"3\"',\n            \"foo===,>=1\",\n            \"foo>=1,===\",\n            \"foo>=1,===,<=2\",\n            \"foo===x,===\",\n            \"foo===x,===,>=1\",\n        ],\n    )\n    def test_error_on_missing_arbitrary_version(self, requirement_string: str) -> None:\n        with pytest.raises(InvalidRequirement, match=\"===\"):\n            Requirement(requirement_string)"
+          }
+        ],
+        "assessment": "模型列出的9种InvalidRequirement输入均已有精确断言，复用native7382项。",
+        "model_claim": "covered"
+      },
+      "execution": {
+        "kind": "native_baseline_reused",
+        "command": {
+          "label": "tests",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/pypa--packaging/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_requirements.py",
+            "tests/test_specifiers.py",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/native_pypa--packaging/junit.xml",
+            "-ra"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging",
+          "exit_code": 0,
+          "elapsed_seconds": 51.49,
+          "log": "logs/native_pypa--packaging/05_tests.log"
+        },
+        "result": "passed",
+        "assertion_references": [
+          {
+            "path": "tests/test_requirements.py",
+            "start_line": 691,
+            "end_line": 707,
+            "quote": "    @pytest.mark.parametrize(\n        \"requirement_string\",\n        [\n            \"foo===\",\n            \"foo === \",\n            \"foo (=== )\",\n            'foo=== ; python_version >= \"3\"',\n            \"foo===,>=1\",\n            \"foo>=1,===\",\n            \"foo>=1,===,<=2\",\n            \"foo===x,===\",\n            \"foo===x,===,>=1\",\n        ],\n    )\n    def test_error_on_missing_arbitrary_version(self, requirement_string: str) -> None:\n        with pytest.raises(InvalidRequirement, match=\"===\"):\n            Requirement(requirement_string)"
+          }
+        ],
+        "native_record": "native_pypa--packaging.json"
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "模型列出的9种InvalidRequirement输入均已有精确断言，复用native7382项。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "existing-invalid-requirement"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC001",
+      "title": "Specifier 拒绝缺失版本，空白不能充当版本",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_specifiers.py",
+            "start_line": 58,
+            "end_line": 66,
+            "quote": "            # Operator-less specifier\n            \"2.0\",\n            # Invalid operator\n            \"=>2.0\",\n            # Version-less specifier\n            \"==\",\n            \"===\",\n            \"=== \",\n            # Local segment on operators which don't support them"
+          },
+          {
+            "path": "tests/test_specifiers.py",
+            "start_line": 109,
+            "end_line": 111,
+            "quote": "        with pytest.raises(InvalidSpecifier):\n            Specifier(specifier)\n"
+          }
+        ],
+        "assessment": "===和===空格已覆盖；补制表符及前后空白组合。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "pypa--packaging",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/pypa--packaging/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/pypa--packaging/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging",
+          "exit_code": 0,
+          "elapsed_seconds": 1.744,
+          "log": "logs/model-checks/pypa--packaging/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/pypa--packaging/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_whitespace_not_version[===\\t]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_whitespace_not_version[ \\t=== \\t]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+            "start_line": 5,
+            "end_line": 6,
+            "quote": "def test_whitespace_not_version(s):\n    with pytest.raises(InvalidSpecifier):Specifier(s)"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "===和===空格已覆盖；补制表符及前后空白组合。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "whitespace-empty-version"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC002",
+      "title": "SpecifierSet 不得忽略混合约束中的空任意版本",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_specifiers.py",
+            "start_line": 1255,
+            "end_line": 1259,
+            "quote": "class TestSpecifierSet:\n    @pytest.mark.parametrize(\"specifier\", [\"===\", \">=1,===\", \"===,===x\"])\n    def test_empty_arbitrary_version_invalid(self, specifier: str) -> None:\n        with pytest.raises(InvalidSpecifier):\n            SpecifierSet(specifier)"
+          }
+        ],
+        "assessment": "集合首末位置已有覆盖；补中间空===和含tab/相邻有效约束。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "pypa--packaging",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/pypa--packaging/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/pypa--packaging/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging",
+          "exit_code": 0,
+          "elapsed_seconds": 1.744,
+          "log": "logs/model-checks/pypa--packaging/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/pypa--packaging/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_empty_arbitrary_all_set_positions[>=1,===,<=2]",
+            "result": "passed",
+            "seconds": 0.001,
+            "message": null
+          },
+          {
+            "name": "test_empty_arbitrary_all_set_positions[===x,===]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_empty_arbitrary_all_set_positions[=== \\t,>=1]",
+            "result": "passed",
+            "seconds": 0.225,
+            "message": null
+          },
+          {
+            "name": "test_empty_arbitrary_all_set_positions[>=1, ===\\t ,<=2]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+            "start_line": 8,
+            "end_line": 9,
+            "quote": "def test_empty_arbitrary_all_set_positions(s):\n    with pytest.raises(InvalidSpecifier):SpecifierSet(s)"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "集合首末位置已有覆盖；补中间空===和含tab/相邻有效约束。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "empty-set-positions"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC003",
+      "title": "非空任意版本仍可解析，三个入口保持一致",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_requirements.py",
+            "start_line": 272,
+            "end_line": 277,
+            "quote": "    @pytest.mark.parametrize(\n        \"specifier\", [\"===bar===\", \"===arbitrarystring,>=1\", \">=1,===arbitrarystring\"]\n    )\n    def test_nonempty_arbitrary_version(self, specifier: str) -> None:\n        req = Requirement(f\"foo{specifier}\")\n        assert req.specifier == specifier"
+          },
+          {
+            "path": "tests/test_requirements.py",
+            "start_line": 100,
+            "end_line": 103,
+            "quote": "        (\"git+https://git.example.com/MyProject.git@refs/pull/123/head\", \"\"),\n        (\"gopher:/foo/com\", \"\"),\n        (None, \"==={ws}arbitrarystring\"),\n        (None, \"({ws}==={ws}arbitrarystring{ws})\"),"
+          }
+        ],
+        "assessment": "Requirement已有非空任意版本及混合顺序，补Specifier.operator/version与SpecifierSet成员一致性。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "pypa--packaging",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/pypa--packaging/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/pypa--packaging/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging",
+          "exit_code": 0,
+          "elapsed_seconds": 1.744,
+          "log": "logs/model-checks/pypa--packaging/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/pypa--packaging/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_nonempty_three_entries[===bar===]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_nonempty_three_entries[===arbitrarystring]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_nonempty_mixed_entries[===arbitrarystring,>=1]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_nonempty_mixed_entries[>=1,===arbitrarystring]",
+            "result": "passed",
+            "seconds": 0.001,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+            "start_line": 11,
+            "end_line": 14,
+            "quote": "def test_nonempty_three_entries(s):\n    spec=Specifier(s);assert spec.operator=='===';assert spec.version==s[3:]\n    assert {str(x) for x in SpecifierSet(s)}=={s}\n    assert {str(x) for x in Requirement('foo'+s).specifier}=={s}"
+          },
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+            "start_line": 16,
+            "end_line": 19,
+            "quote": "def test_nonempty_mixed_entries(s):\n    expected={'===arbitrarystring','>=1'}\n    assert {str(x) for x in SpecifierSet(s)}==expected\n    assert {str(x) for x in Requirement('foo'+s).specifier}==expected"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "Requirement已有非空任意版本及混合顺序，补Specifier.operator/version与SpecifierSet成员一致性。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "nonempty-three-api-entries"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC004",
+      "title": "Requirement 拒绝空任意版本及其语法包装",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "covered",
+        "references": [
+          {
+            "path": "tests/test_requirements.py",
+            "start_line": 691,
+            "end_line": 707,
+            "quote": "    @pytest.mark.parametrize(\n        \"requirement_string\",\n        [\n            \"foo===\",\n            \"foo === \",\n            \"foo (=== )\",\n            'foo=== ; python_version >= \"3\"',\n            \"foo===,>=1\",\n            \"foo>=1,===\",\n            \"foo>=1,===,<=2\",\n            \"foo===x,===\",\n            \"foo===x,===,>=1\",\n        ],\n    )\n    def test_error_on_missing_arbitrary_version(self, requirement_string: str) -> None:\n        with pytest.raises(InvalidRequirement, match=\"===\"):\n            Requirement(requirement_string)"
+          }
+        ],
+        "assessment": "模型列出的9种InvalidRequirement输入均已有精确断言，复用native7382项。",
+        "model_claim": "covered"
+      },
+      "execution": {
+        "kind": "native_baseline_reused",
+        "command": {
+          "label": "tests",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/pypa--packaging/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_requirements.py",
+            "tests/test_specifiers.py",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/native_pypa--packaging/junit.xml",
+            "-ra"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging",
+          "exit_code": 0,
+          "elapsed_seconds": 51.49,
+          "log": "logs/native_pypa--packaging/05_tests.log"
+        },
+        "result": "passed",
+        "assertion_references": [
+          {
+            "path": "tests/test_requirements.py",
+            "start_line": 691,
+            "end_line": 707,
+            "quote": "    @pytest.mark.parametrize(\n        \"requirement_string\",\n        [\n            \"foo===\",\n            \"foo === \",\n            \"foo (=== )\",\n            'foo=== ; python_version >= \"3\"',\n            \"foo===,>=1\",\n            \"foo>=1,===\",\n            \"foo>=1,===,<=2\",\n            \"foo===x,===\",\n            \"foo===x,===,>=1\",\n        ],\n    )\n    def test_error_on_missing_arbitrary_version(self, requirement_string: str) -> None:\n        with pytest.raises(InvalidRequirement, match=\"===\"):\n            Requirement(requirement_string)"
+          }
+        ],
+        "native_record": "native_pypa--packaging.json"
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "模型列出的9种InvalidRequirement输入均已有精确断言，复用native7382项。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "existing-invalid-requirement"
+    }
+  ],
+  "native_record": "native_pypa--packaging.json",
+  "model_check_execution": {
+    "slug": "pypa--packaging",
+    "label": "model_checks",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/pypa--packaging/bin/python",
+      "-m",
+      "pytest",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+      "-c",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging/pyproject.toml",
+      "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/pypa--packaging/model_checks.xml",
+      "-ra",
+      "-v"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging",
+    "exit_code": 0,
+    "elapsed_seconds": 1.744,
+    "log": "logs/model-checks/pypa--packaging/01_model_checks.log"
+  },
+  "model_check_junit": "logs/model-checks/pypa--packaging/model_checks.xml",
+  "model_check_counts": {
+    "passed": 10,
+    "failed": 0,
+    "error": 0,
+    "skipped": 0
+  },
+  "platform_gaps": [
+    "Windows/Linux and other Python versions not executed."
+  ],
+  "history_source_assessment": {
+    "source_count": 0,
+    "treatment": "no_available_history; no treatment applied",
+    "sources": []
+  },
+  "summary": {
+    "cases": 8,
+    "applicable": 8,
+    "existing_covered": 2,
+    "technically_adopted_cases": 6,
+    "new_defects": 0,
+    "human_evaluations": 0
+  },
+  "final_git_status": "",
+  "final_head_sha": "45473a150d4181513543f16bcb23ba870fc98241"
+}

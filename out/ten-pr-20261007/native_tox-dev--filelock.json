@@ -1,0 +1,155 @@
+{
+  "id": "tox-dev--filelock",
+  "repo": "tox-dev/filelock",
+  "pr": 756,
+  "head_sha": "2a533f3053444b67a1764d628e0cdcf6d383cfb5",
+  "checkout": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+  "environment": {
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "base_python": "/Users/apple/.local/bin/python3.12",
+    "venv": "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock",
+    "runtime": "3.12.12 (main, Dec 17 2025, 21:07:08) [Clang 21.1.4 ]\nmacOS-26.5.2-arm64-arm-64bit\n4.0.6.dev4+g2a533f305\n/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/lib/python3.12/site-packages/filelock/__init__.py"
+  },
+  "commands": [
+    {
+      "label": "venv",
+      "argv": [
+        "/Users/apple/.local/bin/python3.12",
+        "-m",
+        "venv",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+      "exit_code": 0,
+      "elapsed_seconds": 23.371,
+      "log": "logs/native_tox-dev--filelock/01_venv.log"
+    },
+    {
+      "label": "install",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        ".",
+        "covdefaults>=2.3",
+        "diff-cover>=10.2",
+        "exceptiongroup>=1.2; python_version<'3.11'",
+        "pytest>=9.0.3",
+        "pytest-asyncio>=1.3",
+        "pytest-cov>=7.1",
+        "pytest-mock>=3.15.1",
+        "pytest-randomly>=3.16",
+        "pytest-timeout>=2.4",
+        "virtualenv>=21.2"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+      "exit_code": 1,
+      "elapsed_seconds": 66.288,
+      "log": "logs/native_tox-dev--filelock/02_install.log"
+    },
+    {
+      "label": "git_history",
+      "argv": [
+        "git",
+        "fetch",
+        "--unshallow",
+        "--tags",
+        "origin"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+      "exit_code": 0,
+      "elapsed_seconds": 5.823,
+      "log": "logs/native_tox-dev--filelock/03_git_history.log"
+    },
+    {
+      "label": "install_focused",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        ".",
+        "covdefaults>=2.3",
+        "diff-cover>=10.2",
+        "exceptiongroup>=1.2; python_version<'3.11'",
+        "pytest>=9.0.3",
+        "pytest-asyncio>=1.3",
+        "pytest-cov>=7.1",
+        "pytest-mock>=3.15.1",
+        "pytest-randomly>=3.16",
+        "pytest-timeout>=2.4"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+      "exit_code": 0,
+      "elapsed_seconds": 20.255,
+      "log": "logs/native_tox-dev--filelock/04_install_focused.log"
+    },
+    {
+      "label": "environment",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+        "-c",
+        "import platform,sys,filelock;print(sys.version);print(platform.platform());print(filelock.__version__);print(filelock.__file__)"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+      "exit_code": 0,
+      "elapsed_seconds": 0.133,
+      "log": "logs/native_tox-dev--filelock/05_environment.log"
+    },
+    {
+      "label": "freeze",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+        "-m",
+        "pip",
+        "--isolated",
+        "freeze"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+      "exit_code": 0,
+      "elapsed_seconds": 0.461,
+      "log": "logs/native_tox-dev--filelock/06_freeze.log"
+    },
+    {
+      "label": "tests",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_read_write_unit.py",
+        "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/native_tox-dev--filelock/junit.xml",
+        "-ra"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+      "exit_code": 0,
+      "elapsed_seconds": 15.556,
+      "log": "logs/native_tox-dev--filelock/07_tests.log"
+    }
+  ],
+  "initial_git_status": "",
+  "native_test_files": [
+    "tests/test_read_write_unit.py"
+  ],
+  "boundary_notes": [
+    "Timeout validation covers SQLite and soft read/write locks, first/reentrant read/write acquisitions; original ValueError, Timeout and hold preservation must remain intact.",
+    "Hard links are available on this macOS run; Windows, Linux, other Python versions and network filesystem behavior are not established.",
+    "Full test dependency group cannot resolve with virtualenv current filelock<4 dependency; focused native suite omits unused virtualenv. This is not full tox/CI validation."
+  ],
+  "maintainer_adoption": "not evaluated by a human maintainer",
+  "historical_gain": "not established by native baseline",
+  "status": "passed",
+  "environment_fix": "Restore version metadata from official upstream Git history; initial clone was shallow with no tags, yielding 0.1.dev1 and incompatible virtualenv dependency. After restoration the actual version is 4.0.6.dev4, still incompatible with virtualenv<4. The selected test_read_write_unit.py and its imported helpers do not use virtualenv; omitted only virtualenv from installation for this focused suite.",
+  "test_counts": {
+    "tests": 128,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 128
+  },
+  "junit": "logs/native_tox-dev--filelock/junit.xml",
+  "final_git_status": "",
+  "final_head_sha": "2a533f3053444b67a1764d628e0cdcf6d383cfb5"
+}

@@ -1,0 +1,136 @@
+{
+  "samples": [
+    {
+      "id": "Textualize--rich",
+      "native_counts": {
+        "tests": 114,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 114
+      },
+      "model_case_count": 9,
+      "technical_adoption_arm_case_count": 4,
+      "reuse_existing_arm_case_count": 5,
+      "additional_checks": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 4
+      },
+      "additional_check_xml": "native-logs/Textualize--rich/model-cases.xml",
+      "history_source_count": 0
+    },
+    {
+      "id": "pallets--click",
+      "native_counts": {
+        "tests": 36,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 36
+      },
+      "model_case_count": 9,
+      "technical_adoption_arm_case_count": 4,
+      "reuse_existing_arm_case_count": 5,
+      "additional_checks": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 3
+      },
+      "additional_check_xml": "native-logs/pallets--click/model-cases.xml",
+      "history_source_count": 0
+    },
+    {
+      "id": "fastapi--typer",
+      "native_counts": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 9
+      },
+      "model_case_count": 10,
+      "technical_adoption_arm_case_count": 4,
+      "reuse_existing_arm_case_count": 6,
+      "additional_checks": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 4
+      },
+      "additional_check_xml": "native-logs/fastapi--typer/model-cases-full.xml",
+      "history_source_count": 1
+    },
+    {
+      "id": "theskumar--python-dotenv",
+      "native_counts": {
+        "tests": 45,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 45
+      },
+      "model_case_count": 10,
+      "technical_adoption_arm_case_count": 4,
+      "reuse_existing_arm_case_count": 6,
+      "additional_checks": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 3
+      },
+      "additional_check_xml": "native-logs/theskumar--python-dotenv/model-cases.xml",
+      "history_source_count": 0
+    },
+    {
+      "id": "tox-dev--platformdirs",
+      "native_counts": {
+        "tests": 358,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 6,
+        "passed": 352
+      },
+      "model_case_count": 10,
+      "technical_adoption_arm_case_count": 7,
+      "reuse_existing_arm_case_count": 3,
+      "additional_checks": {
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 24
+      },
+      "additional_check_xml": "native-logs/tox-dev--platformdirs/model-cases-ab.xml",
+      "history_source_count": 1
+    }
+  ],
+  "totals": {
+    "sample_count": 5,
+    "model_case_count": 48,
+    "technical_adoption_arm_case_count": 23,
+    "reuse_existing_arm_case_count": 25,
+    "additional_checks": {
+      "tests": 38,
+      "passed": 38,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "native_counts": {
+      "tests": 562,
+      "passed": 556,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 6
+    }
+  },
+  "calculation": "Case/adoption counts derived from current assessment_<slug>.json; additional test counts verified from the JUnit XML referenced by current execution_<slug>.json. Original model outputs and logs unchanged.",
+  "correction": "Earlier narrative totals of 49 suggestions and 26 reused were arithmetic errors; actual totals are 48 and 25."
+}

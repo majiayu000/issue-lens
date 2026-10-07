@@ -1,0 +1,106 @@
+{
+  "id": "tox-dev--platformdirs",
+  "repo": "tox-dev/platformdirs",
+  "pr": 566,
+  "head_sha": "0fe7a0c57a0c8f5815eb54d7d35fd399db1d4958",
+  "native_test_files": [
+    "tests/test_api.py"
+  ],
+  "commands": [
+    {
+      "command": [
+        "/Users/apple/.local/bin/python3.12",
+        "-m",
+        "venv",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+      "exit_code": 0,
+      "seconds": 12.372,
+      "log": "native-logs/tox-dev--platformdirs/01-venv.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "-e",
+        ".",
+        "appdirs==1.4.4",
+        "covdefaults>=2.3",
+        "diff-cover>=10.2",
+        "pytest>=9.0.2",
+        "pytest-cov>=7",
+        "pytest-mock>=3.15.1"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+      "exit_code": 0,
+      "seconds": 32.665,
+      "log": "native-logs/tox-dev--platformdirs/02-install.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "--junitxml",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/tox-dev--platformdirs/pytest.xml",
+        "tests/test_api.py"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+      "exit_code": 0,
+      "seconds": 1.389,
+      "log": "native-logs/tox-dev--platformdirs/03-pytest.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+        "-m",
+        "pip",
+        "freeze"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+      "exit_code": 0,
+      "seconds": 0.607,
+      "log": "native-logs/tox-dev--platformdirs/04-freeze.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+        "-c",
+        "import sys,platform;print(sys.version);print(platform.platform())"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+      "exit_code": 0,
+      "seconds": 0.06,
+      "log": "native-logs/tox-dev--platformdirs/05-environment.log",
+      "environment_overrides": {}
+    }
+  ],
+  "environment": {
+    "python": "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+    "python_base": "/Users/apple/.local/bin/python3.12",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+  },
+  "result": "passed",
+  "test_counts": {
+    "tests": 358,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 6,
+    "passed": 352
+  },
+  "initial_git_status": "",
+  "final_git_status": "",
+  "platform_limits": [
+    "Only the local macOS Python 3.12 environment was run; supported OS/Python matrices were not run."
+  ],
+  "notes": "Current diff validates appname/appauthor/version on assignment through setters. The API suite exercises construction, assignment, containment and mocked platform behavior. Real Windows drive paths/known-folder APIs require Windows; mocked tests are not device verification.",
+  "evidence_root": "/Users/apple/.codex/task-evidence/issue-lens-20261007"
+}

@@ -1,0 +1,4 @@
+before_lock_type TqdmDefaultWriteLock
+after_lock_type TqdmDefaultWriteLock same_object True
+next_process_map
+result [1, 2]

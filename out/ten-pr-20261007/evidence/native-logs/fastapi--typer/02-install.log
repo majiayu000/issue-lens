@@ -1,0 +1,68 @@
+Obtaining file:///Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Collecting pytest>=9
+  Using cached pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+Collecting pytest-cov>=7
+  Using cached pytest_cov-7.1.0-py3-none-any.whl.metadata (32 kB)
+Collecting pytest-sugar>=1
+  Downloading pytest_sugar-1.1.1-py3-none-any.whl.metadata (5.2 kB)
+Collecting pytest-xdist>=3.6.1
+  Downloading pytest_xdist-3.8.0-py3-none-any.whl.metadata (3.0 kB)
+Collecting iniconfig>=1.0.1 (from pytest>=9)
+  Using cached iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+Collecting packaging>=22 (from pytest>=9)
+  Using cached packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting pluggy<2,>=1.5 (from pytest>=9)
+  Using cached pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest>=9)
+  Using cached pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting coverage>=7.10.6 (from coverage[toml]>=7.10.6->pytest-cov>=7)
+  Using cached coverage-7.16.2-cp312-cp312-macosx_11_0_arm64.whl.metadata (8.2 kB)
+Collecting termcolor>=2.1.0 (from pytest-sugar>=1)
+  Using cached termcolor-3.3.0-py3-none-any.whl.metadata (6.5 kB)
+Collecting execnet>=2.1 (from pytest-xdist>=3.6.1)
+  Using cached execnet-2.1.2-py3-none-any.whl.metadata (2.9 kB)
+Collecting shellingham>=1.3.0 (from typer==0.26.5)
+  Using cached shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
+Collecting rich>=13.8.0 (from typer==0.26.5)
+  Using cached rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+Collecting annotated-doc>=0.0.2 (from typer==0.26.5)
+  Using cached annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+Collecting markdown-it-py>=2.2.0 (from rich>=13.8.0->typer==0.26.5)
+  Using cached markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=13.8.0->typer==0.26.5)
+  Using cached mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Using cached pytest-9.1.1-py3-none-any.whl (386 kB)
+Using cached pytest_cov-7.1.0-py3-none-any.whl (22 kB)
+Downloading pytest_sugar-1.1.1-py3-none-any.whl (11 kB)
+Downloading pytest_xdist-3.8.0-py3-none-any.whl (46 kB)
+Using cached annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+Using cached coverage-7.16.2-cp312-cp312-macosx_11_0_arm64.whl (224 kB)
+Using cached execnet-2.1.2-py3-none-any.whl (40 kB)
+Using cached iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+Using cached packaging-26.3-py3-none-any.whl (129 kB)
+Using cached pluggy-1.6.0-py3-none-any.whl (20 kB)
+Using cached pygments-2.21.0-py3-none-any.whl (1.3 MB)
+Using cached rich-15.0.0-py3-none-any.whl (310 kB)
+Using cached shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+Using cached termcolor-3.3.0-py3-none-any.whl (7.7 kB)
+Using cached markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+Using cached mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Building wheels for collected packages: typer
+  Building editable for typer (pyproject.toml): started
+  Building editable for typer (pyproject.toml): finished with status 'done'
+  Created wheel for typer: filename=typer-0.26.5-py3-none-any.whl size=6646 sha256=2acbb7b7f8036ee4e8a61a92b810845b2d622732ad95a9f815209121bea0c501
+  Stored in directory: /private/var/folders/58/pj_81qw13l59j103s0njbw1c0000gn/T/pip-ephem-wheel-cache-3fxvtow1/wheels/2b/e3/9d/2e07479cd78a01ada73a134ab3021d56243d87b136916a89da
+Successfully built typer
+Installing collected packages: termcolor, shellingham, pygments, pluggy, packaging, mdurl, iniconfig, execnet, coverage, annotated-doc, pytest, markdown-it-py, rich, pytest-xdist, pytest-sugar, pytest-cov, typer
+Successfully installed annotated-doc-0.0.5 coverage-7.16.2 execnet-2.1.2 iniconfig-2.3.1 markdown-it-py-4.2.0 mdurl-0.1.2 packaging-26.3 pluggy-1.6.0 pygments-2.21.0 pytest-9.1.1 pytest-cov-7.1.0 pytest-sugar-1.1.1 pytest-xdist-3.8.0 rich-15.0.0 shellingham-1.5.4 termcolor-3.3.0 typer-0.26.5
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.1
+[notice] To update, run: /Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python -m pip install --upgrade pip

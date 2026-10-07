@@ -1,0 +1,285 @@
+{
+  "status": "verified_against_frozen_clone",
+  "samples": [
+    {
+      "sample": "tqdm--tqdm",
+      "head_sha": "24b9e1e08a097f1c30f2d235b63f9eb25ba47974",
+      "input_file_sha256": "d599d9e1db63a2abd59f0d62421c1f72f2e5c2ff16c484dab9431c5d96cc9ac0",
+      "diff_sha256": "61d6152185f420d3a08a049702e2b69d77ed2d25ca9f84d5d9549b7145f4a679",
+      "files": [
+        {
+          "path": "tqdm/contrib/concurrent.py",
+          "full_sha256": "0a9c6bc1c29a4111fb9f04cf1b799562e95e1acfeed0c3615b8853b9a6e9618b",
+          "provided_sha256": "0a9c6bc1c29a4111fb9f04cf1b799562e95e1acfeed0c3615b8853b9a6e9618b",
+          "full_characters": 9873,
+          "provided_characters": 9873,
+          "truncated": false
+        },
+        {
+          "path": "tests/tests_concurrent.py",
+          "full_sha256": "9a9c6d5859ae81f28122252e5824f780311ea88c9031e03d6a6373c459d2ec45",
+          "provided_sha256": "9a9c6d5859ae81f28122252e5824f780311ea88c9031e03d6a6373c459d2ec45",
+          "full_characters": 3197,
+          "provided_characters": 3197,
+          "truncated": false
+        }
+      ]
+    },
+    {
+      "sample": "Textualize--rich",
+      "head_sha": "05c5dfc8fcbb1c967490540cc080c3d534a91a12",
+      "input_file_sha256": "ca3cbb855c31f0ca75d4f04f067f11145df2961384cd6decff285197b73bbe59",
+      "diff_sha256": "72f8f1289eb17f4d152febdbba93d26d85ecde125b9162e37406aa98bb822b7d",
+      "files": [
+        {
+          "path": "rich/_wrap.py",
+          "full_sha256": "1654aca26e445f42d5900dca5b2df8c879c27cbb6a5fe6487a95ca87eef4ae97",
+          "provided_sha256": "1654aca26e445f42d5900dca5b2df8c879c27cbb6a5fe6487a95ca87eef4ae97",
+          "full_characters": 3326,
+          "provided_characters": 3326,
+          "truncated": false
+        },
+        {
+          "path": "rich/cells.py",
+          "full_sha256": "36f9a0b887016027b6dec2b91eb0a0d0a0edcbab904c632a1a3531b152268af8",
+          "provided_sha256": "36f9a0b887016027b6dec2b91eb0a0d0a0edcbab904c632a1a3531b152268af8",
+          "full_characters": 4654,
+          "provided_characters": 4654,
+          "truncated": false
+        },
+        {
+          "path": "tests/test_cells.py",
+          "full_sha256": "8bd40974b27d12a9cfdf8c3ebcf4ccce6c741483668f2f3eec20207d2ed92a14",
+          "provided_sha256": "8bd40974b27d12a9cfdf8c3ebcf4ccce6c741483668f2f3eec20207d2ed92a14",
+          "full_characters": 1928,
+          "provided_characters": 1928,
+          "truncated": false
+        },
+        {
+          "path": "tests/test_text.py",
+          "full_sha256": "81c3fb2227226d4e9b5c8e01e98ca7e576c86f2ec3bcdc983c62ca9e5dab7fe1",
+          "provided_sha256": "81c3fb2227226d4e9b5c8e01e98ca7e576c86f2ec3bcdc983c62ca9e5dab7fe1",
+          "full_characters": 25856,
+          "provided_characters": 25856,
+          "truncated": false
+        }
+      ]
+    },
+    {
+      "sample": "tox-dev--platformdirs",
+      "head_sha": "0fe7a0c57a0c8f5815eb54d7d35fd399db1d4958",
+      "input_file_sha256": "0ae2175c8fb80e70ff9a87b0f2d2de5205e913dea86962084da9f0c7daebc897",
+      "diff_sha256": "b4fdbc5ece551cf3f1a7179f9ff3be8e13d67d8002df33ef60d76af8843f4c33",
+      "files": [
+        {
+          "path": "src/platformdirs/api.py",
+          "full_sha256": "d3af03d287b2cb77e19ec761917373ece692ccf7148127f0be91b93099294949",
+          "provided_sha256": "d3af03d287b2cb77e19ec761917373ece692ccf7148127f0be91b93099294949",
+          "full_characters": 18803,
+          "provided_characters": 18803,
+          "truncated": false
+        },
+        {
+          "path": "tests/test_api.py",
+          "full_sha256": "dfae444d245dde0d81edee655967a556878952141300259a9a1577f6266b7db3",
+          "provided_sha256": "dfae444d245dde0d81edee655967a556878952141300259a9a1577f6266b7db3",
+          "full_characters": 10104,
+          "provided_characters": 10104,
+          "truncated": false
+        }
+      ]
+    },
+    {
+      "sample": "pallets--click",
+      "head_sha": "f67c2bb6c2f055c1c7a57cd46c3697fc26a7742e",
+      "input_file_sha256": "f05f3afc1e59d0d133536dc6c883b3c909cd036c69066bcc2f2c17c7b12eb949",
+      "diff_sha256": "aa17e672235208495c9befd88f29564a20ea06d88eb8e4ae9c02512ee27f861e",
+      "files": [
+        {
+          "path": "src/click/utils.py",
+          "full_sha256": "4720e22c292047ff1a747546b1ba80e96d1d8e8158e2e21ff01cdddb6498db17",
+          "provided_sha256": "4720e22c292047ff1a747546b1ba80e96d1d8e8158e2e21ff01cdddb6498db17",
+          "full_characters": 21419,
+          "provided_characters": 21419,
+          "truncated": false
+        },
+        {
+          "path": "tests/test_utils/test_make_default_short_help.py",
+          "full_sha256": "0aef0e5d3dc10c7ab6f2f09f3177f99d7d31664968d881b4b6f009af5bd11b2c",
+          "provided_sha256": "0aef0e5d3dc10c7ab6f2f09f3177f99d7d31664968d881b4b6f009af5bd11b2c",
+          "full_characters": 2362,
+          "provided_characters": 2362,
+          "truncated": false
+        }
+      ]
+    },
+    {
+      "sample": "theskumar--python-dotenv",
+      "head_sha": "004b454e37f415ed7828ed4c9426816d8c1b608f",
+      "input_file_sha256": "f97e5148348fbba6c6954e4e1109e7879a7e61e107027981d3ec8fe687d92535",
+      "diff_sha256": "40cb96f74317079ad8a42466bef9d9e6efc62f8efa1d703035650f8b7f080c35",
+      "files": [
+        {
+          "path": "src/dotenv/cli.py",
+          "full_sha256": "11f52f3c0cbbb3b7c59ab337281a120be9ccfb38f3546b41b16f49c290cf142c",
+          "provided_sha256": "11f52f3c0cbbb3b7c59ab337281a120be9ccfb38f3546b41b16f49c290cf142c",
+          "full_characters": 6969,
+          "provided_characters": 6969,
+          "truncated": false
+        },
+        {
+          "path": "tests/test_cli.py",
+          "full_sha256": "b57e1b0a40b54834b103dcc77e3eb8eea578d34b78ba28042f7c204feaee94ad",
+          "provided_sha256": "b57e1b0a40b54834b103dcc77e3eb8eea578d34b78ba28042f7c204feaee94ad",
+          "full_characters": 9800,
+          "provided_characters": 9800,
+          "truncated": false
+        }
+      ]
+    },
+    {
+      "sample": "cpburnz--python-pathspec",
+      "head_sha": "73120f31ad255c581f267b8515f274d7862210de",
+      "input_file_sha256": "f890134bc8191f4c59c77effae31986c56fd3dc5fe5388723a6085cedd7a6557",
+      "diff_sha256": "5404ee7719f9af582c2c54504309cd8f0ae863b6a94f3e4a998bd5e399fcdd7c",
+      "files": [
+        {
+          "path": "pathspec/patterns/gitignore/basic.py",
+          "full_sha256": "16b515c775f5f2ae3cb99381ca20a7571d620d27f0c09ef719a5e44ca66304b7",
+          "provided_sha256": "16b515c775f5f2ae3cb99381ca20a7571d620d27f0c09ef719a5e44ca66304b7",
+          "full_characters": 11546,
+          "provided_characters": 11546,
+          "truncated": false
+        },
+        {
+          "path": "pathspec/patterns/gitignore/spec.py",
+          "full_sha256": "bad8cf8fc4bce1b25c1716eb52e12644a0c3b20911970c53c7e920d6c347955e",
+          "provided_sha256": "bad8cf8fc4bce1b25c1716eb52e12644a0c3b20911970c53c7e920d6c347955e",
+          "full_characters": 11082,
+          "provided_characters": 11082,
+          "truncated": false
+        },
+        {
+          "path": "tests/test_07_gitignore_trailing_space.py",
+          "full_sha256": "6fdbe28c9a46b24bdc2551f55d7d51e57e03311116ec75a7209344a720af6b42",
+          "provided_sha256": "6fdbe28c9a46b24bdc2551f55d7d51e57e03311116ec75a7209344a720af6b42",
+          "full_characters": 4515,
+          "provided_characters": 4515,
+          "truncated": false
+        }
+      ]
+    },
+    {
+      "sample": "fastapi--typer",
+      "head_sha": "5bec961514de7c5da842c6e3170727022388414b",
+      "input_file_sha256": "cd7e89b948b6d1895c932c14fe69110d53ffa10ae3c41daf98974544b696a9a7",
+      "diff_sha256": "39af96b613dc425300ebb2029eaf3752e4dc56843b1a56b52a45cd6c3094dac9",
+      "files": [
+        {
+          "path": "typer/_click/parser.py",
+          "full_sha256": "56b0a674ea4a36fd2013a0b61e73e3fda5a18c9d5183d502cb2e7cd98ce1f89e",
+          "provided_sha256": "56b0a674ea4a36fd2013a0b61e73e3fda5a18c9d5183d502cb2e7cd98ce1f89e",
+          "full_characters": 16645,
+          "provided_characters": 16645,
+          "truncated": false
+        },
+        {
+          "path": "tests/test_types.py",
+          "full_sha256": "e2c67c2ef9944c825143c1a7e5a701042109e1f562722410808960edc57989cd",
+          "provided_sha256": "e2c67c2ef9944c825143c1a7e5a701042109e1f562722410808960edc57989cd",
+          "full_characters": 4835,
+          "provided_characters": 4835,
+          "truncated": false
+        }
+      ]
+    },
+    {
+      "sample": "pypa--packaging",
+      "head_sha": "45473a150d4181513543f16bcb23ba870fc98241",
+      "input_file_sha256": "8f4def568cd5d6f7ad353d67fd88c44c0ceb4d16a172ae25423533d67dc4431a",
+      "diff_sha256": "dd92d2841305edc3d312592774575351be80aa85400c0ff8ab251f02c1f46fc1",
+      "files": [
+        {
+          "path": "src/packaging/specifiers.py",
+          "full_sha256": "148611eab1005d9e39cbc2158bb4f93c9c0683130a0079447526df7b5d5c9f05",
+          "provided_sha256": "148611eab1005d9e39cbc2158bb4f93c9c0683130a0079447526df7b5d5c9f05",
+          "full_characters": 52663,
+          "provided_characters": 52663,
+          "truncated": false
+        },
+        {
+          "path": "tests/test_requirements.py",
+          "full_sha256": "56b86968586e3a347ef715ff9501a668fecf6a099710f14f04ceb947dfd5ea41",
+          "provided_sha256": "56b86968586e3a347ef715ff9501a668fecf6a099710f14f04ceb947dfd5ea41",
+          "full_characters": 36882,
+          "provided_characters": 36882,
+          "truncated": false
+        },
+        {
+          "path": "tests/test_specifiers.py",
+          "full_sha256": "5cb8ec61a5c085c43d5db5a0a71f2110ff814d4784e5ff173cee157b106b67ee",
+          "provided_sha256": "16937d705c2db260d75369be812d882c8e6e5fc68ddaec83102ab8295f5bd16b",
+          "full_characters": 146651,
+          "provided_characters": 60000,
+          "truncated": true
+        }
+      ]
+    },
+    {
+      "sample": "python-humanize--humanize",
+      "head_sha": "244ac0ed6baeb3d1789be61e1a0f8ef962e716f4",
+      "input_file_sha256": "17bf47e7e3340aa2131888c058cd5ab0401e1f63d5f887a2f946770882b98e5f",
+      "diff_sha256": "b81da93bb0552fc7ffa021ebd0e0e9b9837283273fd805b33ffe7ff77d021cf5",
+      "files": [
+        {
+          "path": "src/humanize/number.py",
+          "full_sha256": "c130dd54f4847f92e83123f8c8374eac6ff17401d4a212e0faeba45276ea2c2f",
+          "provided_sha256": "c130dd54f4847f92e83123f8c8374eac6ff17401d4a212e0faeba45276ea2c2f",
+          "full_characters": 16058,
+          "provided_characters": 16058,
+          "truncated": false
+        },
+        {
+          "path": "tests/test_number.py",
+          "full_sha256": "ec7cea38992a34df2e70f747b65428946ae1b1ddbfcdfe7185cb67e8facee996",
+          "provided_sha256": "ec7cea38992a34df2e70f747b65428946ae1b1ddbfcdfe7185cb67e8facee996",
+          "full_characters": 9894,
+          "provided_characters": 9894,
+          "truncated": false
+        }
+      ]
+    },
+    {
+      "sample": "tox-dev--filelock",
+      "head_sha": "2a533f3053444b67a1764d628e0cdcf6d383cfb5",
+      "input_file_sha256": "dbe4b19942d66537dbd24075c88e08c9d6dbcaa12a1d2e912bd61664602c8225",
+      "diff_sha256": "64a360da79f3c0aa12bb159145439df9edcc146e016476438cd211b4871ff37e",
+      "files": [
+        {
+          "path": "src/filelock/_read_write.py",
+          "full_sha256": "69e5f08161f8a1697a3f84c76bfc70f1bfb4955e5f7d3f6f7d2b827c37e698a6",
+          "provided_sha256": "69e5f08161f8a1697a3f84c76bfc70f1bfb4955e5f7d3f6f7d2b827c37e698a6",
+          "full_characters": 33168,
+          "provided_characters": 33168,
+          "truncated": false
+        },
+        {
+          "path": "src/filelock/_soft_rw/_sync.py",
+          "full_sha256": "6f396cd8b623ee4ef408784c842a9a798d6f301608d0f72beb725882a06571c8",
+          "provided_sha256": "6f396cd8b623ee4ef408784c842a9a798d6f301608d0f72beb725882a06571c8",
+          "full_characters": 29747,
+          "provided_characters": 29747,
+          "truncated": false
+        },
+        {
+          "path": "tests/test_read_write_unit.py",
+          "full_sha256": "19f3094f391e29815a281d3390a52e330c60ed53f8a1ef7158ff04bec2fe732d",
+          "provided_sha256": "19f3094f391e29815a281d3390a52e330c60ed53f8a1ef7158ff04bec2fe732d",
+          "full_characters": 27461,
+          "provided_characters": 27461,
+          "truncated": false
+        }
+      ]
+    }
+  ]
+}

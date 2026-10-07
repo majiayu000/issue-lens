@@ -1,0 +1,105 @@
+{
+  "id": "Textualize--rich",
+  "repo": "Textualize/rich",
+  "pr": 3180,
+  "head_sha": "05c5dfc8fcbb1c967490540cc080c3d534a91a12",
+  "native_test_files": [
+    "tests/test_cells.py",
+    "tests/test_text.py"
+  ],
+  "commands": [
+    {
+      "command": [
+        "/Users/apple/.local/bin/python3.12",
+        "-m",
+        "venv",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich",
+      "exit_code": 0,
+      "seconds": 23.812,
+      "log": "native-logs/Textualize--rich/01-venv.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "-e",
+        ".",
+        "pytest>=7,<8",
+        "pytest-cov>=3,<4",
+        "attrs>=21.4,<22"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich",
+      "exit_code": 0,
+      "seconds": 38.901,
+      "log": "native-logs/Textualize--rich/02-install.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "--junitxml",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/Textualize--rich/pytest.xml",
+        "tests/test_cells.py",
+        "tests/test_text.py"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich",
+      "exit_code": 0,
+      "seconds": 10.447,
+      "log": "native-logs/Textualize--rich/03-pytest.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich/bin/python",
+        "-m",
+        "pip",
+        "freeze"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich",
+      "exit_code": 0,
+      "seconds": 1.305,
+      "log": "native-logs/Textualize--rich/04-freeze.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich/bin/python",
+        "-c",
+        "import sys,platform;print(sys.version);print(platform.platform())"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich",
+      "exit_code": 0,
+      "seconds": 0.174,
+      "log": "native-logs/Textualize--rich/05-environment.log",
+      "environment_overrides": {}
+    }
+  ],
+  "environment": {
+    "python": "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich/bin/python",
+    "python_base": "/Users/apple/.local/bin/python3.12",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+  },
+  "result": "passed",
+  "test_counts": {
+    "tests": 114,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 114
+  },
+  "initial_git_status": "",
+  "final_git_status": "",
+  "platform_limits": [
+    "Only the local macOS Python 3.12 environment was run; supported OS/Python matrices were not run."
+  ],
+  "notes": "Current diff changes cell-aware folding and chop_cells. Native cells/text files exercise CJK width and wrapping; no historical-benefit inference follows from passing them. Terminal presentation outside these assertions is unverified.",
+  "evidence_root": "/Users/apple/.codex/task-evidence/issue-lens-20261007"
+}

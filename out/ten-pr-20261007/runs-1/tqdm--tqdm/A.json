@@ -1,0 +1,195 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R1",
+        "category": "显式参数回归",
+        "title": "未知长度输入不覆盖调用者显式提供的 total",
+        "preconditions": [
+          "使用环境支持的三种映射函数和模块顶层加一函数",
+          "输入为生成 0 至 8 的裸生成器",
+          "使用可记录构造参数的 tqdm_class"
+        ],
+        "steps": [
+          "分别调用各映射函数，显式传入 total=9",
+          "检查进度构造参数和返回列表"
+        ],
+        "expected_result": "进度对象收到 total=9，而非回退值 0；映射返回 [1,2,3,4,5,6,7,8,9]，不抛出最小值计算 ValueError。",
+        "source_ids": [],
+        "rationale": "所给 _executor_map 源码仅在未传 total 时推导长度；process_map 的默认 chunksize 检查仍会调用修改后的辅助函数，因此该路径与本次改动相关。",
+        "coverage": "not_found",
+        "incremental_value": "补充显式 total 与未知长度输入共同出现的边界；所给 T1 未发现这一触发条件的断言。",
+        "existing_tests": [],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "空输入边界",
+        "title": "长度未知且实际为空的生成器正常返回空列表",
+        "preconditions": [
+          "使用环境支持的三种映射函数；interpreter_map 限 Python 3.14+",
+          "输入为裸空生成器，不是带已知长度的空列表",
+          "不传 total，使用可记录构造参数的 tqdm_class"
+        ],
+        "steps": [
+          "分别以新的空生成器调用 _min_map_len 和各映射函数",
+          "检查辅助函数返回值、进度构造参数和映射返回值"
+        ],
+        "expected_result": "_min_map_len 返回 0，进度对象收到 total=0，映射返回 []，不抛出最小值计算 ValueError。",
+        "source_ids": [],
+        "rationale": "空生成器仍属于所有输入长度未知的明确契约；区别于补丁中 _min_map_len([]) 的无输入参数情形。",
+        "coverage": "partial",
+        "incremental_value": "补充实际零元素的未知长度输入及映射集成路径；已有测试只覆盖非空生成器和辅助函数的空参数集合。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "assert concurrent._min_map_len([]) == 0\n    assert concurrent._min_map_len([(i for i in range(9))]) == 0",
+            "reason": "分别覆盖无输入集合和非空裸生成器，未触发裸空生成器的映射执行。",
+            "path": "tests/tests_concurrent.py",
+            "line": 15
+          }
+        ],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "多输入边界",
+        "title": "多个长度未知且实际长度不同的生成器按最短输入映射",
+        "preconditions": [
+          "使用环境支持的三种映射函数，映射函数为模块顶层二元加法函数",
+          "两个裸生成器分别产生 [1,2,3] 和 [10,20]，均无可用长度提示",
+          "不传 total，使用可记录构造参数的 tqdm_class"
+        ],
+        "steps": [
+          "调用 _min_map_len，输入两个新建生成器",
+          "为各映射函数重新创建生成器并执行二元映射",
+          "检查进度构造参数及返回列表"
+        ],
+        "expected_result": "_min_map_len 返回 0，进度对象收到 total=0；返回 [11,22]，顺序符合输入顺序，不抛出最小值计算 ValueError。",
+        "source_ids": [],
+        "rationale": "R1 使用“所有输入”表述，需验证多个未知长度输入。最短输入终止行为来自所给源码声明的 list(map(fn, *iterables)) 契约。",
+        "coverage": "partial",
+        "incremental_value": "补充多个未知长度输入及不同实际长度的终止边界，不重复单生成器场景。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "assert mapper(dummy_func, (i for i in range(9))) == b",
+            "reason": "已有断言只传一个生成器，未覆盖多输入及最短输入终止。",
+            "path": "tests/tests_concurrent.py",
+            "line": 36
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "受影响契约回归",
+        "title": "混合已知与未知长度时保留已知长度推导",
+        "preconditions": [
+          "使用环境支持的三种映射函数及模块顶层二元加法函数",
+          "输入为生成 0 至 8 的裸生成器和 range(5)",
+          "不传 total，使用可记录构造参数的 tqdm_class"
+        ],
+        "steps": [
+          "调用 _min_map_len 检查混合输入的长度推导",
+          "分别以新建输入执行二元映射",
+          "检查进度构造参数和返回列表"
+        ],
+        "expected_result": "_min_map_len 返回 5，进度对象收到 total=5，映射返回 [0,2,4,6,8]；新增 default=0 不覆盖有效的已知长度。",
+        "source_ids": [],
+        "rationale": "这是补丁所影响辅助函数的回归边界，依据提供的源码和新增测试纳入；并非将 PRD 未明确的混合输入行为认定为新增需求。",
+        "coverage": "partial",
+        "incremental_value": "辅助函数已有同等断言；新增三种映射的参数传递及结果集成检查。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "assert concurrent._min_map_len([(i for i in range(9)), range(5)]) == 5",
+            "reason": "已覆盖相同混合输入的辅助函数返回值，未断言映射层收到的 total 或多输入结果。",
+            "path": "tests/tests_concurrent.py",
+            "line": 17
+          }
+        ],
+        "id": "TC004"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "基础契约",
+        "title": "单个非空裸生成器在三种并发映射中正常完成",
+        "preconditions": [
+          "分别使用 thread_map、process_map 和 interpreter_map；interpreter_map 仅在提供相应执行器的 Python 3.14+ 环境验收",
+          "映射函数为模块顶层可序列化函数，返回输入值加一；每次调用创建新的生成器",
+          "不传 total，捕获进度输出"
+        ],
+        "steps": [
+          "直接调用 _min_map_len，输入包含一个生成 0 至 8 的裸生成器",
+          "分别调用三种映射函数，输入新的同类生成器",
+          "检查返回列表和进度输出"
+        ],
+        "expected_result": "_min_map_len 返回 0；映射返回 [1,2,3,4,5,6,7,8,9]，不抛出最小值计算 ValueError；进度采用未知总量统计。已有测试中的 '9it [' 可作为当前实现的回归断言，但不将其提升为 PRD 要求的固定显示格式。",
+        "source_ids": [],
+        "rationale": "直接覆盖 R1 明确规定的触发条件与 total=0 回退。没有提供历史来源，依据 PRD 和补丁制定；这是测试草稿，未执行。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给测试已有同等的单生成器结果、未知总量输出及辅助函数回退断言。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "assert concurrent._min_map_len([(i for i in range(9))]) == 0",
+            "reason": "直接断言非空裸生成器长度未知时回退为 0。",
+            "path": "tests/tests_concurrent.py",
+            "line": 16
+          },
+          {
+            "test_id": "T1",
+            "quote": "@mark.parametrize(\"mapper\", [interpreter_map, process_map, thread_map])\ndef test_concurrent_map_unknown_len(mapper, caperr):\n    b = [i + 1 for i in range(9)]\n    try:\n        assert mapper(dummy_func, (i for i in range(9))) == b\n    except ImportError as err:\n        skip(str(err))\n    err = caperr()\n    assert '9it [' in err",
+            "reason": "对三种映射参数化，实际输入为裸生成器，并断言返回值和未知总量输出；ImportError 会导致跳过，源码不能证明各执行器已经运行。",
+            "path": "tests/tests_concurrent.py",
+            "line": 32
+          }
+        ],
+        "id": "TC005"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "未覆盖无可用长度提示的自定义迭代器，以及 __length_hint__ 返回有效长度的对象；当前方案聚焦 PRD 明确示例裸生成器，不能据此断言所有迭代器类型均已覆盖。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "未覆盖长度探测、输入迭代或映射函数本身抛出异常时的传播契约；default=0 不应被理解为吞掉这些错误，本方案尚未提供相关用例。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "未知总量仅检查回退参数和基础输出，不完整验收 ETA、百分比等显示语义；PRD 未要求固定 '9it [' 格式，且本次标记为异常修复，未扩展为视觉输出测试。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "无输入可迭代对象只在所给辅助函数测试中断言返回 0，未规划映射入口无输入参数的验收；该行为不属于 PRD 明确的所有输入长度未知场景，入口错误契约需另行明确。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "未展开跨操作系统和进程启动方式的执行矩阵；interpreter_map 还受 Python 3.14+ 及执行器可用性限制。所给测试会在 ImportError 时跳过，不能将跳过视为覆盖已执行。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "sources 为空，无法补充有历史来源支持的故障边界。已有覆盖判断仅依据提供的 tests/tests_concurrent.py，未检查其他文件或整个仓库；全部用例均为草稿，未执行。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 26738,
+      "cached_input_tokens": 3456,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2610,
+      "reasoning_output_tokens": 120
+    },
+    "thread_id": "01a116c7-cde2-7d41-af5d-4b15c2fb1ab7"
+  },
+  "input_sha256": "9bfd96e94ae213084ba28dfafd8408c647b9aa73ee62fa1f3beca6c77c6cb92a",
+  "common_input_sha256": "794e115ee3f2690e525665f06a4a9cdfc9f278d8d48e7f8df4ca3843832b0192",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

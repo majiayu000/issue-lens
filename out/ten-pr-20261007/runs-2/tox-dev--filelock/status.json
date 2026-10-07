@@ -1,0 +1,28 @@
+{
+  "sample": "tox-dev--filelock",
+  "head_sha": "2a533f3053444b67a1764d628e0cdcf6d383cfb5",
+  "diff_sha256": "64a360da79f3c0aa12bb159145439df9edcc146e016476438cd211b4871ff37e",
+  "requested_model": "gpt-6.1-sol",
+  "started_at": "2026-10-07T14:22:01.202157+00:00",
+  "status": "paired_drafts_not_executed",
+  "stages": {
+    "B": {
+      "status": "reused_valid_original",
+      "seconds": 0
+    },
+    "A": {
+      "status": "completed",
+      "seconds": 111.67529008397833
+    }
+  },
+  "common_input_sha256": "4491b2229e9dc7d7403eb56985a256fd44b861f746c62d7545d80ca61329c683",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98",
+  "sources_count": 0,
+  "requirements_count": 4,
+  "order": [
+    "B",
+    "A"
+  ],
+  "retry_of": "out/ten-pr-20261007/runs-1/tox-dev--filelock",
+  "retry_policy": "one deliberate retry per missing arm, identical frozen input"
+}

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="21" time="5.721" timestamp="2026-10-07T22:42:53.829484+08:00" hostname="appledeMacBook-Pro.local"><testcase classname="" name="test_explicit_total[thread]" time="0.150" /><testcase classname="" name="test_explicit_total[process]" time="0.532" /><testcase classname="" name="test_explicit_total[interpreter]" time="0.555" /><testcase classname="" name="test_empty_unknown[thread]" time="0.006" /><testcase classname="" name="test_empty_unknown[process]" time="0.002" /><testcase classname="" name="test_empty_unknown[interpreter]" time="0.001" /><testcase classname="" name="test_multiple_unknown_a[thread]" time="0.001" /><testcase classname="" name="test_multiple_unknown_a[process]" time="0.547" /><testcase classname="" name="test_multiple_unknown_a[interpreter]" time="0.417" /><testcase classname="" name="test_multiple_unknown_b[thread]" time="0.002" /><testcase classname="" name="test_multiple_unknown_b[process]" time="0.416" /><testcase classname="" name="test_multiple_unknown_b[interpreter]" time="0.625" /><testcase classname="" name="test_mixed_lengths[thread]" time="0.002" /><testcase classname="" name="test_mixed_lengths[process]" time="0.411" /><testcase classname="" name="test_mixed_lengths[interpreter]" time="0.423" /><testcase classname="" name="test_worker_error_propagates[thread]" time="0.002" /><testcase classname="" name="test_worker_error_propagates[process]" time="0.633" /><testcase classname="" name="test_worker_error_propagates[interpreter]" time="0.323" /><testcase classname="" name="test_single_unknown_explicit_total_zero[thread]" time="0.004" /><testcase classname="" name="test_single_unknown_explicit_total_zero[process]" time="0.002"><failure message="TypeError: cannot pickle '_thread.RLock' object&#10;when serializing dict item '_lock'&#10;when serializing tqdm.contrib.concurrent._InterpreterLock state&#10;when serializing tqdm.contrib.concurrent._InterpreterLock object&#10;when serializing tuple item 0&#10;when serializing tuple item 3&#10;when serializing dict item '_args'&#10;when serializing multiprocessing.context.SpawnProcess state&#10;when serializing multiprocessing.context.SpawnProcess object">../../model-checks/test_tqdm_cases.py:38: in test_single_unknown_explicit_total_zero
+    assert mapper(partial(operator.add,1),(i for i in range(9)),**opts())==list(range(1,10))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tqdm/contrib/concurrent.py:259: in process_map
+    return _executor_map(ProcessPoolExecutor, fn, *iterables, lock_name=lock_name, **tqdm_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tqdm/contrib/concurrent.py:163: in _executor_map
+    return list(ex.map(
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/process.py:949: in map
+    results = super().map(partial(_process_chunk, fn),
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py:624: in map
+    fs = [self.submit(fn, *args) for args in zipped_iterables]
+          ^^^^^^^^^^^^^^^^^^^^^^
+tqdm/contrib/concurrent.py:159: in patchsubmit
+    fut = orisubmit(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/process.py:914: in submit
+    self._adjust_process_count()
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/process.py:878: in _adjust_process_count
+    self._spawn_process()
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/process.py:889: in _spawn_process
+    _spawn_worker(self._mp_context, self._call_queue,
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/process.py:282: in _spawn_worker
+    p.start()
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+                  ^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/context.py:294: in _Popen
+    return Popen(process_obj)
+           ^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/popen_fork.py:20: in __init__
+    self._launch(process_obj)
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/popen_spawn_posix.py:47: in _launch
+    reduction.dump(process_obj, fp)
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/reduction.py:60: in dump
+    ForkingPickler(file, protocol).dump(obj)
+E   TypeError: cannot pickle '_thread.RLock' object
+E   when serializing dict item '_lock'
+E   when serializing tqdm.contrib.concurrent._InterpreterLock state
+E   when serializing tqdm.contrib.concurrent._InterpreterLock object
+E   when serializing tuple item 0
+E   when serializing tuple item 3
+E   when serializing dict item '_args'
+E   when serializing multiprocessing.context.SpawnProcess state
+E   when serializing multiprocessing.context.SpawnProcess object</failure></testcase><testcase classname="" name="test_single_unknown_explicit_total_zero[interpreter]" time="0.461" /></testsuite></testsuites>

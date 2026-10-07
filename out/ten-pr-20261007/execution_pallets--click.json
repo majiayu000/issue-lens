@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/pallets--click/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-c",
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pallets--click/pyproject.toml",
+    "--junitxml",
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/pallets--click/model-cases.xml",
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/pallets--click/test_model_cases.py"
+  ],
+  "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pallets--click",
+  "exit_code": 0,
+  "seconds": 1.699,
+  "log": "native-logs/pallets--click/07-model-cases.log",
+  "environment_overrides": {}
+}

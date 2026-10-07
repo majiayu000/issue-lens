@@ -1,0 +1,190 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R2",
+        "category": "单个约束异常契约",
+        "title": "Specifier 不把操作符后的纯空白当作任意版本",
+        "preconditions": [
+          "在 Python 测试环境中导入 Specifier 和 InvalidSpecifier。",
+          "输入中的 \\t 表示实际制表符，不是反斜杠与字母 t。"
+        ],
+        "steps": [
+          "分别调用 Specifier(\"===\") 和 Specifier(\"=== \")，核对异常类型。",
+          "分别调用 Specifier(\"===\\t\") 和 Specifier(\" \\t=== \\t\")，核对异常类型。"
+        ],
+        "expected_result": "每项输入均在构造阶段抛出 InvalidSpecifier；前后空白或操作符后的空白不能满足非空版本要求。",
+        "source_ids": [],
+        "rationale": "R2 明确规定 Specifier(\"===\") 的异常。diff 将任意版本字符数量从零个以上改为一个以上，纯空白属于直接受影响的边界；制表符扩展依据提供的正则，而非历史根因判断。",
+        "coverage": "partial",
+        "incremental_value": "在已有裸操作符和尾随空格覆盖上，补充操作符后制表符及前后混合水平空白。",
+        "existing_tests": [
+          {
+            "test_id": "T2",
+            "quote": "            # Version-less specifier\n            \"==\",\n            \"===\",\n            \"=== \",",
+            "reason": "已有无版本参数包含 === 和 === 加尾随空格，但此处未包含本方案新增的制表符组合。",
+            "path": "tests/test_specifiers.py",
+            "line": 62
+          },
+          {
+            "test_id": "T2",
+            "quote": "    def test_specifiers_invalid(self, specifier: str) -> None:\n        with pytest.raises(InvalidSpecifier):",
+            "reason": "该参数化测试要求 InvalidSpecifier。",
+            "path": "tests/test_specifiers.py",
+            "line": 108
+          },
+          {
+            "test_id": "T2",
+            "quote": "        with pytest.raises(InvalidSpecifier):\n            Specifier(specifier)",
+            "reason": "明确被测入口是 Specifier 构造函数，支持已有两个输入的覆盖判断。",
+            "path": "tests/test_specifiers.py",
+            "line": 109
+          }
+        ],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R2",
+        "category": "约束集合分隔边界",
+        "title": "SpecifierSet 拒绝集合任意位置的空任意版本",
+        "preconditions": [
+          "在 Python 测试环境中导入 SpecifierSet 和 InvalidSpecifier。",
+          "通过字符串构造集合，使用逗号分隔各约束。"
+        ],
+        "steps": [
+          "逐项调用 SpecifierSet，输入为 \"===\"、\">=1,===\"、\"===,===x\"。",
+          "补充输入 \">=1,===,<=2\"、\"===x,===\" 和 \"=== \\t,>=1\"。",
+          "分别核对每次构造是否立即抛出指定异常。"
+        ],
+        "expected_result": "所有输入均抛出 InvalidSpecifier；其他有效约束、已有非空任意版本以及空白均不能掩盖空任意版本，不返回仅保留有效项的集合。",
+        "source_ids": [],
+        "rationale": "R2 的集合入口与 diff 直接相关。提供的实现先按逗号拆分，再逐项构造 Specifier，因此应验证非法项在首部、中部、尾部都不能被跳过；这属于待验证边界，不是已确认缺陷。",
+        "coverage": "partial",
+        "incremental_value": "补充集合中部非法项、非空任意版本后的空项，以及拆分后去除水平空白仍为空版本的场景。",
+        "existing_tests": [
+          {
+            "test_id": "T2",
+            "quote": "    @pytest.mark.parametrize(\"specifier\", [\"===\", \">=1,===\", \"===,===x\"])",
+            "reason": "已有参数覆盖裸空版本、普通约束后的空版本和非空任意版本前的空版本。",
+            "path": "tests/test_specifiers.py",
+            "line": 1256
+          },
+          {
+            "test_id": "T2",
+            "quote": "        with pytest.raises(InvalidSpecifier):\n            SpecifierSet(specifier)",
+            "reason": "已有断言明确要求集合构造抛出 InvalidSpecifier；所给片段未展示本方案新增三个输入的同等覆盖。",
+            "path": "tests/test_specifiers.py",
+            "line": 1258
+          }
+        ],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R3",
+        "category": "共享规则正向回归",
+        "title": "收紧非空规则后仍接受非空任意版本和合法混合约束",
+        "preconditions": [
+          "在 Python 测试环境中导入 Requirement、Specifier 和 SpecifierSet。",
+          "将正向接受行为作为 diff 明确展示的回归保护，不扩展为 PRD 未规定的新功能。"
+        ],
+        "steps": [
+          "令 s 依次为 \"===bar===\"、\"===arbitrarystring,>=1\"、\">=1,===arbitrarystring\"；调用 Requirement(\"foo\" + s)，核对 req.specifier 与 s 表示的约束集合相等。",
+          "调用 Specifier(\"===bar===\")，核对 operator 为 \"===\"、version 为 \"bar===\"。",
+          "对上述三个 s 分别构造 SpecifierSet，迭代成员并核对成员字符串集合分别为 {\"===bar===\"}、{\"===arbitrarystring\", \">=1\"}、{\"===arbitrarystring\", \">=1\"}。"
+        ],
+        "expected_result": "所有构造均成功；非空任意版本保留其内容，包括版本内部的等号。混合约束保留全部成员，不要求集合字符串维持输入顺序，也不将构造成功解释为约束一定可满足。",
+        "source_ids": [],
+        "rationale": "R3 涉及三个入口共用规则。diff 已明确添加 Requirement 的这些正向输入，提供的正则允许非空版本内部包含等号；在三个入口核对解析结果，可防止收紧规则误拒绝有效输入。",
+        "coverage": "partial",
+        "incremental_value": "Requirement 的正向解析无新增；补充相同输入在 Specifier 和 SpecifierSet 的直接构造及内容保留断言。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "        \"specifier\", [\"===bar===\", \"===arbitrarystring,>=1\", \">=1,===arbitrarystring\"]",
+            "reason": "已有参数与本方案的 Requirement 正向输入完全相同。",
+            "path": "tests/test_requirements.py",
+            "line": 273
+          },
+          {
+            "test_id": "T1",
+            "quote": "        req = Requirement(f\"foo{specifier}\")\n        assert req.specifier == specifier",
+            "reason": "已断言 Requirement 成功构造及约束集合相等；不能据此声称 Specifier 与 SpecifierSet 的直接入口已有相同断言。",
+            "path": "tests/test_requirements.py",
+            "line": 276
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "基础异常契约与需求语法边界",
+        "title": "Requirement 拒绝裸空任意版本及被语法分隔符包围的空版本",
+        "preconditions": [
+          "在 Python 测试环境中导入 Requirement 和 InvalidRequirement。",
+          "针对本次 diff 对应的待测版本；以下为待执行方案。"
+        ],
+        "steps": [
+          "逐项调用 Requirement：输入为 \"foo===\"、\"foo === \"、\"foo (=== )\"、'foo=== ; python_version >= \"3\"'。",
+          "继续逐项输入 \"foo===,>=1\"、\"foo>=1,===\"、\"foo>=1,===,<=2\"、\"foo===x,===\"、\"foo===x,===,>=1\"。",
+          "每次调用单独捕获异常并核对异常类型。"
+        ],
+        "expected_result": "所有输入均在构造阶段抛出 InvalidRequirement，不返回 Requirement 对象；不将 InvalidSpecifier 作为公开异常泄漏。PRD 未规定精确错误消息，本方案不增加消息格式要求。",
+        "source_ids": [],
+        "rationale": "直接覆盖 R1 的基础契约，并用 diff 明确列出的空白、括号、环境标记和逗号组合验证非空规则。没有提供历史 issue，不作故障根因或跨产品迁移推断。",
+        "coverage": "covered",
+        "incremental_value": "无新增边界；所给 T1 已对相同输入断言 InvalidRequirement，可优先复用其回归用例。这里只判断源码覆盖，不代表已执行。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "        \"requirement_string\",\n        [\n            \"foo===\",\n            \"foo === \",\n            \"foo (=== )\",\n            'foo=== ; python_version >= \"3\"',\n            \"foo===,>=1\",\n            \"foo>=1,===\",\n            \"foo>=1,===,<=2\",\n            \"foo===x,===\",\n            \"foo===x,===,>=1\",\n        ],",
+            "reason": "参数列表逐字包含本方案全部触发输入，与同文件下述异常断言配对。",
+            "path": "tests/test_requirements.py",
+            "line": 692
+          },
+          {
+            "test_id": "T1",
+            "quote": "        with pytest.raises(InvalidRequirement, match=\"===\"):\n            Requirement(requirement_string)",
+            "reason": "对上述输入断言 InvalidRequirement，且额外要求消息包含 ===；本方案只要求 PRD 明确的异常类型。",
+            "path": "tests/test_requirements.py",
+            "line": 706
+          }
+        ],
+        "id": "TC004"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "当前优先方案覆盖 diff 列出的 Requirement 组合，但未补充 extras 与制表符组合。PRD 未规定精确错误消息，故没有将已有 match=\"===\" 提升为需求契约。"
+      },
+      {
+        "requirement_id": "R2",
+        "reason": "T2 被截断，覆盖判断仅限提供的片段；新增边界标为 partial 不意味着文件剩余部分或整个仓库没有同等测试。当前方案未穷举所有 Unicode 空白和换行组合。"
+      },
+      {
+        "requirement_id": "R3",
+        "reason": "三个入口的行为测试不能单独证明内部确实共享同一解析规则；未提供 Requirement 解析实现，无法完整核实共享关系。也未提供属性测试源码、平台矩阵配置或执行日志，无法核验 PRD 关于 45473a1 的通过声明。"
+      },
+      {
+        "requirement_id": "R3",
+        "reason": "sources 为空，没有可用于迁移故障触发条件的历史 issue。本方案仅依据 PRD、diff 和所给源码，所有 source_ids 均为空；未扩展到 packaging 的其他功能或假定其提供独立 CLI。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 65612,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2708,
+      "reasoning_output_tokens": 196
+    },
+    "thread_id": "01a116c8-66f0-7670-8422-e0fec4e0302b"
+  },
+  "input_sha256": "94b1c0a08599bbb05e33af19be460942f7803b20409a66fba17a296e1b9a10c5",
+  "common_input_sha256": "6c19cd26bade8b1e70fe274d25bdf66acf73352ba22079ded3210611c9ff92ce",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

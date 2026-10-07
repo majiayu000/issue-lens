@@ -1,0 +1,53 @@
+{
+  "scope": "last five frozen real PRs",
+  "cases": 45,
+  "applicable": 45,
+  "existing_covered": 13,
+  "technically_adopted_cases": 29,
+  "unique_adopted_scenario_groups": [
+    "cpburnz--python-pathspec:backend-odd-even-parity",
+    "cpburnz--python-pathspec:bytes-odd-even",
+    "cpburnz--python-pathspec:leading-and-trailing-combination",
+    "pypa--packaging:empty-set-positions",
+    "pypa--packaging:nonempty-three-api-entries",
+    "pypa--packaging:whitespace-empty-version",
+    "python-humanize--humanize:dense-adjacent-integer",
+    "python-humanize--humanize:dense-huge-integer",
+    "tox-dev--filelock:failed-nesting-state",
+    "tox-dev--filelock:negative-default-overrides",
+    "tox-dev--filelock:negative-nonblocking-contention",
+    "tox-dev--filelock:wait-release-reentry",
+    "tqdm--tqdm:empty-generator",
+    "tqdm--tqdm:explicit-total",
+    "tqdm--tqdm:mixed-known-unknown",
+    "tqdm--tqdm:multiple-unknown-shortest",
+    "tqdm--tqdm:worker-error-lock-restoration"
+  ],
+  "human_evaluations": 0,
+  "initial_model_checks": {
+    "passed": 72,
+    "failed": 1,
+    "error": 0,
+    "skipped": 0
+  },
+  "new_unique_defects": [
+    "tqdm-exception-lock-restoration"
+  ],
+  "isolation_rechecks": {
+    "passed": 3,
+    "failed": 0
+  },
+  "defect_reproduction_and_controls": {
+    "error_unknown": {
+      "exit_code": 1
+    },
+    "success": {
+      "exit_code": 0
+    },
+    "error_known_length": {
+      "exit_code": 1
+    }
+  },
+  "review_time": "Human review time is unavailable; executed command elapsed times are individually recorded. No human maintainer adoption inferred.",
+  "unique_adopted_scenario_group_count": 17
+}

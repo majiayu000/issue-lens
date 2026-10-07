@@ -1,0 +1,7 @@
+{
+  "sources": [],
+  "generation": {},
+  "target_repo_excluded": "pallets/click",
+  "issue_creation_cutoff": "2026-09-12T02:35:08Z",
+  "pr_evidence_note": "Current bounded GitHub snapshots, not time-travel evidence."
+}

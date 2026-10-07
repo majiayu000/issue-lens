@@ -1,0 +1,50 @@
+{
+  "sample": "tqdm--tqdm",
+  "head_sha": "24b9e1e08a097f1c30f2d235b63f9eb25ba47974",
+  "diff_sha256": "61d6152185f420d3a08a049702e2b69d77ed2d25ca9f84d5d9549b7145f4a679",
+  "requested_model": "gpt-6.1-sol",
+  "started_at": "2026-10-07T14:29:31.094874+00:00",
+  "status": "paired_drafts_not_executed",
+  "stages": {
+    "requirements": {
+      "status": "completed",
+      "seconds": 23.20058637484908
+    },
+    "retrieval": {
+      "status": "completed",
+      "seconds": 19.23591958382167
+    },
+    "extraction": {
+      "status": "completed",
+      "seconds": 24.610221832990646
+    },
+    "pr_evidence": {
+      "status": "completed",
+      "seconds": 4.850934125017375
+    },
+    "B": {
+      "status": "completed",
+      "seconds": 112.1099652920384
+    },
+    "B_validation": {
+      "status": "completed",
+      "seconds": 0.00014408305287361145
+    },
+    "A": {
+      "status": "completed",
+      "seconds": 92.26347158383578
+    },
+    "A_validation": {
+      "status": "completed",
+      "seconds": 8.483300916850567e-05
+    }
+  },
+  "common_input_sha256": "794e115ee3f2690e525665f06a4a9cdfc9f278d8d48e7f8df4ca3843832b0192",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98",
+  "sources_count": 1,
+  "requirements_count": 1,
+  "order": [
+    "B",
+    "A"
+  ]
+}

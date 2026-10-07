@@ -1,0 +1,55 @@
+{
+  "status": "verified_all_10_clean_and_fixed",
+  "samples": [
+    {
+      "sample": "Textualize--rich",
+      "head_sha": "05c5dfc8fcbb1c967490540cc080c3d534a91a12",
+      "git_status_porcelain": ""
+    },
+    {
+      "sample": "pallets--click",
+      "head_sha": "f67c2bb6c2f055c1c7a57cd46c3697fc26a7742e",
+      "git_status_porcelain": ""
+    },
+    {
+      "sample": "fastapi--typer",
+      "head_sha": "5bec961514de7c5da842c6e3170727022388414b",
+      "git_status_porcelain": ""
+    },
+    {
+      "sample": "theskumar--python-dotenv",
+      "head_sha": "004b454e37f415ed7828ed4c9426816d8c1b608f",
+      "git_status_porcelain": ""
+    },
+    {
+      "sample": "tox-dev--platformdirs",
+      "head_sha": "0fe7a0c57a0c8f5815eb54d7d35fd399db1d4958",
+      "git_status_porcelain": ""
+    },
+    {
+      "sample": "tox-dev--filelock",
+      "head_sha": "2a533f3053444b67a1764d628e0cdcf6d383cfb5",
+      "git_status_porcelain": ""
+    },
+    {
+      "sample": "pypa--packaging",
+      "head_sha": "45473a150d4181513543f16bcb23ba870fc98241",
+      "git_status_porcelain": ""
+    },
+    {
+      "sample": "cpburnz--python-pathspec",
+      "head_sha": "73120f31ad255c581f267b8515f274d7862210de",
+      "git_status_porcelain": ""
+    },
+    {
+      "sample": "tqdm--tqdm",
+      "head_sha": "24b9e1e08a097f1c30f2d235b63f9eb25ba47974",
+      "git_status_porcelain": ""
+    },
+    {
+      "sample": "python-humanize--humanize",
+      "head_sha": "244ac0ed6baeb3d1789be61e1a0f8ef962e716f4",
+      "git_status_porcelain": ""
+    }
+  ]
+}

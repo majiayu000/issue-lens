@@ -1,0 +1,39 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0 -- /Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm
+configfile: pyproject.toml
+plugins: cov-7.1.0, timeout-2.4.0, asyncio-1.4.0
+timeout: 30.0s
+timeout method: signal
+timeout func_only: False
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collecting ... collected 16 items
+
+tests/tests_concurrent.py::test_min_map_len PASSED                       [  6%]
+tests/tests_concurrent.py::test_concurrent_map[interpreter_map] PASSED   [ 12%]
+tests/tests_concurrent.py::test_concurrent_map[process_map] PASSED       [ 18%]
+tests/tests_concurrent.py::test_concurrent_map[thread_map] PASSED        [ 25%]
+tests/tests_concurrent.py::test_concurrent_map_unknown_len[interpreter_map] PASSED [ 31%]
+tests/tests_concurrent.py::test_concurrent_map_unknown_len[process_map] PASSED [ 37%]
+tests/tests_concurrent.py::test_concurrent_map_unknown_len[thread_map] PASSED [ 43%]
+tests/tests_concurrent.py::test_interpreter_map_lock PASSED              [ 50%]
+tests/tests_concurrent.py::test_chunksize_warning[iterables0-False] PASSED [ 56%]
+tests/tests_concurrent.py::test_chunksize_warning[iterables1-False] PASSED [ 62%]
+tests/tests_concurrent.py::test_chunksize_warning[iterables2-False] PASSED [ 68%]
+tests/tests_concurrent.py::test_chunksize_warning[iterables3-False] PASSED [ 75%]
+tests/tests_concurrent.py::test_chunksize_warning[iterables4-True] PASSED [ 81%]
+tests/tests_concurrent.py::test_chunksize_warning[iterables5-False] PASSED [ 87%]
+tests/tests_concurrent.py::test_chunksize_warning[iterables6-False] PASSED [ 93%]
+tests/tests_concurrent.py::test_chunksize_warning[iterables7-True] PASSED [100%]
+
+- generated xml file: /Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/native_py314.xml -
+============================== slowest durations ===============================
+1.06s call     tests/tests_concurrent.py::test_concurrent_map_unknown_len[process_map]
+0.89s call     tests/tests_concurrent.py::test_concurrent_map[process_map]
+0.35s call     tests/tests_concurrent.py::test_concurrent_map[interpreter_map]
+0.31s call     tests/tests_concurrent.py::test_interpreter_map_lock
+0.28s call     tests/tests_concurrent.py::test_concurrent_map_unknown_len[interpreter_map]
+
+(43 durations < 0.1s hidden.)
+============================= 16 passed in 18.09s ==============================

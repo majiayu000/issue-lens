@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-c",
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer/pyproject.toml",
+    "--junitxml",
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/fastapi--typer/model-cases.xml",
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/fastapi--typer/test_model_cases.py"
+  ],
+  "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+  "exit_code": 0,
+  "seconds": 2.944,
+  "log": "native-logs/fastapi--typer/07-model-cases.log",
+  "environment_overrides": {
+    "_TYPER_FORCE_DISABLE_TERMINAL": "1",
+    "TERMINAL_WIDTH": "3000"
+  }
+}

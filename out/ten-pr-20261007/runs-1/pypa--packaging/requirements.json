@@ -1,0 +1,81 @@
+{
+  "requirements": [
+    {
+      "title": "需求解析拒绝缺失任意版本并抛出指定异常",
+      "quote": "`Requirement(\"foo===\")` now raises `InvalidRequirement`, and `Specifier(\"===\")` / `SpecifierSet(\"===\")` raise `InvalidSpecifier`.",
+      "queries": [
+        [
+          "requirement",
+          "empty"
+        ],
+        [
+          "requirement",
+          "InvalidRequirement"
+        ],
+        [
+          "parser",
+          "missing",
+          "version"
+        ]
+      ],
+      "id": "R1"
+    },
+    {
+      "title": "单个版本约束及约束集合拒绝空任意版本",
+      "quote": "`Requirement(\"foo===\")` now raises `InvalidRequirement`, and `Specifier(\"===\")` / `SpecifierSet(\"===\")` raise `InvalidSpecifier`.",
+      "queries": [
+        [
+          "specifier",
+          "empty"
+        ],
+        [
+          "Specifier",
+          "InvalidSpecifier"
+        ],
+        [
+          "SpecifierSet",
+          "InvalidSpecifier"
+        ]
+      ],
+      "id": "R2"
+    },
+    {
+      "title": "共享解析规则要求任意版本非空，回归覆盖三个入口",
+      "quote": "The shared specifier regex requires a nonempty version after `===`, with regression tests covering all three entry points.",
+      "queries": [
+        [
+          "regex",
+          "empty"
+        ],
+        [
+          "specifier",
+          "missing",
+          "version"
+        ],
+        [
+          "regression",
+          "Requirement",
+          "SpecifierSet"
+        ]
+      ],
+      "id": "R3"
+    }
+  ],
+  "open_questions": [
+    "diff 新增了非空任意版本以及混合约束被接受的测试，但 PRD 未明确这些输入的接受规则；是否将其列为本次要求？",
+    "diff 覆盖了空白、括号、环境标记及逗号组合中的空任意版本；PRD 仅明确非空规则，未逐项说明这些组合的预期异常及错误消息要求。"
+  ],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 17495,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 321,
+      "reasoning_output_tokens": 0
+    },
+    "thread_id": "01a116bf-baa2-73f3-bfe9-507d6f29435b"
+  },
+  "prd_sha256": "701ed81406101b644f6c608e75fa4e4527befba900301d5c075d9f72e99fc775"
+}

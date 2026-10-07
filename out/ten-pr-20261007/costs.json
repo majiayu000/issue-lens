@@ -1,0 +1,47 @@
+{
+  "completed_unique_model_calls": 43,
+  "completed_usage": {
+    "input_tokens": 1126353,
+    "cached_input_tokens": 187264,
+    "output_tokens": 57643
+  },
+  "selected_plan_arm_usage": {
+    "A": {
+      "input_tokens": 337060,
+      "cached_input_tokens": 35584,
+      "output_tokens": 25018
+    },
+    "B": {
+      "input_tokens": 350373,
+      "cached_input_tokens": 79616,
+      "output_tokens": 26814
+    }
+  },
+  "failed_calls_without_usage": [
+    {
+      "path": "runs-1/tox-dev--filelock/status.json",
+      "stage": "A",
+      "status": "failed",
+      "seconds": 300.0654113329947,
+      "error_type": "ModelError",
+      "error": "Codex exceeded the 300-second call limit."
+    },
+    {
+      "path": "runs-1/pypa--packaging/status.json",
+      "stage": "B",
+      "status": "failed",
+      "seconds": 300.0568496249616,
+      "error_type": "ModelError",
+      "error": "Codex exceeded the 300-second call limit."
+    }
+  ],
+  "bill_usd": null,
+  "human_review_seconds": null,
+  "note": "Token usage deduplicated by thread_id, including shared requirements/retrieval/extraction and reused retry arms. Failed-call tokens and billing unknown; smoke excluded. Cached input is a subset, not added to input.",
+  "selected_plan_seconds": {
+    "A": 906.4875396254938,
+    "B": 1138.491187957814
+  },
+  "shared_and_history_preparation_seconds": 686.8893453336786,
+  "failed_model_seconds": 600.1222609579563
+}

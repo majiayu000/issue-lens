@@ -1,0 +1,201 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R4",
+        "category": "实例存储",
+        "title": "vars 使用私有存储名称，并与公开属性保持一致",
+        "preconditions": [
+          "构造 appname='app'、appauthor='author'、version='1.0' 的实例。"
+        ],
+        "steps": [
+          "读取 vars(dirs)，检查三个私有键及对应值。",
+          "检查 appname、appauthor、version 不作为实例字典键出现，但仍能通过公开属性读取。",
+          "分别赋入合法新值，再比较公开属性与对应私有键的值。",
+          "尝试一次非法赋值并捕获 ValueError，再检查对应私有值。"
+        ],
+        "expected_result": "实例字典包含 _appname、_appauthor、_version，替代三个公开键；合法赋值更新相应私有值，公开 getter 返回同一值；非法赋值不覆盖此前私有值。",
+        "source_ids": [],
+        "rationale": "PRD 明确要求实例字典名称变化，diff 的 setter 在校验之后写入私有字段；直接检查可观察存储结果。",
+        "coverage": "not_found",
+        "incremental_value": "增加 vars 键名、存储值与公开 getter 一致性以及非法赋值不写入的断言。",
+        "existing_tests": [],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "文件系统副作用",
+        "title": "非法赋值失败后读取目录，不在基础目录外创建目录",
+        "preconditions": [
+          "Linux/Unix 环境，将 XDG_DATA_HOME 指向临时根目录下的 base，关闭 root 目录重定向。",
+          "基础目录旁的 escaped 尚不存在，另有包含已知内容的哨兵文件。",
+          "使用合法 appname、appauthor、version 构造 ensure_exists=True 的实例。"
+        ],
+        "steps": [
+          "分别在独立实例上将 appname、appauthor、version 设置为 ../escaped，捕获 ValueError。",
+          "确认失败属性仍为赋值前的合法值。",
+          "读取 user_data_dir 和 user_data_path。",
+          "检查返回路径、实际创建的目录、escaped 是否存在以及哨兵内容。"
+        ],
+        "expected_result": "非法赋值抛出 ValueError且不覆盖原值；返回路径位于 base 内，合法数据目录可被创建；base 旁不出现 escaped，哨兵内容保持原样。",
+        "source_ids": [
+          4536421142
+        ],
+        "rationale": "PRD 明确涉及赋值后 ensure_exists 的越界创建。历史案例仅启发采用真实临时目录和哨兵检查文件系统边界；不迁移克隆、中止、删除或所有权机制，也不把其模型提炼的根因视为目标产品事实。",
+        "coverage": "partial",
+        "incremental_value": "补充异常之后的属性状态、目录读取以及真实文件系统副作用，验证安全目标而不只验证异常。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "dirs = platformdirs.PlatformDirs(\"app\", \"author\", \"1.0\")\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        setattr(dirs, field, value)",
+            "reason": "已有测试断言非法赋值被拒绝，但没有启用 ensure_exists，也没有检查失败后的属性值、目录创建位置或哨兵。",
+            "path": "tests/test_api.py",
+            "line": 217
+          }
+        ],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R3",
+        "category": "公开 API 兼容",
+        "title": "公开属性允许 None，Windows 保留作者目录禁用行为",
+        "preconditions": [
+          "使用公开名称 appname、appauthor、version 操作实例。",
+          "Windows 用例将 get_win_folder 固定为 C:/Local；每项使用独立实例。",
+          "其他支持平台仅验证公开属性及 None 接受行为，不套用 Windows 作者目录结构。"
+        ],
+        "steps": [
+          "分别通过构造参数和后续赋值为三个属性设置 None，读取对应公开属性。",
+          "在 Windows 上保持 appname='app'、version='1.0'，通过构造和赋值分别设置 appauthor=False，读取 user_data_dir。",
+          "在 Windows 上将 appauthor 设置为 None，读取 user_data_dir。",
+          "检查三个公开属性仍可按原名称读写，其属性文档保留应用名、作者及 False/None 行为、版本路径元素的说明。"
+        ],
+        "expected_result": "三个属性均接受并返回 None。Windows 上 appauthor=False 得到 C:/Local/app/1.0，省略作者层；appauthor=None 得到 C:/Local/app/app/1.0。公开名称和相关 API 文档语义保留。",
+        "source_ids": [],
+        "rationale": "覆盖从普通实例字段改为 property 后受影响的明确兼容契约。合法 appname 改名后路径立即更新仍是输入中的待确认要求，不据此扩展验收标准。",
+        "coverage": "partial",
+        "incremental_value": "补充 appauthor=None、构造入口的 None/False、公开 getter 回读以及属性文档语义检查。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "pytest.param(\"appname\", None, (), id=\"appname-none\"),\n        pytest.param(\"appauthor\", False, (\"app\", \"1.0\"), id=\"appauthor-false\"),\n        pytest.param(\"version\", None, (\"author\", \"app\"), id=\"version-none\"),",
+            "reason": "现有参数覆盖 Windows 上 appname=None、version=None 和 appauthor=False 的赋值情况，缺少 appauthor=None。",
+            "path": "tests/test_api.py",
+            "line": 228
+          },
+          {
+            "test_id": "T1",
+            "quote": "mocker.patch(\"platformdirs.windows.get_win_folder\", return_value=\"C:/Local\")\n    dirs = Windows(\"app\", \"author\", \"1.0\")\n    setattr(dirs, field, value)\n    assert Path(dirs.user_data_dir) == Path(os.path.normpath(\"C:/Local\"), *parts)",
+            "reason": "已有测试实际断言赋值后的 Windows 路径；没有覆盖这些值的构造入口、公开属性回读或文档保留。",
+            "path": "tests/test_api.py",
+            "line": 237
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "赋值安全",
+        "title": "三个公开属性在赋值时拒绝越界路径",
+        "preconditions": [
+          "分别在 Linux/Unix、macOS、Windows、Android 的受支持环境中创建合法实例。",
+          "每个非法值使用独立实例；盘符输入仅在 Windows 验证。"
+        ],
+        "steps": [
+          "逐一对 appname、appauthor、version 赋值：../evil、nested/../../evil、..\\evil、/evil、\\evil、//server/share/evil。",
+          "在 Windows 上额外赋值 C:/evil。",
+          "捕获赋值操作产生的异常。"
+        ],
+        "expected_result": "每次赋值立即抛出 ValueError，错误消息准确标明属性名及非法值，无需读取目录属性才触发拒绝。",
+        "source_ids": [],
+        "rationale": "直接覆盖 PRD 的核心赋值契约；路径类型取自所给目标产品测试，不引入其他产品的路径规则。",
+        "coverage": "covered",
+        "incremental_value": "对所列输入和异常断言无新增；跨平台执行情况仍需验证，不能由源码断言推定。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "def test_app_argument_escaping_base_is_rejected_on_assignment(field: str, value: str) -> None:\n    dirs = platformdirs.PlatformDirs(\"app\", \"author\", \"1.0\")\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        setattr(dirs, field, value)",
+            "reason": "该测试通过 _APP_FIELDS 和 _ESCAPING_VALUES 参数化覆盖三个属性及上述非法值，并直接断言赋值抛出指定 ValueError。Windows 盘符项限定在 win32；源码不能证明平台矩阵已执行。",
+            "path": "tests/test_api.py",
+            "line": 216
+          }
+        ],
+        "id": "TC004"
+      },
+      {
+        "requirement_id": "R2",
+        "category": "错误契约",
+        "title": "构造与后续赋值对同一非法值返回相同错误",
+        "preconditions": [
+          "使用所给测试中的三个属性及非法值矩阵；C:/evil 仅用于 Windows。",
+          "构造测试与赋值测试使用相同的平台、属性和输入值。"
+        ],
+        "steps": [
+          "通过构造参数传入非法值，记录异常类型和消息。",
+          "构造合法实例，再通过相同公开属性赋入同一非法值，记录异常类型和消息。",
+          "比较两条入口的结果。"
+        ],
+        "expected_result": "两条入口均抛出 ValueError，消息相同，格式为属性名加 must stay inside the base directory, got 及输入值的 repr。",
+        "source_ids": [],
+        "rationale": "直接验证校验迁移至 setter 后仍保留构造入口的错误契约；不以辅助函数存在代替行为断言。",
+        "coverage": "covered",
+        "incremental_value": "无新增：已有构造和赋值测试对同一参数矩阵断言相同异常类型及完整消息。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "args = {\"appname\": \"app\", \"appauthor\": \"author\", \"version\": \"1.0\"} | {field: value}\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        platformdirs.PlatformDirs(args[\"appname\"], args[\"appauthor\"], args[\"version\"])",
+            "reason": "构造入口使用共享属性和非法值矩阵，断言 ValueError 及完整消息。",
+            "path": "tests/test_api.py",
+            "line": 207
+          },
+          {
+            "test_id": "T1",
+            "quote": "dirs = platformdirs.PlatformDirs(\"app\", \"author\", \"1.0\")\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        setattr(dirs, field, value)",
+            "reason": "赋值入口使用同一矩阵和相同消息表达式，提供同等错误契约覆盖；此判断仅来自所给源码，未执行测试。",
+            "path": "tests/test_api.py",
+            "line": 217
+          }
+        ],
+        "id": "TC005"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "本草稿的真实文件系统用例限于 Linux/Unix user_data 入口；macOS、Windows、Android 的创建副作用，以及其他受影响应用目录入口尚未充分覆盖。所给 T1 也未提供这些副作用断言或平台执行证据。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "所给 T1 的合法嵌套名及双点前后缀仅测试构造时的 appname；三个属性后续赋值的合法嵌套边界尚未充分覆盖。遵循 diff 范围和五条用例限制，未展开更多变体。"
+      },
+      {
+        "requirement_id": "R2",
+        "reason": "相同错误行为已有源码覆盖，但测试结果未提供，也未执行；行为断言不能证明运行时始终只经过一次校验。"
+      },
+      {
+        "requirement_id": "R3",
+        "reason": "合法 appname 赋值后立即改变生成路径有新增测试证据，但 PRD 是否将其列为验收契约仍待确认；本草稿未将其作为已确定要求。文档检查仅涵盖所给属性文档语义，未提供完整 API 文档或生成结果以核对全部文档。"
+      },
+      {
+        "requirement_id": "R4",
+        "reason": "仅在所给 tests/test_api.py 中未发现 vars 存储契约的对应断言；新增草稿尚未执行，此结论不代表整个仓库没有相关测试。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 33681,
+      "cached_input_tokens": 7680,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2985,
+      "reasoning_output_tokens": 108
+    },
+    "thread_id": "01a116bc-c1ad-78e1-8dfc-5864dc9f58f1"
+  },
+  "input_sha256": "9fcc9de99ab0fdfe1beb7b58736ad07579ea796f2648912d3ba3dccc03bd0c4c",
+  "common_input_sha256": "aa9924fdcfa5200d4d3c9b8479e18a817f24dd78b2ae35109ae8ea6ba33d8fb9",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

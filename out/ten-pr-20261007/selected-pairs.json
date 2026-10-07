@@ -1,0 +1,105 @@
+{
+  "status": "10_pairs_verified",
+  "selected": [
+    {
+      "sample": "Textualize--rich",
+      "run": "runs-1",
+      "cases_a": 4,
+      "cases_b": 5,
+      "sources_b": 0,
+      "common_input_sha256": "93b837c0d64851d41fa86331ee49c746c3b0b82e4e66331b250d20195b7a5c48",
+      "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98",
+      "status": "verified_pair"
+    },
+    {
+      "sample": "pallets--click",
+      "run": "runs-1",
+      "cases_a": 4,
+      "cases_b": 5,
+      "sources_b": 0,
+      "common_input_sha256": "90ab994b07805fb2c231eb5a112e51024d28d3d4fd5df2ff838275bca1b276ee",
+      "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98",
+      "status": "verified_pair"
+    },
+    {
+      "sample": "fastapi--typer",
+      "run": "runs-1",
+      "cases_a": 5,
+      "cases_b": 5,
+      "sources_b": 1,
+      "common_input_sha256": "d765344a3fe82a9618bde4ec73cdac3a8a6cd121bf5408b8059ec2e76b93c522",
+      "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98",
+      "status": "verified_pair"
+    },
+    {
+      "sample": "theskumar--python-dotenv",
+      "run": "runs-1",
+      "cases_a": 5,
+      "cases_b": 5,
+      "sources_b": 0,
+      "common_input_sha256": "726c07c9238e9efd31712e65015320912a719300b7eaf31eee2617c42a334d54",
+      "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98",
+      "status": "verified_pair"
+    },
+    {
+      "sample": "tox-dev--platformdirs",
+      "run": "runs-1",
+      "cases_a": 5,
+      "cases_b": 5,
+      "sources_b": 1,
+      "common_input_sha256": "aa9924fdcfa5200d4d3c9b8479e18a817f24dd78b2ae35109ae8ea6ba33d8fb9",
+      "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98",
+      "status": "verified_pair"
+    },
+    {
+      "sample": "tox-dev--filelock",
+      "run": "runs-2",
+      "cases_a": 5,
+      "cases_b": 5,
+      "sources_b": 0,
+      "common_input_sha256": "4491b2229e9dc7d7403eb56985a256fd44b861f746c62d7545d80ca61329c683",
+      "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98",
+      "status": "verified_pair"
+    },
+    {
+      "sample": "pypa--packaging",
+      "run": "runs-2",
+      "cases_a": 4,
+      "cases_b": 4,
+      "sources_b": 0,
+      "common_input_sha256": "6c19cd26bade8b1e70fe274d25bdf66acf73352ba22079ded3210611c9ff92ce",
+      "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98",
+      "status": "verified_pair"
+    },
+    {
+      "sample": "cpburnz--python-pathspec",
+      "run": "runs-1",
+      "cases_a": 5,
+      "cases_b": 4,
+      "sources_b": 0,
+      "common_input_sha256": "0eff0e4cc45ba488450e6d1e1df5fc65fe644b554ec38b5b6231568668b1eb5d",
+      "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98",
+      "status": "verified_pair"
+    },
+    {
+      "sample": "tqdm--tqdm",
+      "run": "runs-1",
+      "cases_a": 5,
+      "cases_b": 5,
+      "sources_b": 1,
+      "common_input_sha256": "794e115ee3f2690e525665f06a4a9cdfc9f278d8d48e7f8df4ca3843832b0192",
+      "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98",
+      "status": "verified_pair"
+    },
+    {
+      "sample": "python-humanize--humanize",
+      "run": "runs-1",
+      "cases_a": 4,
+      "cases_b": 4,
+      "sources_b": 1,
+      "common_input_sha256": "130d6a8c59820a205dd3d08205d83f12ce2e28d11e4d1cc740297eb4accb918f",
+      "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98",
+      "status": "verified_pair"
+    }
+  ]
+}

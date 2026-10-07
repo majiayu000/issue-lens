@@ -1,0 +1,130 @@
+{
+  "id": "theskumar--python-dotenv",
+  "repo": "theskumar/python-dotenv",
+  "pr": 700,
+  "head_sha": "004b454e37f415ed7828ed4c9426816d8c1b608f",
+  "native_test_files": [
+    "tests/test_cli.py"
+  ],
+  "commands": [
+    {
+      "command": [
+        "/Users/apple/.local/bin/python3.12",
+        "-m",
+        "venv",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/theskumar--python-dotenv"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/theskumar--python-dotenv",
+      "exit_code": 0,
+      "seconds": 9.478,
+      "log": "native-logs/theskumar--python-dotenv/01-venv.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/theskumar--python-dotenv/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "-e",
+        ".",
+        "pytest>=9.0.3",
+        "pytest-cov",
+        "click",
+        "ipython"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/theskumar--python-dotenv",
+      "exit_code": 0,
+      "seconds": 81.354,
+      "log": "native-logs/theskumar--python-dotenv/02-install.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/theskumar--python-dotenv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "--junitxml",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/theskumar--python-dotenv/pytest.xml",
+        "tests/test_cli.py"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/theskumar--python-dotenv",
+      "exit_code": 1,
+      "seconds": 5.762,
+      "log": "native-logs/theskumar--python-dotenv/03-pytest.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/theskumar--python-dotenv/bin/python",
+        "-m",
+        "pip",
+        "freeze"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/theskumar--python-dotenv",
+      "exit_code": 0,
+      "seconds": 1.265,
+      "log": "native-logs/theskumar--python-dotenv/04-freeze.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/theskumar--python-dotenv/bin/python",
+        "-c",
+        "import sys,platform;print(sys.version);print(platform.platform())"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/theskumar--python-dotenv",
+      "exit_code": 0,
+      "seconds": 0.077,
+      "log": "native-logs/theskumar--python-dotenv/05-environment.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/theskumar--python-dotenv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "--junitxml",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/theskumar--python-dotenv/pytest-path-fixed.xml",
+        "tests/test_cli.py"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/theskumar--python-dotenv",
+      "exit_code": 0,
+      "seconds": 2.678,
+      "log": "native-logs/theskumar--python-dotenv/06-pytest-path-fixed.log",
+      "environment_overrides": {
+        "PATH": "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/theskumar--python-dotenv/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/apple/.grok/bin:/Users/apple/.bun/bin:/Users/apple/bin:/Users/apple/.antigravity/antigravity/bin:/Users/apple/.bun/bin:/Users/apple/.local/state/fnm_multishells/17151_1791382100800/bin:/Users/apple/.local/state/fnm_multishells/17141_1791382100756/bin:/Library/Frameworks/Python.framework/Versions/3.11/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/opt/homebrew/bin:/Users/apple/.codex/tmp/arg0/codex-arg07GGNig:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/apple/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/apple/.grok/bin:/Users/apple/.bun/bin:/Users/apple/bin:/Users/apple/.antigravity/antigravity/bin:/Users/apple/.local/bin:/Users/apple/.local/state/fnm_multishells/35110_1791264452345/bin:/Users/apple/.local/state/fnm_multishells/35104_1791264452311/bin:/Library/Frameworks/Python.framework/Versions/3.11/bin:/opt/homebrew/sbin:/Library/Frameworks/Python.framework/Versions/3.10/bin:/Users/apple/.cargo/bin:/Users/lifcc/.local/bin:/Users/apple/.orbstack/bin:/var/folders/58/pj_81qw13l59j103s0njbw1c0000gn/T/tmp.juxiuWOe45/install:/Users/apple/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS:/Users/lifcc/.local/bin:/Users/apple/.orbstack/bin:/var/folders/58/pj_81qw13l59j103s0njbw1c0000gn/T/tmp.juxiuWOe45/install"
+      }
+    }
+  ],
+  "environment": {
+    "python": "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/theskumar--python-dotenv/bin/python",
+    "python_base": "/Users/apple/.local/bin/python3.12",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+  },
+  "result": "passed",
+  "test_counts": {
+    "tests": 45,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 45
+  },
+  "initial_git_status": "",
+  "final_git_status": "",
+  "platform_limits": [
+    "Only the local macOS Python 3.12 environment was run; supported OS/Python matrices were not run."
+  ],
+  "notes": "Current diff changes CLI get missing/None versus empty-string behavior. The full CLI file exercises real CliRunner and isolated files. Error exit contracts for missing/bare keys should remain distinct from valid empty values.",
+  "evidence_root": "/Users/apple/.codex/task-evidence/issue-lens-20261007",
+  "initial_test_counts": {
+    "tests": 45,
+    "failures": 15,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 30
+  },
+  "environment_correction": "First run lacked venv bin in PATH; tests/test_lib.py:15 starts dotenv by command name. Only PATH was corrected; initial 15 FileNotFoundError failures retained."
+}

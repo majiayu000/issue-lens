@@ -1,0 +1,186 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R2",
+        "category": "先换行再放置",
+        "title": "CJK 词容不下当前行但能放入完整新行时保持整词",
+        "preconditions": [
+          "输入为“abc 中文”，换行宽度为 6 个单元格。",
+          "使用默认折叠，无对齐填充；“中文”占 4 个单元格，当前行仅剩 2 个。"
+        ],
+        "steps": [
+          "调用 Text(\"abc 中文\").wrap(Console(), 6)。",
+          "检查非空白字符在各行的分布和各行单元格宽度。"
+        ],
+        "expected_result": "产生两行，第一行非空白文本为“abc”，第二行为完整的“中文”；不得把“中”塞入第一行或拆开该词；每行不超过 6 个单元格。不将行尾分隔空格是否保留作为验收断言。",
+        "source_ids": [],
+        "rationale": "直接覆盖 PRD 的先换行契约，并验证改动后的剩余空间判断使用单元格宽度。未借用其他产品功能。",
+        "coverage": "partial",
+        "incremental_value": "补充能放入新行的 CJK 词：字符数能放入当前行，但实际显示宽度不能，区别于已有 ASCII 整词换行。",
+        "existing_tests": [
+          {
+            "test_id": "T2",
+            "quote": "    text = Text(\"foo bar baz\")\n    lines = text.wrap(Console(), 3)\n    print(repr(lines))\n    assert len(lines) == 3\n    assert lines[0] == Text(\"foo\")\n    assert lines[1] == Text(\"bar\")\n    assert lines[2] == Text(\"baz\")",
+            "reason": "已有断言覆盖 ASCII 词移到新行，但单宽字符数与显示宽度相同，不能验证本用例的 CJK 宽度差异。",
+            "path": "tests/test_text.py",
+            "line": 405
+          }
+        ],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "换行与双宽折叠组合",
+        "title": "已有前置词时连续 CJK 长词跨多个奇数宽度行",
+        "preconditions": [
+          "输入为“AB 中文测试”，换行宽度为 5。",
+          "使用默认折叠，无对齐填充；CJK 长词占 8 个单元格，超过完整行宽。"
+        ],
+        "steps": [
+          "调用 Text(\"AB 中文测试\").wrap(Console(), 5)。",
+          "检查前置词与长词的分行位置。",
+          "检查 CJK 各段拼接结果及每行单元格宽度。"
+        ],
+        "expected_result": "产生三行，非空白文本依次为“AB”、“中文”、“测试”；CJK 长词从新行开始，各段完整、顺序正确，均不超过 5 个单元格。不要求特定行尾空格处理。",
+        "source_ids": [],
+        "rationale": "组合 R2 的先换行契约与 R1 的双宽字符完整性，针对 diff 中折叠段长度参与后续分割位置计算的边界；这是待验证风险，不是已确认根因。",
+        "coverage": "partial",
+        "incremental_value": "新增独立前置词之后的 CJK 长词折叠，验证非零起始位置与字符数、单元格宽度差异的组合；已有混排用例没有词间分隔。",
+        "existing_tests": [
+          {
+            "test_id": "T2",
+            "quote": "    text = Text(\"XX 12345678912\")\n    lines = text.wrap(Console(), 4)\n\n    assert lines._lines == [\n        Text(\"XX \"),\n        Text(\"1234\"),\n        Text(\"5678\"),\n        Text(\"912\"),\n    ]",
+            "reason": "验证前置词之后长词从新行开始折叠，但全部为单宽字符，未覆盖 CJK 折叠段的字符数与单元格宽度差异。",
+            "path": "tests/test_text.py",
+            "line": 492
+          }
+        ],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "双宽字符完整性",
+        "title": "折行边界落在双宽字符内部时保留全部字符",
+        "preconditions": [
+          "使用 Rich Text 默认折叠行为，无样式和对齐填充。",
+          "输入为“わさび”，换行宽度为 3 个终端单元格。"
+        ],
+        "steps": [
+          "调用 Text(\"わさび\").wrap(Console(), 3)。",
+          "检查各行纯文本、单元格宽度及按行拼接后的文本。"
+        ],
+        "expected_result": "各行依次为“わ”“さ”“び”；每行宽度为 2，不超过 3；拼接后严格等于原文，无遗漏、重复或替代空格。",
+        "source_ids": [],
+        "rationale": "直接验证 PRD 指定的双宽字符内部折行边界。没有提供历史 issue 提炼来源，不作根因推断。",
+        "coverage": "covered",
+        "incremental_value": "无新增触发边界；所给测试已有同等输入、宽度和逐行文本断言，可优先复用。",
+        "existing_tests": [
+          {
+            "test_id": "T2",
+            "quote": "    text = Text(\"わさび\")\n    lines = text.wrap(Console(), 3)\n    assert lines._lines == [\n        Text(\"わ\"),\n        Text(\"さ\"),\n        Text(\"び\"),\n    ]",
+            "reason": "实际触发宽度落在双宽字符内部，逐行精确断言足以验证字符完整性和行宽。仅审查源码，未执行。",
+            "path": "tests/test_text.py",
+            "line": 443
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "混合宽度输出",
+        "title": "单宽前缀与连续 CJK 混排折叠后输出完整",
+        "preconditions": [
+          "输入为“123ありがとうございました”，使用默认折叠。",
+          "Console 宽度为 20，显式换行宽度为 8；该组合仅复用已有触发条件，不将宽度优先级另立验收要求。"
+        ],
+        "steps": [
+          "调用 Text(\"123ありがとうございました\").wrap(console, width=8)。",
+          "通过 console.capture() 捕获打印这些行的输出。",
+          "检查逐行文本和去除换行后的字符序列。"
+        ],
+        "expected_result": "捕获输出为“123あり\\nがとうご\\nざいまし\\nた\\n”；各行不超过 8 个单元格，去除换行后严格等于输入。",
+        "source_ids": [],
+        "rationale": "覆盖 diff 直接新增的混合单宽、双宽字符回归场景。测试注释中的 issue 交叉引用不能证明根因或修复关系，且不作为历史来源。",
+        "coverage": "covered",
+        "incremental_value": "无新增边界；所给测试已断言相同条件下的最终捕获输出。",
+        "existing_tests": [
+          {
+            "test_id": "T2",
+            "quote": "    text = Text(\"123ありがとうございました\")\n    console = Console(width=20)  # let's ensure the width passed to wrap() wins.\n\n    wrapped_lines = text.wrap(console, width=8)\n    with console.capture() as capture:\n        console.print(wrapped_lines)\n\n    assert capture.get() == \"123あり\\nがとうご\\nざいまし\\nた\\n\"",
+            "reason": "同一混排输入和折行宽度，且验证了 Console 捕获结果，而非仅验证底层分割函数。",
+            "path": "tests/test_text.py",
+            "line": 456
+          }
+        ],
+        "id": "TC004"
+      },
+      {
+        "requirement_id": "R2",
+        "category": "长词多行折叠",
+        "title": "当前行空间不足且完整新行也容不下长词",
+        "preconditions": [
+          "输入为“1234 12345678”，换行宽度为 7。",
+          "使用默认折叠，无对齐填充。"
+        ],
+        "steps": [
+          "调用 Text(\"1234 12345678\").wrap(Console(), 7)。",
+          "检查长词是否从新行开始，以及折叠后的各段顺序与长度。"
+        ],
+        "expected_result": "各行依次为“1234 ”、“1234567”、“8”；长词从新行开始，完整保留且按宽度分为两段，无超宽行。",
+        "source_ids": [],
+        "rationale": "覆盖 PRD 明确的两阶段行为，作为双宽修复时的基础 ASCII 回归契约。",
+        "coverage": "covered",
+        "incremental_value": "无新增边界；所给测试已有同等前置词、超长词和完整逐行断言。",
+        "existing_tests": [
+          {
+            "test_id": "T2",
+            "quote": "    text = Text(\"1234 12345678\")\n    lines = text.wrap(Console(), 7)\n    assert lines._lines == [\n        Text(\"1234 \"),\n        Text(\"1234567\"),\n        Text(\"8\"),\n    ]",
+            "reason": "同时验证当前行剩余空间不足、长词超过整行宽度以及从新行开始多行折叠。",
+            "path": "tests/test_text.py",
+            "line": 424
+          }
+        ],
+        "id": "TC005"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "宽度为 1 时无法同时满足双宽字符完整保留和每行不超宽；PRD 未定义取舍。所给源码可提示该边界，但不能据此确定验收输出，需先明确契约。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "所给测试未提供 Linux、OSX、Windows 的执行证据；本草稿未覆盖终端实际显示差异或 Python 支持版本矩阵，也未执行任何测试。审查范围仅为提供的两个测试文件及补丁。"
+      },
+      {
+        "requirement_id": "R2",
+        "reason": "连续空格、首尾空白的精确输出，以及长词折叠后后续词是否复用末行剩余空间，虽有补丁测试，但 PRD 未明确为验收要求。本草稿仅验证核心换行契约，不将这些输出提升为产品要求；标点禁则和完整浏览器空白一致性属于明确排除范围。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "显式换行宽度与 Console 宽度的优先级尚未被 PRD 定义；已有混排用例保留该触发条件，但未单独覆盖优先级契约。chop_cells 接口变更和禁用折叠时的裁剪行为同样未被声明为需求，不新增测试主题。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "sources 为空，没有可用于补充故障边界的历史 issue 提炼或评论。测试注释、PRD 中的 issue 编号不替代所给来源证据，因此所有用例 source_ids 均为空。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 36878,
+      "cached_input_tokens": 3456,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2775,
+      "reasoning_output_tokens": 131
+    },
+    "thread_id": "01a116b4-bd66-7db2-a2da-142648bee550"
+  },
+  "input_sha256": "887594711f0416bf6087fc5c01f134579cc2e4390ec5c0bca0b146fc153c239e",
+  "common_input_sha256": "93b837c0d64851d41fa86331ee49c746c3b0b82e4e66331b250d20195b7a5c48",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

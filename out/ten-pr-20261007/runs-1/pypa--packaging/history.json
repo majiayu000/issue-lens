@@ -1,0 +1,18 @@
+{
+  "sources": [],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 19275,
+      "cached_input_tokens": 7680,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 42,
+      "reasoning_output_tokens": 31
+    },
+    "thread_id": "01a116c0-1851-7a12-a8c5-d476678eb7e0"
+  },
+  "target_repo_excluded": "pypa/packaging",
+  "issue_creation_cutoff": "2026-10-06T14:23:26Z",
+  "pr_evidence_note": "Current bounded GitHub snapshots, not time-travel evidence."
+}

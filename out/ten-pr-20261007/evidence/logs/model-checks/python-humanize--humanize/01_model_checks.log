@@ -1,0 +1,16 @@
+[1m============================= test session starts ==============================[0m
+platform darwin -- Python 3.12.12, pytest-9.1.1, pluggy-1.6.0 -- /Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python
+codspeed: 5.0.3 (disabled, mode: walltime, callgraph: not supported, timer_resolution: 41.7ns)
+cachedir: .pytest_cache
+benchmark: 5.3.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: /Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize
+configfile: pyproject.toml
+plugins: cov-7.1.0, benchmark-5.3.0, codspeed-5.0.3
+[1mcollecting ... [0mcollected 3 items
+
+::test_explicit_none_large_integer [32mPASSED[0m[32m                                [ 33%][0m
+::test_dense_adjacent_large_integers [32mPASSED[0m[32m                              [ 66%][0m
+::test_dense_405_digits [32mPASSED[0m[32m                                           [100%][0m
+
+- generated xml file: /Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/python-humanize--humanize/model_checks.xml -
+[32m============================== [32m[1m3 passed[0m[32m in 0.05s[0m[32m ===============================[0m

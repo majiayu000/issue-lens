@@ -1,0 +1,108 @@
+{
+  "id": "fastapi--typer",
+  "repo": "fastapi/typer",
+  "pr": 1821,
+  "head_sha": "5bec961514de7c5da842c6e3170727022388414b",
+  "native_test_files": [
+    "tests/test_types.py"
+  ],
+  "commands": [
+    {
+      "command": [
+        "/Users/apple/.local/bin/python3.12",
+        "-m",
+        "venv",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+      "exit_code": 0,
+      "seconds": 16.237,
+      "log": "native-logs/fastapi--typer/01-venv.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "-e",
+        ".",
+        "pytest>=9",
+        "pytest-cov>=7",
+        "pytest-sugar>=1",
+        "pytest-xdist>=3.6.1"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+      "exit_code": 0,
+      "seconds": 37.745,
+      "log": "native-logs/fastapi--typer/02-install.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "--junitxml",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/fastapi--typer/pytest.xml",
+        "tests/test_types.py"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+      "exit_code": 0,
+      "seconds": 1.909,
+      "log": "native-logs/fastapi--typer/03-pytest.log",
+      "environment_overrides": {
+        "TERMINAL_WIDTH": "3000",
+        "_TYPER_FORCE_DISABLE_TERMINAL": "1",
+        "_TYPER_RUN_INSTALL_COMPLETION_TESTS": "1"
+      }
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+        "-m",
+        "pip",
+        "freeze"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+      "exit_code": 0,
+      "seconds": 0.885,
+      "log": "native-logs/fastapi--typer/04-freeze.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+        "-c",
+        "import sys,platform;print(sys.version);print(platform.platform())"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+      "exit_code": 0,
+      "seconds": 0.069,
+      "log": "native-logs/fastapi--typer/05-environment.log",
+      "environment_overrides": {}
+    }
+  ],
+  "environment": {
+    "python": "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+    "python_base": "/Users/apple/.local/bin/python3.12",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+  },
+  "result": "passed",
+  "test_counts": {
+    "tests": 9,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 9
+  },
+  "initial_git_status": "",
+  "final_git_status": "",
+  "platform_limits": [
+    "Only the local macOS Python 3.12 environment was run; supported OS/Python matrices were not run."
+  ],
+  "notes": "Current diff changes empty/default list argument conversion. The types suite compares explicit values, options, list arguments and envvar defaults. This baseline is runtime validation on Python 3.12, not a full supported-version matrix.",
+  "evidence_root": "/Users/apple/.codex/task-evidence/issue-lens-20261007"
+}

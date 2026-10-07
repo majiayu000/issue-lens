@@ -1,0 +1,22 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.12, pytest-9.1.1, pluggy-1.6.0 -- /Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/pypa--packaging/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging
+configfile: pyproject.toml
+plugins: hypothesis-6.168.5
+collecting ... collected 10 items
+
+::test_whitespace_not_version[===\t] PASSED                              [ 10%]
+::test_whitespace_not_version[ \t=== \t] PASSED                          [ 20%]
+::test_empty_arbitrary_all_set_positions[>=1,===,<=2] PASSED             [ 30%]
+::test_empty_arbitrary_all_set_positions[===x,===] PASSED                [ 40%]
+::test_empty_arbitrary_all_set_positions[=== \t,>=1] PASSED              [ 50%]
+::test_empty_arbitrary_all_set_positions[>=1, ===\t ,<=2] PASSED         [ 60%]
+::test_nonempty_three_entries[===bar===] PASSED                          [ 70%]
+::test_nonempty_three_entries[===arbitrarystring] PASSED                 [ 80%]
+::test_nonempty_mixed_entries[===arbitrarystring,>=1] PASSED             [ 90%]
+::test_nonempty_mixed_entries[>=1,===arbitrarystring] PASSED             [100%]
+
+- generated xml file: /Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/pypa--packaging/model_checks.xml -
+============================== 10 passed in 0.76s ==============================

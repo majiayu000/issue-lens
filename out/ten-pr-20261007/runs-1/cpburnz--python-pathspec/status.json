@@ -1,0 +1,50 @@
+{
+  "sample": "cpburnz--python-pathspec",
+  "head_sha": "73120f31ad255c581f267b8515f274d7862210de",
+  "diff_sha256": "5404ee7719f9af582c2c54504309cd8f0ae863b6a94f3e4a998bd5e399fcdd7c",
+  "requested_model": "gpt-6.1-sol",
+  "started_at": "2026-10-07T14:29:25.855244+00:00",
+  "status": "paired_drafts_not_executed",
+  "stages": {
+    "requirements": {
+      "status": "completed",
+      "seconds": 25.976105084177107
+    },
+    "retrieval": {
+      "status": "completed",
+      "seconds": 15.249204375082627
+    },
+    "extraction": {
+      "status": "completed",
+      "seconds": 2.9159709811210632e-06
+    },
+    "pr_evidence": {
+      "status": "completed",
+      "seconds": 4.665926098823547e-06
+    },
+    "B": {
+      "status": "completed",
+      "seconds": 94.35844079195522
+    },
+    "B_validation": {
+      "status": "completed",
+      "seconds": 0.0006359589751809835
+    },
+    "A": {
+      "status": "completed",
+      "seconds": 95.96558408392593
+    },
+    "A_validation": {
+      "status": "completed",
+      "seconds": 0.00035204109735786915
+    }
+  },
+  "common_input_sha256": "0eff0e4cc45ba488450e6d1e1df5fc65fe644b554ec38b5b6231568668b1eb5d",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98",
+  "sources_count": 0,
+  "requirements_count": 3,
+  "order": [
+    "B",
+    "A"
+  ]
+}

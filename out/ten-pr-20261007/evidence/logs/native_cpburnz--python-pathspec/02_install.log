@@ -1,0 +1,43 @@
+Processing /Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Ignoring tomli: markers 'python_version < "3.11"' don't match your environment
+Collecting pytest>=8
+  Using cached pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+Collecting pytest-benchmark>=5
+  Downloading pytest_benchmark-5.3.0-py3-none-any.whl.metadata (31 kB)
+Collecting typing-extensions>=4.4
+  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting iniconfig>=1.0.1 (from pytest>=8)
+  Using cached iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+Collecting packaging>=22 (from pytest>=8)
+  Using cached packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting pluggy<2,>=1.5 (from pytest>=8)
+  Using cached pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest>=8)
+  Using cached pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting py-cpuinfo2>=10.1 (from pytest-benchmark>=5)
+  Downloading py_cpuinfo2-10.1.1-py3-none-any.whl.metadata (7.5 kB)
+Using cached pytest-9.1.1-py3-none-any.whl (386 kB)
+Downloading pytest_benchmark-5.3.0-py3-none-any.whl (48 kB)
+Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Using cached iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+Using cached packaging-26.3-py3-none-any.whl (129 kB)
+Using cached pluggy-1.6.0-py3-none-any.whl (20 kB)
+Downloading py_cpuinfo2-10.1.1-py3-none-any.whl (23 kB)
+Using cached pygments-2.21.0-py3-none-any.whl (1.3 MB)
+Building wheels for collected packages: pathspec
+  Building wheel for pathspec (pyproject.toml): started
+  Building wheel for pathspec (pyproject.toml): finished with status 'done'
+  Created wheel for pathspec: filename=pathspec-1.1.1-py3-none-any.whl size=60873 sha256=3225ed24189550025bb831e5c9219085dc723848e5741fd9c56c54bc2b9f0533
+  Stored in directory: /Users/apple/Library/Caches/pip/wheels/35/51/71/009b501a4c8329435a4adfd8c2f3377593175a301f7c39d832
+Successfully built pathspec
+Installing collected packages: typing-extensions, pygments, py-cpuinfo2, pluggy, pathspec, packaging, iniconfig, pytest, pytest-benchmark
+Successfully installed iniconfig-2.3.1 packaging-26.3 pathspec-1.1.1 pluggy-1.6.0 py-cpuinfo2-10.1.1 pygments-2.21.0 pytest-9.1.1 pytest-benchmark-5.3.0 typing-extensions-4.16.0
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.1
+[notice] To update, run: /Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python -m pip install --upgrade pip

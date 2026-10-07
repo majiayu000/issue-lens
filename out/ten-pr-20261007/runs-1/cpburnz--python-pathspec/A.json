@@ -1,0 +1,184 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R3",
+        "category": "受影响输入类型",
+        "title": "bytes 模式经共享裁剪逻辑后保持返回类型及匹配语义",
+        "preconditions": [
+          "分别使用两种模式类的 pattern_to_regex。",
+          "使用 ASCII 输入，BS 表示一个实际反斜杠字符；仅使用 Python 标准正则进行内存匹配。"
+        ],
+        "steps": [
+          "分别将 'foo' + BS * n + ' ' 编码为 ASCII bytes，n 为 2、3，并调用 pattern_to_regex。",
+          "检查返回的正则类型与 include 值，编译返回正则。",
+          "n=2 时匹配含一个反斜杠的 bytes 路径及追加空格的路径；n=3 时匹配含一个反斜杠且带空格的 bytes 路径及去掉空格的路径。"
+        ],
+        "expected_result": "两种模式类均返回 bytes 正则且 include 为 True；n=2 只匹配不带空格的候选，n=3 只匹配带空格的候选。",
+        "source_ids": [],
+        "rationale": "所给两份实现均声明支持 str 和 bytes，且 bytes 解码后经过本次修改的共享函数；这是受改动影响的既有类型契约。",
+        "coverage": "not_found",
+        "incremental_value": "补充 bytes 解码、裁剪、重新编码链路；所给 T1 仅使用 str，未发现同等测试。",
+        "existing_tests": [],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "裁剪范围回归",
+        "title": "裁剪尾随空格时不删除前导空格",
+        "preconditions": [
+          "分别使用两种模式类；BS 表示一个实际反斜杠字符。",
+          "使用内存字符串，不进行路径分隔符归一化。"
+        ],
+        "steps": [
+          "构造模式 ' foo' + BS * 2 + ' '。",
+          "分别匹配 ' foo' + BS、'foo' + BS 和 ' foo' + BS + ' '。"
+        ],
+        "expected_result": "仅带前导空格且没有尾随空格的候选匹配；去掉前导空格或保留未转义尾随空格的候选均不匹配。",
+        "source_ids": [],
+        "rationale": "diff 替换了两种模式类的裁剪逻辑，原有注释明确要求保留前导空格；本用例验证修改只影响应裁剪的末尾字符。",
+        "coverage": "not_found",
+        "incremental_value": "补充前导空格与偶数反斜杠裁剪同时出现的边界；所给 T1 未发现该触发条件。",
+        "existing_tests": [],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R3",
+        "category": "接口与后端一致性",
+        "title": "PathSpec 在明确选择的后端上保持奇偶匹配契约",
+        "preconditions": [
+          "simple 后端可用；仅在对应可选依赖可用时纳入 re2、hyperscan，并记录未参与的后端。",
+          "BS 表示一个实际反斜杠字符；所有含字面反斜杠的路径显式设置 separators=('/',)，不依赖操作系统默认分隔符。"
+        ],
+        "steps": [
+          "分别通过 PathSpec.from_lines('gitignore', patterns, backend=后端名) 编译单条模式，模式为 'foo' + BS * 2 + ' ' 或 'foo' + BS + ' '。",
+          "偶数模式分别匹配 'foo' + BS 和 'foo' + BS + ' '；奇数模式分别匹配 'foo ' 和 'foo'。",
+          "对每个已纳入后端比较上述布尔结果。"
+        ],
+        "expected_result": "每个已纳入后端的偶数模式结果依次为 True、False，奇数模式结果依次为 True、False；后端之间结果一致。",
+        "source_ids": [],
+        "rationale": "R3 要求修复落实到 PathSpec；PRD 又明确提到三个后端的比较。新增明确选择后端的验证，不将 PRD 的执行声明当作本次验证结果。",
+        "coverage": "partial",
+        "incremental_value": "补充显式选择 simple、re2、hyperscan 的同输入比较；T1 的 PathSpec 测试未传 backend 参数。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "\t\tself.assertIs(spec.match_file(f'foo{BS}', separators=('/',)), True)\n\t\tself.assertIs(spec.match_file(f'foo{BS} ', separators=('/',)), False)\n\n\t\tspec = PathSpec.from_lines('gitignore', [f'foo{BS} '])\n\t\tself.assertIs(spec.match_file('foo '), True)\n\t\tself.assertIs(spec.match_file('foo'), False)",
+            "reason": "所给方法中 spec 的偶数模式由 PathSpec.from_lines 构造，此片段包含偶数正反断言以及奇数模式构造与正反断言；已有接口覆盖，但没有显式后端矩阵。",
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "line": 106
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "模式类基础契约",
+        "title": "偶数反斜杠后的单个尾随空格被裁剪",
+        "preconditions": [
+          "分别使用 GitIgnoreBasicPattern 和 GitIgnoreSpecPattern；BS 表示一个实际反斜杠字符。",
+          "使用内存字符串匹配，不创建文件，不将反斜杠转换为路径分隔符。"
+        ],
+        "steps": [
+          "分别构造 'foo' + BS * n + ' '，其中 n 为 2、4。",
+          "调用模式对象的 match_file，分别匹配 'foo' + BS * (n / 2) 及该字符串追加一个空格的路径。"
+        ],
+        "expected_result": "两种模式类均匹配含 n / 2 个字面反斜杠且不带尾随空格的路径；不匹配追加空格的路径。以 match_file 返回值是否为 None 判断匹配。",
+        "source_ids": [],
+        "rationale": "直接验证 R1 的裁剪与字面反斜杠匹配契约；2、4 个反斜杠作为同一用例的数据组，不借用未提供的历史 issue。",
+        "coverage": "covered",
+        "incremental_value": "无新增边界；所给 T1 已对两种模式类断言这两组输入的正反匹配。本方案未执行测试。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 2} ', f'foo{BS}', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 2} ', f'foo{BS} ', False)",
+            "reason": "实际触发条件为两个反斜杠加空格，分别断言去空格路径匹配和保留空格路径不匹配，且遍历两种模式类。",
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "line": 54
+          },
+          {
+            "test_id": "T1",
+            "quote": "\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 4} ', f'foo{BS * 2}', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 4} ', f'foo{BS * 2} ', False)",
+            "reason": "四个反斜杠输入也有对应正反断言；辅助方法用 actual is not None 与 expected 比较。",
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "line": 66
+          }
+        ],
+        "id": "TC004"
+      },
+      {
+        "requirement_id": "R2",
+        "category": "模式类基础契约",
+        "title": "奇数反斜杠后的转义尾随空格继续保留",
+        "preconditions": [
+          "分别使用 GitIgnoreBasicPattern 和 GitIgnoreSpecPattern；BS 表示一个实际反斜杠字符。",
+          "使用内存字符串匹配。"
+        ],
+        "steps": [
+          "分别构造 'foo' + BS * n + ' '，其中 n 为 1、3。",
+          "分别匹配 'foo' + BS * ((n - 1) / 2) + ' ' 及去掉末尾空格的路径。"
+        ],
+        "expected_result": "两种模式类均只匹配保留尾随空格的路径；不匹配去掉该空格的路径。",
+        "source_ids": [],
+        "rationale": "验证 R2 明确要求的行为保持，防止偶数分支修复误伤奇数分支。",
+        "coverage": "covered",
+        "incremental_value": "无新增边界；T1 已覆盖 1、3 个反斜杠及两种模式类的正反匹配。本方案未执行测试。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS} ', f'foo ', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS} ', f'foo', False)",
+            "reason": "一个反斜杠的触发条件和保留空格的正反断言与本用例相同。",
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "line": 75
+          },
+          {
+            "test_id": "T1",
+            "quote": "\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 3} ', f'foo{BS} ', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 3} ', f'foo{BS}', False)",
+            "reason": "三个反斜杠时同时验证字面反斜杠和转义空格，未仅依据测试名称判断覆盖。",
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "line": 87
+          }
+        ],
+        "id": "TC005"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "多个尾随空格、转义空格后再跟未转义空格，以及尾随制表符的期望尚未明确。实现只对最后一个空格前紧邻反斜杠的情形检查奇偶，其余调用 rstrip()；注释不足以确认这些组合的产品契约，需澄清后再形成可判定用例。"
+      },
+      {
+        "requirement_id": "R2",
+        "reason": "当前方案验证奇数反斜杠加单个尾随空格，未覆盖转义空格与后续空白混合的行为；不将单空格要求外推为混合空白规则。"
+      },
+      {
+        "requirement_id": "R3",
+        "reason": "所给 T1 未显式验证 GitIgnoreSpec 包装接口，且正则归一化相等断言只针对 GitIgnoreBasicPattern；两种模式类的直接匹配不能证明这些入口或断言已有同等覆盖。为遵守 diff 范围内最多五条优先用例，本稿暂未展开。"
+      },
+      {
+        "requirement_id": "R3",
+        "reason": "可选后端的实际可用环境未提供，接口用例需记录未参与的后端；也未提供可复核的 Git 对照输出。没有将 PRD 的本地比较声明视为本次已执行或通过。"
+      },
+      {
+        "requirement_id": "R3",
+        "reason": "基线摘要声明六项失败，但只列出四个 failed_cases，另两项的归属无法确认。仅审查了所给测试文件和补丁，不能据此判断整个仓库的覆盖或失败情况；sources 为空，也无法补充历史 issue 边界。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 31928,
+      "cached_input_tokens": 13312,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2923,
+      "reasoning_output_tokens": 87
+    },
+    "thread_id": "01a116c6-fb78-76b3-b4ba-e58b80e9a3b5"
+  },
+  "input_sha256": "1028fd9eb1b828e8dbba2796400314de72ad7116d7ec4a46aec31cbc4572c412",
+  "common_input_sha256": "0eff0e4cc45ba488450e6d1e1df5fc65fe644b554ec38b5b6231568668b1eb5d",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

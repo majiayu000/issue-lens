@@ -1,0 +1,47 @@
+{
+  "samples": [
+    {
+      "id": "Textualize--rich",
+      "status": "paired_drafts_not_executed"
+    },
+    {
+      "id": "pallets--click",
+      "status": "paired_drafts_not_executed"
+    },
+    {
+      "id": "fastapi--typer",
+      "status": "paired_drafts_not_executed"
+    },
+    {
+      "id": "theskumar--python-dotenv",
+      "status": "paired_drafts_not_executed"
+    },
+    {
+      "id": "tox-dev--platformdirs",
+      "status": "paired_drafts_not_executed"
+    },
+    {
+      "id": "tox-dev--filelock",
+      "status": "failed",
+      "error_type": "ModelError"
+    },
+    {
+      "id": "pypa--packaging",
+      "status": "failed",
+      "error_type": "ModelError"
+    },
+    {
+      "id": "cpburnz--python-pathspec",
+      "status": "paired_drafts_not_executed"
+    },
+    {
+      "id": "tqdm--tqdm",
+      "status": "paired_drafts_not_executed"
+    },
+    {
+      "id": "python-humanize--humanize",
+      "status": "paired_drafts_not_executed"
+    }
+  ],
+  "status": "failed"
+}

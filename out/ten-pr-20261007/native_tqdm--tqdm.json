@@ -1,0 +1,186 @@
+{
+  "id": "tqdm--tqdm",
+  "repo": "tqdm/tqdm",
+  "pr": 1830,
+  "head_sha": "24b9e1e08a097f1c30f2d235b63f9eb25ba47974",
+  "checkout": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+  "environment": {
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "base_python": "/Users/apple/.local/bin/python3.12",
+    "venv": "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm",
+    "runtime": "3.12.12 (main, Dec 17 2025, 21:07:08) [Clang 21.1.4 ]\nmacOS-26.5.2-arm64-arm-64bit"
+  },
+  "commands": [
+    {
+      "label": "venv",
+      "argv": [
+        "/Users/apple/.local/bin/python3.12",
+        "-m",
+        "venv",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+      "exit_code": 0,
+      "elapsed_seconds": 7.968,
+      "log": "logs/native_tqdm--tqdm/01_venv.log"
+    },
+    {
+      "label": "install",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm/bin/python",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        ".",
+        "pytest",
+        "pytest-cov",
+        "pytest-timeout",
+        "pytest-asyncio"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+      "exit_code": 0,
+      "elapsed_seconds": 22.453,
+      "log": "logs/native_tqdm--tqdm/02_install.log"
+    },
+    {
+      "label": "environment",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm/bin/python",
+        "-c",
+        "import platform,sys;print(sys.version);print(platform.platform())"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+      "exit_code": 0,
+      "elapsed_seconds": 0.081,
+      "log": "logs/native_tqdm--tqdm/03_environment.log"
+    },
+    {
+      "label": "freeze",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm/bin/python",
+        "-m",
+        "pip",
+        "--isolated",
+        "freeze"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+      "exit_code": 0,
+      "elapsed_seconds": 1.357,
+      "log": "logs/native_tqdm--tqdm/04_freeze.log"
+    },
+    {
+      "label": "tests",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm/bin/python",
+        "-m",
+        "pytest",
+        "tests/tests_concurrent.py",
+        "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/native_tqdm--tqdm/junit.xml",
+        "-ra"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+      "exit_code": 0,
+      "elapsed_seconds": 2.982,
+      "log": "logs/native_tqdm--tqdm/05_tests.log"
+    }
+  ],
+  "initial_git_status": "",
+  "native_test_files": [
+    "tests/tests_concurrent.py"
+  ],
+  "boundary_notes": [
+    "No-known-length iterable fallback and known/unknown mixture semantics are exercised through native concurrent map tests.",
+    "Python 3.12 lacks InterpreterPoolExecutor; interpreter_map branches require Python 3.14+ and are expected skips.",
+    "Original Python3.12 skips retained. Separate available Python3.14 concurrent suite was actually executed; see additional_python314_run."
+  ],
+  "maintainer_adoption": "not evaluated by a human maintainer",
+  "historical_gain": "not established by native baseline",
+  "test_counts": {
+    "tests": 16,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 3,
+    "passed": 13
+  },
+  "junit": "logs/native_tqdm--tqdm/junit.xml",
+  "status": "passed",
+  "final_git_status": "",
+  "final_head_sha": "24b9e1e08a097f1c30f2d235b63f9eb25ba47974",
+  "additional_python314_run": {
+    "commands": [
+      {
+        "slug": "tqdm--tqdm",
+        "label": "venv_py314",
+        "argv": [
+          "/opt/homebrew/bin/python3",
+          "-m",
+          "venv",
+          "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314"
+        ],
+        "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+        "exit_code": 0,
+        "elapsed_seconds": 10.864,
+        "log": "logs/model-checks/tqdm--tqdm/01_venv_py314.log"
+      },
+      {
+        "slug": "tqdm--tqdm",
+        "label": "install_py314",
+        "argv": [
+          "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+          "-m",
+          "pip",
+          "--isolated",
+          "install",
+          ".",
+          "pytest",
+          "pytest-cov",
+          "pytest-timeout",
+          "pytest-asyncio"
+        ],
+        "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+        "exit_code": 0,
+        "elapsed_seconds": 23.9,
+        "log": "logs/model-checks/tqdm--tqdm/02_install_py314.log"
+      },
+      {
+        "slug": "tqdm--tqdm",
+        "label": "environment_py314",
+        "argv": [
+          "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+          "-c",
+          "import sys,platform,tqdm;print(sys.version);print(platform.platform());print(tqdm.__file__)"
+        ],
+        "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+        "exit_code": 0,
+        "elapsed_seconds": 0.327,
+        "log": "logs/model-checks/tqdm--tqdm/03_environment_py314.log"
+      },
+      {
+        "slug": "tqdm--tqdm",
+        "label": "native_py314",
+        "argv": [
+          "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+          "-m",
+          "pytest",
+          "tests/tests_concurrent.py",
+          "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/native_py314.xml",
+          "-ra"
+        ],
+        "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+        "exit_code": 0,
+        "elapsed_seconds": 18.925,
+        "log": "logs/model-checks/tqdm--tqdm/04_native_py314.log"
+      }
+    ],
+    "junit": "logs/model-checks/tqdm--tqdm/native_py314.xml",
+    "status": "passed",
+    "test_counts": {
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 16
+    }
+  }
+}

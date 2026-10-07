@@ -1,0 +1,44 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.12, pytest-9.1.1, pluggy-1.6.0 -- /Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python
+cachedir: .pytest_cache
+Using --randomly-seed=2792211670
+rootdir: /Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock
+configfile: pyproject.toml
+plugins: mock-3.16.0, randomly-5.0.0, cov-7.1.0, timeout-2.4.0, asyncio-1.4.0
+timeout: 20.0s
+timeout method: signal
+timeout func_only: False
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=session, asyncio_default_test_loop_scope=function
+collecting ... collected 28 items
+
+::test_nonblocking_timeout_under_contention[sqlite-5.0-read] PASSED      [  3%]
+::test_nonblocking_timeout_under_contention[soft-5.0-read] PASSED        [  7%]
+::test_nonblocking_timeout_under_contention[sqlite--inf-write] PASSED    [ 10%]
+::test_nonblocking_timeout_under_contention[soft--inf-read] PASSED       [ 14%]
+::test_nonblocking_timeout_under_contention[soft--inf-write] PASSED      [ 17%]
+::test_unlimited_wait_then_reentrant[soft-write] PASSED                  [ 21%]
+::test_defaults_and_overrides[sqlite-read] PASSED                        [ 25%]
+::test_nonblocking_timeout_under_contention[sqlite--0.5-write] PASSED    [ 28%]
+::test_defaults_and_overrides[sqlite-write] PASSED                       [ 32%]
+::test_nonblocking_timeout_under_contention[sqlite--2-read] PASSED       [ 35%]
+::test_nonblocking_timeout_under_contention[soft--2-read] PASSED         [ 39%]
+::test_unlimited_wait_then_reentrant[sqlite-read] PASSED                 [ 42%]
+::test_nonblocking_timeout_under_contention[soft--0.5-write] PASSED      [ 46%]
+::test_nonblocking_timeout_under_contention[sqlite--0.5-read] PASSED     [ 50%]
+::test_nonblocking_timeout_under_contention[soft-5.0-write] PASSED       [ 53%]
+::test_nonblocking_timeout_under_contention[sqlite--inf-read] PASSED     [ 57%]
+::test_defaults_and_overrides[soft-write] PASSED                         [ 60%]
+::test_defaults_and_overrides[soft-read] PASSED                          [ 64%]
+::test_multilayer_failure_preserves_hold[soft-read] PASSED               [ 67%]
+::test_unlimited_wait_then_reentrant[soft-read] PASSED                   [ 71%]
+::test_multilayer_failure_preserves_hold[sqlite-write] PASSED            [ 75%]
+::test_unlimited_wait_then_reentrant[sqlite-write] PASSED                [ 78%]
+::test_nonblocking_timeout_under_contention[sqlite--2-write] PASSED      [ 82%]
+::test_multilayer_failure_preserves_hold[sqlite-read] PASSED             [ 85%]
+::test_nonblocking_timeout_under_contention[soft--2-write] PASSED        [ 89%]
+::test_multilayer_failure_preserves_hold[soft-write] PASSED              [ 92%]
+::test_nonblocking_timeout_under_contention[sqlite-5.0-write] PASSED     [ 96%]
+::test_nonblocking_timeout_under_contention[soft--0.5-read] PASSED       [100%]
+
+- generated xml file: /Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tox-dev--filelock/model_checks.xml -
+============================== 28 passed in 1.96s ==============================

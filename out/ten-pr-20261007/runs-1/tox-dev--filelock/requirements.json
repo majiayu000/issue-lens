@@ -1,0 +1,85 @@
+{
+  "requirements": [
+    {
+      "title": "两种读写锁在重入获取前拒绝除 -1 外的负阻塞超时",
+      "quote": "Reject negative blocking timeouts other than `-1` before reentrant acquisition in `ReadWriteLock` and `SoftReadWriteLock`.",
+      "queries": [
+        [
+          "timeout",
+          "negative"
+        ],
+        [
+          "reentrant",
+          "timeout",
+          "validation"
+        ]
+      ],
+      "id": "R1"
+    },
+    {
+      "title": "无效调用不得改变锁深度",
+      "quote": "Invalid calls must not change lock depth.",
+      "queries": [
+        [
+          "lock",
+          "depth"
+        ],
+        [
+          "reentrant",
+          "timeout",
+          "release"
+        ]
+      ],
+      "id": "R2"
+    },
+    {
+      "title": "保留 -1 表示的无限等待",
+      "quote": "Preserve unlimited waits and nonblocking acquisition.",
+      "queries": [
+        [
+          "timeout",
+          "blocking"
+        ],
+        [
+          "timeout",
+          "-1",
+          "wait"
+        ]
+      ],
+      "id": "R3"
+    },
+    {
+      "title": "保留非阻塞获取及其超时处理行为",
+      "quote": "Preserve unlimited waits and filelock’s nonblocking timeout behavior, consistent with #755.",
+      "queries": [
+        [
+          "timeout",
+          "nonblocking"
+        ],
+        [
+          "acquire",
+          "blocking=False",
+          "negative"
+        ]
+      ],
+      "id": "R4"
+    }
+  ],
+  "open_questions": [
+    "diff 明确要求首次获取也拒绝非法负阻塞超时，但 PRD 仅明确重入获取前的校验；首次获取是否属于本次需求？",
+    "diff 固定抛出 ValueError 及错误消息，但 PRD 只要求拒绝无效调用；异常类型和消息是否属于对外契约？"
+  ],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 17954,
+      "cached_input_tokens": 13312,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 288,
+      "reasoning_output_tokens": 0
+    },
+    "thread_id": "01a116be-204a-7c73-b021-75643710c2f2"
+  },
+  "prd_sha256": "367ec80417aa5122eabcfc80c3ffe395aca965753503c65d2981b5b76791a64d"
+}

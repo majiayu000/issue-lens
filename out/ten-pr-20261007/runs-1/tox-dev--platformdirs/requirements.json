@@ -1,0 +1,96 @@
+{
+  "requirements": [
+    {
+      "title": "构造后赋值拒绝目录越界，防止在基础目录外创建目录",
+      "quote": "Reject an ``appname``, ``appauthor`` or ``version`` that leaves the base directory when set after construction.",
+      "queries": [
+        [
+          "path",
+          "escape"
+        ],
+        [
+          "assignment",
+          "traversal"
+        ],
+        [
+          "directory",
+          "creation",
+          "outside"
+        ]
+      ],
+      "id": "R1"
+    },
+    {
+      "title": "构造与后续赋值使用一致校验，对相同非法值抛出相同 ValueError",
+      "quote": "The three attributes validate on assignment and the constructor assigns through them, so one check covers construction and later changes and raises the same `ValueError` for the same value.",
+      "queries": [
+        [
+          "validation",
+          "error"
+        ],
+        [
+          "constructor",
+          "assignment",
+          "ValueError"
+        ]
+      ],
+      "id": "R2"
+    },
+    {
+      "title": "保留公开名称和 API 文档，允许 None，并保留 Windows 禁用作者目录的行为",
+      "quote": "Names and API docs stay the same. `None` passes, and `appauthor=False` keeps dropping the author directory on Windows.",
+      "queries": [
+        [
+          "attribute",
+          "compatibility"
+        ],
+        [
+          "assignment",
+          "None"
+        ],
+        [
+          "Windows",
+          "appauthor",
+          "False"
+        ]
+      ],
+      "id": "R3"
+    },
+    {
+      "title": "实例属性字典改为列出三个私有存储名称",
+      "quote": "`vars(dirs)` lists `_appname`, `_appauthor` and `_version` in place of the public names.",
+      "queries": [
+        [
+          "attribute",
+          "dictionary"
+        ],
+        [
+          "vars",
+          "_appname"
+        ],
+        [
+          "vars",
+          "_appauthor",
+          "_version"
+        ]
+      ],
+      "id": "R4"
+    }
+  ],
+  "open_questions": [
+    "diff 新增测试要求合法 appname 赋值立即改变生成路径；PRD 明确描述了赋值校验，但未明确说明合法赋值后的路径更新契约，需确认该行为是否属于本次验收要求。"
+  ],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 19973,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 358,
+      "reasoning_output_tokens": 0
+    },
+    "thread_id": "01a116ba-fac9-73a2-a2e3-3c37d6bcca0a"
+  },
+  "prd_sha256": "fb4b39dda6c4c5fef414ed8f35ff6c9a961092afdc361f5174df287187561da0"
+}

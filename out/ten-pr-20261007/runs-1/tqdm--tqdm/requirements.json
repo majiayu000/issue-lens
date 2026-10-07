@@ -1,0 +1,41 @@
+{
+  "requirements": [
+    {
+      "title": "所有输入长度未知时，并发映射不再抛出最小值计算异常，并以未知总量回退",
+      "quote": "Fixes #1828: `thread_map`/`process_map`/`interpreter_map` raised\r\n`ValueError: min() iterable argument is empty` when every input iterable had\r\nno known length (e.g. a bare generator), because `_min_map_len()` called\r\n`min()` on a filtered-empty generator expression. Restored the pre-2023\r\nfallback behavior (`total=0`, i.e. \"unknown total\") for the all-unknown case\r\nby adding `default=0` to that `min()` call.",
+      "queries": [
+        [
+          "generator",
+          "error"
+        ],
+        [
+          "map",
+          "ValueError"
+        ],
+        [
+          "total",
+          "unknown"
+        ]
+      ],
+      "id": "R1"
+    }
+  ],
+  "open_questions": [
+    "diff 新增了无输入可迭代对象时返回 0、混合已知与未知长度时采用已知长度的测试；PRD 未明确规定这两种情况，是否属于本次要求？",
+    "diff 对未知长度映射断言具体输出片段 '9it ['；PRD 仅明确 total=0 表示未知总量，是否要求固定该显示格式？",
+    "PR 模板中的 AI 辅助提交署名格式属于贡献流程，isort 版本升级属于开发工具配置，均不属于明确的用户功能或质量要求；是否需要另行验收？"
+  ],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 22344,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 312,
+      "reasoning_output_tokens": 0
+    },
+    "thread_id": "01a116c4-fe29-73d1-b2d9-36fe94c244d6"
+  },
+  "prd_sha256": "13d6ef6663eb26be7c768949a1c5a7125b2a746c40dc6c7c9298ec15dce109fc"
+}
