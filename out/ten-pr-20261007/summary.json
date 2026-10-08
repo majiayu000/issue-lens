@@ -150,6 +150,7 @@
   "isolated_followup_checks_passed": 3,
   "maintainer_adopted_effective": null,
   "maintainer_review_seconds": null,
-  "upstream_pr": null,
-  "upstream_delivery_blocker": "Available GitHub credential has READ permission; primary stored credential invalid and SSH public-key access unavailable."
+  "upstream_pr": "https://github.com/majiayu000/issue-lens/pull/2",
+  "upstream_delivery_blocker": null,
+  "delivery_date": "2026-10-08"
 }

@@ -59,7 +59,7 @@ filelock A、packaging B首次300秒超时的原始状态不变。各只做一�
 | 最小流程缺口/可重复命令与报告 | 已完成 | 一个薄实验入口、同输入重跑、冻结资料、执行证据及报告；未扩语料或建新平台。 |
 | 真实参与者评价入口及缺项 | 已实现待验证／受阻 | 93行[维护者评价表](maintainer-review.csv)；无人类评价，未擅自招募或发消息。 |
 | 相关升级/恢复可作为diff场景；不另建平台 | 已完成边界保持 | 当前样本按实际diff验证，不强加无关升级功能，不新增平台仓库。 |
-| 发布PR | 受阻 | 默认GitHub凭据失效、SSH公钥不可用；可用凭据对目标仅READ。保留本地独立分支，未声称已发布或新CI通过。 |
+| 发布PR | 已完成（2026-10-08） | [PR #2](https://github.com/majiayu000/issue-lens/pull/2)已创建；认证恢复为仓库所有者，权限ADMIN。实验阶段的只读权限阻塞已解除。 |
 
 维护者可打开对应逐项JSON、冻结输入和原始脚本，填写评价表的适用、已有覆盖、可执行、真实问题、是否采纳、采用后有效及review_minutes。字段是开放判断，不用规则引擎替维护者打分；缺项必须保持空值。Windows/Linux/Android原生设备验收如涉及相应建议也仍需要真实环境。
 
@@ -76,4 +76,10 @@ python3 experiments/ten_pr_comparison.py \
 
 新的目录才允许运行；已有目录拒绝覆盖已实际验证。样本原生命令/依赖安装、环境版本、修正前失败、版本freeze、JUnit及补充场景全部在[evidence](evidence/README.md)。原始本机路径仍保留，副本映射见[evidence-location.json](evidence-location.json)。`acquire.py`为当次获取记录，不可对原目录再次运行覆盖冻结资料；重取样本应使用新的目录并核对manifest固定head。[原始输入清单](manifest.json) · [全文/实际提供片段核验](input-audit.json)
 
-已完成检查：仓库既有58项离线单元测试、Python编译检查通过（有既存ResourceWarning）；10个pair实际同输入/提示词/模型请求核对通过；93条评估与对应模型case逐项一一相符。现有main的[CI](https://github.com/majiayu000/issue-lens/actions/runs/37049099210)在任务开始时成功，不能代替本次尚未发布的改动CI。
+已完成检查：仓库既有58项离线单元测试、Python编译检查通过（有既存ResourceWarning）；10个pair实际同输入/提示词/模型请求核对通过；93条评估与对应模型case逐项一一相符。现有main的[CI](https://github.com/majiayu000/issue-lens/actions/runs/37049099210)在任务开始时成功，本次交付检查见[PR checks](https://github.com/majiayu000/issue-lens/pull/2/checks)。
+
+## 2026-10-08 交付更新
+
+复用实验提交 `4c6d326`，已推送原独立分支并创建[PR #2](https://github.com/majiayu000/issue-lens/pull/2)。当前认证与权限已经恢复；`environment.json`里的READ记录属于10月7日当次环境，保留为原始证据。10月8日再次用CI相同的Python3.12运行编译检查及58项离线测试，均通过。
+
+本次只更新交付状态，未重跑模型或样本实验，也未修改110通过/1失败、tqdm复现、已有覆盖、费用未知与人类评价缺项。真实维护者评价及部分跨平台原生验证仍待完成；是否合并由维护者审阅本PR决定。
