@@ -1,0 +1,55 @@
+{
+  "requirements": [
+    {
+      "title": "默认精度下的大整数格式化不因浮点范围限制而溢出",
+      "quote": "* Skip the float validation for values that are already Python integers. Integers are finite, and the existing integer formatting path preserves all digits.",
+      "queries": [
+        [
+          "integer",
+          "overflow"
+        ],
+        [
+          "float",
+          "conversion",
+          "OverflowError"
+        ]
+      ],
+      "id": "R1"
+    },
+    {
+      "title": "超出浮点范围的正负整数完整保留符号、千位分组和末尾数字",
+      "quote": "* Add regression cases for positive and negative integers beyond the float range, checking the complete grouped output including the final 123.",
+      "queries": [
+        [
+          "format",
+          "digits"
+        ],
+        [
+          "integer",
+          "negative",
+          "separator"
+        ],
+        [
+          "integer",
+          "precision",
+          "loss"
+        ]
+      ],
+      "id": "R2"
+    }
+  ],
+  "open_questions": [],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 18040,
+      "cached_input_tokens": 12672,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 155,
+      "reasoning_output_tokens": 0
+    },
+    "thread_id": "01a116c8-726c-7fe2-9360-8733ca3b46c4"
+  },
+  "prd_sha256": "0dc78e9f90008f8c3e23c4d5cab529a5472db37357b50b851f942124660422f9"
+}

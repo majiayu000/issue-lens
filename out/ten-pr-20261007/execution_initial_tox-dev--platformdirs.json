@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-c",
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs/pyproject.toml",
+    "--junitxml",
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/tox-dev--platformdirs/model-cases-full.xml",
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/tox-dev--platformdirs/test_model_cases.py"
+  ],
+  "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+  "exit_code": 0,
+  "seconds": 2.078,
+  "log": "native-logs/tox-dev--platformdirs/08-model-cases-full.log",
+  "environment_overrides": {}
+}

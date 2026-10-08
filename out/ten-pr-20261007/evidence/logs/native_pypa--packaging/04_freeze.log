@@ -1,0 +1,10 @@
+coverage==7.16.2
+hypothesis==6.168.5
+iniconfig==2.3.1
+packaging @ file:///Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging
+pluggy==1.6.0
+pretend==1.0.9
+Pygments==2.21.0
+pytest==9.1.1
+sortedcontainers==2.4.0
+tomli_w==1.2.0

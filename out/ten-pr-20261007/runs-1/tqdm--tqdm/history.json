@@ -1,0 +1,124 @@
+{
+  "sources": [
+    {
+      "id": 5065463834,
+      "title": "clean: a slow ~/Library/Caches size check (exit 124) aborts the whole run",
+      "url": "https://github.com/tw93/Mole/issues/1374",
+      "repo": "tw93/Mole",
+      "extraction": {
+        "id": 5065463834,
+        "issue_kind": "bug",
+        "symptom": "运行 mo clean 时，单个缓存项的大小检查超过 30 秒并返回退出码 124，会取消整个清理并跳过剩余项目。",
+        "root_cause": "正文明确指出，主缓存路径的 _safe_clean_impl 将大小检查超时视为致命错误，而大小仅用于统计释放空间，删除集合另行确定。",
+        "root_cause_category": "退出码与错误输出",
+        "environment": [
+          "mole 1.49.2",
+          "macOS 15.5",
+          "Apple Silicon",
+          "~/Library/Caches 约 12 GB、约 173000 个文件",
+          "大小检查预算为 30 秒"
+        ],
+        "evidence_quote": "On a large `~/Library/Caches` (mine: ~12 GB, ~173k files), `mo clean` cancels the entire run the first time a single item takes longer than the 30s size-check budget:",
+        "test_ideas": [
+          "模拟单个缓存项的大小检查返回 124，验证建议的继续清理行为：该项及后续项目仍按独立确定的删除集合处理。",
+          "模拟大小检查超时，验证释放空间汇总将未知大小计为 0，并明确提示总量低估及 MOLE_TIMEOUT_DISK_VERIFY_SEC 调整方式。",
+          "分别模拟信号退出码 >=128 和实际删除操作超时，验证仍停止清理，避免将所有失败都当作大小未知。",
+          "让大小检查成功、超时的项目交错出现，验证已知大小正确累计，未知大小不产生虚假的释放空间统计。",
+          "针对约 173000 个文件的缓存目录执行规模测试，观察大小检查耗时及超时后的处理，并记录实际结果。",
+          "单独覆盖 process_project_cache_matches 的超时行为，验证其正文所述的停止策略，避免通用超时处理误改该路径。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": "gpt-6.1-sol",
+          "usage": {
+            "input_tokens": 15721,
+            "cached_input_tokens": 12672,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 416,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a116c5-a399-7d81-b401-2a460e7568da"
+        }
+      },
+      "pr_evidence": {
+        "fetched_at": "2026-10-07T14:30:43.029272+00:00",
+        "selection": "current closing event, then explicit closing references; latest 8 comments",
+        "pulls_truncated": false,
+        "pulls": [
+          {
+            "url": "https://github.com/tw93/Mole/pull/1377",
+            "title": "fix(clean): keep cleaning when a cache size check times out (#1374)",
+            "body": "## Summary\n\nFixes #1374: a single `~/Library/Caches/*` item whose size check exceeds `MOLE_TIMEOUT_DISK_VERIFY_SEC` (exit 124) cancelled the whole `mo clean` run. The size is only used for the \"freed\" total; the delete set is chosen separately, so a stalled sizing scan should not stop cleanup (same reasoning as #1350).\n\nChanges in `_safe_clean_impl` (bin/clean.sh):\n- All three sizing paths (bulk `stat`, parallel per-item workers, small-batch) now treat a sizing `124` as \"size unknown\": the item is still cleaned and counted as 0 KB.\n- Signals (`>=128`) and real `rm`/guard timeouts stay fatal, unchanged.\n- A run that under-counted sizes now prints one summary line:\n  `Some items exceeded the Ns size-check budget and were counted as 0, so the total is under-reported. Raise MOLE_TIMEOUT_DISK_VERIFY_SEC to measure them.`\n- `process_project_cache_matches` intentionally keeps its stop-on-timeout behavior, unchanged.\n\n## Reproduction\n\nHarness: throwaway `HOME` + a PATH `du` stub that stalls one cache dir past the budget, `MOLE_TEST_NO_AUTH=1`, no real files touched (script: `repro-scripts/repro-1374-cache-size-timeout.sh` in the mole-fix workspace, not part of this PR).\n\n| case | version | exit | result |\n|---|---|---|---|\n| control, no slow item | main | 0 | `Cleanup complete` |\n| one slow cache item | main (before) | 124 | `Cleanup cancelled` + all remaining sections skipped |\n| one slow cache item | main (after) | 0 | `Cleanup complete`, all 9 items cleaned, note printed |\n| one slow cache item, default 30s budget | main (after) | 0 | same |\n| one slow cache item | V1.49.2 (released) | 124 | unchanged bug |\n\n## Tests\n\n- `tests/clean_core.bats`: updated the old \"size timeout cancels deletion\" test to the new semantics; added a parallel-worker timeout test (one of five workers times out, all five items are removed, `MOLE_CLEAN_CANCEL_STATUS` stays 0).\n- `tests/clean_summary_cancel.bats`: added a full-`perform_cleanup` test asserting the run completes and prints the under-reported note.\n- `make check` passes (go vet, shellcheck, syntax, duplication audit).\n- Bats: clean_core 53/53, clean_summary_cancel 4/4, clean_mail_downloads 6/6, plus 14 related clean/size/safe-function files all green. Full `make test`: 1550 tests, 1 failure, 15 skipped; the failure is a pre-existing `core_timeout.bats` tty/perl-fallback test that also fails on unmodified `main` in this environment.",
+            "body_truncated": false,
+            "state": "closed",
+            "merged": false,
+            "head_sha": "430402d8698e4b0fed9225ac2556e28bad3b0b98",
+            "base_sha": "b2cd6c5b7d431e9ee1ba82472b0ba3a5cc5d5a22",
+            "merge_commit_sha": "b92a89a51be078d7d70a6a18bbbb20ea72cc53c9",
+            "relation": "closing_reference_not_verified_fix",
+            "files": [
+              {
+                "filename": "tests/clean_core.bats",
+                "status": "modified",
+                "patch": "@@ -445,7 +445,7 @@ EOF\n     [[ \"$output\" != *\"UNEXPECTED_REMOVE\"* ]]\n }\n \n-@test \"safe_clean propagates a real directory size timeout before deletion\" {\n+@test \"safe_clean treats a real directory size timeout as size-unknown and keeps cleaning\" {\n     local base=\"$HOME/safe-clean-real-timeout\"\n     mkdir -p \"$base/candidate\"\n \n@@ -455,21 +455,69 @@ set -euo pipefail\n source \"\\$PROJECT_ROOT/bin/clean.sh\"\n DRY_RUN=false\n MOLE_CURRENT_COMMAND=clean\n+unset MOLE_CLEAN_SIZING_TIMEOUTS\n run_with_timeout() { return 124; }\n-safe_remove() { echo \"UNEXPECTED_REMOVE:\\$1\"; return 0; }\n+safe_remove() { echo \"REMOVE:\\$1\"; /bin/rm -rf \"\\$1\"; }\n \n rc=0\n safe_clean \"$base/candidate\" \"Timed out directory\" || rc=\\$?\n-printf 'RC=%s CANCEL=%s\\n' \"\\$rc\" \"\\${MOLE_CLEAN_CANCEL_STATUS:-0}\"\n-[[ -d \"$base/candidate\" ]]\n+printf 'RC=%s CANCEL=%s TIMEOUTS=%s\\n' \"\\$rc\" \"\\${MOLE_CLEAN_CANCEL_STATUS:-0}\" \"\\${MOLE_CLEAN_SIZING_TIMEOUTS:-0}\"\n+[[ ! -e \"$base/candidate\" ]]\n EOF\n \n     [ \"$status\" -eq 0 ] || {\n         echo \"$output\"\n         return 1\n     }\n-    [[ \"$output\" == *\"RC=124 CANCEL=124\"* ]] || return 1\n-    [[ \"$output\" != *\"UNEXPECTED_REMOVE\"* ]]\n+    [[ \"$output\" == *\"RC=0 CANCEL=0 TIMEOUTS=1\"* ]] || return 1\n+    [[ \"$output\" == *\"REMOVE:$base/candidate\"* ]] || return 1\n+}\n+\n+@test \"safe_clean keeps cleaning when a parallel size worker times out (#1374)\" {\n+    local base=\"$HOME/safe_clean_parallel_timeout\"\n+    mkdir -p \"$base/a\" \"$base/b\" \"$base/c\" \"$base/d\" \"$base/e\"\n+\n+    run env HOME=\"$HOME\" PROJECT_ROOT=\"$PROJECT_ROOT\" MOLE_TEST_MODE=1 /bin/bash --noprofile --norc << EOF\n+set -euo pipefail\n+source \"\\$PROJECT_ROOT/lib/core/common.sh\"\n+source \"\\$PROJECT_ROOT/bin/clean.sh\"\n+DRY_RUN=false\n+MOLE_CURRENT_COMMAND=clean\n+MOLE_CLEAN_CANCEL_STATUS=0\n+files_cleaned=0\n+total_size_cleaned=0\n+total_items=0\n+unset MOLE_CLEAN_SIZING_TIMEOUTS\n+start_section_spinner() { :; }\n+stop_section_spinner() { :; }\n+start_inline_spinner() { :; }\n+stop_inline_spinner() { :; }\n+note_activity() { :; }\n+is_path_whitelisted() { return 1; }\n+get_cleanup_path_size_kb() {\n+    [[ \"\\$1\" == \"$base/c\" ]] && return 124\n+    echo 1\n+}\n+safe_remove() { echo \"REMOVE:\\$1\"; /bin/rm -rf \"\\$1\"; }\n+\n+rc=0\n+safe_clean \"$base/a\" \"$base/b\" \"$base/c\" \"$base/d\" \"$base/e\" \\\n+    \"Timed out size batch\" || rc=\\$?\n+printf 'RC=%s CANCEL=%s TIMEOUTS=%s\\n' \"\\$rc\" \"\\${MOLE_CLEAN_CANCEL_STATUS:-0}\" \"\\${MOLE_CLEAN_SIZING_TIMEOUTS:-0}\"\n+for path in \"$base/a\" \"$base/b\" \"$base/c\" \"$base/d\" \"$base/e\"; do\n+    if [[ -d \"\\$path\" ]]; then\n+        echo \"WRONG: kept \\$path\"\n+        exit 1\n+    fi\n+done\n+EOF\n+\n+    [ \"$status\" -eq 0 ] || {\n+        echo \"$output\"\n+        return 1\n+    }\n+    [[ \"$output\" == *\"RC=0 CANCEL=0 TIMEOUTS=1\"* ]] || return 1\n+    [[ \"$output\" == *\"REMOVE:$base/c\"* ]] || return 1\n }\n \n @test \"mo clean --dry-run skips system cleanup in non-interactive mode\" {",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "tests/clean_summary_cancel.bats",
+                "status": "modified",
+                "patch": "@@ -87,3 +87,45 @@ EOF\n     [[ \"$output\" == *\"Cleanup complete\"* ]]\n     [[ \"$output\" != *\"Cleanup cancelled\"* ]]\n }\n+\n+@test \"sizing timeouts still clean and the summary reports the under-count (#1374)\" {\n+    mkdir -p \"$HOME/Library/Caches/cache1374\"\n+    printf x > \"$HOME/Library/Caches/cache1374/file.bin\"\n+\n+    run env HOME=\"$HOME\" PROJECT_ROOT=\"$PROJECT_ROOT\" \\\n+        /bin/bash --noprofile --norc << 'EOF'\n+set -euo pipefail\n+source \"$PROJECT_ROOT/bin/clean.sh\"\n+# Stub every section so perform_cleanup never scans the real machine.\n+# run_with_shell_timeout is stubbed too: its shell-fallback killer process\n+# would otherwise outlive the test when pgrep is unavailable.\n+for fn in clean_finder_metadata clean_app_caches \\\n+    clean_browsers run_cloud_and_office_cleanup clean_developer_tools \\\n+    clean_user_gui_applications clean_virtualization_tools \\\n+    clean_application_support_logs clean_orphaned_app_data \\\n+    clean_orphaned_system_services clean_orphaned_container_stubs \\\n+    clean_stale_launch_services_registrations show_user_launch_agent_hint_notice \\\n+    clean_apple_silicon_caches clean_cached_device_firmware \\\n+    clean_time_machine_failed_backups check_large_file_candidates \\\n+    show_project_artifact_hint_notice; do\n+    eval \"$fn() { return 0; }\"\n+done\n+run_with_shell_timeout() { return 0; }\n+# Force every size check to hit the sizing budget.\n+get_cleanup_path_size_kb() { return 124; }\n+clean_user_essentials() {\n+    safe_clean \"$HOME/Library/Caches/cache1374\" \"User app cache\"\n+}\n+perform_cleanup\n+EOF\n+\n+    [ \"$status\" -eq 0 ] || {\n+        echo \"$output\"\n+        return 1\n+    }\n+    [[ \"$output\" == *\"Cleanup complete\"* ]] || return 1\n+    [[ \"$output\" != *\"Cleanup cancelled\"* ]] || return 1\n+    [[ \"$output\" == *\"size-check budget\"* ]] || return 1\n+    [[ \"$output\" == *\"under-reported\"* ]] || return 1\n+    [[ ! -e \"$HOME/Library/Caches/cache1374\" ]]\n+}",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "bin/clean.sh",
+                "status": "modified",
+                "patch": "@@ -1071,8 +1071,12 @@ _safe_clean_impl() {\n             run_with_timeout \"$MOLE_TIMEOUT_DISK_VERIFY_SEC\" \\\n                 stat -f%z \"${existing_paths[@]}\" < /dev/null \\\n                 > \"$bulk_stat_file\" 2> /dev/null || bulk_stat_rc=$?\n-            if [[ $bulk_stat_rc -eq 124 || $bulk_stat_rc -ge 128 ]]; then\n+            if [[ $bulk_stat_rc -ge 128 ]]; then\n                 cleanup_interrupt_rc=$bulk_stat_rc\n+            elif [[ $bulk_stat_rc -eq 124 ]]; then\n+                # The size is only used for the freed total; a stalled stat\n+                # must not cancel the delete set. Sizes are already 0 here.\n+                MOLE_CLEAN_SIZING_TIMEOUTS=$((${MOLE_CLEAN_SIZING_TIMEOUTS:-0} + 1))\n             fi\n             while IFS= read -r _bytes; do\n                 [[ \"$_bytes\" =~ ^[0-9]+$ ]] || _bytes=0\n@@ -1094,9 +1098,11 @@ _safe_clean_impl() {\n                     local _dsize_rc=0\n                     _dsize=$(get_cleanup_path_size_kb \\\n                         \"${existing_paths[$idx]}\") || _dsize_rc=$?\n-                    if [[ $_dsize_rc -eq 124 || $_dsize_rc -ge 128 ]]; then\n+                    if [[ $_dsize_rc -ge 128 ]]; then\n                         cleanup_interrupt_rc=$_dsize_rc\n                         break\n+                    elif [[ $_dsize_rc -eq 124 ]]; then\n+                        MOLE_CLEAN_SIZING_TIMEOUTS=$((${MOLE_CLEAN_SIZING_TIMEOUTS:-0} + 1))\n                     fi\n                     [[ \"$_dsize\" =~ ^[0-9]+$ ]] || _dsize=0\n                     if [[ \"$_dsize\" -gt 0 ]]; then\n@@ -1118,16 +1124,22 @@ _safe_clean_impl() {\n                 for path in \"${existing_paths[@]}\"; do\n                     (\n                         local size=0 size_rc=0\n+                        local size_unknown=0\n                         size=$(get_cleanup_path_size_kb \"$path\") || size_rc=$?\n-                        if [[ $size_rc -eq 124 || $size_rc -ge 128 ]]; then\n+                        if [[ $size_rc -ge 128 ]]; then\n                             exit \"$size_rc\"\n                         fi\n+                        if [[ $size_rc -eq 124 ]]; then\n+                            # Sizing budget exhausted: keep the item in the\n+                            # delete set and report its size as 0.\n+                            size_unknown=1\n+                        fi\n                         [[ ! \"$size\" =~ ^[0-9]+$ ]] && size=0\n                         local tmp_file=\"$temp_dir/result_${idx}.$$\"\n                         if [[ \"$size\" -gt 0 ]]; then\n-                            echo \"$size 1\" > \"$tmp_file\"\n+                            echo \"$size 1 $size_unknown\" > \"$tmp_file\"\n                         else\n-                            echo \"0 0\" > \"$tmp_file\"\n+                            echo \"0 0 $size_unknown\" > \"$tmp_file\"\n                         fi\n                         mv \"$tmp_file\" \"$temp_dir/result_${idx}\" 2> /dev/null || true\n                     ) < /dev/null &\n@@ -1137,7 +1149,7 @@ _safe_clean_impl() {\n                     if ((${#pids[@]} >= MOLE_MAX_PARALLEL_JOBS)); then\n                         local wait_rc=0\n                         wait \"${pids[0]}\" 2> /dev/null || wait_rc=$?\n-                        if [[ $wait_rc -eq 124 || $wait_rc -ge 128 ]]; then\n+                        if [[ $wait_rc -ge 128 ]]; then\n                             cleanup_interrupt_rc=$wait_rc\n                             break\n                         fi\n@@ -1155,7 +1167,7 @@ _safe_clean_impl() {\n                 for pid in \"${pids[@]}\"; do\n                     local wait_rc=0\n                     wait \"$pid\" 2> /dev/null || wait_rc=$?\n-                    if [[ $wait_rc -eq 124 || $wait_rc -ge 128 ]]; then\n+                    if [[ $wait_rc -ge 128 ]]; then\n                         [[ $cleanup_interrupt_rc -ne 0 ]] || cleanup_interrupt_rc=$wait_rc\n                     fi\n                     completed=$((completed + 1))\n@@ -1167,6 +1179,19 @@ _safe_clean_impl() {\n             fi\n         fi\n \n+        # Count the items whose size check hit the budget; they were still\n+        # cleaned, only the freed total is under-reported.\n+        local _t_size=0\n+        local _t_count=0\n+        local _t_flag=0\n+        local _t_file\n+        for _t_file in \"$temp_dir\"/result_*; do\n+            [[ -f \"$_t_file\" ]] || continue\n+            _t_flag=0\n+            read -r _t_size _t_count _t_flag < \"$_t_file\" 2> /dev/null || true\n+            [[ \"$_t_flag\" == \"1\" ]] && MOLE_CLEAN_SIZING_TIMEOUTS=$((${MOLE_CLEAN_SIZING_TIMEOUTS:-0} + 1))\n+        done\n+\n         if [[ $cleanup_interrupt_rc -ne 0 ]]; then\n             if [[ \"$show_spinner\" == \"true\" || \"$show_scan_feedback\" == \"true\" ]]; then\n                 stop_inline_spinner\n@@ -1192,7 +1217,7 @@ _safe_clean_impl() {\n             for path in \"${existing_paths[@]}\"; do\n                 local result_file=\"$temp_dir/result_${idx}\"\n                 if [[ -f \"$result_file\" ]]; then\n-                    read -r size count < \"$result_file\" 2> /dev/null || true\n+                    read -r size count size_unknown < \"$result_file\" 2> /dev/null || true\n                     local removed=0\n                     local action_rc=0\n                     if [[ \"$DRY_RUN\" != \"true\" ]]; then\n@@ -1289,9 +1314,12 @@ _safe_clean_impl() {\n                 local size_kb=0\n                 local size_rc=0\n                 size_kb=$(get_cleanup_path_size_kb \"$path\") || size_rc=$?\n-                if [[ $size_rc -eq 124 || $size_rc -ge 128 ]]; then\n+                if [[ $size_rc -ge 128 ]]; then\n                     cleanup_interrupt_rc=$size_rc\n                     break\n+                elif [[ $size_rc -eq 124 ]]; then\n+                    # Sizing budget exhausted: keep cleaning with size 0.\n+                    MOLE_CLEAN_SIZING_TIMEOUTS=$((${MOLE_CLEAN_SIZING_TIMEOUTS:-0} + 1))\n                 fi\n                 [[ ! \"$size_kb\" =~ ^[0-9]+$ ]] && size_kb=0\n \n@@ -1452,6 +1480,8 @@ start_cleanup() {\n     export MOLE_CURRENT_COMMAND=\"clean\"\n     MOLE_CLEAN_CANCEL_STATUS=0\n     export MOLE_CLEAN_CANCEL_STATUS\n+    MOLE_CLEAN_SIZING_TIMEOUTS=0\n+    export MOLE_CLEAN_SIZING_TIMEOUTS\n     log_operation_session_start \"clean\"\n     DRY_RUN_SEEN_IDENTITIES=()\n     DRY_RUN_TOTAL_PARTIAL=false\n@@ -1960,6 +1990,10 @@ perform_cleanup() {\n         publish_clean_preview_file || true\n     fi\n \n+    if [[ ${MOLE_CLEAN_SIZING_TIMEOUTS:-0} -gt 0 ]]; then\n+        summary_details+=(\"${GRAY}${ICON_WARNING}${NC} Some items exceeded the ${MOLE_TIMEOUT_DISK_VERIFY_SEC}s size-check budget and were counted as 0, so the total is under-reported. Raise ${GRAY}MOLE_TIMEOUT_DISK_VERIFY_SEC${NC} to measure them.\")\n+    fi\n+\n     if [[ $had_errexit -eq 1 ]]; then\n         set -e\n     fi",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              }
+            ],
+            "files_truncated": false
+          }
+        ],
+        "comments": [
+          {
+            "url": "https://github.com/tw93/Mole/issues/1374#issuecomment-5187206542",
+            "body": "Reproduced on both V1.49.2 and current main: one slow `~/Library/Caches/*` size check (exit 124) cancels the whole `mo clean` run and skips every remaining section. I will submit a fix along the lines proposed here: treat a sizing `124` as \"size unknown, keep cleaning\" in `_safe_clean_impl` (signals `>=128` and real `rm` timeouts stay fatal), add a one-line summary note about the under-reported total, and keep `process_project_cache_matches` untouched. Bats tests included.",
+            "authorAssociation": "CONTRIBUTOR",
+            "createdAt": "2026-08-05T03:30:54Z",
+            "updatedAt": "2026-08-05T03:30:54Z",
+            "body_truncated": false
+          },
+          {
+            "url": "https://github.com/tw93/Mole/issues/1374#issuecomment-5217595526",
+            "body": "@tashicorp thank you for the report. This is fixed on main: a cache size-check exit 124 no longer aborts the whole `mo clean` run. Get it with `mo update --nightly`, or wait for the next release. Closing as completed; reopen if nightly still stops the run.\n",
+            "authorAssociation": "OWNER",
+            "createdAt": "2026-08-07T13:21:35Z",
+            "updatedAt": "2026-08-07T13:21:35Z",
+            "body_truncated": false
+          }
+        ],
+        "comments_total": 2,
+        "comments_truncated": false
+      }
+    }
+  ],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 19206,
+      "cached_input_tokens": 3456,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 183,
+      "reasoning_output_tokens": 37
+    },
+    "thread_id": "01a116c5-58ae-7e90-a314-b8caf23515ac"
+  },
+  "target_repo_excluded": "tqdm/tqdm",
+  "issue_creation_cutoff": "2026-09-11T07:09:57Z",
+  "pr_evidence_note": "Current bounded GitHub snapshots, not time-travel evidence."
+}

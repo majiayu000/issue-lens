@@ -1,0 +1,192 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R1",
+        "category": "有效参数解析",
+        "title": "实例默认值及调用覆盖值进入相同校验路径",
+        "preconditions": [
+          "两种锁及读写模式参数化，Soft 环境支持硬链接；禁用单例复用。",
+          "实例默认 timeout=-2、blocking=True；先用显式 timeout=-1 合法获取一层。"
+        ],
+        "steps": [
+          "分别省略 timeout/blocking，或显式传入 None，尝试同模式重入。",
+          "捕获异常并检查原深度仍为 1。",
+          "显式传入 timeout=-1、blocking=True 重入，确认深度增至 2，再释放新增一层。",
+          "仅显式传入 blocking=False，继承默认负超时重入，再逐层释放。",
+          "由独立实例获取写锁，确认最终释放完整。"
+        ],
+        "expected_result": "省略参数或传入 None 时，有效负阻塞超时被拒绝且深度不变；显式 -1 或 blocking=False 覆盖默认值后重入成功，释放层数与成功获取次数一致。",
+        "source_ids": [],
+        "rationale": "所给源码先解析实例默认值再进入新增检查，默认值与调用覆盖值是改动直接影响的入口边界。",
+        "coverage": "not_found",
+        "incremental_value": "新增非法实例默认值在重入时的校验，以及合法调用参数覆盖默认值的验证；仅在所给 T1 中未发现同等覆盖。",
+        "existing_tests": [],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R2",
+        "category": "失败后的持锁状态",
+        "title": "多层持锁中的非法调用既不增加深度，也不提前释放",
+        "preconditions": [
+          "分别准备两种锁及读写模式；Soft 环境支持硬链接。",
+          "同线程同模式合法获取两次，记录当前深度为 2；准备同路径独立竞争实例。"
+        ],
+        "steps": [
+          "调用同模式获取，传入 timeout=-2、blocking=True，捕获拒绝异常。",
+          "立即检查 ReadWriteLock._lock_level 或 SoftReadWriteLock._hold.level，以及原持锁模式。",
+          "正常释放一次，检查深度为 1，并尝试由竞争实例非阻塞获取写锁。",
+          "再释放一次，由竞争实例非阻塞获取写锁。"
+        ],
+        "expected_result": "非法调用后深度仍为 2，模式不变；第一次释放后竞争实例抛出 Timeout；第二次释放后竞争实例能够获取写锁。",
+        "source_ids": [],
+        "rationale": "R2 要求失败调用不改变深度。直接状态断言和逐层释放共同检测深度增加、减少及过早释放。",
+        "coverage": "partial",
+        "incremental_value": "新增深度为 2 时失败后的即时深度断言，以及剩余一层仍排斥竞争者的检查。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "    with ExitStack() as stack:\n        if reentrant:\n            stack.enter_context(acquire())\n        with pytest.raises(ValueError, match=r\"^timeout must be a non-negative number or -1$\"):\n            stack.enter_context(acquire(timeout=timeout))\n    with timeout_locks[1].acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)",
+            "reason": "已有测试在一层持锁中拒绝非法调用，并在退出后验证可被竞争实例获取，能检测遗留持锁；没有断言失败瞬间深度，也没有验证失败后原持锁仍持续排斥竞争者。",
+            "path": "tests/test_read_write_unit.py",
+            "line": 747
+          }
+        ],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R3",
+        "category": "合法阻塞超时",
+        "title": "-1 在真实竞争下等待释放，并保留合法重入",
+        "preconditions": [
+          "两种锁分别运行，读写模式参数化；使用同路径独立实例，Soft 环境支持硬链接。",
+          "持有者先获取写锁；通过事件协调竞争者启动与持有者释放，测试设独立看门狗以避免挂起。"
+        ],
+        "steps": [
+          "竞争者在工作线程调用对应获取方法，传入 timeout=-1、blocking=True。",
+          "持有者未释放时，观察竞争者尚未报告获取成功或异常。",
+          "释放持有者，等待竞争者报告获取成功。",
+          "竞争者在同一工作线程以 -1 同模式重入，再依次释放两层。"
+        ],
+        "expected_result": "持有者释放前竞争者保持等待，不因 -1 抛出 ValueError 或 Timeout；释放后成功获取并能合法重入，最终完整释放。",
+        "source_ids": [],
+        "rationale": "覆盖 R3 的实际等待行为；空闲获取和重入成功不足以证明竞争下仍保留无限等待语义。有限观察窗口用于回归验证，不声称证明无限时长。",
+        "coverage": "partial",
+        "incremental_value": "新增真实竞争、释放后唤醒及同线程重入边界。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "    with acquire(timeout=timeout, blocking=blocking):\n        with acquire(timeout=timeout, blocking=blocking), pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n        with pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n    with contender.acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)",
+            "reason": "test_acquire_valid_timeout_preserves_nested_hold 包含 timeout=-1、blocking=True，验证两种锁合法嵌套获取及释放；获取时没有其他实例先持有冲突锁，因此不覆盖等待后成功。",
+            "path": "tests/test_read_write_unit.py",
+            "line": 777
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R4",
+        "category": "非阻塞语义",
+        "title": "负超时不改变非阻塞成功及竞争失败行为",
+        "preconditions": [
+          "两种锁及读写模式参数化，Soft 环境支持硬链接。",
+          "参数化 timeout=-2、-0.5、负无穷和正有限值；准备空闲及独立实例持有冲突写锁两种状态。"
+        ],
+        "steps": [
+          "空闲时调用获取方法，传入 blocking=False 和参数化 timeout；同线程同模式重入并逐层释放。",
+          "让独立持有者获取写锁，再以相同参数调用竞争实例获取方法，记录结果和耗时。",
+          "保持持有者未释放，确认竞争调用已结束；释放持有者后再次非阻塞获取。"
+        ],
+        "expected_result": "空闲获取与合法重入成功；竞争时抛出 Timeout，不抛 ValueError，且无需等待持有者释放或消耗指定正超时；释放后可以成功获取，没有失败调用遗留的持锁。",
+        "source_ids": [],
+        "rationale": "覆盖 R4 中 blocking=False 优先于 timeout 校验与等待的行为。PRD 提到的历史编号未提供对应 source，不能作为历史证据引用。",
+        "coverage": "partial",
+        "incremental_value": "新增两种锁在外部持锁竞争下携带非法负超时的失败行为，以及无需等待释放的观察。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "    with acquire(timeout=timeout, blocking=blocking):\n        with acquire(timeout=timeout, blocking=blocking), pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n        with pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n    with contender.acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)",
+            "reason": "已有参数化验证负超时配合 blocking=False 的空闲和重入成功；其中竞争调用没有传入这些负超时。",
+            "path": "tests/test_read_write_unit.py",
+            "line": 777
+          },
+          {
+            "test_id": "T1",
+            "quote": "    lock = ReadWriteLock(lock_file, is_singleton=False)\n    lock._transaction_lock.acquire()\n    try:\n        with pytest.raises(Timeout):\n            (lock.acquire_read if mode == \"read\" else lock.acquire_write)(blocking=False, timeout=5.0)\n    finally:\n        lock._transaction_lock.release()",
+            "reason": "已有测试覆盖 SQLite 内部事务锁被占用时非阻塞携带正超时抛出 Timeout；不覆盖 Soft 或外部持锁时携带负超时。",
+            "path": "tests/test_read_write_unit.py",
+            "line": 418
+          }
+        ],
+        "id": "TC004"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "阻塞超时校验",
+        "title": "两种锁的读写获取拒绝非法负阻塞超时",
+        "preconditions": [
+          "分别使用 ReadWriteLock 和 SoftReadWriteLock，关闭单例复用；SQLite 用例使用其支持的文件系统，Soft 用例要求支持硬链接。",
+          "参数化读、写模式以及 timeout=-2、-0.5、负无穷；分别准备未持锁和同线程同模式已持锁状态。"
+        ],
+        "steps": [
+          "调用对应获取方法，显式传入 blocking=True 和参数化 timeout。",
+          "捕获异常；若原先持锁，正常释放原持锁。",
+          "让同路径独立实例以非阻塞方式获取写锁，确认失败调用未遗留持锁。"
+        ],
+        "expected_result": "获取抛出 ValueError，消息为 timeout must be a non-negative number or -1；原持锁释放后，独立实例能够获取写锁。异常类型、消息及首次获取检查来自所给 diff，是否成为正式对外契约仍待确认。",
+        "source_ids": [],
+        "rationale": "直接覆盖 R1；diff 将检查放在重入分支之前，也影响首次获取。没有提供历史 issue，不推断故障根因。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给测试已经参数化两种锁、读写模式、三类非法负值及首次/重入状态。这里只做静态覆盖判断，未执行测试。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "    with ExitStack() as stack:\n        if reentrant:\n            stack.enter_context(acquire())\n        with pytest.raises(ValueError, match=r\"^timeout must be a non-negative number or -1$\"):\n            stack.enter_context(acquire(timeout=timeout))\n    with timeout_locks[1].acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)",
+            "reason": "test_acquire_rejects_negative_timeout 的参数化包含首次和重入获取、读写模式及三类非法负值；timeout_locks 夹具覆盖 SQLite 与 Soft。默认 blocking=True，与本用例触发条件一致。",
+            "path": "tests/test_read_write_unit.py",
+            "line": 747
+          }
+        ],
+        "id": "TC005"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "首次获取的拒绝行为及 ValueError 精确消息已有源码测试，但 PRD 未明确其正式契约地位；草稿按 diff 列入，验收口径仍需确认。未提供历史 issue 提炼，无法补充有来源的故障触发条件。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "本草稿未展开非法超时与升降级、跨线程写重入错误同时出现时的异常优先级；新增校验位于重入检查之前，PRD 未明确组合错误的优先级契约。"
+      },
+      {
+        "requirement_id": "R2",
+        "reason": "拟补充多层持锁的即时深度与排斥性检查；所给测试尚未提供同等断言。本草稿没有单独覆盖 read_lock/write_lock 包装器进入失败时是否保留外层持锁。"
+      },
+      {
+        "requirement_id": "R3",
+        "reason": "所给测试覆盖 -1 的合法嵌套及 SQLite 超时换算，未发现真实竞争后释放并成功获取的同等测试；拟补充用例只验证有限观察窗口内的等待语义。"
+      },
+      {
+        "requirement_id": "R4",
+        "reason": "所给测试没有覆盖两种锁在外部竞争下携带负超时的非阻塞失败路径。timeout=0 已有空闲及重入测试，但本草稿未覆盖它在外部竞争下的立即失败边界。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 41307,
+      "cached_input_tokens": 7680,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2995,
+      "reasoning_output_tokens": 80
+    },
+    "thread_id": "01a116c6-cea7-70e1-8d3c-421a1dd9cb0b"
+  },
+  "input_sha256": "2d6232408c64b07346c998b91f31c7997fa38404d040528d82e1da4d2f4bbbdc",
+  "common_input_sha256": "4491b2229e9dc7d7403eb56985a256fd44b861f746c62d7545d80ca61329c683",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

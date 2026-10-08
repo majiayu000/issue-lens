@@ -1,0 +1,40 @@
+{
+  "sample": "pypa--packaging",
+  "head_sha": "45473a150d4181513543f16bcb23ba870fc98241",
+  "diff_sha256": "dd92d2841305edc3d312592774575351be80aa85400c0ff8ab251f02c1f46fc1",
+  "requested_model": "gpt-6.1-sol",
+  "started_at": "2026-10-07T14:23:46.089325+00:00",
+  "status": "failed_no_pair_accepted",
+  "stages": {
+    "requirements": {
+      "status": "completed",
+      "seconds": 23.961782959057018
+    },
+    "retrieval": {
+      "status": "completed",
+      "seconds": 15.714343374827877
+    },
+    "extraction": {
+      "status": "completed",
+      "seconds": 3.3329706639051437e-06
+    },
+    "pr_evidence": {
+      "status": "completed",
+      "seconds": 6.500165909528732e-06
+    },
+    "B": {
+      "status": "failed",
+      "seconds": 300.0568496249616,
+      "error_type": "ModelError",
+      "error": "Codex exceeded the 300-second call limit."
+    }
+  },
+  "common_input_sha256": "6c19cd26bade8b1e70fe274d25bdf66acf73352ba22079ded3210611c9ff92ce",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98",
+  "sources_count": 0,
+  "requirements_count": 3,
+  "order": [
+    "B",
+    "A"
+  ]
+}

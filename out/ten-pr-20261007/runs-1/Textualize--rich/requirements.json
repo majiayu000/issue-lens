@@ -1,0 +1,65 @@
+{
+  "requirements": [
+    {
+      "title": "双宽字符处折行不丢失文本",
+      "quote": "Update wrapping logic to fix issues with CJK charcters disappearing when the \"fold\" location sat *within* a double-width character.",
+      "queries": [
+        [
+          "wrapping",
+          "missing"
+        ],
+        [
+          "CJK",
+          "fold",
+          "disappearing"
+        ],
+        [
+          "double-width",
+          "wrapping",
+          "boundary"
+        ]
+      ],
+      "id": "R1"
+    },
+    {
+      "title": "当前行空间不足时换行，整行仍容不下时分多行折叠",
+      "quote": "if there is no space on the current line, move to a new line, and if theres not enough space on the entire new line, fold the text over multiple lines at appropriate locations.",
+      "queries": [
+        [
+          "wrap",
+          "overflow"
+        ],
+        [
+          "word",
+          "width",
+          "fold"
+        ],
+        [
+          "line",
+          "space",
+          "break"
+        ]
+      ],
+      "id": "R2"
+    }
+  ],
+  "open_questions": [
+    "PRD 明确不要求完全匹配浏览器的标点和空白处理；diff 新增连续空格、首尾空白的具体输出测试，但 PRD 未规定这些输出是否属于验收要求，需澄清。",
+    "diff 新增长词折叠后让后续词继续占用末行剩余空间的测试，PRD 未明确该行为，需澄清。",
+    "diff 测试要求显式传入的换行宽度优先于 Console 宽度，PRD 未说明宽度优先级，需澄清。",
+    "diff 修改 chop_cells 的参数和返回顺序，并描述禁用折叠时裁剪长词；PRD 未声明这些接口或行为要求，不能据此新增测试主题。"
+  ],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 24343,
+      "cached_input_tokens": 7680,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 340,
+      "reasoning_output_tokens": 0
+    },
+    "thread_id": "01a116b3-c9a0-7202-811f-cfcb8f300f3e"
+  },
+  "prd_sha256": "556d0711856d53ce44cfb713e9dbe08b3128486d6a39d8979a4482ddb1ffc419"
+}

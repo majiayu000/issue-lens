@@ -1,0 +1,17 @@
+test_00_even_backslash_run_trailing_space_stripped (tests.test_07_gitignore_trailing_space.TrailingSpaceAfterEscapedBackslashTest.test_00_even_backslash_run_trailing_space_stripped)
+Tests that a trailing space preceded by an even number of ... ok
+test_01_four_backslashes_trailing_space_stripped (tests.test_07_gitignore_trailing_space.TrailingSpaceAfterEscapedBackslashTest.test_01_four_backslashes_trailing_space_stripped)
+Tests that a trailing space preceded by four backslashes (two ... ok
+test_02_odd_backslash_run_trailing_space_kept (tests.test_07_gitignore_trailing_space.TrailingSpaceAfterEscapedBackslashTest.test_02_odd_backslash_run_trailing_space_kept)
+Tests that a trailing space preceded by an odd number of ... ok
+test_03_three_backslashes_trailing_space_kept (tests.test_07_gitignore_trailing_space.TrailingSpaceAfterEscapedBackslashTest.test_03_three_backslashes_trailing_space_kept)
+Tests that a trailing space preceded by three backslashes (an ... ok
+test_04_regex_normalization (tests.test_07_gitignore_trailing_space.TrailingSpaceAfterEscapedBackslashTest.test_04_regex_normalization)
+Tests the compiled regular expressions directly. ... ok
+test_05_pathspec_end_to_end (tests.test_07_gitignore_trailing_space.TrailingSpaceAfterEscapedBackslashTest.test_05_pathspec_end_to_end)
+Tests the behavior through the PathSpec interface. ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.001s
+
+OK

@@ -1,0 +1,11 @@
+attrs==21.4.0
+coverage==7.16.2
+iniconfig==2.3.1
+markdown-it-py==4.2.0
+mdurl==0.1.2
+packaging==26.3
+pluggy==1.6.0
+Pygments==2.21.0
+pytest==7.4.4
+pytest-cov==3.0.0
+-e git+https://github.com/Textualize/rich.git@05c5dfc8fcbb1c967490540cc080c3d534a91a12#egg=rich

@@ -1,0 +1,101 @@
+{
+  "sources": [
+    {
+      "id": 3213333611,
+      "title": "Grist node incorrectly parses numbers in query fields causing loss of precision",
+      "url": "https://github.com/n8n-io/n8n/issues/17132",
+      "repo": "n8n-io/n8n",
+      "extraction": {
+        "id": 3213333611,
+        "issue_kind": "bug",
+        "symptom": "Grist 节点使用超出 JavaScript Number 精度范围的整数字符串作为过滤值时，查询返回空结果。",
+        "root_cause": "正文明确指出，查询过滤值从字符串转换为 JavaScript Number 时丢失精度，导致查询无结果。",
+        "root_cause_category": "参数解析与默认值",
+        "environment": [
+          "Ubuntu Linux 24.04",
+          "n8n 1.101.1",
+          "Docker 镜像，Node.js 版本不详",
+          "PostgreSQL",
+          "main（默认）执行模式",
+          "Grist 查询过滤值为字符串形式的 64 位整数，例如 Discord snowflake"
+        ],
+        "evidence_quote": "Query returns no results, since the conversion to Number from string is lossy.",
+        "test_ideas": [
+          "在 Grist 表中准备字符串形式的 64 位整数记录，使用超过 Number.MAX_SAFE_INTEGER 的值进行过滤，检查能否返回精确匹配的记录。",
+          "分别用字符串形式的 9007199254740990、9007199254740991、9007199254740992、9007199254740993 查询，检查精度边界两侧的过滤结果及发出的参数是否保持原值。",
+          "准备两个转换为 Number 后会得到相同数值的不同整数字符串，分别过滤，检查是否只返回各自对应的记录，避免空结果或错误匹配。",
+          "以安全范围内的整数字符串和普通非数字字符串作为对照，检查精度处理是否影响已有过滤行为。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": "gpt-6.1-sol",
+          "usage": {
+            "input_tokens": 15588,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 345,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a116c9-151a-7792-a558-d999f7956003"
+        }
+      },
+      "pr_evidence": {
+        "fetched_at": "2026-10-07T14:34:44.119132+00:00",
+        "selection": "current closing event, then explicit closing references; latest 8 comments",
+        "pulls_truncated": false,
+        "pulls": [
+          {
+            "url": "https://github.com/n8n-io/n8n/pull/17136",
+            "title": "fix(Grist Node): Test for integer precision loss",
+            "body": "## Summary\r\n\r\nFixes #17132 \r\n\r\n## Review / Merge checklist\r\n\r\n- [x] PR title and summary are descriptive. ([conventions](../blob/master/.github/pull_request_title_conventions.md))\r\n- [ ] [Docs updated](https://github.com/n8n-io/n8n-docs) or follow-up ticket created.\r\n- [ ] Tests included.\r\n- [ ] PR Labeled with `release/backport` (if the PR is an urgent fix that needs to be backported)\r\n",
+            "body_truncated": false,
+            "state": "closed",
+            "merged": true,
+            "head_sha": "b5ea8936f30b5960d339eb0a9cb42cdcd5ddf05d",
+            "base_sha": "dc86984ae05e05be65a4b99e2223ffefa77c8442",
+            "merge_commit_sha": "735e0647490f411a4031eec71f1af0581d129ef6",
+            "relation": "closing_reference_not_verified_fix",
+            "files": [
+              {
+                "filename": "packages/nodes-base/nodes/Grist/GenericFunctions.ts",
+                "status": "modified",
+                "patch": "@@ -67,10 +67,14 @@ export function parseSortProperties(sortProperties: GristSortProperties) {\n \t}, '');\n }\n \n+export function isSafeInteger(val: number) {\n+\treturn !isNaN(val) && val > Number.MIN_VALUE && val < Number.MAX_VALUE;\n+}\n+\n export function parseFilterProperties(filterProperties: GristFilterProperties) {\n \treturn filterProperties.reduce<{ [key: string]: Array<string | number> }>((acc, cur) => {\n \t\tacc[cur.field] = acc[cur.field] ?? [];\n-\t\tconst values = isNaN(Number(cur.values)) ? cur.values : Number(cur.values);\n+\t\tconst values = isSafeInteger(Number(cur.values)) ? Number(cur.values) : cur.values;\n \t\tacc[cur.field].push(values);\n \t\treturn acc;\n \t}, {});",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              }
+            ],
+            "files_truncated": false
+          }
+        ],
+        "comments": [
+          {
+            "url": "https://github.com/n8n-io/n8n/issues/17132#issuecomment-3049823155",
+            "body": "Hey @EternalDeiwos,\n\nThank you for reaching out! We’ve received your issue and are looking into it. To help us track this internally, we’ve created a Linear ticket with the reference: \"GHC-2991\".\n\nWe’ll keep you updated as we make progress, but if you have any additional details or context to share, feel free to add them here - it’s always helpful!\n\nThanks for your patience and for bringing this to our attention.",
+            "authorAssociation": "MEMBER",
+            "createdAt": "2025-07-08T17:54:19Z",
+            "updatedAt": "2025-07-08T17:54:19Z",
+            "body_truncated": false
+          }
+        ],
+        "comments_total": 1,
+        "comments_truncated": false
+      }
+    }
+  ],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 17021,
+      "cached_input_tokens": 3456,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 304,
+      "reasoning_output_tokens": 56
+    },
+    "thread_id": "01a116c8-ba7f-71a2-87aa-aea06ff68def"
+  },
+  "target_repo_excluded": "python-humanize/humanize",
+  "issue_creation_cutoff": "2026-09-16T15:46:34Z",
+  "pr_evidence_note": "Current bounded GitHub snapshots, not time-travel evidence."
+}

@@ -1,0 +1,772 @@
+{
+  "id": "cpburnz--python-pathspec",
+  "repo": "cpburnz/python-pathspec",
+  "pr": 142,
+  "head_sha": "73120f31ad255c581f267b8515f274d7862210de",
+  "selected_pair_directory": "runs-1/cpburnz--python-pathspec",
+  "reviewer": "agent technical review; no human maintainer judgment",
+  "human_maintainer_adoption": null,
+  "cases": [
+    {
+      "arm": "A",
+      "case_id": "TC001",
+      "title": "bytes 模式经共享裁剪逻辑后保持返回类型及匹配语义",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_03_gitignore_basic.py",
+            "start_line": 561,
+            "end_line": 584,
+            "quote": "\tdef test_07_match_bytes_and_bytes(self):\n\t\t\"\"\"\n\t\tTest byte string patterns matching byte string paths.\n\t\t\"\"\"\n\t\tpattern = GitIgnoreBasicPattern(b'*.py')\n\t\tresults = set(filter(pattern.match_file, [b'a.py']))\n\t\tself.assertEqual(results, {b'a.py'})\n\n\tdef test_07_match_bytes_and_bytes_complete(self):\n\t\t\"\"\"\n\t\tTest byte string patterns matching byte string paths.\n\t\t\"\"\"\n\t\tencoded = bytes(bytearray(range(0, 256)))\n\n\t\t# Forward slashes cannot be escaped with the current implementation.\n\t\t# Remove ASCII 47.\n\t\tfs_ord = ord('/')\n\t\tencoded = encoded[:fs_ord] + encoded[fs_ord+1:]\n\n\t\tescaped = b''.join(b'\\\\' + encoded[i:i+1] for i in range(len(encoded)))\n\n\t\tpattern = GitIgnoreBasicPattern(escaped)\n\t\tresults = set(filter(pattern.match_file, [encoded]))\n\t\tself.assertEqual(results, {encoded})"
+          },
+          {
+            "path": "tests/test_04_gitignore_spec.py",
+            "start_line": 567,
+            "end_line": 590,
+            "quote": "\tdef test_07_match_bytes_and_bytes(self):\n\t\t\"\"\"\n\t\tTest byte string patterns matching byte string paths.\n\t\t\"\"\"\n\t\tpattern = GitIgnoreSpecPattern(b'*.py')\n\t\tresults = set(filter(pattern.match_file, [b'a.py']))\n\t\tself.assertEqual(results, {b'a.py'})\n\n\tdef test_07_match_bytes_and_bytes_complete(self):\n\t\t\"\"\"\n\t\tTest byte string patterns matching byte string paths.\n\t\t\"\"\"\n\t\tencoded = bytes(bytearray(range(0, 256)))\n\n\t\t# Forward slashes cannot be escaped with the current implementation.\n\t\t# Remove ASCII 47.\n\t\tfs_ord = ord('/')\n\t\tencoded = encoded[:fs_ord] + encoded[fs_ord+1:]\n\n\t\tescaped = b\"\".join(b'\\\\' + encoded[i:i+1] for i in range(len(encoded)))\n\n\t\tpattern = GitIgnoreSpecPattern(escaped)\n\t\tresults = set(filter(pattern.match_file, [encoded]))\n\t\tself.assertEqual(results, {encoded})"
+          },
+          {
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "start_line": 47,
+            "end_line": 88,
+            "quote": "\tdef test_00_even_backslash_run_trailing_space_stripped(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by an even number of\n\t\tbackslashes is unescaped and stripped.\n\t\t\"\"\"\n\t\t# 'foo\\\\ ' (escaped backslash followed by space): Git strips the\n\t\t# unescaped trailing space and matches the file 'foo\\'.\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 2} ', f'foo{BS}', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 2} ', f'foo{BS} ', False)\n\n\tdef test_01_four_backslashes_trailing_space_stripped(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by four backslashes (two\n\t\tescaped backslashes) is unescaped and stripped.\n\t\t\"\"\"\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 4} ', f'foo{BS * 2}', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 4} ', f'foo{BS * 2} ', False)\n\n\tdef test_02_odd_backslash_run_trailing_space_kept(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by an odd number of\n\t\tbackslashes is escaped and kept.\n\t\t\"\"\"\n\t\t# 'foo\\ ' has an escaped space and matches the file 'foo '.\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS} ', f'foo ', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS} ', f'foo', False)\n\n\tdef test_03_three_backslashes_trailing_space_kept(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by three backslashes (an\n\t\tescaped backslash followed by an escaped space) is kept.\n\t\t\"\"\"\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 3} ', f'foo{BS} ', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 3} ', f'foo{BS}', False)"
+          }
+        ],
+        "assessment": "已有bytes通用匹配及str奇偶裁剪；新增bytes奇偶组合与返回正则类型。",
+        "model_claim": "not_found"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "cpburnz--python-pathspec",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_pathspec_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/cpburnz--python-pathspec/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+          "exit_code": 0,
+          "elapsed_seconds": 68.629,
+          "log": "logs/model-checks/cpburnz--python-pathspec/03_model_checks.log"
+        },
+        "junit": "logs/model-checks/cpburnz--python-pathspec/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_bytes_odd_even[1-GitIgnoreBasicPattern]",
+            "result": "passed",
+            "seconds": 0.001,
+            "message": null
+          },
+          {
+            "name": "test_bytes_odd_even[1-GitIgnoreSpecPattern]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_bytes_odd_even[2-GitIgnoreBasicPattern]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_bytes_odd_even[2-GitIgnoreSpecPattern]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_bytes_odd_even[3-GitIgnoreBasicPattern]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_bytes_odd_even[3-GitIgnoreSpecPattern]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_pathspec_cases.py",
+            "start_line": 9,
+            "end_line": 15,
+            "quote": "def test_bytes_odd_even(cls,n):\n    raw=('foo'+BS*n+' ').encode('ascii');regex,include=cls.pattern_to_regex(raw)\n    assert isinstance(regex,bytes);assert include is True\n    expected=('foo'+BS*(n//2)+(' ' if n%2 else '')).encode('ascii');other=expected.rstrip() if n%2 else expected+b' '\n    assert re.compile(regex).search(expected) is not None\n    assert re.compile(regex).search(other) is None\n    if n==2:assert regex==cls.pattern_to_regex(raw[:-1])[0]"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "已有bytes通用匹配及str奇偶裁剪；新增bytes奇偶组合与返回正则类型。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "bytes-odd-even"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC002",
+      "title": "裁剪尾随空格时不删除前导空格",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_03_gitignore_basic.py",
+            "start_line": 892,
+            "end_line": 911,
+            "quote": "\tdef test_15_issue_93_b_1_single(self):\n\t\t\"\"\"\n\t\tTest patterns with leading spaces.\n\t\t\"\"\"\n\t\tpattern = GitIgnoreBasicPattern(' foo')\n\t\tself.assertIs(pattern.include, True)\n\t\tself.assertEqual(pattern.regex.pattern, f'^(?s:.+/)?\\\\ foo{_DIR_OPT}')\n\t\tself.assertFalse(pattern.match_file('foo'))\n\t\tself.assertTrue(pattern.match_file(' foo'))\n\n\tdef test_15_issue_93_b_2_double(self):\n\t\t\"\"\"\n\t\tTest patterns with leading spaces.\n\t\t\"\"\"\n\t\tpattern = GitIgnoreBasicPattern('  foo')\n\t\tself.assertIs(pattern.include, True)\n\t\tself.assertEqual(pattern.regex.pattern, f'^(?s:.+/)?\\\\ \\\\ foo{_DIR_OPT}')\n\t\tself.assertFalse(pattern.match_file('foo'))\n\t\tself.assertFalse(pattern.match_file(' foo'))\n\t\tself.assertTrue(pattern.match_file('  foo'))"
+          },
+          {
+            "path": "tests/test_04_gitignore_spec.py",
+            "start_line": 924,
+            "end_line": 943,
+            "quote": "\tdef test_15_issue_93_b_1_single(self):\n\t\t\"\"\"\n\t\tTest patterns with leading spaces.\n\t\t\"\"\"\n\t\tpattern = GitIgnoreSpecPattern(' foo')\n\t\tself.assertIs(pattern.include, True)\n\t\tself.assertEqual(pattern.regex.pattern, f'^(?s:.+/)?\\\\ foo{_DIR_MARK_OPT}')\n\t\tself.assertFalse(pattern.match_file('foo'))\n\t\tself.assertTrue(pattern.match_file(' foo'))\n\n\tdef test_15_issue_93_b_2_double(self):\n\t\t\"\"\"\n\t\tTest patterns with leading spaces.\n\t\t\"\"\"\n\t\tpattern = GitIgnoreSpecPattern('  foo')\n\t\tself.assertIs(pattern.include, True)\n\t\tself.assertEqual(pattern.regex.pattern, f'^(?s:.+/)?\\\\ \\\\ foo{_DIR_MARK_OPT}')\n\t\tself.assertFalse(pattern.match_file('foo'))\n\t\tself.assertFalse(pattern.match_file(' foo'))\n\t\tself.assertTrue(pattern.match_file('  foo'))"
+          }
+        ],
+        "assessment": "已有前导空格保留单独测试；本例补前导空格与偶数反斜杠尾随裁剪组合。",
+        "model_claim": "not_found"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "cpburnz--python-pathspec",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_pathspec_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/cpburnz--python-pathspec/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+          "exit_code": 0,
+          "elapsed_seconds": 68.629,
+          "log": "logs/model-checks/cpburnz--python-pathspec/03_model_checks.log"
+        },
+        "junit": "logs/model-checks/cpburnz--python-pathspec/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_leading_space_with_even_trailing[GitIgnoreBasicPattern]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_leading_space_with_even_trailing[GitIgnoreSpecPattern]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_pathspec_cases.py",
+            "start_line": 17,
+            "end_line": 21,
+            "quote": "def test_leading_space_with_even_trailing(cls):\n    p=cls(' foo'+BS*2+' ')\n    assert p.match_file(' foo'+BS) is not None\n    assert p.match_file('foo'+BS) is None\n    assert p.match_file(' foo'+BS+' ') is None"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "已有前导空格保留单独测试；本例补前导空格与偶数反斜杠尾随裁剪组合。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "leading-and-trailing-combination"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC003",
+      "title": "PathSpec 在明确选择的后端上保持奇偶匹配契约",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "start_line": 100,
+            "end_line": 111,
+            "quote": "\t\t\"\"\"\n\t\tTests the behavior through the PathSpec interface.\n\t\t\"\"\"\n\t\tspec = PathSpec.from_lines('gitignore', [f'foo{BS * 2} '])\n\t\t# These POSIX-style paths contain literal backslashes. Keep Windows\n\t\t# from normalizing those characters into directory separators.\n\t\tself.assertIs(spec.match_file(f'foo{BS}', separators=('/',)), True)\n\t\tself.assertIs(spec.match_file(f'foo{BS} ', separators=('/',)), False)\n\n\t\tspec = PathSpec.from_lines('gitignore', [f'foo{BS} '])\n\t\tself.assertIs(spec.match_file('foo '), True)\n\t\tself.assertIs(spec.match_file('foo'), False)"
+          },
+          {
+            "path": "tests/test_05_pathspec.py",
+            "start_line": 118,
+            "end_line": 188,
+            "quote": "\t\tParameterize `PathSpec.from_lines()` for each backend and configuration to\n\t\tbegin a subtest.\n\n\t\t*pattern_factory* (:class:`str`) is the pattern factory.\n\n\t\t*lines* (:class:`Iterable` of :class:`str`) yields the lines.\n\n\t\tReturns an :class:`Iterator` yielding each subtest context for the\n\t\t:class:`PathSpec`.\n\t\t\"\"\"\n\t\tlines = list(lines)\n\n\t\tconfigs: list[tuple[\n\t\t\tstr, BackendNamesHint, Optional[Callable[[Sequence[Pattern]], _Backend]]\n\t\t]] = []\n\n\t\t# Simple backend, no optimizations.\n\t\tconfigs.append((\n\t\t\t\"simple (unopt)\",\n\t\t\t'simple',\n\t\t\tpartial(SimplePsBackend, no_filter=True, no_reverse=True),\n\t\t))\n\n\t\t# Simple backend, minimal optimizations.\n\t\tconfigs.append((\n\t\t\t\"simple (minopt)\",\n\t\t\t'simple',\n\t\t\tNone,\n\t\t))\n\n\t\t# Add additional backends.\n\t\tfor backend in BACKENDS:\n\t\t\tif backend == 'hyperscan':\n\t\t\t\tconfigs.append((\n\t\t\t\t\tf\"hyperscan (forward)\",\n\t\t\t\t\tbackend,\n\t\t\t\t\tpartial(HyperscanPsBackend, _debug_exprs=True),\n\t\t\t\t))\n\t\t\t\tconfigs.append((\n\t\t\t\t\tf\"hyperscan (reverse)\",\n\t\t\t\t\tbackend,\n\t\t\t\t\tpartial(HyperscanPsBackend, _debug_exprs=True, _test_sort=reverse_inplace)\n\t\t\t\t))\n\t\t\t\tconfigs.append((\n\t\t\t\t\tf\"hyperscan (shuffle)\",\n\t\t\t\t\tbackend,\n\t\t\t\t\tpartial(HyperscanPsBackend, _debug_exprs=True, _test_sort=shuffle_inplace)\n\t\t\t\t))\n\t\t\telif backend == 're2':\n\t\t\t\tconfigs.append((\n\t\t\t\t\tf\"re2 (forward)\",\n\t\t\t\t\tbackend,\n\t\t\t\t\tpartial(Re2PsBackend, _debug_regex=True),\n\t\t\t\t))\n\t\t\t\tconfigs.append((\n\t\t\t\t\tf\"re2 (reverse)\",\n\t\t\t\t\tbackend,\n\t\t\t\t\tpartial(Re2PsBackend, _debug_regex=True, _test_sort=reverse_inplace),\n\t\t\t\t))\n\t\t\t\tconfigs.append((\n\t\t\t\t\tf\"re2 (shuffle)\",\n\t\t\t\t\tbackend,\n\t\t\t\t\tpartial(Re2PsBackend, _debug_regex=True, _test_sort=shuffle_inplace),\n\t\t\t\t))\n\t\t\telse:\n\t\t\t\tconfigs.append((\n\t\t\t\t\tbackend,\n\t\t\t\t\tbackend,\n\t\t\t\t\tNone,\n\t\t\t\t))\n"
+          }
+        ],
+        "assessment": "默认后端端到端已覆盖；显式simple/re2/hyperscan相同奇偶结果实际新增验证，三后端均已安装并通过。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "cpburnz--python-pathspec",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_pathspec_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/cpburnz--python-pathspec/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+          "exit_code": 0,
+          "elapsed_seconds": 68.629,
+          "log": "logs/model-checks/cpburnz--python-pathspec/03_model_checks.log"
+        },
+        "junit": "logs/model-checks/cpburnz--python-pathspec/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_explicit_backend_odd_even[simple]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_explicit_backend_odd_even[re2]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_explicit_backend_odd_even[hyperscan]",
+            "result": "passed",
+            "seconds": 0.005,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_pathspec_cases.py",
+            "start_line": 23,
+            "end_line": 30,
+            "quote": "def test_explicit_backend_odd_even(backend):\n    try:p=PathSpec.from_lines('gitignore',['foo'+BS*2+' '],backend=backend)\n    except (ImportError,ModuleNotFoundError) as exc:pytest.skip(str(exc))\n    assert p.match_file('foo'+BS,separators=('/',)) is True\n    assert p.match_file('foo'+BS+' ',separators=('/',)) is False\n    p=PathSpec.from_lines('gitignore',['foo'+BS+' '],backend=backend)\n    assert p.match_file('foo ',separators=('/',)) is True\n    assert p.match_file('foo',separators=('/',)) is False"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "默认后端端到端已覆盖；显式simple/re2/hyperscan相同奇偶结果实际新增验证，三后端均已安装并通过。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "backend-odd-even-parity"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC004",
+      "title": "偶数反斜杠后的单个尾随空格被裁剪",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "covered",
+        "references": [
+          {
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "start_line": 47,
+            "end_line": 67,
+            "quote": "\tdef test_00_even_backslash_run_trailing_space_stripped(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by an even number of\n\t\tbackslashes is unescaped and stripped.\n\t\t\"\"\"\n\t\t# 'foo\\\\ ' (escaped backslash followed by space): Git strips the\n\t\t# unescaped trailing space and matches the file 'foo\\'.\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 2} ', f'foo{BS}', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 2} ', f'foo{BS} ', False)\n\n\tdef test_01_four_backslashes_trailing_space_stripped(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by four backslashes (two\n\t\tescaped backslashes) is unescaped and stripped.\n\t\t\"\"\"\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 4} ', f'foo{BS * 2}', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 4} ', f'foo{BS * 2} ', False)"
+          }
+        ],
+        "assessment": "与已有n=2/4、两种pattern类及正反匹配断言一致，复用6个unittest方法。",
+        "model_claim": "covered"
+      },
+      "execution": {
+        "kind": "native_baseline_reused",
+        "command": {
+          "label": "tests",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+            "-m",
+            "unittest",
+            "discover",
+            "-t",
+            ".",
+            "-s",
+            "tests/",
+            "-p",
+            "test_07_gitignore_trailing_space.py",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+          "exit_code": 0,
+          "elapsed_seconds": 0.226,
+          "log": "logs/native_cpburnz--python-pathspec/05_tests.log"
+        },
+        "result": "passed",
+        "assertion_references": [
+          {
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "start_line": 47,
+            "end_line": 67,
+            "quote": "\tdef test_00_even_backslash_run_trailing_space_stripped(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by an even number of\n\t\tbackslashes is unescaped and stripped.\n\t\t\"\"\"\n\t\t# 'foo\\\\ ' (escaped backslash followed by space): Git strips the\n\t\t# unescaped trailing space and matches the file 'foo\\'.\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 2} ', f'foo{BS}', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 2} ', f'foo{BS} ', False)\n\n\tdef test_01_four_backslashes_trailing_space_stripped(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by four backslashes (two\n\t\tescaped backslashes) is unescaped and stripped.\n\t\t\"\"\"\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 4} ', f'foo{BS * 2}', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 4} ', f'foo{BS * 2} ', False)"
+          }
+        ],
+        "native_record": "native_cpburnz--python-pathspec.json"
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "与已有n=2/4、两种pattern类及正反匹配断言一致，复用6个unittest方法。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "existing-even"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC005",
+      "title": "奇数反斜杠后的转义尾随空格继续保留",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "covered",
+        "references": [
+          {
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "start_line": 69,
+            "end_line": 88,
+            "quote": "\tdef test_02_odd_backslash_run_trailing_space_kept(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by an odd number of\n\t\tbackslashes is escaped and kept.\n\t\t\"\"\"\n\t\t# 'foo\\ ' has an escaped space and matches the file 'foo '.\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS} ', f'foo ', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS} ', f'foo', False)\n\n\tdef test_03_three_backslashes_trailing_space_kept(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by three backslashes (an\n\t\tescaped backslash followed by an escaped space) is kept.\n\t\t\"\"\"\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 3} ', f'foo{BS} ', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 3} ', f'foo{BS}', False)"
+          }
+        ],
+        "assessment": "与已有n=1/3转义空格断言一致，复用6个unittest方法。",
+        "model_claim": "covered"
+      },
+      "execution": {
+        "kind": "native_baseline_reused",
+        "command": {
+          "label": "tests",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+            "-m",
+            "unittest",
+            "discover",
+            "-t",
+            ".",
+            "-s",
+            "tests/",
+            "-p",
+            "test_07_gitignore_trailing_space.py",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+          "exit_code": 0,
+          "elapsed_seconds": 0.226,
+          "log": "logs/native_cpburnz--python-pathspec/05_tests.log"
+        },
+        "result": "passed",
+        "assertion_references": [
+          {
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "start_line": 69,
+            "end_line": 88,
+            "quote": "\tdef test_02_odd_backslash_run_trailing_space_kept(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by an odd number of\n\t\tbackslashes is escaped and kept.\n\t\t\"\"\"\n\t\t# 'foo\\ ' has an escaped space and matches the file 'foo '.\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS} ', f'foo ', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS} ', f'foo', False)\n\n\tdef test_03_three_backslashes_trailing_space_kept(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by three backslashes (an\n\t\tescaped backslash followed by an escaped space) is kept.\n\t\t\"\"\"\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 3} ', f'foo{BS} ', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 3} ', f'foo{BS}', False)"
+          }
+        ],
+        "native_record": "native_cpburnz--python-pathspec.json"
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "与已有n=1/3转义空格断言一致，复用6个unittest方法。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "existing-odd"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC001",
+      "title": "bytes 模式经解码和重新编码后保持奇偶语义",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_03_gitignore_basic.py",
+            "start_line": 561,
+            "end_line": 584,
+            "quote": "\tdef test_07_match_bytes_and_bytes(self):\n\t\t\"\"\"\n\t\tTest byte string patterns matching byte string paths.\n\t\t\"\"\"\n\t\tpattern = GitIgnoreBasicPattern(b'*.py')\n\t\tresults = set(filter(pattern.match_file, [b'a.py']))\n\t\tself.assertEqual(results, {b'a.py'})\n\n\tdef test_07_match_bytes_and_bytes_complete(self):\n\t\t\"\"\"\n\t\tTest byte string patterns matching byte string paths.\n\t\t\"\"\"\n\t\tencoded = bytes(bytearray(range(0, 256)))\n\n\t\t# Forward slashes cannot be escaped with the current implementation.\n\t\t# Remove ASCII 47.\n\t\tfs_ord = ord('/')\n\t\tencoded = encoded[:fs_ord] + encoded[fs_ord+1:]\n\n\t\tescaped = b''.join(b'\\\\' + encoded[i:i+1] for i in range(len(encoded)))\n\n\t\tpattern = GitIgnoreBasicPattern(escaped)\n\t\tresults = set(filter(pattern.match_file, [encoded]))\n\t\tself.assertEqual(results, {encoded})"
+          },
+          {
+            "path": "tests/test_04_gitignore_spec.py",
+            "start_line": 567,
+            "end_line": 590,
+            "quote": "\tdef test_07_match_bytes_and_bytes(self):\n\t\t\"\"\"\n\t\tTest byte string patterns matching byte string paths.\n\t\t\"\"\"\n\t\tpattern = GitIgnoreSpecPattern(b'*.py')\n\t\tresults = set(filter(pattern.match_file, [b'a.py']))\n\t\tself.assertEqual(results, {b'a.py'})\n\n\tdef test_07_match_bytes_and_bytes_complete(self):\n\t\t\"\"\"\n\t\tTest byte string patterns matching byte string paths.\n\t\t\"\"\"\n\t\tencoded = bytes(bytearray(range(0, 256)))\n\n\t\t# Forward slashes cannot be escaped with the current implementation.\n\t\t# Remove ASCII 47.\n\t\tfs_ord = ord('/')\n\t\tencoded = encoded[:fs_ord] + encoded[fs_ord+1:]\n\n\t\tescaped = b\"\".join(b'\\\\' + encoded[i:i+1] for i in range(len(encoded)))\n\n\t\tpattern = GitIgnoreSpecPattern(escaped)\n\t\tresults = set(filter(pattern.match_file, [encoded]))\n\t\tself.assertEqual(results, {encoded})"
+          },
+          {
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "start_line": 47,
+            "end_line": 88,
+            "quote": "\tdef test_00_even_backslash_run_trailing_space_stripped(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by an even number of\n\t\tbackslashes is unescaped and stripped.\n\t\t\"\"\"\n\t\t# 'foo\\\\ ' (escaped backslash followed by space): Git strips the\n\t\t# unescaped trailing space and matches the file 'foo\\'.\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 2} ', f'foo{BS}', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 2} ', f'foo{BS} ', False)\n\n\tdef test_01_four_backslashes_trailing_space_stripped(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by four backslashes (two\n\t\tescaped backslashes) is unescaped and stripped.\n\t\t\"\"\"\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 4} ', f'foo{BS * 2}', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 4} ', f'foo{BS * 2} ', False)\n\n\tdef test_02_odd_backslash_run_trailing_space_kept(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by an odd number of\n\t\tbackslashes is escaped and kept.\n\t\t\"\"\"\n\t\t# 'foo\\ ' has an escaped space and matches the file 'foo '.\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS} ', f'foo ', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS} ', f'foo', False)\n\n\tdef test_03_three_backslashes_trailing_space_kept(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by three backslashes (an\n\t\tescaped backslash followed by an escaped space) is kept.\n\t\t\"\"\"\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 3} ', f'foo{BS} ', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 3} ', f'foo{BS}', False)"
+          }
+        ],
+        "assessment": "bytes通用支持已测，但bytes裁剪结果等价及奇偶匹配是组合新增。",
+        "model_claim": "not_found"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "cpburnz--python-pathspec",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_pathspec_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/cpburnz--python-pathspec/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+          "exit_code": 0,
+          "elapsed_seconds": 68.629,
+          "log": "logs/model-checks/cpburnz--python-pathspec/03_model_checks.log"
+        },
+        "junit": "logs/model-checks/cpburnz--python-pathspec/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_bytes_odd_even[1-GitIgnoreBasicPattern]",
+            "result": "passed",
+            "seconds": 0.001,
+            "message": null
+          },
+          {
+            "name": "test_bytes_odd_even[1-GitIgnoreSpecPattern]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_bytes_odd_even[2-GitIgnoreBasicPattern]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_bytes_odd_even[2-GitIgnoreSpecPattern]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_bytes_odd_even[3-GitIgnoreBasicPattern]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_bytes_odd_even[3-GitIgnoreSpecPattern]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_pathspec_cases.py",
+            "start_line": 9,
+            "end_line": 15,
+            "quote": "def test_bytes_odd_even(cls,n):\n    raw=('foo'+BS*n+' ').encode('ascii');regex,include=cls.pattern_to_regex(raw)\n    assert isinstance(regex,bytes);assert include is True\n    expected=('foo'+BS*(n//2)+(' ' if n%2 else '')).encode('ascii');other=expected.rstrip() if n%2 else expected+b' '\n    assert re.compile(regex).search(expected) is not None\n    assert re.compile(regex).search(other) is None\n    if n==2:assert regex==cls.pattern_to_regex(raw[:-1])[0]"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "bytes通用支持已测，但bytes裁剪结果等价及奇偶匹配是组合新增。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "bytes-odd-even"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC002",
+      "title": "PathSpec 的显式后端保持奇偶裁剪结果一致",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "start_line": 100,
+            "end_line": 111,
+            "quote": "\t\t\"\"\"\n\t\tTests the behavior through the PathSpec interface.\n\t\t\"\"\"\n\t\tspec = PathSpec.from_lines('gitignore', [f'foo{BS * 2} '])\n\t\t# These POSIX-style paths contain literal backslashes. Keep Windows\n\t\t# from normalizing those characters into directory separators.\n\t\tself.assertIs(spec.match_file(f'foo{BS}', separators=('/',)), True)\n\t\tself.assertIs(spec.match_file(f'foo{BS} ', separators=('/',)), False)\n\n\t\tspec = PathSpec.from_lines('gitignore', [f'foo{BS} '])\n\t\tself.assertIs(spec.match_file('foo '), True)\n\t\tself.assertIs(spec.match_file('foo'), False)"
+          },
+          {
+            "path": "tests/test_05_pathspec.py",
+            "start_line": 118,
+            "end_line": 188,
+            "quote": "\t\tParameterize `PathSpec.from_lines()` for each backend and configuration to\n\t\tbegin a subtest.\n\n\t\t*pattern_factory* (:class:`str`) is the pattern factory.\n\n\t\t*lines* (:class:`Iterable` of :class:`str`) yields the lines.\n\n\t\tReturns an :class:`Iterator` yielding each subtest context for the\n\t\t:class:`PathSpec`.\n\t\t\"\"\"\n\t\tlines = list(lines)\n\n\t\tconfigs: list[tuple[\n\t\t\tstr, BackendNamesHint, Optional[Callable[[Sequence[Pattern]], _Backend]]\n\t\t]] = []\n\n\t\t# Simple backend, no optimizations.\n\t\tconfigs.append((\n\t\t\t\"simple (unopt)\",\n\t\t\t'simple',\n\t\t\tpartial(SimplePsBackend, no_filter=True, no_reverse=True),\n\t\t))\n\n\t\t# Simple backend, minimal optimizations.\n\t\tconfigs.append((\n\t\t\t\"simple (minopt)\",\n\t\t\t'simple',\n\t\t\tNone,\n\t\t))\n\n\t\t# Add additional backends.\n\t\tfor backend in BACKENDS:\n\t\t\tif backend == 'hyperscan':\n\t\t\t\tconfigs.append((\n\t\t\t\t\tf\"hyperscan (forward)\",\n\t\t\t\t\tbackend,\n\t\t\t\t\tpartial(HyperscanPsBackend, _debug_exprs=True),\n\t\t\t\t))\n\t\t\t\tconfigs.append((\n\t\t\t\t\tf\"hyperscan (reverse)\",\n\t\t\t\t\tbackend,\n\t\t\t\t\tpartial(HyperscanPsBackend, _debug_exprs=True, _test_sort=reverse_inplace)\n\t\t\t\t))\n\t\t\t\tconfigs.append((\n\t\t\t\t\tf\"hyperscan (shuffle)\",\n\t\t\t\t\tbackend,\n\t\t\t\t\tpartial(HyperscanPsBackend, _debug_exprs=True, _test_sort=shuffle_inplace)\n\t\t\t\t))\n\t\t\telif backend == 're2':\n\t\t\t\tconfigs.append((\n\t\t\t\t\tf\"re2 (forward)\",\n\t\t\t\t\tbackend,\n\t\t\t\t\tpartial(Re2PsBackend, _debug_regex=True),\n\t\t\t\t))\n\t\t\t\tconfigs.append((\n\t\t\t\t\tf\"re2 (reverse)\",\n\t\t\t\t\tbackend,\n\t\t\t\t\tpartial(Re2PsBackend, _debug_regex=True, _test_sort=reverse_inplace),\n\t\t\t\t))\n\t\t\t\tconfigs.append((\n\t\t\t\t\tf\"re2 (shuffle)\",\n\t\t\t\t\tbackend,\n\t\t\t\t\tpartial(Re2PsBackend, _debug_regex=True, _test_sort=shuffle_inplace),\n\t\t\t\t))\n\t\t\telse:\n\t\t\t\tconfigs.append((\n\t\t\t\t\tbackend,\n\t\t\t\t\tbackend,\n\t\t\t\t\tNone,\n\t\t\t\t))\n"
+          }
+        ],
+        "assessment": "默认后端端到端已覆盖；显式simple/re2/hyperscan相同奇偶结果实际新增验证，三后端均已安装并通过。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "cpburnz--python-pathspec",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_pathspec_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/cpburnz--python-pathspec/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+          "exit_code": 0,
+          "elapsed_seconds": 68.629,
+          "log": "logs/model-checks/cpburnz--python-pathspec/03_model_checks.log"
+        },
+        "junit": "logs/model-checks/cpburnz--python-pathspec/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_explicit_backend_odd_even[simple]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_explicit_backend_odd_even[re2]",
+            "result": "passed",
+            "seconds": 0.0,
+            "message": null
+          },
+          {
+            "name": "test_explicit_backend_odd_even[hyperscan]",
+            "result": "passed",
+            "seconds": 0.005,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_pathspec_cases.py",
+            "start_line": 23,
+            "end_line": 30,
+            "quote": "def test_explicit_backend_odd_even(backend):\n    try:p=PathSpec.from_lines('gitignore',['foo'+BS*2+' '],backend=backend)\n    except (ImportError,ModuleNotFoundError) as exc:pytest.skip(str(exc))\n    assert p.match_file('foo'+BS,separators=('/',)) is True\n    assert p.match_file('foo'+BS+' ',separators=('/',)) is False\n    p=PathSpec.from_lines('gitignore',['foo'+BS+' '],backend=backend)\n    assert p.match_file('foo ',separators=('/',)) is True\n    assert p.match_file('foo',separators=('/',)) is False"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "默认后端端到端已覆盖；显式simple/re2/hyperscan相同奇偶结果实际新增验证，三后端均已安装并通过。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "backend-odd-even-parity"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC003",
+      "title": "偶数反斜杠后的单个尾随空格被裁剪",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "covered",
+        "references": [
+          {
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "start_line": 47,
+            "end_line": 67,
+            "quote": "\tdef test_00_even_backslash_run_trailing_space_stripped(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by an even number of\n\t\tbackslashes is unescaped and stripped.\n\t\t\"\"\"\n\t\t# 'foo\\\\ ' (escaped backslash followed by space): Git strips the\n\t\t# unescaped trailing space and matches the file 'foo\\'.\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 2} ', f'foo{BS}', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 2} ', f'foo{BS} ', False)\n\n\tdef test_01_four_backslashes_trailing_space_stripped(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by four backslashes (two\n\t\tescaped backslashes) is unescaped and stripped.\n\t\t\"\"\"\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 4} ', f'foo{BS * 2}', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 4} ', f'foo{BS * 2} ', False)"
+          }
+        ],
+        "assessment": "与已有n=2/4、两种pattern类及正反匹配断言一致，复用6个unittest方法。",
+        "model_claim": "covered"
+      },
+      "execution": {
+        "kind": "native_baseline_reused",
+        "command": {
+          "label": "tests",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+            "-m",
+            "unittest",
+            "discover",
+            "-t",
+            ".",
+            "-s",
+            "tests/",
+            "-p",
+            "test_07_gitignore_trailing_space.py",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+          "exit_code": 0,
+          "elapsed_seconds": 0.226,
+          "log": "logs/native_cpburnz--python-pathspec/05_tests.log"
+        },
+        "result": "passed",
+        "assertion_references": [
+          {
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "start_line": 47,
+            "end_line": 67,
+            "quote": "\tdef test_00_even_backslash_run_trailing_space_stripped(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by an even number of\n\t\tbackslashes is unescaped and stripped.\n\t\t\"\"\"\n\t\t# 'foo\\\\ ' (escaped backslash followed by space): Git strips the\n\t\t# unescaped trailing space and matches the file 'foo\\'.\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 2} ', f'foo{BS}', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 2} ', f'foo{BS} ', False)\n\n\tdef test_01_four_backslashes_trailing_space_stripped(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by four backslashes (two\n\t\tescaped backslashes) is unescaped and stripped.\n\t\t\"\"\"\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 4} ', f'foo{BS * 2}', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 4} ', f'foo{BS * 2} ', False)"
+          }
+        ],
+        "native_record": "native_cpburnz--python-pathspec.json"
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "与已有n=2/4、两种pattern类及正反匹配断言一致，复用6个unittest方法。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "existing-even"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC004",
+      "title": "奇数反斜杠继续保留转义的单个尾随空格",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "covered",
+        "references": [
+          {
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "start_line": 69,
+            "end_line": 88,
+            "quote": "\tdef test_02_odd_backslash_run_trailing_space_kept(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by an odd number of\n\t\tbackslashes is escaped and kept.\n\t\t\"\"\"\n\t\t# 'foo\\ ' has an escaped space and matches the file 'foo '.\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS} ', f'foo ', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS} ', f'foo', False)\n\n\tdef test_03_three_backslashes_trailing_space_kept(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by three backslashes (an\n\t\tescaped backslash followed by an escaped space) is kept.\n\t\t\"\"\"\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 3} ', f'foo{BS} ', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 3} ', f'foo{BS}', False)"
+          }
+        ],
+        "assessment": "与已有n=1/3转义空格断言一致，复用6个unittest方法。",
+        "model_claim": "covered"
+      },
+      "execution": {
+        "kind": "native_baseline_reused",
+        "command": {
+          "label": "tests",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+            "-m",
+            "unittest",
+            "discover",
+            "-t",
+            ".",
+            "-s",
+            "tests/",
+            "-p",
+            "test_07_gitignore_trailing_space.py",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+          "exit_code": 0,
+          "elapsed_seconds": 0.226,
+          "log": "logs/native_cpburnz--python-pathspec/05_tests.log"
+        },
+        "result": "passed",
+        "assertion_references": [
+          {
+            "path": "tests/test_07_gitignore_trailing_space.py",
+            "start_line": 69,
+            "end_line": 88,
+            "quote": "\tdef test_02_odd_backslash_run_trailing_space_kept(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by an odd number of\n\t\tbackslashes is escaped and kept.\n\t\t\"\"\"\n\t\t# 'foo\\ ' has an escaped space and matches the file 'foo '.\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS} ', f'foo ', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS} ', f'foo', False)\n\n\tdef test_03_three_backslashes_trailing_space_kept(self):\n\t\t\"\"\"\n\t\tTests that a trailing space preceded by three backslashes (an\n\t\tescaped backslash followed by an escaped space) is kept.\n\t\t\"\"\"\n\t\tfor pattern_class in (GitIgnoreBasicPattern, GitIgnoreSpecPattern):\n\t\t\twith self.subTest(pattern_class=pattern_class.__name__):\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 3} ', f'foo{BS} ', True)\n\t\t\t\tself._assert_matches(pattern_class, f'foo{BS * 3} ', f'foo{BS}', False)"
+          }
+        ],
+        "native_record": "native_cpburnz--python-pathspec.json"
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "与已有n=1/3转义空格断言一致，复用6个unittest方法。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "existing-odd"
+    }
+  ],
+  "native_record": "native_cpburnz--python-pathspec.json",
+  "model_check_execution": {
+    "slug": "cpburnz--python-pathspec",
+    "label": "model_checks",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+      "-m",
+      "pytest",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_pathspec_cases.py",
+      "-c",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec/pyproject.toml",
+      "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/cpburnz--python-pathspec/model_checks.xml",
+      "-ra",
+      "-v"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+    "exit_code": 0,
+    "elapsed_seconds": 68.629,
+    "log": "logs/model-checks/cpburnz--python-pathspec/03_model_checks.log"
+  },
+  "model_check_junit": "logs/model-checks/cpburnz--python-pathspec/model_checks.xml",
+  "model_check_counts": {
+    "passed": 11,
+    "failed": 0,
+    "error": 0,
+    "skipped": 0
+  },
+  "platform_gaps": [
+    "Windows/Linux and other Python versions not executed."
+  ],
+  "history_source_assessment": {
+    "source_count": 0,
+    "treatment": "no_available_history; no treatment applied",
+    "sources": []
+  },
+  "summary": {
+    "cases": 9,
+    "applicable": 9,
+    "existing_covered": 4,
+    "technically_adopted_cases": 5,
+    "new_defects": 0,
+    "human_evaluations": 0
+  },
+  "final_git_status": "",
+  "final_head_sha": "73120f31ad255c581f267b8515f274d7862210de"
+}

@@ -1,0 +1,622 @@
+{
+  "id": "fastapi--typer",
+  "head_sha": "5bec961514de7c5da842c6e3170727022388414b",
+  "status": "technically_assessed",
+  "cases": [
+    {
+      "arm": "A",
+      "case_id": "TC001",
+      "title": "必填列表位置参数缺失时仍报告用法错误",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "not_found",
+        "citations": [],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "additional_boundary_check",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer/pyproject.toml",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/fastapi--typer/model-cases-full.xml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/fastapi--typer/test_model_cases.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+          "exit_code": 0,
+          "seconds": 2.809,
+          "log": "native-logs/fastapi--typer/08-model-cases-full.log",
+          "environment_overrides": {
+            "_TYPER_FORCE_DISABLE_TERMINAL": "1",
+            "TERMINAL_WIDTH": "3000"
+          }
+        },
+        "test": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/fastapi--typer/test_model_cases.py::test_A_TC001_required_list_missing_stays_usage_error",
+        "result": "passed"
+      },
+      "new_defect": false,
+      "technical_adoption": true,
+      "technical_adoption_reason": "Adopted as an isolated executable regression candidate for a distinct current-diff boundary; not committed to upstream. Passing validates executability and the stated output only.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "A",
+      "case_id": "TC002",
+      "title": "声明 envvar 的列表参数在环境变量缺失和有值时分别解析",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "partial",
+        "citations": [
+          {
+            "path": "tests/test_types.py",
+            "line": 142,
+            "quote": "    result = runner.invoke(app, [\"hello-all-envvar\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "覆盖默认元素出现，但该片段及所给文件未显式清除 NAMES，也未排除额外元素。"
+          },
+          {
+            "path": "tests/test_types.py",
+            "line": 149,
+            "quote": "    monkeypatch.setenv(\"NAMES\", \"Rick   Morty\")\n    result = runner.invoke(app, [\"hello-all-envvar\"])\n    assert result.exit_code == 0\n    assert \"Hello Rick!\" in result.output\n    assert \"Hello Morty!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "覆盖环境变量多空格拆分，但未断言默认元素缺席、输出顺序或无额外元素。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "additional_boundary_check",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer/pyproject.toml",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/fastapi--typer/model-cases-full.xml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/fastapi--typer/test_model_cases.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+          "exit_code": 0,
+          "seconds": 2.809,
+          "log": "native-logs/fastapi--typer/08-model-cases-full.log",
+          "environment_overrides": {
+            "_TYPER_FORCE_DISABLE_TERMINAL": "1",
+            "TERMINAL_WIDTH": "3000"
+          }
+        },
+        "test": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/fastapi--typer/test_model_cases.py::test_A_TC002_envvar_absent_and_present",
+        "result": "passed"
+      },
+      "new_defect": false,
+      "technical_adoption": true,
+      "technical_adoption_reason": "Adopted as an isolated executable regression candidate for a distinct current-diff boundary; not committed to upstream. Passing validates executability and the stated output only.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "A",
+      "case_id": "TC003",
+      "title": "未声明环境变量且省略列表位置参数时使用默认值",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "covered",
+        "citations": [
+          {
+            "path": "tests/test_types.py",
+            "line": 133,
+            "quote": "def test_list_empty() -> None:\n    result = runner.invoke(app, [\"hello-all-args\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "在未提供位置参数的情况下，直接断言成功退出并输出默认列表元素；对应命令声明未配置 envvar。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "reuse_native_assertions",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/fastapi--typer/pytest.xml",
+            "tests/test_types.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+          "exit_code": 0,
+          "seconds": 1.909,
+          "log": "native-logs/fastapi--typer/03-pytest.log",
+          "environment_overrides": {
+            "TERMINAL_WIDTH": "3000",
+            "_TYPER_FORCE_DISABLE_TERMINAL": "1",
+            "_TYPER_RUN_INSTALL_COMPLETION_TESTS": "1"
+          }
+        },
+        "result": "passed",
+        "assertion_citations": [
+          {
+            "path": "tests/test_types.py",
+            "line": 133,
+            "quote": "def test_list_empty() -> None:\n    result = runner.invoke(app, [\"hello-all-args\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "在未提供位置参数的情况下，直接断言成功退出并输出默认列表元素；对应命令声明未配置 envvar。"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": false,
+      "technical_adoption_reason": "Same trigger and output assertions already exist at the frozen head. Reused the passing native suite; no new regression candidate adopted.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "A",
+      "case_id": "TC004",
+      "title": "省略列表选项时使用默认值",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "covered",
+        "citations": [
+          {
+            "path": "tests/test_types.py",
+            "line": 138,
+            "quote": "    result = runner.invoke(app, [\"hello-all-options\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "调用未提供 --name，断言成功退出并输出默认元素，与本项契约一致。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "reuse_native_assertions",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/fastapi--typer/pytest.xml",
+            "tests/test_types.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+          "exit_code": 0,
+          "seconds": 1.909,
+          "log": "native-logs/fastapi--typer/03-pytest.log",
+          "environment_overrides": {
+            "TERMINAL_WIDTH": "3000",
+            "_TYPER_FORCE_DISABLE_TERMINAL": "1",
+            "_TYPER_RUN_INSTALL_COMPLETION_TESTS": "1"
+          }
+        },
+        "result": "passed",
+        "assertion_citations": [
+          {
+            "path": "tests/test_types.py",
+            "line": 138,
+            "quote": "    result = runner.invoke(app, [\"hello-all-options\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "调用未提供 --name，断言成功退出并输出默认元素，与本项契约一致。"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": false,
+      "technical_adoption_reason": "Same trigger and output assertions already exist at the frozen head. Reused the passing native suite; no new regression candidate adopted.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "A",
+      "case_id": "TC005",
+      "title": "提供非空列表位置参数时不混入默认值",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "covered",
+        "citations": [
+          {
+            "path": "tests/test_types.py",
+            "line": 126,
+            "quote": "    result = runner.invoke(app, [\"hello-all-args\", \"Rick\", \"Morty\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" not in result.output\n    assert \"Hello Rick!\" in result.output\n    assert \"Hello Morty!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "触发条件为非空位置参数列表，断言明确排除了默认元素，并检查两个显式元素。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "reuse_native_assertions",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/fastapi--typer/pytest.xml",
+            "tests/test_types.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+          "exit_code": 0,
+          "seconds": 1.909,
+          "log": "native-logs/fastapi--typer/03-pytest.log",
+          "environment_overrides": {
+            "TERMINAL_WIDTH": "3000",
+            "_TYPER_FORCE_DISABLE_TERMINAL": "1",
+            "_TYPER_RUN_INSTALL_COMPLETION_TESTS": "1"
+          }
+        },
+        "result": "passed",
+        "assertion_citations": [
+          {
+            "path": "tests/test_types.py",
+            "line": 126,
+            "quote": "    result = runner.invoke(app, [\"hello-all-args\", \"Rick\", \"Morty\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" not in result.output\n    assert \"Hello Rick!\" in result.output\n    assert \"Hello Morty!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "触发条件为非空位置参数列表，断言明确排除了默认元素，并检查两个显式元素。"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": false,
+      "technical_adoption_reason": "Same trigger and output assertions already exist at the frozen head. Reused the passing native suite; no new regression candidate adopted.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "B",
+      "case_id": "TC001",
+      "title": "显式空字符串元素不被当作未提供列表",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "not_found",
+        "citations": [],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "additional_boundary_check",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer/pyproject.toml",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/fastapi--typer/model-cases-full.xml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/fastapi--typer/test_model_cases.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+          "exit_code": 0,
+          "seconds": 2.809,
+          "log": "native-logs/fastapi--typer/08-model-cases-full.log",
+          "environment_overrides": {
+            "_TYPER_FORCE_DISABLE_TERMINAL": "1",
+            "TERMINAL_WIDTH": "3000"
+          }
+        },
+        "test": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/fastapi--typer/test_model_cases.py::test_B_TC001_explicit_empty_string_is_one_element",
+        "result": "passed"
+      },
+      "new_defect": false,
+      "technical_adoption": true,
+      "technical_adoption_reason": "Adopted as an isolated executable regression candidate for a distinct current-diff boundary; not committed to upstream. Passing validates executability and the stated output only.",
+      "human_maintainer_adoption": null,
+      "source_ids": [
+        4560755924
+      ],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "B",
+      "case_id": "TC002",
+      "title": "声明 envvar 后分别验证变量缺失回退和变量存在解析",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "partial",
+        "citations": [
+          {
+            "path": "tests/test_types.py",
+            "line": 142,
+            "quote": "    result = runner.invoke(app, [\"hello-all-envvar\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "已有默认回退调用及输出断言，但该测试片段未显式清除 NAMES，也未断言完整列表。"
+          },
+          {
+            "path": "tests/test_types.py",
+            "line": 149,
+            "quote": "    monkeypatch.setenv(\"NAMES\", \"Rick   Morty\")\n    result = runner.invoke(app, [\"hello-all-envvar\"])\n    assert result.exit_code == 0\n    assert \"Hello Rick!\" in result.output\n    assert \"Hello Morty!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "已有环境变量存在及多空格分词覆盖，但包含式输出断言没有排除默认元素或其他额外元素。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "additional_boundary_check",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer/pyproject.toml",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/fastapi--typer/model-cases-full.xml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/fastapi--typer/test_model_cases.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+          "exit_code": 0,
+          "seconds": 2.809,
+          "log": "native-logs/fastapi--typer/08-model-cases-full.log",
+          "environment_overrides": {
+            "_TYPER_FORCE_DISABLE_TERMINAL": "1",
+            "TERMINAL_WIDTH": "3000"
+          }
+        },
+        "test": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/fastapi--typer/test_model_cases.py::test_B_TC002_envvar_actual_lists",
+        "result": "passed"
+      },
+      "new_defect": false,
+      "technical_adoption": true,
+      "technical_adoption_reason": "Adopted as an isolated executable regression candidate for a distinct current-diff boundary; not committed to upstream. Passing validates executability and the stated output only.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "B",
+      "case_id": "TC003",
+      "title": "未提供位置参数且未配置环境变量时使用默认列表",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "covered",
+        "citations": [
+          {
+            "path": "tests/test_types.py",
+            "line": 133,
+            "quote": "def test_list_empty() -> None:\n    result = runner.invoke(app, [\"hello-all-args\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "对应命令声明没有 envvar，调用未提供列表值；断言成功退出并输出默认元素。仅依据提供的文件判断，未执行测试。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "reuse_native_assertions",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/fastapi--typer/pytest.xml",
+            "tests/test_types.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+          "exit_code": 0,
+          "seconds": 1.909,
+          "log": "native-logs/fastapi--typer/03-pytest.log",
+          "environment_overrides": {
+            "TERMINAL_WIDTH": "3000",
+            "_TYPER_FORCE_DISABLE_TERMINAL": "1",
+            "_TYPER_RUN_INSTALL_COMPLETION_TESTS": "1"
+          }
+        },
+        "result": "passed",
+        "assertion_citations": [
+          {
+            "path": "tests/test_types.py",
+            "line": 133,
+            "quote": "def test_list_empty() -> None:\n    result = runner.invoke(app, [\"hello-all-args\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "对应命令声明没有 envvar，调用未提供列表值；断言成功退出并输出默认元素。仅依据提供的文件判断，未执行测试。"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": false,
+      "technical_adoption_reason": "Same trigger and output assertions already exist at the frozen head. Reused the passing native suite; no new regression candidate adopted.",
+      "human_maintainer_adoption": null,
+      "source_ids": [
+        4560755924
+      ],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "B",
+      "case_id": "TC004",
+      "title": "未提供列表选项时使用默认列表",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "covered",
+        "citations": [
+          {
+            "path": "tests/test_types.py",
+            "line": 138,
+            "quote": "    result = runner.invoke(app, [\"hello-all-options\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "调用省略 --name，并断言默认元素输出及成功退出。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "reuse_native_assertions",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/fastapi--typer/pytest.xml",
+            "tests/test_types.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+          "exit_code": 0,
+          "seconds": 1.909,
+          "log": "native-logs/fastapi--typer/03-pytest.log",
+          "environment_overrides": {
+            "TERMINAL_WIDTH": "3000",
+            "_TYPER_FORCE_DISABLE_TERMINAL": "1",
+            "_TYPER_RUN_INSTALL_COMPLETION_TESTS": "1"
+          }
+        },
+        "result": "passed",
+        "assertion_citations": [
+          {
+            "path": "tests/test_types.py",
+            "line": 138,
+            "quote": "    result = runner.invoke(app, [\"hello-all-options\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "调用省略 --name，并断言默认元素输出及成功退出。"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": false,
+      "technical_adoption_reason": "Same trigger and output assertions already exist at the frozen head. Reused the passing native suite; no new regression candidate adopted.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "B",
+      "case_id": "TC005",
+      "title": "显式列表值保持原有替换默认值行为",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "covered",
+        "citations": [
+          {
+            "path": "tests/test_types.py",
+            "line": 126,
+            "quote": "    result = runner.invoke(app, [\"hello-all-args\", \"Rick\", \"Morty\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" not in result.output\n    assert \"Hello Rick!\" in result.output\n    assert \"Hello Morty!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "位置参数的触发条件和默认值排除断言相同。"
+          },
+          {
+            "path": "tests/test_types.py",
+            "line": 118,
+            "quote": "    result = runner.invoke(\n        app, [\"hello-all-options\", \"--name\", \"Rick\", \"--name\", \"Morty\"]\n    )\n    assert result.exit_code == 0\n    assert \"Hello World!\" not in result.output\n    assert \"Hello Rick!\" in result.output\n    assert \"Hello Morty!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "重复列表选项的触发条件和默认值排除断言相同。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "reuse_native_assertions",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/fastapi--typer/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/fastapi--typer/pytest.xml",
+            "tests/test_types.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/fastapi--typer",
+          "exit_code": 0,
+          "seconds": 1.909,
+          "log": "native-logs/fastapi--typer/03-pytest.log",
+          "environment_overrides": {
+            "TERMINAL_WIDTH": "3000",
+            "_TYPER_FORCE_DISABLE_TERMINAL": "1",
+            "_TYPER_RUN_INSTALL_COMPLETION_TESTS": "1"
+          }
+        },
+        "result": "passed",
+        "assertion_citations": [
+          {
+            "path": "tests/test_types.py",
+            "line": 126,
+            "quote": "    result = runner.invoke(app, [\"hello-all-args\", \"Rick\", \"Morty\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" not in result.output\n    assert \"Hello Rick!\" in result.output\n    assert \"Hello Morty!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "位置参数的触发条件和默认值排除断言相同。"
+          },
+          {
+            "path": "tests/test_types.py",
+            "line": 118,
+            "quote": "    result = runner.invoke(\n        app, [\"hello-all-options\", \"--name\", \"Rick\", \"--name\", \"Morty\"]\n    )\n    assert result.exit_code == 0\n    assert \"Hello World!\" not in result.output\n    assert \"Hello Rick!\" in result.output\n    assert \"Hello Morty!\" in result.output",
+            "verified_against_frozen_head": true,
+            "scope": "重复列表选项的触发条件和默认值排除断言相同。"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": false,
+      "technical_adoption_reason": "Same trigger and output assertions already exist at the frozen head. Reused the passing native suite; no new regression candidate adopted.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    }
+  ],
+  "human_maintainer_adoption": null,
+  "history_source_count": 1,
+  "history_source_assessment": [
+    {
+      "source_id": 4560755924,
+      "url": "https://github.com/Hmbown/Codewhale/issues/2483",
+      "relevance": "weak_analogy",
+      "shared_trigger_mechanism": false,
+      "reason": "Both invite omitted/default/empty-list distinction, but serde deserialize_with without a default annotation is not Typer list conversion. This is a transferable input-partition idea, not evidence of a shared causal defect.",
+      "target_evidence": [
+        {
+          "path": "typer/main.py",
+          "line": 1462,
+          "quote": "if (value is None) or (default_value is None and len(value) == 0):",
+          "verified_against_frozen_head": true
+        },
+        {
+          "path": "typer/main.py",
+          "line": 1692,
+          "quote": "default_value=default_value",
+          "verified_against_frozen_head": true
+        }
+      ],
+      "adoptable_transfer": "Only current-diff omission/explicit empty/default partitions, if executable requirements support them.",
+      "rejected_transfer": "Rust configuration deserializer root cause and upgrade/config platform work."
+    }
+  ],
+  "limitations": [
+    "Technical review is by this agent, not external maintainers.",
+    "No newly discovered product defect in executed cases.",
+    "Incremental checks passing do not prove historical retrieval improves review.",
+    "Technical review wall time was not separately timed; command durations are measured."
+  ],
+  "history_treatment": "B received retrieved history; source_ids are retained per case and no passing test is attributed causally to retrieval.",
+  "extra_check_sha256": "cda23a2e298a0a6e03c64d754576cda42892c41ec3e47b0e0b895f302946268e",
+  "final_clone_verification": {
+    "head_sha": "5bec961514de7c5da842c6e3170727022388414b",
+    "git_status": ""
+  },
+  "review_seconds": null,
+  "review_time_limitation": "No independently timed technical assessment interval; execution seconds are measured in command records.",
+  "additional_check_counts": {
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

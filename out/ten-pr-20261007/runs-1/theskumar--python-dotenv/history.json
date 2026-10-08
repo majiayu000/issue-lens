@@ -1,0 +1,18 @@
+{
+  "sources": [],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 20762,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 44,
+      "reasoning_output_tokens": 33
+    },
+    "thread_id": "01a116b7-e232-78c2-aacd-3e55680f7ce9"
+  },
+  "target_repo_excluded": "theskumar/python-dotenv",
+  "issue_creation_cutoff": "2026-10-01T05:34:45Z",
+  "pr_evidence_note": "Current bounded GitHub snapshots, not time-travel evidence."
+}

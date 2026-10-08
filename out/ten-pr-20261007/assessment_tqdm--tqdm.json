@@ -1,0 +1,1056 @@
+{
+  "id": "tqdm--tqdm",
+  "repo": "tqdm/tqdm",
+  "pr": 1830,
+  "head_sha": "24b9e1e08a097f1c30f2d235b63f9eb25ba47974",
+  "selected_pair_directory": "runs-1/tqdm--tqdm",
+  "reviewer": "agent technical review; no human maintainer judgment",
+  "human_maintainer_adoption": null,
+  "cases": [
+    {
+      "arm": "A",
+      "case_id": "TC001",
+      "title": "未知长度输入不覆盖调用者显式提供的 total",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "not_found",
+        "references": [
+          {
+            "path": "tqdm/contrib/concurrent.py",
+            "start_line": 125,
+            "end_line": 127,
+            "quote": "    kwargs = tqdm_kwargs.copy()\n    if 'total' not in kwargs:\n        kwargs['total'] = _min_map_len(iterables)"
+          }
+        ],
+        "assessment": "当前相关native文件未断言显式total；生产代码仅在缺省total时推导，本例直接验证显式9不被覆盖。",
+        "model_claim": "not_found"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tqdm--tqdm",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+          "exit_code": 1,
+          "elapsed_seconds": 6.649,
+          "log": "logs/model-checks/tqdm--tqdm/05_model_checks.log"
+        },
+        "junit": "logs/model-checks/tqdm--tqdm/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_explicit_total[thread]",
+            "result": "passed",
+            "seconds": 0.15,
+            "message": null
+          },
+          {
+            "name": "test_explicit_total[process]",
+            "result": "passed",
+            "seconds": 0.532,
+            "message": null
+          },
+          {
+            "name": "test_explicit_total[interpreter]",
+            "result": "passed",
+            "seconds": 0.555,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "start_line": 16,
+            "end_line": 18,
+            "quote": "def test_explicit_total(mapper,captured_total):\n    assert mapper(partial(operator.add,1),(i for i in range(9)),total=9,**opts())==list(range(1,10))\n    assert captured_total==[9]"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "当前相关native文件未断言显式total；生产代码仅在缺省total时推导，本例直接验证显式9不被覆盖。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "explicit-total"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC002",
+      "title": "长度未知且实际为空的生成器正常返回空列表",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/tests_concurrent.py",
+            "start_line": 14,
+            "end_line": 17,
+            "quote": "def test_min_map_len():\n    assert concurrent._min_map_len([]) == 0\n    assert concurrent._min_map_len([(i for i in range(9))]) == 0\n    assert concurrent._min_map_len([(i for i in range(9)), range(5)]) == 5"
+          },
+          {
+            "path": "tests/tests_concurrent.py",
+            "start_line": 32,
+            "end_line": 40,
+            "quote": "@mark.parametrize(\"mapper\", [interpreter_map, process_map, thread_map])\ndef test_concurrent_map_unknown_len(mapper, caperr):\n    b = [i + 1 for i in range(9)]\n    try:\n        assert mapper(dummy_func, (i for i in range(9))) == b\n    except ImportError as err:\n        skip(str(err))\n    err = caperr()\n    assert '9it [' in err"
+          }
+        ],
+        "assessment": "已有空iterables列表与非空未知生成器；新增实际空生成器的三个mapper及total0断言。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tqdm--tqdm",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+          "exit_code": 1,
+          "elapsed_seconds": 6.649,
+          "log": "logs/model-checks/tqdm--tqdm/05_model_checks.log"
+        },
+        "junit": "logs/model-checks/tqdm--tqdm/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_empty_unknown[thread]",
+            "result": "passed",
+            "seconds": 0.006,
+            "message": null
+          },
+          {
+            "name": "test_empty_unknown[process]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_empty_unknown[interpreter]",
+            "result": "passed",
+            "seconds": 0.001,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "start_line": 19,
+            "end_line": 22,
+            "quote": "def test_empty_unknown(mapper,captured_total):\n    assert concurrent._min_map_len([(i for i in ())])==0\n    assert mapper(abs,(i for i in ()),**opts())==[]\n    assert captured_total==[0]"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "已有空iterables列表与非空未知生成器；新增实际空生成器的三个mapper及total0断言。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "empty-generator"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC003",
+      "title": "多个长度未知且实际长度不同的生成器按最短输入映射",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/tests_concurrent.py",
+            "start_line": 14,
+            "end_line": 17,
+            "quote": "def test_min_map_len():\n    assert concurrent._min_map_len([]) == 0\n    assert concurrent._min_map_len([(i for i in range(9))]) == 0\n    assert concurrent._min_map_len([(i for i in range(9)), range(5)]) == 5"
+          },
+          {
+            "path": "tests/tests_concurrent.py",
+            "start_line": 32,
+            "end_line": 40,
+            "quote": "@mark.parametrize(\"mapper\", [interpreter_map, process_map, thread_map])\ndef test_concurrent_map_unknown_len(mapper, caperr):\n    b = [i + 1 for i in range(9)]\n    try:\n        assert mapper(dummy_func, (i for i in range(9))) == b\n    except ImportError as err:\n        skip(str(err))\n    err = caperr()\n    assert '9it [' in err"
+          }
+        ],
+        "assessment": "已有单生成器；新增全未知不等长双输入返回[11,22]及total0。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tqdm--tqdm",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+          "exit_code": 1,
+          "elapsed_seconds": 6.649,
+          "log": "logs/model-checks/tqdm--tqdm/05_model_checks.log"
+        },
+        "junit": "logs/model-checks/tqdm--tqdm/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_multiple_unknown_a[thread]",
+            "result": "passed",
+            "seconds": 0.001,
+            "message": null
+          },
+          {
+            "name": "test_multiple_unknown_a[process]",
+            "result": "passed",
+            "seconds": 0.547,
+            "message": null
+          },
+          {
+            "name": "test_multiple_unknown_a[interpreter]",
+            "result": "passed",
+            "seconds": 0.417,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "start_line": 23,
+            "end_line": 26,
+            "quote": "def test_multiple_unknown_a(mapper,captured_total):\n    assert concurrent._min_map_len([(i for i in [1,2,3]),(i for i in [10,20])])==0\n    assert mapper(operator.add,(i for i in [1,2,3]),(i for i in [10,20]),**opts())==[11,22]\n    assert captured_total==[0]"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "已有单生成器；新增全未知不等长双输入返回[11,22]及total0。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "multiple-unknown-shortest"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC004",
+      "title": "混合已知与未知长度时保留已知长度推导",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/tests_concurrent.py",
+            "start_line": 14,
+            "end_line": 17,
+            "quote": "def test_min_map_len():\n    assert concurrent._min_map_len([]) == 0\n    assert concurrent._min_map_len([(i for i in range(9))]) == 0\n    assert concurrent._min_map_len([(i for i in range(9)), range(5)]) == 5"
+          }
+        ],
+        "assessment": "辅助函数混合长度已测；新增三个mapper混合输入实际映射与构造total5。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tqdm--tqdm",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+          "exit_code": 1,
+          "elapsed_seconds": 6.649,
+          "log": "logs/model-checks/tqdm--tqdm/05_model_checks.log"
+        },
+        "junit": "logs/model-checks/tqdm--tqdm/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_mixed_lengths[thread]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_mixed_lengths[process]",
+            "result": "passed",
+            "seconds": 0.411,
+            "message": null
+          },
+          {
+            "name": "test_mixed_lengths[interpreter]",
+            "result": "passed",
+            "seconds": 0.423,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "start_line": 30,
+            "end_line": 33,
+            "quote": "def test_mixed_lengths(mapper,captured_total):\n    assert concurrent._min_map_len([(i for i in range(9)),range(5)])==5\n    assert mapper(operator.add,(i for i in range(9)),range(5),**opts())==[0,2,4,6,8]\n    assert captured_total==[5]"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "辅助函数混合长度已测；新增三个mapper混合输入实际映射与构造total5。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "mixed-known-unknown"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC005",
+      "title": "单个非空裸生成器在三种并发映射中正常完成",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "covered",
+        "references": [
+          {
+            "path": "tests/tests_concurrent.py",
+            "start_line": 14,
+            "end_line": 17,
+            "quote": "def test_min_map_len():\n    assert concurrent._min_map_len([]) == 0\n    assert concurrent._min_map_len([(i for i in range(9))]) == 0\n    assert concurrent._min_map_len([(i for i in range(9)), range(5)]) == 5"
+          },
+          {
+            "path": "tests/tests_concurrent.py",
+            "start_line": 32,
+            "end_line": 40,
+            "quote": "@mark.parametrize(\"mapper\", [interpreter_map, process_map, thread_map])\ndef test_concurrent_map_unknown_len(mapper, caperr):\n    b = [i + 1 for i in range(9)]\n    try:\n        assert mapper(dummy_func, (i for i in range(9))) == b\n    except ImportError as err:\n        skip(str(err))\n    err = caperr()\n    assert '9it [' in err"
+          }
+        ],
+        "assessment": "已有完全相同单非空未知生成器、结果和进度断言；Python3.14 native16项通过。新增执行序列同类检查在此前B错误案例污染锁后失败，是同一锁恢复缺陷的下游症状，不归因为本条基线场景。",
+        "model_claim": "covered"
+      },
+      "execution": {
+        "kind": "native_baseline_reused",
+        "command": {
+          "slug": "tqdm--tqdm",
+          "label": "native_py314",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+            "-m",
+            "pytest",
+            "tests/tests_concurrent.py",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/native_py314.xml",
+            "-ra"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+          "exit_code": 0,
+          "elapsed_seconds": 18.925,
+          "log": "logs/model-checks/tqdm--tqdm/04_native_py314.log"
+        },
+        "result": "passed",
+        "assertion_references": [
+          {
+            "path": "tests/tests_concurrent.py",
+            "start_line": 14,
+            "end_line": 17,
+            "quote": "def test_min_map_len():\n    assert concurrent._min_map_len([]) == 0\n    assert concurrent._min_map_len([(i for i in range(9))]) == 0\n    assert concurrent._min_map_len([(i for i in range(9)), range(5)]) == 5"
+          },
+          {
+            "path": "tests/tests_concurrent.py",
+            "start_line": 32,
+            "end_line": 40,
+            "quote": "@mark.parametrize(\"mapper\", [interpreter_map, process_map, thread_map])\ndef test_concurrent_map_unknown_len(mapper, caperr):\n    b = [i + 1 for i in range(9)]\n    try:\n        assert mapper(dummy_func, (i for i in range(9))) == b\n    except ImportError as err:\n        skip(str(err))\n    err = caperr()\n    assert '9it [' in err"
+          }
+        ],
+        "native_record": "native_tqdm--tqdm.json"
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "已有完全相同单非空未知生成器、结果和进度断言；Python3.14 native16项通过。新增执行序列同类检查在此前B错误案例污染锁后失败，是同一锁恢复缺陷的下游症状，不归因为本条基线场景。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "single-unknown-native"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC001",
+      "title": "未知长度回退不吞掉工作函数异常",
+      "source_ids": [
+        5065463834
+      ],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "not_found",
+        "references": [
+          {
+            "path": "tqdm/contrib/concurrent.py",
+            "start_line": 71,
+            "end_line": 83,
+            "quote": "@contextmanager\ndef ensure_lock(tqdm_class, lock_name=\"\", lock=None):\n    \"\"\"get (create if necessary) and then restore `tqdm_class`'s lock\"\"\"\n    old_lock = getattr(tqdm_class, '_lock', None)  # don't create a new lock\n    if lock is None:\n        lock = old_lock or tqdm_class.get_lock()  # maybe create a new lock\n    lock = getattr(lock, lock_name, lock)  # maybe subtype\n    tqdm_class.set_lock(lock)\n    yield lock\n    if old_lock is None:\n        del tqdm_class._lock\n    else:\n        tqdm_class.set_lock(old_lock)"
+          },
+          {
+            "path": "tqdm/contrib/concurrent.py",
+            "start_line": 151,
+            "end_line": 164,
+            "quote": "        with PoolExecutor(max_workers=max_workers, initializer=_initializer, initargs=_initargs,\n                          **pool_kwargs) as ex:\n            with tqdm_class(smoothing=smoothing, **kwargs) as pbar:\n                if dynamic_miniters is not None:\n                    pbar.dynamic_miniters = True\n                orisubmit = ex.submit\n\n                def patchsubmit(*args, **kwargs):\n                    fut = orisubmit(*args, **kwargs)\n                    fut.add_done_callback(lambda _: pbar.update())\n                    return fut\n                ex.submit = patchsubmit\n                return list(ex.map(\n                    fn, *iterables, timeout=timeout, chunksize=chunksize, **map_kwargs))"
+          }
+        ],
+        "assessment": "未知总量工作函数错误传播直接断言通过；该案例后出现进程映射失败，默认API无monkeypatch复现证明异常跳过ensure_lock恢复。成功对照通过，已知长度错误也复现，基线源码相同；属于新发现的既有缺陷。恢复/后续调用为审查者追加验证，模型原案只要求错误传播。",
+        "model_claim": "not_found"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tqdm--tqdm",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+          "exit_code": 1,
+          "elapsed_seconds": 6.649,
+          "log": "logs/model-checks/tqdm--tqdm/05_model_checks.log"
+        },
+        "junit": "logs/model-checks/tqdm--tqdm/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_worker_error_propagates[thread]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_worker_error_propagates[process]",
+            "result": "passed",
+            "seconds": 0.633,
+            "message": null
+          },
+          {
+            "name": "test_worker_error_propagates[interpreter]",
+            "result": "passed",
+            "seconds": 0.323,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "start_line": 34,
+            "end_line": 36,
+            "quote": "def test_worker_error_propagates(mapper):\n    with pytest.raises(ValueError,match='worker-failure-marker'):\n        mapper(int,(s for s in ['worker-failure-marker']),**opts())"
+          }
+        ],
+        "reviewer_followup": {
+          "id": "tqdm-exception-lock-restoration",
+          "status": "reproduced",
+          "introduced_by_current_pr": false,
+          "finding": "Worker error from interpreter_map leaves _InterpreterLock globally installed; subsequent process_map fails TypeError cannot pickle _thread.RLock.",
+          "cause_reference": {
+            "path": "tqdm/contrib/concurrent.py",
+            "start_line": 71,
+            "end_line": 83,
+            "quote": "@contextmanager\ndef ensure_lock(tqdm_class, lock_name=\"\", lock=None):\n    \"\"\"get (create if necessary) and then restore `tqdm_class`'s lock\"\"\"\n    old_lock = getattr(tqdm_class, '_lock', None)  # don't create a new lock\n    if lock is None:\n        lock = old_lock or tqdm_class.get_lock()  # maybe create a new lock\n    lock = getattr(lock, lock_name, lock)  # maybe subtype\n    tqdm_class.set_lock(lock)\n    yield lock\n    if old_lock is None:\n        del tqdm_class._lock\n    else:\n        tqdm_class.set_lock(old_lock)"
+          },
+          "base_evidence": "logs/model-checks/tqdm--tqdm/base_ensure_lock.txt",
+          "reproduction_commands": [
+            {
+              "slug": "tqdm--tqdm",
+              "label": "reproduce_error_lock",
+              "argv": [
+                "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+                "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/reproduce_tqdm_error_lock.py"
+              ],
+              "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+              "exit_code": 1,
+              "elapsed_seconds": 0.489,
+              "log": "logs/model-checks/tqdm--tqdm/07_reproduce_error_lock.log"
+            },
+            {
+              "slug": "tqdm--tqdm",
+              "label": "control_success",
+              "argv": [
+                "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+                "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/reproduce_tqdm_error_lock.py",
+                "success"
+              ],
+              "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+              "exit_code": 0,
+              "elapsed_seconds": 3.212,
+              "log": "logs/model-checks/tqdm--tqdm/08_control_success.log"
+            },
+            {
+              "slug": "tqdm--tqdm",
+              "label": "control_known-error",
+              "argv": [
+                "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+                "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/reproduce_tqdm_error_lock.py",
+                "known-error"
+              ],
+              "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+              "exit_code": 1,
+              "elapsed_seconds": 1.537,
+              "log": "logs/model-checks/tqdm--tqdm/08_control_known-error.log"
+            }
+          ],
+          "attribution": "B TC001 requested worker-error propagation; lock restoration and chained process_map were reviewer follow-up after actual sequence failure, not explicitly predicted by model.",
+          "baseline_runtime_executed": false,
+          "introduced_by_current_pr_assessment": "inferred preexisting from identical base ensure_lock source plus same current known-length error reproduction; old base runtime not executed"
+        }
+      },
+      "new_defect": true,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "未知总量工作函数错误传播直接断言通过；该案例后出现进程映射失败，默认API无monkeypatch复现证明异常跳过ensure_lock恢复。成功对照通过，已知长度错误也复现，基线源码相同；属于新发现的既有缺陷。恢复/后续调用为审查者追加验证，模型原案只要求错误传播。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "worker-error-lock-restoration",
+      "historical_transfer": "weak analogy: optional size-estimate timeout vs absent iterable length; actual worker failure is not the same mechanism"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC002",
+      "title": "单个非空生成器映射成功并采用未知总量",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/tests_concurrent.py",
+            "start_line": 14,
+            "end_line": 17,
+            "quote": "def test_min_map_len():\n    assert concurrent._min_map_len([]) == 0\n    assert concurrent._min_map_len([(i for i in range(9))]) == 0\n    assert concurrent._min_map_len([(i for i in range(9)), range(5)]) == 5"
+          },
+          {
+            "path": "tests/tests_concurrent.py",
+            "start_line": 32,
+            "end_line": 40,
+            "quote": "@mark.parametrize(\"mapper\", [interpreter_map, process_map, thread_map])\ndef test_concurrent_map_unknown_len(mapper, caperr):\n    b = [i + 1 for i in range(9)]\n    try:\n        assert mapper(dummy_func, (i for i in range(9))) == b\n    except ImportError as err:\n        skip(str(err))\n    err = caperr()\n    assert '9it [' in err"
+          }
+        ],
+        "assessment": "native已有返回结果/未知总量显示；显式观察total0增加实现细节断言但价值较小。20/21通过的新增序列中process此项失败，原因是此前错误案例泄漏锁；不是单生成器场景独立的新缺陷。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tqdm--tqdm",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+          "exit_code": 1,
+          "elapsed_seconds": 6.649,
+          "log": "logs/model-checks/tqdm--tqdm/05_model_checks.log"
+        },
+        "junit": "logs/model-checks/tqdm--tqdm/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_single_unknown_explicit_total_zero[thread]",
+            "result": "passed",
+            "seconds": 0.004,
+            "message": null
+          },
+          {
+            "name": "test_single_unknown_explicit_total_zero[process]",
+            "result": "failed",
+            "seconds": 0.002,
+            "message": "TypeError: cannot pickle '_thread.RLock' object\nwhen serializing dict item '_lock'\nwhen serializing tqdm.contrib.concurrent._InterpreterLock state\nwhen serializing tqdm.contrib.concurrent._InterpreterLock object\nwhen serializing tuple item 0\nwhen serializing tuple item 3\nwhen serializing dict item '_args'\nwhen serializing multiprocessing.context.SpawnProcess state\nwhen serializing multiprocessing.context.SpawnProcess object"
+          },
+          {
+            "name": "test_single_unknown_explicit_total_zero[interpreter]",
+            "result": "passed",
+            "seconds": 0.461,
+            "message": null
+          }
+        ],
+        "result": "failed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "start_line": 37,
+            "end_line": 39,
+            "quote": "def test_single_unknown_explicit_total_zero(mapper,captured_total):\n    assert mapper(partial(operator.add,1),(i for i in range(9)),**opts())==list(range(1,10))\n    assert captured_total==[0]"
+          }
+        ],
+        "isolated_recheck": {
+          "command": {
+            "slug": "tqdm--tqdm",
+            "label": "isolate_single_unknown",
+            "argv": [
+              "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+              "-m",
+              "pytest",
+              "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+              "-c",
+              "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm/pyproject.toml",
+              "-k",
+              "test_single_unknown_explicit_total_zero",
+              "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/isolate_single_unknown.xml",
+              "-ra",
+              "-v"
+            ],
+            "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+            "exit_code": 0,
+            "elapsed_seconds": 1.353,
+            "log": "logs/model-checks/tqdm--tqdm/09_isolate_single_unknown.log"
+          },
+          "junit": "logs/model-checks/tqdm--tqdm/isolate_single_unknown.xml",
+          "test_counts": {
+            "passed": 3,
+            "failed": 0
+          },
+          "note": "Fresh separate Python process; no production edits, no lock-reset workaround. Initial21-check sequence remains20 passed/1 failed."
+        }
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "native已有返回结果/未知总量显示；显式观察total0增加实现细节断言但价值较小。20/21通过的新增序列中process此项失败，原因是此前错误案例泄漏锁；不是单生成器场景独立的新缺陷。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "single-unknown-native"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC003",
+      "title": "多个输入均无长度且元素数不等",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/tests_concurrent.py",
+            "start_line": 32,
+            "end_line": 40,
+            "quote": "@mark.parametrize(\"mapper\", [interpreter_map, process_map, thread_map])\ndef test_concurrent_map_unknown_len(mapper, caperr):\n    b = [i + 1 for i in range(9)]\n    try:\n        assert mapper(dummy_func, (i for i in range(9))) == b\n    except ImportError as err:\n        skip(str(err))\n    err = caperr()\n    assert '9it [' in err"
+          }
+        ],
+        "assessment": "补全未知不等长双输入返回[10,12,14]及total0；与A双生成器场景同机制。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tqdm--tqdm",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+          "exit_code": 1,
+          "elapsed_seconds": 6.649,
+          "log": "logs/model-checks/tqdm--tqdm/05_model_checks.log"
+        },
+        "junit": "logs/model-checks/tqdm--tqdm/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_multiple_unknown_b[thread]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_multiple_unknown_b[process]",
+            "result": "passed",
+            "seconds": 0.416,
+            "message": null
+          },
+          {
+            "name": "test_multiple_unknown_b[interpreter]",
+            "result": "passed",
+            "seconds": 0.625,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "start_line": 27,
+            "end_line": 29,
+            "quote": "def test_multiple_unknown_b(mapper,captured_total):\n    assert mapper(operator.add,(i for i in range(5)),(i for i in range(10,13)),**opts())==[10,12,14]\n    assert captured_total==[0]"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "补全未知不等长双输入返回[10,12,14]及total0；与A双生成器场景同机制。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "multiple-unknown-shortest"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC004",
+      "title": "空生成器仍走未知总量回退",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/tests_concurrent.py",
+            "start_line": 14,
+            "end_line": 17,
+            "quote": "def test_min_map_len():\n    assert concurrent._min_map_len([]) == 0\n    assert concurrent._min_map_len([(i for i in range(9))]) == 0\n    assert concurrent._min_map_len([(i for i in range(9)), range(5)]) == 5"
+          },
+          {
+            "path": "tests/tests_concurrent.py",
+            "start_line": 32,
+            "end_line": 40,
+            "quote": "@mark.parametrize(\"mapper\", [interpreter_map, process_map, thread_map])\ndef test_concurrent_map_unknown_len(mapper, caperr):\n    b = [i + 1 for i in range(9)]\n    try:\n        assert mapper(dummy_func, (i for i in range(9))) == b\n    except ImportError as err:\n        skip(str(err))\n    err = caperr()\n    assert '9it [' in err"
+          }
+        ],
+        "assessment": "新增实际空生成器的mapper执行及total0，与A空生成器同机制。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tqdm--tqdm",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+          "exit_code": 1,
+          "elapsed_seconds": 6.649,
+          "log": "logs/model-checks/tqdm--tqdm/05_model_checks.log"
+        },
+        "junit": "logs/model-checks/tqdm--tqdm/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_empty_unknown[thread]",
+            "result": "passed",
+            "seconds": 0.006,
+            "message": null
+          },
+          {
+            "name": "test_empty_unknown[process]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_empty_unknown[interpreter]",
+            "result": "passed",
+            "seconds": 0.001,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "start_line": 19,
+            "end_line": 22,
+            "quote": "def test_empty_unknown(mapper,captured_total):\n    assert concurrent._min_map_len([(i for i in ())])==0\n    assert mapper(abs,(i for i in ()),**opts())==[]\n    assert captured_total==[0]"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "新增实际空生成器的mapper执行及total0，与A空生成器同机制。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "empty-generator"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC005",
+      "title": "混合已知与未知长度时保留已知长度估算",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/tests_concurrent.py",
+            "start_line": 14,
+            "end_line": 17,
+            "quote": "def test_min_map_len():\n    assert concurrent._min_map_len([]) == 0\n    assert concurrent._min_map_len([(i for i in range(9))]) == 0\n    assert concurrent._min_map_len([(i for i in range(9)), range(5)]) == 5"
+          }
+        ],
+        "assessment": "辅助函数混合长度已测；三个mapper构造total5和返回正确属于组合新增。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tqdm--tqdm",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+          "exit_code": 1,
+          "elapsed_seconds": 6.649,
+          "log": "logs/model-checks/tqdm--tqdm/05_model_checks.log"
+        },
+        "junit": "logs/model-checks/tqdm--tqdm/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_mixed_lengths[thread]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_mixed_lengths[process]",
+            "result": "passed",
+            "seconds": 0.411,
+            "message": null
+          },
+          {
+            "name": "test_mixed_lengths[interpreter]",
+            "result": "passed",
+            "seconds": 0.423,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+            "start_line": 30,
+            "end_line": 33,
+            "quote": "def test_mixed_lengths(mapper,captured_total):\n    assert concurrent._min_map_len([(i for i in range(9)),range(5)])==5\n    assert mapper(operator.add,(i for i in range(9)),range(5),**opts())==[0,2,4,6,8]\n    assert captured_total==[5]"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "辅助函数混合长度已测；三个mapper构造total5和返回正确属于组合新增。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "mixed-known-unknown"
+    }
+  ],
+  "native_record": "native_tqdm--tqdm.json",
+  "model_check_execution": {
+    "slug": "tqdm--tqdm",
+    "label": "model_checks",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+      "-m",
+      "pytest",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+      "-c",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm/pyproject.toml",
+      "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/model_checks.xml",
+      "-ra",
+      "-v"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+    "exit_code": 1,
+    "elapsed_seconds": 6.649,
+    "log": "logs/model-checks/tqdm--tqdm/05_model_checks.log"
+  },
+  "model_check_junit": "logs/model-checks/tqdm--tqdm/model_checks.xml",
+  "model_check_counts": {
+    "passed": 20,
+    "failed": 1,
+    "error": 0,
+    "skipped": 0
+  },
+  "platform_gaps": [
+    "Python3.12 and3.14 concurrent native suite executed; Windows/Linux not executed."
+  ],
+  "history_source_assessment": {
+    "source_count": 1,
+    "treatment": "historical_sources_added",
+    "sources": [
+      {
+        "id": 5065463834,
+        "url": "https://github.com/tw93/Mole/issues/1374",
+        "quality": "weak",
+        "reason": "Mole #1374 is optional directory-statistics timeout/exit124; current min-empty-generator ValueError is absent length metadata. Both separate progress estimation from actual work, but shared direct trigger/root cause is not established.",
+        "external_pr_fix_verified_for_target": false
+      }
+    ]
+  },
+  "verified_defect": {
+    "id": "tqdm-exception-lock-restoration",
+    "status": "reproduced",
+    "introduced_by_current_pr": false,
+    "finding": "Worker error from interpreter_map leaves _InterpreterLock globally installed; subsequent process_map fails TypeError cannot pickle _thread.RLock.",
+    "cause_reference": {
+      "path": "tqdm/contrib/concurrent.py",
+      "start_line": 71,
+      "end_line": 83,
+      "quote": "@contextmanager\ndef ensure_lock(tqdm_class, lock_name=\"\", lock=None):\n    \"\"\"get (create if necessary) and then restore `tqdm_class`'s lock\"\"\"\n    old_lock = getattr(tqdm_class, '_lock', None)  # don't create a new lock\n    if lock is None:\n        lock = old_lock or tqdm_class.get_lock()  # maybe create a new lock\n    lock = getattr(lock, lock_name, lock)  # maybe subtype\n    tqdm_class.set_lock(lock)\n    yield lock\n    if old_lock is None:\n        del tqdm_class._lock\n    else:\n        tqdm_class.set_lock(old_lock)"
+    },
+    "base_evidence": "logs/model-checks/tqdm--tqdm/base_ensure_lock.txt",
+    "reproduction_commands": [
+      {
+        "slug": "tqdm--tqdm",
+        "label": "reproduce_error_lock",
+        "argv": [
+          "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+          "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/reproduce_tqdm_error_lock.py"
+        ],
+        "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+        "exit_code": 1,
+        "elapsed_seconds": 0.489,
+        "log": "logs/model-checks/tqdm--tqdm/07_reproduce_error_lock.log"
+      },
+      {
+        "slug": "tqdm--tqdm",
+        "label": "control_success",
+        "argv": [
+          "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+          "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/reproduce_tqdm_error_lock.py",
+          "success"
+        ],
+        "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+        "exit_code": 0,
+        "elapsed_seconds": 3.212,
+        "log": "logs/model-checks/tqdm--tqdm/08_control_success.log"
+      },
+      {
+        "slug": "tqdm--tqdm",
+        "label": "control_known-error",
+        "argv": [
+          "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+          "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/reproduce_tqdm_error_lock.py",
+          "known-error"
+        ],
+        "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+        "exit_code": 1,
+        "elapsed_seconds": 1.537,
+        "log": "logs/model-checks/tqdm--tqdm/08_control_known-error.log"
+      }
+    ],
+    "attribution": "B TC001 requested worker-error propagation; lock restoration and chained process_map were reviewer follow-up after actual sequence failure, not explicitly predicted by model.",
+    "baseline_runtime_executed": false,
+    "introduced_by_current_pr_assessment": "inferred preexisting from identical base ensure_lock source plus same current known-length error reproduction; old base runtime not executed"
+  },
+  "summary": {
+    "cases": 10,
+    "applicable": 10,
+    "existing_covered": 1,
+    "technically_adopted_cases": 8,
+    "new_defects": 1,
+    "human_evaluations": 0
+  },
+  "final_git_status": "",
+  "final_head_sha": "24b9e1e08a097f1c30f2d235b63f9eb25ba47974",
+  "isolated_recheck": {
+    "command": {
+      "slug": "tqdm--tqdm",
+      "label": "isolate_single_unknown",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+        "-m",
+        "pytest",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+        "-c",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm/pyproject.toml",
+        "-k",
+        "test_single_unknown_explicit_total_zero",
+        "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/isolate_single_unknown.xml",
+        "-ra",
+        "-v"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+      "exit_code": 0,
+      "elapsed_seconds": 1.353,
+      "log": "logs/model-checks/tqdm--tqdm/09_isolate_single_unknown.log"
+    },
+    "junit": "logs/model-checks/tqdm--tqdm/isolate_single_unknown.xml",
+    "test_counts": {
+      "passed": 3,
+      "failed": 0
+    },
+    "note": "Fresh separate Python process; no production edits, no lock-reset workaround. Initial21-check sequence remains20 passed/1 failed."
+  }
+}

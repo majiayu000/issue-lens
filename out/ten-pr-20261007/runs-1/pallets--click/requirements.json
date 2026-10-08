@@ -1,0 +1,37 @@
+{
+  "requirements": [
+    {
+      "title": "简短帮助中的缩写不得导致提前截断",
+      "quote": "Just a small bug I encountered in my CLIs, where as `vs.` or `e.g.` was prematurely ending the shorten version of a help message produced by `_make_default_short_help`.",
+      "queries": [
+        [
+          "abbreviation",
+          "truncation"
+        ],
+        [
+          "help",
+          "abbreviation",
+          "period"
+        ]
+      ],
+      "id": "R1"
+    }
+  ],
+  "open_questions": [
+    "PRD 未明确句末判断规则：diff 以句点位于文本末尾或后续词不以小写字母开头作为句末条件；大写字母、数字等边界行为是否符合预期，需澄清。",
+    "PRD 提出使用 Python 的 textwrap.shorten 简化计算，但未明确长词及连字符词不可拆分、长度不足以容纳省略号或为负数时仍返回完整省略号等用户可见行为；这些 diff 中的行为不能直接视为产品要求。"
+  ],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 18335,
+      "cached_input_tokens": 7680,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 210,
+      "reasoning_output_tokens": 0
+    },
+    "thread_id": "01a116b3-c9a0-7b93-89f4-9dd941b38ab0"
+  },
+  "prd_sha256": "73c43a259e076db83417c93fe77523739914992af7b0e117da41d8abf7195b71"
+}

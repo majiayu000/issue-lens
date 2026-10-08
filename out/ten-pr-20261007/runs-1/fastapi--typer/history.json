@@ -1,0 +1,109 @@
+{
+  "sources": [
+    {
+      "id": 4560755924,
+      "title": "bug(config): `tui.status_items` is wrongly required — config.toml fails to parse when `[tui]` exists without it",
+      "url": "https://github.com/Hmbown/Codewhale/issues/2483",
+      "repo": "Hmbown/Codewhale",
+      "extraction": {
+        "id": 4560755924,
+        "issue_kind": "bug",
+        "symptom": "配置文件存在 [tui] 节但未设置 status_items 时，codewhale-tui 启动失败，codewhale doctor 也报配置解析错误。",
+        "root_cause": "正文明确指出：status_items 虽为 Option 类型，但使用了 serde 的 deserialize_with 属性且未设置 default，因此缺失该键时被视为必填字段，在调用自定义反序列化函数前就报错。",
+        "root_cause_category": "参数解析与默认值",
+        "environment": [
+          "v0.8.48（e0160cc6f0ba）",
+          "rustc 1.95.0",
+          "Linux",
+          "config.toml 包含 [tui] 节但缺少 status_items",
+          "正文提及从旧版本或 DeepSeek-TUI 升级后沿用配置的场景"
+        ],
+        "evidence_quote": "Run `codewhale-tui` (or `codewhale doctor`) → parse fails with `missing field status_items`.",
+        "test_ideas": [
+          "使用正文提供的最小配置，保留 [tui]、locale 和 mouse_capture，省略 status_items；分别运行 codewhale-tui 和 codewhale doctor，检查配置能否加载及是否采用默认页脚顺序。",
+          "对比省略 status_items、设置 status_items = []、设置有效的非空列表三种配置，分别检查默认页脚、空页脚和指定顺序，避免将缺省值与空列表混为一谈。",
+          "对比完全省略 [tui] 节与存在空 [tui] 节的配置，检查可选配置节的默认值行为是否一致。",
+          "将旧版不含 status_items 的 [tui] 配置作为升级测试样本，检查沿用配置后启动与 doctor 的加载结果。",
+          "针对同时使用 Option 和自定义反序列化函数的配置字段，分别测试键缺失、有效值和无效值，检查缺省处理及错误信息。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": "gpt-6.1-sol",
+          "usage": {
+            "input_tokens": 16668,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 444,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a116b8-9e1d-70e1-82ea-1bb7dbec6d12"
+        }
+      },
+      "pr_evidence": {
+        "fetched_at": "2026-10-07T14:16:46.701617+00:00",
+        "selection": "current closing event, then explicit closing references; latest 8 comments",
+        "pulls_truncated": false,
+        "pulls": [
+          {
+            "url": "https://github.com/codewhale-hq/Codewhale/pull/2493",
+            "title": " fix(config): allow missing tui status items",
+            "body": "## Summary\r\n\r\n  Fixes #2483.\r\n\r\n  Configs with a `[tui]` table failed to parse unless `status_items` was also present:\r\n\r\n  ```text\r\n  missing field `status_items`\r\n```\r\n\r\n  That broke older or hand-written configs such as:\r\n\r\n  [tui]\r\n  locale = \"zh-Hans\"\r\n  mouse_capture = false\r\n\r\n  status_items is intended to be optional: missing means use the default footer order, while an empty list means\r\n  hide all footer items. The custom deserializer needed serde(default) so serde can pass missing fields through as\r\n  None.\r\n\r\n## Testing\r\n\r\n- [x] `cargo fmt --all -- --check`\r\n- [ ] `cargo clippy --workspace --all-targets --all-features`\r\n- [ ] `cargo test --workspace --all-features`\r\n\r\n## Checklist\r\n\r\n- [ ] Updated docs or comments as needed\r\n- [x] Added or updated tests where relevant\r\n- [ ] Verified TUI behavior manually if UI changes\n\n<!-- greptile_comment -->\n\n<details open><summary><h3>Greptile Summary</h3></summary>\n\nAdds `serde(default)` to the `status_items` field on `TuiConfig` so that configs containing a `[tui]` section without `status_items` no longer fail to parse with \"missing field `status_items`\".\n\n- The one-line change is the correct, idiomatic fix: combining `serde(default)` with `deserialize_with` tells serde to produce `None` (the `Option`'s default) when the field is absent, while still routing present values through the custom `deser_status_items` deserializer.\n- A new unit test validates the previously broken case directly.\n</details>\n\n<details open><summary><h3>Confidence Score: 5/5</h3></summary>\n\nSafe to merge — the change is minimal and correct, fixing a parse regression without altering any existing deserialization path.\n\nAdding serde(default) to an Option field is the idiomatic fix for this class of serde issue. When the field is absent serde now yields None directly; when it is present the custom deser_status_items function is called exactly as before. The new test exercises the previously failing case and the existing test suite continues to cover the non-missing path. No logic changed beyond the missing-field handling.\n\nNo files require special attention.\n</details>\n\n<details open><summary><h3>Important Files Changed</h3></summary>\n\n| Filename | Overview |\n|----------|----------|\n| crates/tui/src/config.rs | Adds `serde(default)` to `TuiConfig::status_items` and a regression test; the fix correctly handles the missing-field case without touching the custom deserializer logic. |\n\n</details>\n\n</details>\n\n<details open><summary><h3>Flowchart</h3></summary>\n\n```mermaid\n%%{init: {'theme': 'neutral'}}%%\nflowchart TD\n    A{status_items field\\npresent in TOML?} -->|No - field absent| B[\"serde default kicks in\\nfield value = None\"]\n    A -->|Yes - field present| C[\"Call deser_status_items\"]\n    C --> D[\"Deserialize as Option of Vec of String\"]\n    D --> E[\"Filter unknown variants\\nvia StatusItem::from_key\"]\n    E --> G[\"Return Some Vec of StatusItem\"]\n    B --> H[\"status_items = None\\nuse built-in default order\"]\n    G --> I[\"status_items = Some items\\nuse configured order\"]\n```\n</details>\n\n<sub>Reviews (1): Last reviewed commit: [\"fix(config): allow missing tui status it...\"](https://github.com/hmbown/codewhale/commit/b0e3f29bf5e506d8eee2e5d75b5a6da3604e5a50) | [Re-trigger Greptile](https://app.greptile.com/api/retrigger?id=34875244)</sub>\n\n<!-- /greptile_comment -->",
+            "body_truncated": false,
+            "state": "closed",
+            "merged": false,
+            "head_sha": "b0e3f29bf5e506d8eee2e5d75b5a6da3604e5a50",
+            "base_sha": "e0160cc6f0ba175ae94ea16e031e9802ef53f70a",
+            "merge_commit_sha": "53ef44ba8cb58f83df97cf6b1a2875f39e3fa1bd",
+            "relation": "closing_reference_not_verified_fix",
+            "files": [
+              {
+                "filename": "crates/tui/src/config.rs",
+                "status": "modified",
+                "patch": "@@ -666,7 +666,7 @@ pub struct TuiConfig {\n     ///\n     /// Edited interactively via `/statusline`; persisted to `tui.status_items`\n     /// in `~/.deepseek/config.toml`.\n-    #[serde(deserialize_with = \"deser_status_items\")]\n+    #[serde(default, deserialize_with = \"deser_status_items\")]\n     pub status_items: Option<Vec<StatusItem>>,\n     /// Emit OSC 8 hyperlink escape sequences around URLs in the transcript so\n     /// supporting terminals (iTerm2, Terminal.app 13+, Ghostty, Kitty,\n@@ -8814,4 +8814,14 @@ model = \"deepseek-ai/deepseek-v4-pro\"\n         assert_eq!(items[2], StatusItem::Cost);\n         assert_eq!(items[3], StatusItem::Status);\n     }\n+\n+    #[test]\n+    fn status_items_deser_allows_missing_field() {\n+        let toml_str = r#\"\n+            locale = \"zh-Hans\"\n+            mouse_capture = false\n+        \"#;\n+        let tui: TuiConfig = toml::from_str(toml_str).expect(\"missing status_items should parse\");\n+        assert_eq!(tui.status_items, None);\n+    }\n }",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              }
+            ],
+            "files_truncated": false
+          }
+        ],
+        "comments": [
+          {
+            "url": "https://github.com/codewhale-hq/Codewhale/issues/2483#issuecomment-4591496453",
+            "body": "Fixed on main for v0.8.49 by allowing missing  fields during config deserialization (c1f74b3b2). Thanks @taiwan988 for the report and @reidliu41 for the PR.",
+            "authorAssociation": "COLLABORATOR",
+            "createdAt": "2026-06-01T09:56:56Z",
+            "updatedAt": "2026-06-01T09:56:56Z",
+            "body_truncated": false
+          },
+          {
+            "url": "https://github.com/codewhale-hq/Codewhale/issues/2483#issuecomment-4591498359",
+            "body": "Clarifying the fixed config key literally: `tui.status_items` is now optional when `[tui]` exists without that field.",
+            "authorAssociation": "COLLABORATOR",
+            "createdAt": "2026-06-01T09:57:11Z",
+            "updatedAt": "2026-06-01T09:57:11Z",
+            "body_truncated": false
+          }
+        ],
+        "comments_total": 2,
+        "comments_truncated": false
+      }
+    }
+  ],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 22354,
+      "cached_input_tokens": 3456,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 237,
+      "reasoning_output_tokens": 83
+    },
+    "thread_id": "01a116b7-c9a0-79d2-a0b2-02e1ab1c1c23"
+  },
+  "target_repo_excluded": "fastapi/typer",
+  "issue_creation_cutoff": "2026-06-02T13:26:24Z",
+  "pr_evidence_note": "Current bounded GitHub snapshots, not time-travel evidence."
+}

@@ -1,0 +1,1098 @@
+{
+  "id": "tox-dev--filelock",
+  "repo": "tox-dev/filelock",
+  "pr": 756,
+  "head_sha": "2a533f3053444b67a1764d628e0cdcf6d383cfb5",
+  "selected_pair_directory": "runs-2/tox-dev--filelock",
+  "reviewer": "agent technical review; no human maintainer judgment",
+  "human_maintainer_adoption": null,
+  "cases": [
+    {
+      "arm": "A",
+      "case_id": "TC001",
+      "title": "实例默认值及调用覆盖值进入相同校验路径",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 687,
+            "end_line": 708,
+            "quote": "@pytest.mark.parametrize(\"mode\", [pytest.param(\"read\", id=\"read\"), pytest.param(\"write\", id=\"write\")])\n@ACQUIRE_SETTINGS\ndef test_acquire_respects_settings(\n    sync_locks: tuple[ReadWriteLock, ReadWriteLock],\n    mode: Literal[\"read\", \"write\"],\n    instance_timeout: float,\n    call_timeout: float | None,\n    minimum: float,\n    *,\n    instance_blocking: bool,\n    call_blocking: bool | None,\n    omitted: bool,\n) -> None:\n    contender: Final[ReadWriteLock] = sync_locks[1]\n    contender.timeout = instance_timeout\n    contender.blocking = instance_blocking\n    acquire: Final = contender.acquire_read if mode == \"read\" else contender.acquire_write\n    with sync_locks[0].write_lock():\n        started: Final[float] = time.perf_counter()\n        with pytest.raises(Timeout):\n            acquire() if omitted else acquire(timeout=call_timeout, blocking=call_blocking)\n        assert minimum <= time.perf_counter() - started < 5"
+          },
+          {
+            "path": "tests/read_write_helpers.py",
+            "start_line": 19,
+            "end_line": 31,
+            "quote": "ACQUIRE_SETTINGS: Final[pytest.MarkDecorator] = pytest.mark.parametrize(\n    (\"instance_timeout\", \"instance_blocking\", \"call_timeout\", \"call_blocking\", \"minimum\", \"omitted\"),\n    [\n        pytest.param(0.2, True, None, None, 0.1, True, id=\"instance-timeout\"),\n        pytest.param(30, False, None, None, 0, True, id=\"instance-nonblocking\"),\n        pytest.param(0.2, True, None, None, 0.1, False, id=\"none-timeout\"),\n        pytest.param(30, False, None, None, 0, False, id=\"none-nonblocking\"),\n        pytest.param(30, True, 0.2, None, 0.1, False, id=\"call-timeout\"),\n        pytest.param(0.2, False, None, True, 0.1, False, id=\"call-blocking\"),\n        pytest.param(30, True, None, False, 0, False, id=\"call-nonblocking\"),\n        pytest.param(30, True, 0, None, 0, False, id=\"zero-timeout\"),\n    ],\n)"
+          }
+        ],
+        "assessment": "已有默认值/None/调用覆盖测试使用有效超时；本例补充默认非法负值在重入时被继承并被合法覆盖。",
+        "model_claim": "not_found"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tox-dev--filelock",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tox-dev--filelock/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+          "exit_code": 0,
+          "elapsed_seconds": 2.336,
+          "log": "logs/model-checks/tox-dev--filelock/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/tox-dev--filelock/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_defaults_and_overrides[sqlite-read]",
+            "result": "passed",
+            "seconds": 0.004,
+            "message": null
+          },
+          {
+            "name": "test_defaults_and_overrides[sqlite-write]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_defaults_and_overrides[soft-write]",
+            "result": "passed",
+            "seconds": 0.012,
+            "message": null
+          },
+          {
+            "name": "test_defaults_and_overrides[soft-read]",
+            "result": "passed",
+            "seconds": 0.028,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "start_line": 16,
+            "end_line": 26,
+            "quote": "def test_defaults_and_overrides(locks,mode):\n    h,c=locks;a=getattr(h,'acquire_'+mode)\n    with a(timeout=-1):\n        for kwargs in [{},{'timeout':None,'blocking':None}]:\n            with pytest.raises(ValueError,match='^timeout must be a non-negative number or -1$'):a(**kwargs)\n            assert state(h)==(1,mode)\n        with a(timeout=-1,blocking=True):assert state(h)==(2,mode)\n        with a(blocking=False):assert state(h)==(2,mode)\n        assert state(h)==(1,mode)\n    with c.acquire_write(blocking=False):pass\n"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "已有默认值/None/调用覆盖测试使用有效超时；本例补充默认非法负值在重入时被继承并被合法覆盖。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "negative-default-overrides"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC002",
+      "title": "多层持锁中的非法调用既不增加深度，也不提前释放",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 738,
+            "end_line": 753,
+            "quote": "def test_acquire_rejects_negative_timeout(\n    timeout_locks: tuple[ReadWriteLock | SoftReadWriteLock, ReadWriteLock | SoftReadWriteLock],\n    mode: Literal[\"read\", \"write\"],\n    timeout: float,\n    *,\n    reentrant: bool,\n) -> None:\n    holder: Final = timeout_locks[0]\n    acquire: Final = holder.acquire_read if mode == \"read\" else holder.acquire_write\n    with ExitStack() as stack:\n        if reentrant:\n            stack.enter_context(acquire())\n        with pytest.raises(ValueError, match=r\"^timeout must be a non-negative number or -1$\"):\n            stack.enter_context(acquire(timeout=timeout))\n    with timeout_locks[1].acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)"
+          },
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 767,
+            "end_line": 783,
+            "quote": "def test_acquire_valid_timeout_preserves_nested_hold(\n    timeout_locks: tuple[ReadWriteLock | SoftReadWriteLock, ReadWriteLock | SoftReadWriteLock],\n    mode: Literal[\"read\", \"write\"],\n    timeout: float,\n    *,\n    blocking: bool,\n) -> None:\n    holder: Final = timeout_locks[0]\n    contender: Final = timeout_locks[1]\n    acquire: Final = holder.acquire_read if mode == \"read\" else holder.acquire_write\n    with acquire(timeout=timeout, blocking=blocking):\n        with acquire(timeout=timeout, blocking=blocking), pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n        with pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n    with contender.acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)"
+          }
+        ],
+        "assessment": "已有一层失败及合法两层持锁验证；缺少失败瞬间两层深度和模式不变的组合断言。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tox-dev--filelock",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tox-dev--filelock/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+          "exit_code": 0,
+          "elapsed_seconds": 2.336,
+          "log": "logs/model-checks/tox-dev--filelock/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/tox-dev--filelock/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_multilayer_failure_preserves_hold[soft-read]",
+            "result": "passed",
+            "seconds": 0.02,
+            "message": null
+          },
+          {
+            "name": "test_multilayer_failure_preserves_hold[sqlite-write]",
+            "result": "passed",
+            "seconds": 0.003,
+            "message": null
+          },
+          {
+            "name": "test_multilayer_failure_preserves_hold[sqlite-read]",
+            "result": "passed",
+            "seconds": 0.003,
+            "message": null
+          },
+          {
+            "name": "test_multilayer_failure_preserves_hold[soft-write]",
+            "result": "passed",
+            "seconds": 0.026,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "start_line": 28,
+            "end_line": 38,
+            "quote": "def test_multilayer_failure_preserves_hold(locks,mode):\n    h,c=locks;a=getattr(h,'acquire_'+mode)\n    with a(timeout=-1):\n        with a(timeout=-1):\n            with pytest.raises(ValueError):a(timeout=-2,blocking=True)\n            assert state(h)==(2,mode)\n            with pytest.raises(Timeout):c.acquire_write(blocking=False)\n        assert state(h)==(1,mode)\n        with pytest.raises(Timeout):c.acquire_write(blocking=False)\n    with c.acquire_write(blocking=False):pass\n"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "已有一层失败及合法两层持锁验证；缺少失败瞬间两层深度和模式不变的组合断言。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "failed-nesting-state"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC003",
+      "title": "-1 在真实竞争下等待释放，并保留合法重入",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/soft_rw/test_soft_rw_sync.py",
+            "start_line": 276,
+            "end_line": 298,
+            "quote": "def test_blocking_acquire_without_timeout_waits_for_release(lock_file: str) -> None:\n    # Without a deadline the poll loop sleeps a full interval each round rather than clamping to a budget.\n    holder = _make_lock(lock_file)\n    holder.acquire_write(timeout=2)\n    acquired = threading.Event()\n\n    def waiter() -> None:\n        contender = _make_lock(lock_file)\n        try:\n            contender.acquire_read(timeout=-1)\n            acquired.set()\n            contender.release()\n        finally:\n            contender.close()\n\n    thread = threading.Thread(target=waiter)\n    thread.start()\n    try:\n        assert not acquired.wait(timeout=0.2)\n        holder.release()\n        assert acquired.wait(timeout=_PROCESS_DEADLINE)\n    finally:\n        thread.join(timeout=_PROCESS_DEADLINE)"
+          },
+          {
+            "path": "tests/test_read_write.py",
+            "start_line": 114,
+            "end_line": 140,
+            "quote": "\n    holder = Process(target=acquire_lock, args=(lock_file, holder_mode, holder_acquired, release_holder))\n    contender = Process(\n        target=acquire_lock,\n        args=(lock_file, contender_mode, contender_acquired, None, -1, True, contender_started),\n    )\n\n    with cleanup_processes([holder, contender]):\n        holder.start()\n        assert holder_acquired.wait(timeout=_PROCESS_DEADLINE), f\"{holder_mode} lock not acquired\"\n\n        contender.start()\n        contender_started.set()\n\n        time.sleep(2)  # confirm the contender stays blocked\n        assert not contender_acquired.is_set(), f\"{contender_mode} lock should not be acquired while {holder_mode} held\"\n\n        release_holder.set()\n        holder.join(timeout=_PROCESS_DEADLINE)\n\n        assert contender_acquired.wait(timeout=_PROCESS_DEADLINE), (\n            f\"{contender_mode} lock not acquired after {holder_mode} released\"\n        )\n\n        contender.join(timeout=_PROCESS_DEADLINE)\n        assert not contender.is_alive(), \"Contender did not exit cleanly\"\n"
+          },
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 777,
+            "end_line": 783,
+            "quote": "    with acquire(timeout=timeout, blocking=blocking):\n        with acquire(timeout=timeout, blocking=blocking), pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n        with pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n    with contender.acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)"
+          }
+        ],
+        "assessment": "完整仓库已有SQLite和Soft -1等待释放测试，模型仅见一个文件导致低估覆盖。本实验补写模式和等待后同线程重入的组合，不把整个等待语义计作新增。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tox-dev--filelock",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tox-dev--filelock/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+          "exit_code": 0,
+          "elapsed_seconds": 2.336,
+          "log": "logs/model-checks/tox-dev--filelock/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/tox-dev--filelock/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_unlimited_wait_then_reentrant[soft-write]",
+            "result": "passed",
+            "seconds": 0.333,
+            "message": null
+          },
+          {
+            "name": "test_unlimited_wait_then_reentrant[sqlite-read]",
+            "result": "passed",
+            "seconds": 0.2,
+            "message": null
+          },
+          {
+            "name": "test_unlimited_wait_then_reentrant[soft-read]",
+            "result": "passed",
+            "seconds": 0.288,
+            "message": null
+          },
+          {
+            "name": "test_unlimited_wait_then_reentrant[sqlite-write]",
+            "result": "passed",
+            "seconds": 0.196,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "start_line": 40,
+            "end_line": 53,
+            "quote": "def test_unlimited_wait_then_reentrant(locks,mode):\n    h,c=locks;started=threading.Event();done=threading.Event();errors=[]\n    def worker():\n        try:\n            started.set()\n            with getattr(c,'acquire_'+mode)(timeout=-1,blocking=True):\n                with getattr(c,'acquire_'+mode)(timeout=-1,blocking=True):assert state(c)==(2,mode)\n        except BaseException as exc:errors.append(exc)\n        finally:done.set()\n    with h.acquire_write(timeout=-1):\n        t=threading.Thread(target=worker,daemon=True);t.start();assert started.wait(5);assert not done.wait(.15)\n    t.join(10);assert not t.is_alive();assert not errors;assert done.is_set()\n    with h.acquire_write(timeout=-1,blocking=False):pass\n"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "完整仓库已有SQLite和Soft -1等待释放测试，模型仅见一个文件导致低估覆盖。本实验补写模式和等待后同线程重入的组合，不把整个等待语义计作新增。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "wait-release-reentry"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC004",
+      "title": "负超时不改变非阻塞成功及竞争失败行为",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 758,
+            "end_line": 783,
+            "quote": "    (\"timeout\", \"blocking\"),\n    [\n        pytest.param(-2, False, id=\"nonblocking-integer\"),\n        pytest.param(-0.5, False, id=\"nonblocking-fraction\"),\n        pytest.param(float(\"-inf\"), False, id=\"nonblocking-infinite\"),\n        pytest.param(-1, True, id=\"unlimited\"),\n        pytest.param(0, True, id=\"immediate\"),\n    ],\n)\ndef test_acquire_valid_timeout_preserves_nested_hold(\n    timeout_locks: tuple[ReadWriteLock | SoftReadWriteLock, ReadWriteLock | SoftReadWriteLock],\n    mode: Literal[\"read\", \"write\"],\n    timeout: float,\n    *,\n    blocking: bool,\n) -> None:\n    holder: Final = timeout_locks[0]\n    contender: Final = timeout_locks[1]\n    acquire: Final = holder.acquire_read if mode == \"read\" else holder.acquire_write\n    with acquire(timeout=timeout, blocking=blocking):\n        with acquire(timeout=timeout, blocking=blocking), pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n        with pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n    with contender.acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)"
+          },
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 417,
+            "end_line": 424,
+            "quote": "def test_non_blocking_with_timeout_no_value_error(lock_file: str, mode: Literal[\"read\", \"write\"]) -> None:\n    lock = ReadWriteLock(lock_file, is_singleton=False)\n    lock._transaction_lock.acquire()\n    try:\n        with pytest.raises(Timeout):\n            (lock.acquire_read if mode == \"read\" else lock.acquire_write)(blocking=False, timeout=5.0)\n    finally:\n        lock._transaction_lock.release()"
+          },
+          {
+            "path": "tests/soft_rw/test_soft_rw_sync.py",
+            "start_line": 519,
+            "end_line": 529,
+            "quote": "def test_non_blocking_writer_contended_raises(lock_file: str, lock: SoftReadWriteLock) -> None:\n    held, release = Event(), Event()\n    holder = Process(target=_worker, args=(lock_file, \"write\", held, release))\n    with cleanup_processes([holder]):\n        holder.start()\n        assert held.wait(timeout=_PROCESS_DEADLINE)\n        with pytest.raises(Timeout):\n            lock.acquire_write(timeout=1, blocking=False)\n        with pytest.raises(Timeout):\n            lock.acquire_read(timeout=1, blocking=False)\n        release.set()"
+          }
+        ],
+        "assessment": "已覆盖负超时非阻塞空闲/重入和正超时竞争失败；补负超时在外部竞争中即时Timeout及失败后重试。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tox-dev--filelock",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tox-dev--filelock/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+          "exit_code": 0,
+          "elapsed_seconds": 2.336,
+          "log": "logs/model-checks/tox-dev--filelock/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/tox-dev--filelock/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite-5.0-read]",
+            "result": "passed",
+            "seconds": 0.008,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft-5.0-read]",
+            "result": "passed",
+            "seconds": 0.026,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite--inf-write]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft--inf-read]",
+            "result": "passed",
+            "seconds": 0.076,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft--inf-write]",
+            "result": "passed",
+            "seconds": 0.025,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite--0.5-write]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite--2-read]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft--2-read]",
+            "result": "passed",
+            "seconds": 0.019,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft--0.5-write]",
+            "result": "passed",
+            "seconds": 0.05,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite--0.5-read]",
+            "result": "passed",
+            "seconds": 0.003,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft-5.0-write]",
+            "result": "passed",
+            "seconds": 0.026,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite--inf-read]",
+            "result": "passed",
+            "seconds": 0.003,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite--2-write]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft--2-write]",
+            "result": "passed",
+            "seconds": 0.021,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite-5.0-write]",
+            "result": "passed",
+            "seconds": 0.004,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft--0.5-read]",
+            "result": "passed",
+            "seconds": 0.02,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "start_line": 56,
+            "end_line": 64,
+            "quote": "def test_nonblocking_timeout_under_contention(locks,mode,timeout):\n    h,c=locks;a=getattr(c,'acquire_'+mode)\n    with a(timeout=timeout,blocking=False):\n        with a(timeout=timeout,blocking=False):pass\n    with h.acquire_write(timeout=-1):\n        start=time.monotonic()\n        with pytest.raises(Timeout):a(timeout=timeout,blocking=False)\n        assert time.monotonic()-start<1\n    with a(timeout=timeout,blocking=False):pass"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "已覆盖负超时非阻塞空闲/重入和正超时竞争失败；补负超时在外部竞争中即时Timeout及失败后重试。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "negative-nonblocking-contention"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC005",
+      "title": "两种锁的读写获取拒绝非法负阻塞超时",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "covered",
+        "references": [
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 730,
+            "end_line": 753,
+            "quote": "\n\n@pytest.mark.parametrize(\"mode\", [pytest.param(\"read\", id=\"read\"), pytest.param(\"write\", id=\"write\")])\n@pytest.mark.parametrize(\n    \"timeout\",\n    [pytest.param(-2, id=\"integer\"), pytest.param(-0.5, id=\"fraction\"), pytest.param(float(\"-inf\"), id=\"infinite\")],\n)\n@pytest.mark.parametrize(\"reentrant\", [pytest.param(True, id=\"reentrant\"), pytest.param(False, id=\"first\")])\ndef test_acquire_rejects_negative_timeout(\n    timeout_locks: tuple[ReadWriteLock | SoftReadWriteLock, ReadWriteLock | SoftReadWriteLock],\n    mode: Literal[\"read\", \"write\"],\n    timeout: float,\n    *,\n    reentrant: bool,\n) -> None:\n    holder: Final = timeout_locks[0]\n    acquire: Final = holder.acquire_read if mode == \"read\" else holder.acquire_write\n    with ExitStack() as stack:\n        if reentrant:\n            stack.enter_context(acquire())\n        with pytest.raises(ValueError, match=r\"^timeout must be a non-negative number or -1$\"):\n            stack.enter_context(acquire(timeout=timeout))\n    with timeout_locks[1].acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)"
+          },
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 786,
+            "end_line": 800,
+            "quote": "@pytest.fixture(\n    params=[\n        pytest.param(ReadWriteLock, id=\"sqlite\"),\n        pytest.param(SoftReadWriteLock, id=\"soft\", marks=pytest.mark.requires_hard_links),\n    ]\n)\ndef timeout_locks(\n    tmp_path: Path, request: pytest.FixtureRequest\n) -> Generator[tuple[ReadWriteLock | SoftReadWriteLock, ReadWriteLock | SoftReadWriteLock]]:\n    lock_type: Final[type[ReadWriteLock | SoftReadWriteLock]] = request.param\n    with (\n        closing(lock_type(tmp_path / \"a\", is_singleton=False)) as holder,\n        closing(lock_type(tmp_path / \"a\", is_singleton=False)) as contender,\n    ):\n        yield holder, contender"
+          }
+        ],
+        "assessment": "已有精确同等参数化与异常/释放断言，复用128项native结果。",
+        "model_claim": "covered"
+      },
+      "execution": {
+        "kind": "native_baseline_reused",
+        "command": {
+          "label": "tests",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_read_write_unit.py",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/native_tox-dev--filelock/junit.xml",
+            "-ra"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+          "exit_code": 0,
+          "elapsed_seconds": 15.556,
+          "log": "logs/native_tox-dev--filelock/07_tests.log"
+        },
+        "result": "passed",
+        "assertion_references": [
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 730,
+            "end_line": 753,
+            "quote": "\n\n@pytest.mark.parametrize(\"mode\", [pytest.param(\"read\", id=\"read\"), pytest.param(\"write\", id=\"write\")])\n@pytest.mark.parametrize(\n    \"timeout\",\n    [pytest.param(-2, id=\"integer\"), pytest.param(-0.5, id=\"fraction\"), pytest.param(float(\"-inf\"), id=\"infinite\")],\n)\n@pytest.mark.parametrize(\"reentrant\", [pytest.param(True, id=\"reentrant\"), pytest.param(False, id=\"first\")])\ndef test_acquire_rejects_negative_timeout(\n    timeout_locks: tuple[ReadWriteLock | SoftReadWriteLock, ReadWriteLock | SoftReadWriteLock],\n    mode: Literal[\"read\", \"write\"],\n    timeout: float,\n    *,\n    reentrant: bool,\n) -> None:\n    holder: Final = timeout_locks[0]\n    acquire: Final = holder.acquire_read if mode == \"read\" else holder.acquire_write\n    with ExitStack() as stack:\n        if reentrant:\n            stack.enter_context(acquire())\n        with pytest.raises(ValueError, match=r\"^timeout must be a non-negative number or -1$\"):\n            stack.enter_context(acquire(timeout=timeout))\n    with timeout_locks[1].acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)"
+          },
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 786,
+            "end_line": 800,
+            "quote": "@pytest.fixture(\n    params=[\n        pytest.param(ReadWriteLock, id=\"sqlite\"),\n        pytest.param(SoftReadWriteLock, id=\"soft\", marks=pytest.mark.requires_hard_links),\n    ]\n)\ndef timeout_locks(\n    tmp_path: Path, request: pytest.FixtureRequest\n) -> Generator[tuple[ReadWriteLock | SoftReadWriteLock, ReadWriteLock | SoftReadWriteLock]]:\n    lock_type: Final[type[ReadWriteLock | SoftReadWriteLock]] = request.param\n    with (\n        closing(lock_type(tmp_path / \"a\", is_singleton=False)) as holder,\n        closing(lock_type(tmp_path / \"a\", is_singleton=False)) as contender,\n    ):\n        yield holder, contender"
+          }
+        ],
+        "native_record": "native_tox-dev--filelock.json"
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "已有精确同等参数化与异常/释放断言，复用128项native结果。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "existing-invalid-timeout"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC001",
+      "title": "重入校验采用实例默认值并尊重调用级覆盖",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 687,
+            "end_line": 708,
+            "quote": "@pytest.mark.parametrize(\"mode\", [pytest.param(\"read\", id=\"read\"), pytest.param(\"write\", id=\"write\")])\n@ACQUIRE_SETTINGS\ndef test_acquire_respects_settings(\n    sync_locks: tuple[ReadWriteLock, ReadWriteLock],\n    mode: Literal[\"read\", \"write\"],\n    instance_timeout: float,\n    call_timeout: float | None,\n    minimum: float,\n    *,\n    instance_blocking: bool,\n    call_blocking: bool | None,\n    omitted: bool,\n) -> None:\n    contender: Final[ReadWriteLock] = sync_locks[1]\n    contender.timeout = instance_timeout\n    contender.blocking = instance_blocking\n    acquire: Final = contender.acquire_read if mode == \"read\" else contender.acquire_write\n    with sync_locks[0].write_lock():\n        started: Final[float] = time.perf_counter()\n        with pytest.raises(Timeout):\n            acquire() if omitted else acquire(timeout=call_timeout, blocking=call_blocking)\n        assert minimum <= time.perf_counter() - started < 5"
+          },
+          {
+            "path": "tests/read_write_helpers.py",
+            "start_line": 19,
+            "end_line": 31,
+            "quote": "ACQUIRE_SETTINGS: Final[pytest.MarkDecorator] = pytest.mark.parametrize(\n    (\"instance_timeout\", \"instance_blocking\", \"call_timeout\", \"call_blocking\", \"minimum\", \"omitted\"),\n    [\n        pytest.param(0.2, True, None, None, 0.1, True, id=\"instance-timeout\"),\n        pytest.param(30, False, None, None, 0, True, id=\"instance-nonblocking\"),\n        pytest.param(0.2, True, None, None, 0.1, False, id=\"none-timeout\"),\n        pytest.param(30, False, None, None, 0, False, id=\"none-nonblocking\"),\n        pytest.param(30, True, 0.2, None, 0.1, False, id=\"call-timeout\"),\n        pytest.param(0.2, False, None, True, 0.1, False, id=\"call-blocking\"),\n        pytest.param(30, True, None, False, 0, False, id=\"call-nonblocking\"),\n        pytest.param(30, True, 0, None, 0, False, id=\"zero-timeout\"),\n    ],\n)"
+          }
+        ],
+        "assessment": "已有默认值/None/调用覆盖测试使用有效超时；本例补充默认非法负值在重入时被继承并被合法覆盖。",
+        "model_claim": "not_found"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tox-dev--filelock",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tox-dev--filelock/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+          "exit_code": 0,
+          "elapsed_seconds": 2.336,
+          "log": "logs/model-checks/tox-dev--filelock/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/tox-dev--filelock/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_defaults_and_overrides[sqlite-read]",
+            "result": "passed",
+            "seconds": 0.004,
+            "message": null
+          },
+          {
+            "name": "test_defaults_and_overrides[sqlite-write]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_defaults_and_overrides[soft-write]",
+            "result": "passed",
+            "seconds": 0.012,
+            "message": null
+          },
+          {
+            "name": "test_defaults_and_overrides[soft-read]",
+            "result": "passed",
+            "seconds": 0.028,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "start_line": 16,
+            "end_line": 26,
+            "quote": "def test_defaults_and_overrides(locks,mode):\n    h,c=locks;a=getattr(h,'acquire_'+mode)\n    with a(timeout=-1):\n        for kwargs in [{},{'timeout':None,'blocking':None}]:\n            with pytest.raises(ValueError,match='^timeout must be a non-negative number or -1$'):a(**kwargs)\n            assert state(h)==(1,mode)\n        with a(timeout=-1,blocking=True):assert state(h)==(2,mode)\n        with a(blocking=False):assert state(h)==(2,mode)\n        assert state(h)==(1,mode)\n    with c.acquire_write(blocking=False):pass\n"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "已有默认值/None/调用覆盖测试使用有效超时；本例补充默认非法负值在重入时被继承并被合法覆盖。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "negative-default-overrides"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC002",
+      "title": "非法重入调用保持原有多层锁深度及持锁状态",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 738,
+            "end_line": 753,
+            "quote": "def test_acquire_rejects_negative_timeout(\n    timeout_locks: tuple[ReadWriteLock | SoftReadWriteLock, ReadWriteLock | SoftReadWriteLock],\n    mode: Literal[\"read\", \"write\"],\n    timeout: float,\n    *,\n    reentrant: bool,\n) -> None:\n    holder: Final = timeout_locks[0]\n    acquire: Final = holder.acquire_read if mode == \"read\" else holder.acquire_write\n    with ExitStack() as stack:\n        if reentrant:\n            stack.enter_context(acquire())\n        with pytest.raises(ValueError, match=r\"^timeout must be a non-negative number or -1$\"):\n            stack.enter_context(acquire(timeout=timeout))\n    with timeout_locks[1].acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)"
+          },
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 767,
+            "end_line": 783,
+            "quote": "def test_acquire_valid_timeout_preserves_nested_hold(\n    timeout_locks: tuple[ReadWriteLock | SoftReadWriteLock, ReadWriteLock | SoftReadWriteLock],\n    mode: Literal[\"read\", \"write\"],\n    timeout: float,\n    *,\n    blocking: bool,\n) -> None:\n    holder: Final = timeout_locks[0]\n    contender: Final = timeout_locks[1]\n    acquire: Final = holder.acquire_read if mode == \"read\" else holder.acquire_write\n    with acquire(timeout=timeout, blocking=blocking):\n        with acquire(timeout=timeout, blocking=blocking), pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n        with pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n    with contender.acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)"
+          }
+        ],
+        "assessment": "已有一层失败及合法两层持锁验证；缺少失败瞬间两层深度和模式不变的组合断言。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tox-dev--filelock",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tox-dev--filelock/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+          "exit_code": 0,
+          "elapsed_seconds": 2.336,
+          "log": "logs/model-checks/tox-dev--filelock/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/tox-dev--filelock/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_multilayer_failure_preserves_hold[soft-read]",
+            "result": "passed",
+            "seconds": 0.02,
+            "message": null
+          },
+          {
+            "name": "test_multilayer_failure_preserves_hold[sqlite-write]",
+            "result": "passed",
+            "seconds": 0.003,
+            "message": null
+          },
+          {
+            "name": "test_multilayer_failure_preserves_hold[sqlite-read]",
+            "result": "passed",
+            "seconds": 0.003,
+            "message": null
+          },
+          {
+            "name": "test_multilayer_failure_preserves_hold[soft-write]",
+            "result": "passed",
+            "seconds": 0.026,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "start_line": 28,
+            "end_line": 38,
+            "quote": "def test_multilayer_failure_preserves_hold(locks,mode):\n    h,c=locks;a=getattr(h,'acquire_'+mode)\n    with a(timeout=-1):\n        with a(timeout=-1):\n            with pytest.raises(ValueError):a(timeout=-2,blocking=True)\n            assert state(h)==(2,mode)\n            with pytest.raises(Timeout):c.acquire_write(blocking=False)\n        assert state(h)==(1,mode)\n        with pytest.raises(Timeout):c.acquire_write(blocking=False)\n    with c.acquire_write(blocking=False):pass\n"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "已有一层失败及合法两层持锁验证；缺少失败瞬间两层深度和模式不变的组合断言。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "failed-nesting-state"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC003",
+      "title": "-1 在真实竞争下等待释放并成功获取",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/soft_rw/test_soft_rw_sync.py",
+            "start_line": 276,
+            "end_line": 298,
+            "quote": "def test_blocking_acquire_without_timeout_waits_for_release(lock_file: str) -> None:\n    # Without a deadline the poll loop sleeps a full interval each round rather than clamping to a budget.\n    holder = _make_lock(lock_file)\n    holder.acquire_write(timeout=2)\n    acquired = threading.Event()\n\n    def waiter() -> None:\n        contender = _make_lock(lock_file)\n        try:\n            contender.acquire_read(timeout=-1)\n            acquired.set()\n            contender.release()\n        finally:\n            contender.close()\n\n    thread = threading.Thread(target=waiter)\n    thread.start()\n    try:\n        assert not acquired.wait(timeout=0.2)\n        holder.release()\n        assert acquired.wait(timeout=_PROCESS_DEADLINE)\n    finally:\n        thread.join(timeout=_PROCESS_DEADLINE)"
+          },
+          {
+            "path": "tests/test_read_write.py",
+            "start_line": 114,
+            "end_line": 140,
+            "quote": "\n    holder = Process(target=acquire_lock, args=(lock_file, holder_mode, holder_acquired, release_holder))\n    contender = Process(\n        target=acquire_lock,\n        args=(lock_file, contender_mode, contender_acquired, None, -1, True, contender_started),\n    )\n\n    with cleanup_processes([holder, contender]):\n        holder.start()\n        assert holder_acquired.wait(timeout=_PROCESS_DEADLINE), f\"{holder_mode} lock not acquired\"\n\n        contender.start()\n        contender_started.set()\n\n        time.sleep(2)  # confirm the contender stays blocked\n        assert not contender_acquired.is_set(), f\"{contender_mode} lock should not be acquired while {holder_mode} held\"\n\n        release_holder.set()\n        holder.join(timeout=_PROCESS_DEADLINE)\n\n        assert contender_acquired.wait(timeout=_PROCESS_DEADLINE), (\n            f\"{contender_mode} lock not acquired after {holder_mode} released\"\n        )\n\n        contender.join(timeout=_PROCESS_DEADLINE)\n        assert not contender.is_alive(), \"Contender did not exit cleanly\"\n"
+          },
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 777,
+            "end_line": 783,
+            "quote": "    with acquire(timeout=timeout, blocking=blocking):\n        with acquire(timeout=timeout, blocking=blocking), pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n        with pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n    with contender.acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)"
+          }
+        ],
+        "assessment": "完整仓库已有SQLite和Soft -1等待释放测试，模型仅见一个文件导致低估覆盖。本实验补写模式和等待后同线程重入的组合，不把整个等待语义计作新增。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tox-dev--filelock",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tox-dev--filelock/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+          "exit_code": 0,
+          "elapsed_seconds": 2.336,
+          "log": "logs/model-checks/tox-dev--filelock/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/tox-dev--filelock/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_unlimited_wait_then_reentrant[soft-write]",
+            "result": "passed",
+            "seconds": 0.333,
+            "message": null
+          },
+          {
+            "name": "test_unlimited_wait_then_reentrant[sqlite-read]",
+            "result": "passed",
+            "seconds": 0.2,
+            "message": null
+          },
+          {
+            "name": "test_unlimited_wait_then_reentrant[soft-read]",
+            "result": "passed",
+            "seconds": 0.288,
+            "message": null
+          },
+          {
+            "name": "test_unlimited_wait_then_reentrant[sqlite-write]",
+            "result": "passed",
+            "seconds": 0.196,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "start_line": 40,
+            "end_line": 53,
+            "quote": "def test_unlimited_wait_then_reentrant(locks,mode):\n    h,c=locks;started=threading.Event();done=threading.Event();errors=[]\n    def worker():\n        try:\n            started.set()\n            with getattr(c,'acquire_'+mode)(timeout=-1,blocking=True):\n                with getattr(c,'acquire_'+mode)(timeout=-1,blocking=True):assert state(c)==(2,mode)\n        except BaseException as exc:errors.append(exc)\n        finally:done.set()\n    with h.acquire_write(timeout=-1):\n        t=threading.Thread(target=worker,daemon=True);t.start();assert started.wait(5);assert not done.wait(.15)\n    t.join(10);assert not t.is_alive();assert not errors;assert done.is_set()\n    with h.acquire_write(timeout=-1,blocking=False):pass\n"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "完整仓库已有SQLite和Soft -1等待释放测试，模型仅见一个文件导致低估覆盖。本实验补写模式和等待后同线程重入的组合，不把整个等待语义计作新增。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "wait-release-reentry"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC004",
+      "title": "非阻塞模式忽略负超时并在竞争时返回 Timeout",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 758,
+            "end_line": 783,
+            "quote": "    (\"timeout\", \"blocking\"),\n    [\n        pytest.param(-2, False, id=\"nonblocking-integer\"),\n        pytest.param(-0.5, False, id=\"nonblocking-fraction\"),\n        pytest.param(float(\"-inf\"), False, id=\"nonblocking-infinite\"),\n        pytest.param(-1, True, id=\"unlimited\"),\n        pytest.param(0, True, id=\"immediate\"),\n    ],\n)\ndef test_acquire_valid_timeout_preserves_nested_hold(\n    timeout_locks: tuple[ReadWriteLock | SoftReadWriteLock, ReadWriteLock | SoftReadWriteLock],\n    mode: Literal[\"read\", \"write\"],\n    timeout: float,\n    *,\n    blocking: bool,\n) -> None:\n    holder: Final = timeout_locks[0]\n    contender: Final = timeout_locks[1]\n    acquire: Final = holder.acquire_read if mode == \"read\" else holder.acquire_write\n    with acquire(timeout=timeout, blocking=blocking):\n        with acquire(timeout=timeout, blocking=blocking), pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n        with pytest.raises(Timeout):\n            contender.acquire_write(blocking=False)\n    with contender.acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)"
+          },
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 417,
+            "end_line": 424,
+            "quote": "def test_non_blocking_with_timeout_no_value_error(lock_file: str, mode: Literal[\"read\", \"write\"]) -> None:\n    lock = ReadWriteLock(lock_file, is_singleton=False)\n    lock._transaction_lock.acquire()\n    try:\n        with pytest.raises(Timeout):\n            (lock.acquire_read if mode == \"read\" else lock.acquire_write)(blocking=False, timeout=5.0)\n    finally:\n        lock._transaction_lock.release()"
+          },
+          {
+            "path": "tests/soft_rw/test_soft_rw_sync.py",
+            "start_line": 519,
+            "end_line": 529,
+            "quote": "def test_non_blocking_writer_contended_raises(lock_file: str, lock: SoftReadWriteLock) -> None:\n    held, release = Event(), Event()\n    holder = Process(target=_worker, args=(lock_file, \"write\", held, release))\n    with cleanup_processes([holder]):\n        holder.start()\n        assert held.wait(timeout=_PROCESS_DEADLINE)\n        with pytest.raises(Timeout):\n            lock.acquire_write(timeout=1, blocking=False)\n        with pytest.raises(Timeout):\n            lock.acquire_read(timeout=1, blocking=False)\n        release.set()"
+          }
+        ],
+        "assessment": "已覆盖负超时非阻塞空闲/重入和正超时竞争失败；补负超时在外部竞争中即时Timeout及失败后重试。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "tox-dev--filelock",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tox-dev--filelock/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+          "exit_code": 0,
+          "elapsed_seconds": 2.336,
+          "log": "logs/model-checks/tox-dev--filelock/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/tox-dev--filelock/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite-5.0-read]",
+            "result": "passed",
+            "seconds": 0.008,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft-5.0-read]",
+            "result": "passed",
+            "seconds": 0.026,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite--inf-write]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft--inf-read]",
+            "result": "passed",
+            "seconds": 0.076,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft--inf-write]",
+            "result": "passed",
+            "seconds": 0.025,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite--0.5-write]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite--2-read]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft--2-read]",
+            "result": "passed",
+            "seconds": 0.019,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft--0.5-write]",
+            "result": "passed",
+            "seconds": 0.05,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite--0.5-read]",
+            "result": "passed",
+            "seconds": 0.003,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft-5.0-write]",
+            "result": "passed",
+            "seconds": 0.026,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite--inf-read]",
+            "result": "passed",
+            "seconds": 0.003,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite--2-write]",
+            "result": "passed",
+            "seconds": 0.002,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft--2-write]",
+            "result": "passed",
+            "seconds": 0.021,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[sqlite-5.0-write]",
+            "result": "passed",
+            "seconds": 0.004,
+            "message": null
+          },
+          {
+            "name": "test_nonblocking_timeout_under_contention[soft--0.5-read]",
+            "result": "passed",
+            "seconds": 0.02,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+            "start_line": 56,
+            "end_line": 64,
+            "quote": "def test_nonblocking_timeout_under_contention(locks,mode,timeout):\n    h,c=locks;a=getattr(c,'acquire_'+mode)\n    with a(timeout=timeout,blocking=False):\n        with a(timeout=timeout,blocking=False):pass\n    with h.acquire_write(timeout=-1):\n        start=time.monotonic()\n        with pytest.raises(Timeout):a(timeout=timeout,blocking=False)\n        assert time.monotonic()-start<1\n    with a(timeout=timeout,blocking=False):pass"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "已覆盖负超时非阻塞空闲/重入和正超时竞争失败；补负超时在外部竞争中即时Timeout及失败后重试。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "negative-nonblocking-contention"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC005",
+      "title": "首次与同模式重入获取拒绝非法负阻塞超时",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "covered",
+        "references": [
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 730,
+            "end_line": 753,
+            "quote": "\n\n@pytest.mark.parametrize(\"mode\", [pytest.param(\"read\", id=\"read\"), pytest.param(\"write\", id=\"write\")])\n@pytest.mark.parametrize(\n    \"timeout\",\n    [pytest.param(-2, id=\"integer\"), pytest.param(-0.5, id=\"fraction\"), pytest.param(float(\"-inf\"), id=\"infinite\")],\n)\n@pytest.mark.parametrize(\"reentrant\", [pytest.param(True, id=\"reentrant\"), pytest.param(False, id=\"first\")])\ndef test_acquire_rejects_negative_timeout(\n    timeout_locks: tuple[ReadWriteLock | SoftReadWriteLock, ReadWriteLock | SoftReadWriteLock],\n    mode: Literal[\"read\", \"write\"],\n    timeout: float,\n    *,\n    reentrant: bool,\n) -> None:\n    holder: Final = timeout_locks[0]\n    acquire: Final = holder.acquire_read if mode == \"read\" else holder.acquire_write\n    with ExitStack() as stack:\n        if reentrant:\n            stack.enter_context(acquire())\n        with pytest.raises(ValueError, match=r\"^timeout must be a non-negative number or -1$\"):\n            stack.enter_context(acquire(timeout=timeout))\n    with timeout_locks[1].acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)"
+          },
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 786,
+            "end_line": 800,
+            "quote": "@pytest.fixture(\n    params=[\n        pytest.param(ReadWriteLock, id=\"sqlite\"),\n        pytest.param(SoftReadWriteLock, id=\"soft\", marks=pytest.mark.requires_hard_links),\n    ]\n)\ndef timeout_locks(\n    tmp_path: Path, request: pytest.FixtureRequest\n) -> Generator[tuple[ReadWriteLock | SoftReadWriteLock, ReadWriteLock | SoftReadWriteLock]]:\n    lock_type: Final[type[ReadWriteLock | SoftReadWriteLock]] = request.param\n    with (\n        closing(lock_type(tmp_path / \"a\", is_singleton=False)) as holder,\n        closing(lock_type(tmp_path / \"a\", is_singleton=False)) as contender,\n    ):\n        yield holder, contender"
+          }
+        ],
+        "assessment": "已有精确同等参数化与异常/释放断言，复用128项native结果。",
+        "model_claim": "covered"
+      },
+      "execution": {
+        "kind": "native_baseline_reused",
+        "command": {
+          "label": "tests",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_read_write_unit.py",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/native_tox-dev--filelock/junit.xml",
+            "-ra"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+          "exit_code": 0,
+          "elapsed_seconds": 15.556,
+          "log": "logs/native_tox-dev--filelock/07_tests.log"
+        },
+        "result": "passed",
+        "assertion_references": [
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 730,
+            "end_line": 753,
+            "quote": "\n\n@pytest.mark.parametrize(\"mode\", [pytest.param(\"read\", id=\"read\"), pytest.param(\"write\", id=\"write\")])\n@pytest.mark.parametrize(\n    \"timeout\",\n    [pytest.param(-2, id=\"integer\"), pytest.param(-0.5, id=\"fraction\"), pytest.param(float(\"-inf\"), id=\"infinite\")],\n)\n@pytest.mark.parametrize(\"reentrant\", [pytest.param(True, id=\"reentrant\"), pytest.param(False, id=\"first\")])\ndef test_acquire_rejects_negative_timeout(\n    timeout_locks: tuple[ReadWriteLock | SoftReadWriteLock, ReadWriteLock | SoftReadWriteLock],\n    mode: Literal[\"read\", \"write\"],\n    timeout: float,\n    *,\n    reentrant: bool,\n) -> None:\n    holder: Final = timeout_locks[0]\n    acquire: Final = holder.acquire_read if mode == \"read\" else holder.acquire_write\n    with ExitStack() as stack:\n        if reentrant:\n            stack.enter_context(acquire())\n        with pytest.raises(ValueError, match=r\"^timeout must be a non-negative number or -1$\"):\n            stack.enter_context(acquire(timeout=timeout))\n    with timeout_locks[1].acquire_write(blocking=False), pytest.raises(Timeout):\n        holder.acquire_write(blocking=False)"
+          },
+          {
+            "path": "tests/test_read_write_unit.py",
+            "start_line": 786,
+            "end_line": 800,
+            "quote": "@pytest.fixture(\n    params=[\n        pytest.param(ReadWriteLock, id=\"sqlite\"),\n        pytest.param(SoftReadWriteLock, id=\"soft\", marks=pytest.mark.requires_hard_links),\n    ]\n)\ndef timeout_locks(\n    tmp_path: Path, request: pytest.FixtureRequest\n) -> Generator[tuple[ReadWriteLock | SoftReadWriteLock, ReadWriteLock | SoftReadWriteLock]]:\n    lock_type: Final[type[ReadWriteLock | SoftReadWriteLock]] = request.param\n    with (\n        closing(lock_type(tmp_path / \"a\", is_singleton=False)) as holder,\n        closing(lock_type(tmp_path / \"a\", is_singleton=False)) as contender,\n    ):\n        yield holder, contender"
+          }
+        ],
+        "native_record": "native_tox-dev--filelock.json"
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "已有精确同等参数化与异常/释放断言，复用128项native结果。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "existing-invalid-timeout"
+    }
+  ],
+  "native_record": "native_tox-dev--filelock.json",
+  "model_check_execution": {
+    "slug": "tox-dev--filelock",
+    "label": "model_checks",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+      "-m",
+      "pytest",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+      "-c",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock/pyproject.toml",
+      "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tox-dev--filelock/model_checks.xml",
+      "-ra",
+      "-v"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+    "exit_code": 0,
+    "elapsed_seconds": 2.336,
+    "log": "logs/model-checks/tox-dev--filelock/01_model_checks.log"
+  },
+  "model_check_junit": "logs/model-checks/tox-dev--filelock/model_checks.xml",
+  "model_check_counts": {
+    "passed": 28,
+    "failed": 0,
+    "error": 0,
+    "skipped": 0
+  },
+  "platform_gaps": [
+    "Windows/Linux and other Python versions not executed.",
+    "Only focused native suite; full test group virtualenv<4 conflict retained.",
+    "Network filesystem and true multi-host behavior not validated."
+  ],
+  "history_source_assessment": {
+    "source_count": 0,
+    "treatment": "no_available_history; no treatment applied",
+    "sources": []
+  },
+  "summary": {
+    "cases": 10,
+    "applicable": 10,
+    "existing_covered": 2,
+    "technically_adopted_cases": 8,
+    "new_defects": 0,
+    "human_evaluations": 0
+  },
+  "final_git_status": "",
+  "final_head_sha": "2a533f3053444b67a1764d628e0cdcf6d383cfb5"
+}

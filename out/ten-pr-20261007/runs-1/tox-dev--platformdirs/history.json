@@ -1,0 +1,125 @@
+{
+  "sources": [
+    {
+      "id": 4536421142,
+      "title": "[Bug]: Clone abort can recursively delete an unowned destination path",
+      "url": "https://github.com/stablyai/orca/issues/2929",
+      "repo": "stablyai/orca",
+      "extraction": {
+        "id": 4536421142,
+        "issue_kind": "bug",
+        "symptom": "中止克隆可能递归删除克隆操作未创建的、用户原有的目标目录。",
+        "root_cause": "正文复现说明：点路径 URL 使 activeClonePath 被设置为 join('/Users/alice/projects', '.')，中止处理随后对 '/Users/alice/projects' 调用递归强制删除，未区分该目录是否由本次克隆创建。",
+        "root_cause_category": "文件系统与权限",
+        "environment": [
+          "正文标注涉及 macOS、Linux、Windows",
+          "单元测试使用不触发 close 事件的 gitSpawn 模拟对象，使克隆保持未完成状态",
+          "复现 URL 为 file:///tmp/source/.，目标目录为 /Users/alice/projects"
+        ],
+        "evidence_quote": "Aborting a clone can recursively delete a pre-existing, user-owned destination directory that the clone never created.",
+        "test_ideas": [
+          "模拟未完成的克隆，传入 file:///tmp/source/. 后调用中止处理，断言不会对目标父目录执行递归删除。",
+          "预先创建含哨兵文件的克隆目标目录，再启动并中止克隆，断言目录和原有文件均保留。",
+          "参数化测试派生目录名为 '.'、'..'、空值及规范化后越出目标目录的路径，断言在启动 git 和登记清理路径前拒绝输入。",
+          "使用本次操作新建的独立克隆目录测试中止清理，断言只删除该目录，保留父目录与同级文件。",
+          "在 macOS、Linux、Windows 上执行路径规范化与中止清理用例，验证清理范围始终限制在本次操作拥有的目录内。"
+        ],
+        "body_truncated": false,
+        "generation": {
+          "engine": "codex",
+          "requested_model": "gpt-6.1-sol",
+          "usage": {
+            "input_tokens": 16346,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 387,
+            "reasoning_output_tokens": 0
+          },
+          "thread_id": "01a116bc-3f5f-7692-b334-800a72bbb003"
+        }
+      },
+      "pr_evidence": {
+        "fetched_at": "2026-10-07T14:20:31.218877+00:00",
+        "selection": "current closing event, then explicit closing references; latest 8 comments",
+        "pulls_truncated": false,
+        "pulls": [
+          {
+            "url": "https://github.com/stablyai/orca/pull/2981",
+            "title": "Fix clone abort cleanup ownership",
+            "body": "## Summary\n- Fixes #2929.\n- Adds a shared clone-path helper that validates URL-derived clone names, rejects unsafe dot/parent names, validates host-absolute destinations, and provides WSL-aware comparison keys.\n- Claims fresh clone targets before spawning git and only removes operation-owned targets after failed/aborted clones, preserving pre-existing or replaced user-owned paths.\n- Serializes same-target clone attempts in IPC and runtime paths so abort/retry and concurrent clone races cannot delete or strand a newer clone.\n\n## Design / Review Evidence\n- Scratch design doc: `design-docs/clone-abort-ownership.md` (ignored, not included in product diff).\n- Design review outcome: `auto-design-review-fix` completed 2 iterations; direction confirmed; no unresolved P0/P1 findings. The design changed from direct abort-handler deletion to atomic target ownership plus close/failure-path cleanup.\n- Implementation deviations: extended the reviewed design to also cover runtime `cloneRepo`, normal git failures, spawn errors/sync throws, same-target clone serialization, and WSL-aware dedupe keys after review findings.\n- Completeness verification: initial verifier found Windows backslash validation and test-coverage gaps; these were fixed with `posix.basename`, host-absolute destination validation, and focused tests.\n\n## Review Loop\n- Code-review rounds ran two reviewers at a time until clean.\n- Earlier rounds found and fixed: retry races, newer-success deletion, runtime validation parity, untracked helper, WSL UNC alias/case/trailing-slash keying, failed-clone cleanup, spawn-error cleanup, abort-success retry ordering, non-Windows UNC destination validation, and same-target serialization.\n- Final round 11: both reviewers returned no actionable findings.\n- Post-CI hardening: clone target identity now includes `birthtimeMs` so fast remove/recreate cycles cannot be mistaken for the operation-owned directory even if an inode pair is reused.\n\n## Brennan Test Changes\n- Result: `land`.\n- Evidence: staged/unstaged state inspected, only intended files changed; focused IPC/runtime/helper tests exercised controlled process close/error/abort events with real temp filesystem assertions for owned vs unowned cleanup.\n\n## Electron Validation\n- macOS Electron dev app launched from this PR worktree with CDP on `127.0.0.1:9335` and renderer on `127.0.0.1:5174`.\n- `window.api.app.getIdentity()` confirmed branch `Jinwoo-H/bug-clone-abort-can-recursively-delete-an-unowne` and the expected worktree root.\n- Through real renderer-to-main IPC, `window.api.repos.clone({ url: 'file:///tmp/.../source/.', destination })` rejected with `Invalid repository name derived from URL`; the pre-existing destination sentinel remained intact and no clone directory was created.\n- Through the same IPC path, a normal local clone from `file:///tmp/.../source` succeeded, created `destination/source/README.md`, and added the repo to app state.\n- Screenshot evidence captured locally at `/tmp/orca-pr-2981-electron.png`; the branch-specific Dock tile was also visible via macOS Accessibility.\n\n## Tests\n- [x] `pnpm vitest run --config config/vitest.config.ts src/main/git/repo-clone-path.test.ts src/main/ipc/repos-remote.test.ts src/main/runtime/orca-runtime.test.ts`\n- [x] `pnpm run typecheck`\n- [x] `pnpm run lint`\n- [x] `git diff --check --cached`\n- [x] `git diff --check`\n- [x] GitHub PR `verify` check: passed on run `26562823598`.\n\nNote: local commands emitted the existing engine warning because this shell is Node v26 while the repo wants Node 24. A local full `pnpm test` run failed one unrelated `local-pty-shell-ready` zsh environment assertion in this Orca-hosted shell; the PR's GitHub `verify` full test run passed on Node 24.\n\nMade with [Orca](https://github.com/stablyai/orca) 🐋\n",
+            "body_truncated": false,
+            "state": "closed",
+            "merged": true,
+            "head_sha": "87debdca19e119e1c92d23696323a705345ea218",
+            "base_sha": "a1a362700f050ce960006484770f4f4baff06d0a",
+            "merge_commit_sha": "8f172f538c6b24cd2e45d3af8ef88d43d0f3ee26",
+            "relation": "closed_by_pull_request",
+            "files": [
+              {
+                "filename": "src/main/git/repo-clone-path.test.ts",
+                "status": "added",
+                "patch": "@@ -0,0 +1,63 @@\n+import { describe, expect, it } from 'vitest'\n+import { mkdtemp, rm } from 'fs/promises'\n+import { tmpdir } from 'os'\n+import { join } from 'path'\n+import { deriveValidatedClonePath, getClonePathComparisonKey } from './repo-clone-path'\n+\n+describe('repo clone path helpers', () => {\n+  it('allows safe repository names that start with two dots', async () => {\n+    const destination = await mkdtemp(join(tmpdir(), 'orca-clone-path-'))\n+    try {\n+      expect(\n+        deriveValidatedClonePath({\n+          url: 'https://example.com/..repo.git',\n+          destination\n+        })\n+      ).toBe(join(destination, '..repo'))\n+    } finally {\n+      await rm(destination, { recursive: true, force: true })\n+    }\n+  })\n+\n+  it('rejects Windows-looking destinations on non-Windows hosts', async () => {\n+    if (process.platform === 'win32') {\n+      return\n+    }\n+    expect(() =>\n+      deriveValidatedClonePath({\n+        url: 'https://example.com/orca.git',\n+        destination: 'C:\\\\Users\\\\me\\\\src'\n+      })\n+    ).toThrow('Clone destination must be an absolute path')\n+    expect(() =>\n+      deriveValidatedClonePath({\n+        url: 'https://example.com/orca.git',\n+        destination: '\\\\\\\\server\\\\share'\n+      })\n+    ).toThrow('Clone destination must be an absolute path')\n+    expect(() =>\n+      deriveValidatedClonePath({\n+        url: 'https://example.com/orca.git',\n+        destination: '//server/share'\n+      })\n+    ).toThrow('Clone destination must be an absolute path')\n+    expect(() =>\n+      deriveValidatedClonePath({\n+        url: 'https://example.com/orca.git',\n+        destination: '//wsl.localhost/Ubuntu/home/me'\n+      })\n+    ).toThrow('Clone destination must be an absolute path')\n+  })\n+\n+  it('canonicalizes WSL UNC server aliases without folding Linux path casing', () => {\n+    expect(getClonePathComparisonKey('\\\\\\\\wsl.localhost\\\\Ubuntu\\\\home\\\\User\\\\repo')).toBe(\n+      getClonePathComparisonKey('\\\\\\\\wsl$\\\\ubuntu\\\\home\\\\User\\\\repo')\n+    )\n+    expect(getClonePathComparisonKey('\\\\\\\\wsl.localhost\\\\Ubuntu\\\\home\\\\User\\\\repo\\\\')).toBe(\n+      getClonePathComparisonKey('\\\\\\\\wsl$\\\\ubuntu\\\\home\\\\User\\\\repo')\n+    )\n+    expect(getClonePathComparisonKey('\\\\\\\\wsl.localhost\\\\Ubuntu\\\\home\\\\User\\\\repo')).not.toBe(\n+      getClonePathComparisonKey('\\\\\\\\wsl$\\\\ubuntu\\\\home\\\\user\\\\repo')\n+    )\n+  })\n+})",
+                "patch_unavailable": false,
+                "patch_truncated": false
+              },
+              {
+                "filename": "src/main/ipc/repos-remote.test.ts",
+                "status": "modified",
+                "patch": "@@ -3,8 +3,12 @@ tests (addRemote, getBaseRefDefault envelope, searchBaseRefs SSH relay) so\n fixture setup and mock plumbing can be shared. Splitting by line count would\n duplicate the hoisted mocks and the `../git/repo` partial-real/partial-stub\n setup. */\n-import { describe, expect, it, vi, beforeEach } from 'vitest'\n+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'\n import { EventEmitter } from 'events'\n+import { existsSync } from 'fs'\n+import { mkdir, mkdtemp, rm, writeFile } from 'fs/promises'\n+import { tmpdir } from 'os'\n+import { join } from 'path'\n import type * as RepoModule from '../git/repo'\n import { DEFAULT_REPO_BADGE_COLOR } from '../../shared/constants'\n \n@@ -564,12 +568,46 @@ describe('repos:addRemote', () => {\n   })\n })\n \n+type MockCloneProcess = EventEmitter & {\n+  stderr: EventEmitter\n+  kill: ReturnType<typeof vi.fn>\n+}\n+\n+function createMockCloneProcess(): MockCloneProcess {\n+  const proc = new EventEmitter() as MockCloneProcess\n+  proc.stderr = new EventEmitter()\n+  proc.kill = vi.fn().mockReturnValue(true)\n+  return proc\n+}\n+\n+async function waitForAssertion(assertion: () => void): Promise<void> {\n+  const deadline = Date.now() + 2_000\n+  let lastError: unknown\n+  while (Date.now() < deadline) {\n+    try {\n+      assertion()\n+      return\n+    } catch (error) {\n+      lastError = error\n+      await new Promise((resolve) => setTimeout(resolve, 10))\n+    }\n+  }\n+  throw lastError\n+}\n+\n describe('repos:add + repos:clone', () => {\n   const handlers = new Map<string, (_event: unknown, args: unknown) => unknown>()\n   const mockWindow = {\n     isDestroyed: () => false,\n     webContents: { send: vi.fn() }\n   }\n+  const tempRoots: string[] = []\n+\n+  const createTempRoot = async (): Promise<string> => {\n+    const root = await mkdtemp(join(tmpdir(), 'orca-repos-clone-'))\n+    tempRoots.push(root)\n+    return root\n+  }\n \n   beforeEach(() => {\n     handlers.clear()\n@@ -583,15 +621,18 @@ describe('repos:add + repos:clone', () => {\n     mockWindow.webContents.send.mockReset()\n     gitSpawnMock.mockReset()\n     gitSpawnMock.mockImplementation(() => {\n-      const proc = new EventEmitter() as EventEmitter & { stderr: EventEmitter }\n-      proc.stderr = new EventEmitter()\n+      const proc = createMockCloneProcess()\n       queueMicrotask(() => proc.emit('close', 0, null))\n       return proc\n     })\n \n     registerRepoHandlers(mockWindow as never, mockStore as never)\n   })\n \n+  afterEach(async () => {\n+    await Promise.all(tempRoots.splice(0).map((root) => rm(root, { recursive: true, force: true })))\n+  })\n+\n   it('defaults repos:add badgeColor to DEFAULT_REPO_BADGE_COLOR for folder repos', async () => {\n     const result = await handlers.get('repos:add')!(null, { path: '/tmp/from-add', kind: 'folder' })\n \n@@ -638,14 +679,16 @@ describe('repos:add + repos:clone', () => {\n   })\n \n   it('defaults repos:clone badgeColor to DEFAULT_REPO_BADGE_COLOR', async () => {\n+    const destination = await createTempRoot()\n+\n     const result = await handlers.get('repos:clone')!(null, {\n       url: 'https://example.com/orca.git',\n-      destination: '/tmp'\n+      destination\n     })\n \n     expect(mockStore.addRepo).toHaveBeenCalledWith(\n       expect.objectContaining({\n-        path: '/tmp/orca',\n+        path: join(destination, 'orca'),\n         badgeColor: DEFAULT_REPO_BADGE_COLOR,\n         kind: 'git',\n         externalWorktreeVisibility: 'hide',\n@@ -657,9 +700,11 @@ describe('repos:add + repos:clone', () => {\n   })\n \n   it('preserves existing badgeColor when repos:clone upgrades folder->git after dedupe', async () => {\n+    const destination = await createTempRoot()\n+    const clonePath = join(destination, 'orca')\n     const existing = {\n       id: 'folder-repo',\n-      path: '/tmp/orca',\n+      path: clonePath,\n       displayName: 'orca',\n       badgeColor: '#8b5cf6',\n       addedAt: 1,\n@@ -671,14 +716,338 @@ describe('repos:add + repos:clone', () => {\n \n     const result = await handlers.get('repos:clone')!(null, {\n       url: 'https://example.com/orca.git',\n-      destination: '/tmp'\n+      destination\n     })\n \n     expect(mockStore.updateRepo).toHaveBeenCalledWith(existing.id, { kind: 'git' })\n     expect(result).toEqual(upgraded)\n     expect(result).toHaveProperty('badgeColor', '#8b5cf6')\n     expect(mockStore.addRepo).not.toHaveBeenCalled()\n   })\n+\n+  it('rejects a dot-segment URL before creating the destination or spawning git', async () => {\n+    const tempRoot = await createTempRoot()\n+    const destination = join(tempRoot, 'destination')\n+\n+    await expect(\n+      handlers.get('repos:clone')!(null, {\n+        url: 'file:///tmp/source/.',\n+        destination\n+      })\n+    ).rejects.toThrow('Invalid repository name derived from URL')\n+\n+    expect(existsSync(destination)).toBe(false)\n+    expect(gitSpawnMock).not.toHaveBeenCalled()\n+  })\n+\n+  it('rejects a parent-segment URL before creating the destination or spawning git', async () => {\n+    const tempRoot = await createTempRoot()\n+    const destination = join(tempRoot, 'destination')\n+\n+    await expect(\n+      handlers.get('repos:clone')!(null, {\n+        url: 'file:///tmp/source/..',\n+        destination\n+      })\n+    ).rejects.toThrow('Invalid repository name derived from URL')\n+\n+    expect(existsSync(destination)).toBe(false)\n+    expect(gitSpawnMock).not.toHaveBeenCalled()\n+  })\n+\n+  it('rejects a relative destination before creating directories or spawning git', async () => {\n+    const destination = `relative-clone-destination-${Date.now()}`\n+\n+    await expect(\n+      handlers.get('repos:clone')!(null, {\n+        url: 'https://example.com/orca.git',\n+        destination\n+      })\n+    ).rejects.toThrow('Clone destination must be an absolute path')\n+\n+    expect(existsSync(destination)).toBe(false)\n+    expect(gitSpawnMock).not.toHaveBeenCalled()\n+  })\n+\n+  it('rejects URL-derived names containing Windows separators before spawning git', async () => {\n+    const destination = await createTempRoot()\n+\n+    await expect(\n+      handlers.get('repos:clone')!(null, {\n+        url: 'https://example.com/team\\\\orca.git',\n+        destination\n+      })\n+    ).rejects.toThrow('Invalid repository name derived from URL')\n+\n+    expect(gitSpawnMock).not.toHaveBeenCalled()\n+  })\n+\n+  it('accepts Windows local-path clone sources while validating the final segment', async () => {\n+    const destination = await createTempRoot()\n+\n+    const result = await handlers.get('repos:clone')!(null, {\n+      url: 'C:\\\\src\\\\orca.git',\n+      destination\n+    })\n+\n+    expect(gitSpawnMock).toHaveBeenCalledWith(\n+      ['clone', '--progress', '--', 'C:\\\\src\\\\orca.git', join(destination, 'orca')],\n+      expect.objectContaining({ cwd: destination })\n+    )\n+    expect(result).toHaveProperty('path', join(destination, 'orca'))\n+  })\n+\n+  it('treats cloneAbort with no active clone as a no-op', async () => {\n+    await expect(handlers.get('repos:cloneAbort')!(null, undefined)).resolves.toBeUndefined()\n+  })\n+\n+  it('does not remove an existing target directory when aborting a pending clone', async () => {\n+    const destination = await createTempRoot()\n+    const clonePath = join(destination, 'orca')\n+    await mkdir(clonePath)\n+    await writeFile(join(clonePath, 'user-file.txt'), 'keep me')\n+    const proc = createMockCloneProcess()\n+    gitSpawnMock.mockReturnValueOnce(proc)\n+\n+    const clonePromise = handlers.get('repos:clone')!(null, {\n+      url: 'https://example.com/orca.git',\n+      destination\n+    })\n+    await waitForAssertion(() => expect(gitSpawnMock).toHaveBeenCalledTimes(1))\n+\n+    await handlers.get('repos:cloneAbort')!(null, undefined)\n+    proc.emit('close', null, 'SIGTERM')\n+    await expect(clonePromise).rejects.toThrow('Clone aborted')\n+\n+    expect(existsSync(clonePath)).toBe(true)\n+    expect(existsSync(join(clonePath, 'user-file.txt'))).toBe(true)\n+  })\n+\n+  it('does not remove an existing target file when aborting a pending clone', async () => {\n+    const destination = await createTempRoot()\n+    const clonePath = join(destination, 'orca')\n+    await writeFile(clonePath, 'existing file')\n+    const proc = createMockCloneProcess()\n+    gitSpawnMock.mockReturnValueOnce(proc)\n+\n+    const clonePromise = handlers.get('repos:clone')!(null, {\n+      url: 'https://example.com/orca.git',\n+      destination\n+    })\n+    await waitForAssertion(() => expect(gitSpawnMock).toHaveBeenCalledTimes(1))\n+\n+    await handlers.get('repos:cloneAbort')!(null, undefined)\n+    proc.emit('close', null, 'SIGTERM')\n+    await expect(clonePromise).rejects.toThrow('Clone aborted')\n+\n+    expect(existsSync(clonePath)).toBe(true)\n+  })\n+\n+  it('removes a fresh clone target only after the aborted process closes unsuccessfully', async () => {\n+    const destination = await createTempRoot()\n+    const clonePath = join(destination, 'orca')\n+    const proc = createMockCloneProcess()\n+    gitSpawnMock.mockReturnValueOnce(proc)\n+\n+    const clonePromise = handlers.get('repos:clone')!(null, {\n+      url: 'https://example.com/orca.git',\n+      destination\n+    })\n+    await waitForAssertion(() => expect(gitSpawnMock).toHaveBeenCalledTimes(1))\n+\n+    await handlers.get('repos:cloneAbort')!(null, undefined)\n+    expect(existsSync(clonePath)).toBe(true)\n+\n+    proc.emit('close', null, 'SIGTERM')\n+    await expect(clonePromise).rejects.toThrow('Clone aborted')\n+    expect(existsSync(clonePath)).toBe(false)\n+  })\n+\n+  it('removes an owned fresh clone target when git exits unsuccessfully', async () => {\n+    const destination = await createTempRoot()\n+    const clonePath = join(destination, 'orca')\n+    const partialFile ",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "src/main/runtime/orca-runtime.test.ts",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "src/main/git/repo-clone-path.ts",
+                "status": "added",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "src/main/ipc/repos.ts",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              },
+              {
+                "filename": "src/main/runtime/orca-runtime.ts",
+                "status": "modified",
+                "patch": "",
+                "patch_unavailable": false,
+                "patch_truncated": true
+              }
+            ],
+            "files_truncated": false
+          }
+        ],
+        "comments": [],
+        "comments_total": 0,
+        "comments_truncated": false
+      }
+    }
+  ],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 20857,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 153,
+      "reasoning_output_tokens": 19
+    },
+    "thread_id": "01a116bb-d791-75c3-838f-86a3ace05550"
+  },
+  "target_repo_excluded": "tox-dev/platformdirs",
+  "issue_creation_cutoff": "2026-09-25T17:12:45Z",
+  "pr_evidence_note": "Current bounded GitHub snapshots, not time-travel evidence."
+}

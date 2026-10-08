@@ -1,0 +1,18 @@
+{
+  "sources": [],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 18725,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 35,
+      "reasoning_output_tokens": 24
+    },
+    "thread_id": "01a116c5-4f6a-7ff0-96fc-fe20e840832a"
+  },
+  "target_repo_excluded": "cpburnz/python-pathspec",
+  "issue_creation_cutoff": "2026-09-20T19:48:27Z",
+  "pr_evidence_note": "Current bounded GitHub snapshots, not time-travel evidence."
+}

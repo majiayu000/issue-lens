@@ -1,0 +1,110 @@
+{
+  "id": "python-humanize--humanize",
+  "repo": "python-humanize/humanize",
+  "pr": 392,
+  "head_sha": "244ac0ed6baeb3d1789be61e1a0f8ef962e716f4",
+  "checkout": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+  "environment": {
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "base_python": "/Users/apple/.local/bin/python3.12",
+    "venv": "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize",
+    "runtime": "3.12.12 (main, Dec 17 2025, 21:07:08) [Clang 21.1.4 ]\nmacOS-26.5.2-arm64-arm-64bit"
+  },
+  "commands": [
+    {
+      "label": "venv",
+      "argv": [
+        "/Users/apple/.local/bin/python3.12",
+        "-m",
+        "venv",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+      "exit_code": 0,
+      "elapsed_seconds": 9.428,
+      "log": "logs/native_python-humanize--humanize/01_venv.log"
+    },
+    {
+      "label": "install",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        ".",
+        "freezegun",
+        "pytest>=9",
+        "pytest-benchmark",
+        "pytest-codspeed",
+        "pytest-cov"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+      "exit_code": 0,
+      "elapsed_seconds": 32.023,
+      "log": "logs/native_python-humanize--humanize/02_install.log"
+    },
+    {
+      "label": "environment",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python",
+        "-c",
+        "import platform,sys;print(sys.version);print(platform.platform())"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+      "exit_code": 0,
+      "elapsed_seconds": 0.091,
+      "log": "logs/native_python-humanize--humanize/03_environment.log"
+    },
+    {
+      "label": "freeze",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python",
+        "-m",
+        "pip",
+        "--isolated",
+        "freeze"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+      "exit_code": 0,
+      "elapsed_seconds": 1.166,
+      "log": "logs/native_python-humanize--humanize/04_freeze.log"
+    },
+    {
+      "label": "tests",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_number.py",
+        "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/native_python-humanize--humanize/junit.xml",
+        "-ra"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+      "exit_code": 0,
+      "elapsed_seconds": 2.147,
+      "log": "logs/native_python-humanize--humanize/05_tests.log"
+    }
+  ],
+  "initial_git_status": "",
+  "native_test_files": [
+    "tests/test_number.py"
+  ],
+  "boundary_notes": [
+    "Large positive/negative integers must avoid float conversion while finite/nonfinite values and existing formatting behavior retain the original contract.",
+    "Only Python 3.12/macOS is covered; this result is not a full locale/platform/version matrix."
+  ],
+  "maintainer_adoption": "not evaluated by a human maintainer",
+  "historical_gain": "not established by native baseline",
+  "test_counts": {
+    "tests": 234,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 234
+  },
+  "junit": "logs/native_python-humanize--humanize/junit.xml",
+  "status": "passed",
+  "final_git_status": "",
+  "final_head_sha": "244ac0ed6baeb3d1789be61e1a0f8ef962e716f4"
+}

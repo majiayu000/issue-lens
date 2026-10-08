@@ -1,0 +1,619 @@
+{
+  "id": "tox-dev--platformdirs",
+  "head_sha": "0fe7a0c57a0c8f5815eb54d7d35fd399db1d4958",
+  "status": "technically_assessed",
+  "cases": [
+    {
+      "arm": "A",
+      "case_id": "TC001",
+      "title": "属性改为 property 后仍保留公开名称和属性说明",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "not_found",
+        "citations": [],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "additional_boundary_check",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs/pyproject.toml",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/tox-dev--platformdirs/model-cases-ab.xml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/tox-dev--platformdirs/test_model_cases.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+          "exit_code": 0,
+          "seconds": 1.108,
+          "log": "native-logs/tox-dev--platformdirs/09-model-cases-ab.log",
+          "environment_overrides": {}
+        },
+        "test": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/tox-dev--platformdirs/test_model_cases.py::test_A_TC001_public_construction_assignment_docs",
+        "result": "passed",
+        "platform_scope": "Native local macOS Python 3.12; Unix class with isolated XDG env and temporary real filesystem; Windows class with get_win_folder mocked. Windows drive paths were skipped in native matrix."
+      },
+      "new_defect": false,
+      "technical_adoption": true,
+      "technical_adoption_reason": "Adopted as an isolated executable regression candidate for a distinct current-diff boundary; not committed to upstream. Passing validates executability and the stated output only.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true,
+      "platform_validation_pending": []
+    },
+    {
+      "arm": "A",
+      "case_id": "TC002",
+      "title": "vars 使用三个私有存储名称且与公开属性保持一致",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "not_found",
+        "citations": [],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "additional_boundary_check",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs/pyproject.toml",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/tox-dev--platformdirs/model-cases-ab.xml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/tox-dev--platformdirs/test_model_cases.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+          "exit_code": 0,
+          "seconds": 1.108,
+          "log": "native-logs/tox-dev--platformdirs/09-model-cases-ab.log",
+          "environment_overrides": {}
+        },
+        "test": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/tox-dev--platformdirs/test_model_cases.py::test_B_TC001_private_storage_and_public_attributes",
+        "result": "passed",
+        "platform_scope": "Native local macOS Python 3.12; Unix class with isolated XDG env and temporary real filesystem; Windows class with get_win_folder mocked. Windows drive paths were skipped in native matrix."
+      },
+      "new_defect": false,
+      "technical_adoption": true,
+      "technical_adoption_reason": "Adopted as an isolated executable regression candidate for a distinct current-diff boundary; not committed to upstream. Passing validates executability and the stated output only.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true,
+      "platform_validation_pending": []
+    },
+    {
+      "arm": "A",
+      "case_id": "TC003",
+      "title": "越界赋值立即失败，保留原值且不创建基础目录外的目录",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "partial",
+        "citations": [
+          {
+            "path": "tests/test_api.py",
+            "line": 216,
+            "quote": "def test_app_argument_escaping_base_is_rejected_on_assignment(field: str, value: str) -> None:\n    dirs = platformdirs.PlatformDirs(\"app\", \"author\", \"1.0\")\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        setattr(dirs, field, value)",
+            "verified_against_frozen_head": true,
+            "scope": "该测试参数化非法字段和值并断言赋值异常，但没有开启 ensure_exists，也没有检查失败后的字段、路径或文件系统。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "additional_boundary_check",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs/pyproject.toml",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/tox-dev--platformdirs/model-cases-ab.xml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/tox-dev--platformdirs/test_model_cases.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+          "exit_code": 0,
+          "seconds": 1.108,
+          "log": "native-logs/tox-dev--platformdirs/09-model-cases-ab.log",
+          "environment_overrides": {}
+        },
+        "test": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/tox-dev--platformdirs/test_model_cases.py::test_A_TC003_B_TC002_unix_component_no_escape_after_rejected_assignment",
+        "result": "passed",
+        "platform_scope": "Native local macOS Python 3.12; Unix class with isolated XDG env and temporary real filesystem; Windows class with get_win_folder mocked. Windows drive paths were skipped in native matrix."
+      },
+      "new_defect": false,
+      "technical_adoption": true,
+      "technical_adoption_reason": "Adopted as an isolated executable regression candidate for a distinct current-diff boundary; not committed to upstream. Passing validates executability and the stated output only.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": false,
+      "platform_validation_pending": [
+        "Native Windows validation (including drive-letter paths)",
+        "Linux and Android host runs, where named by the proposal"
+      ]
+    },
+    {
+      "arm": "A",
+      "case_id": "TC004",
+      "title": "三字段允许 None，Windows 保留 appauthor=False 的省略行为",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "partial",
+        "citations": [
+          {
+            "path": "tests/test_api.py",
+            "line": 228,
+            "quote": "        pytest.param(\"appname\", None, (), id=\"appname-none\"),\n        pytest.param(\"appauthor\", False, (\"app\", \"1.0\"), id=\"appauthor-false\"),\n        pytest.param(\"version\", None, (\"author\", \"app\"), id=\"version-none\"),",
+            "verified_against_frozen_head": true,
+            "scope": "实际参数包含两个字段的 None 和作者 False，但没有 appauthor=None。"
+          },
+          {
+            "path": "tests/test_api.py",
+            "line": 237,
+            "quote": "    mocker.patch(\"platformdirs.windows.get_win_folder\", return_value=\"C:/Local\")\n    dirs = Windows(\"app\", \"author\", \"1.0\")\n    setattr(dirs, field, value)\n    assert Path(dirs.user_data_dir) == Path(os.path.normpath(\"C:/Local\"), *parts)",
+            "verified_against_frozen_head": true,
+            "scope": "断言的是 Windows 实例赋值后的具体路径，没有覆盖构造时传入这些哨兵值或其他平台。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "additional_boundary_check",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs/pyproject.toml",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/tox-dev--platformdirs/model-cases-ab.xml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/tox-dev--platformdirs/test_model_cases.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+          "exit_code": 0,
+          "seconds": 1.108,
+          "log": "native-logs/tox-dev--platformdirs/09-model-cases-ab.log",
+          "environment_overrides": {}
+        },
+        "test": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/tox-dev--platformdirs/test_model_cases.py::test_B_TC003_none_public_api_and_mock_windows",
+        "result": "passed",
+        "platform_scope": "Native local macOS Python 3.12; Unix class with isolated XDG env and temporary real filesystem; Windows class with get_win_folder mocked. Windows drive paths were skipped in native matrix."
+      },
+      "new_defect": false,
+      "technical_adoption": true,
+      "technical_adoption_reason": "Adopted as an isolated executable regression candidate for a distinct current-diff boundary; not committed to upstream. Passing validates executability and the stated output only.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": false,
+      "platform_validation_pending": [
+        "Native Windows validation (including drive-letter paths)",
+        "Linux and Android host runs, where named by the proposal"
+      ]
+    },
+    {
+      "arm": "A",
+      "case_id": "TC005",
+      "title": "构造与后续赋值对相同非法值给出相同 ValueError",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "covered",
+        "citations": [
+          {
+            "path": "tests/test_api.py",
+            "line": 206,
+            "quote": "def test_app_argument_escaping_base_is_rejected(field: str, value: str) -> None:\n    args = {\"appname\": \"app\", \"appauthor\": \"author\", \"version\": \"1.0\"} | {field: value}\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        platformdirs.PlatformDirs(args[\"appname\"], args[\"appauthor\"], args[\"version\"])",
+            "verified_against_frozen_head": true,
+            "scope": "构造入口断言 ValueError 类型和完整消息。"
+          },
+          {
+            "path": "tests/test_api.py",
+            "line": 216,
+            "quote": "def test_app_argument_escaping_base_is_rejected_on_assignment(field: str, value: str) -> None:\n    dirs = platformdirs.PlatformDirs(\"app\", \"author\", \"1.0\")\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        setattr(dirs, field, value)",
+            "verified_against_frozen_head": true,
+            "scope": "赋值入口使用同样的参数化集合和完整消息断言，与构造测试共同提供同等覆盖；此判断不表示测试已执行。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "reuse_native_assertions",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/tox-dev--platformdirs/pytest.xml",
+            "tests/test_api.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+          "exit_code": 0,
+          "seconds": 1.389,
+          "log": "native-logs/tox-dev--platformdirs/03-pytest.log",
+          "environment_overrides": {}
+        },
+        "result": "passed",
+        "assertion_citations": [
+          {
+            "path": "tests/test_api.py",
+            "line": 206,
+            "quote": "def test_app_argument_escaping_base_is_rejected(field: str, value: str) -> None:\n    args = {\"appname\": \"app\", \"appauthor\": \"author\", \"version\": \"1.0\"} | {field: value}\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        platformdirs.PlatformDirs(args[\"appname\"], args[\"appauthor\"], args[\"version\"])",
+            "verified_against_frozen_head": true,
+            "scope": "构造入口断言 ValueError 类型和完整消息。"
+          },
+          {
+            "path": "tests/test_api.py",
+            "line": 216,
+            "quote": "def test_app_argument_escaping_base_is_rejected_on_assignment(field: str, value: str) -> None:\n    dirs = platformdirs.PlatformDirs(\"app\", \"author\", \"1.0\")\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        setattr(dirs, field, value)",
+            "verified_against_frozen_head": true,
+            "scope": "赋值入口使用同样的参数化集合和完整消息断言，与构造测试共同提供同等覆盖；此判断不表示测试已执行。"
+          }
+        ],
+        "platform_scope": "Native local macOS Python 3.12; Unix class with isolated XDG env and temporary real filesystem; Windows class with get_win_folder mocked. Windows drive paths were skipped in native matrix."
+      },
+      "new_defect": false,
+      "technical_adoption": false,
+      "technical_adoption_reason": "Same trigger and output assertions already exist at the frozen head. Reused the passing native suite; no new regression candidate adopted.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": false,
+      "platform_validation_pending": [
+        "Native Windows validation (including drive-letter paths)",
+        "Linux and Android host runs, where named by the proposal"
+      ]
+    },
+    {
+      "arm": "B",
+      "case_id": "TC001",
+      "title": "vars 使用私有存储名称，并与公开属性保持一致",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "not_found",
+        "citations": [],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "additional_boundary_check",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs/pyproject.toml",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/tox-dev--platformdirs/model-cases-ab.xml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/tox-dev--platformdirs/test_model_cases.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+          "exit_code": 0,
+          "seconds": 1.108,
+          "log": "native-logs/tox-dev--platformdirs/09-model-cases-ab.log",
+          "environment_overrides": {}
+        },
+        "test": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/tox-dev--platformdirs/test_model_cases.py::test_B_TC001_private_storage_and_public_attributes",
+        "result": "passed",
+        "platform_scope": "Native local macOS Python 3.12; Unix class with isolated XDG env and temporary real filesystem; Windows class with get_win_folder mocked. Windows drive paths were skipped in native matrix."
+      },
+      "new_defect": false,
+      "technical_adoption": true,
+      "technical_adoption_reason": "Adopted as an isolated executable regression candidate for a distinct current-diff boundary; not committed to upstream. Passing validates executability and the stated output only.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true,
+      "platform_validation_pending": []
+    },
+    {
+      "arm": "B",
+      "case_id": "TC002",
+      "title": "非法赋值失败后读取目录，不在基础目录外创建目录",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "partial",
+        "citations": [
+          {
+            "path": "tests/test_api.py",
+            "line": 217,
+            "quote": "dirs = platformdirs.PlatformDirs(\"app\", \"author\", \"1.0\")\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        setattr(dirs, field, value)",
+            "verified_against_frozen_head": true,
+            "scope": "已有测试断言非法赋值被拒绝，但没有启用 ensure_exists，也没有检查失败后的属性值、目录创建位置或哨兵。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "additional_boundary_check",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs/pyproject.toml",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/tox-dev--platformdirs/model-cases-ab.xml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/tox-dev--platformdirs/test_model_cases.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+          "exit_code": 0,
+          "seconds": 1.108,
+          "log": "native-logs/tox-dev--platformdirs/09-model-cases-ab.log",
+          "environment_overrides": {}
+        },
+        "test": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/tox-dev--platformdirs/test_model_cases.py::test_A_TC003_B_TC002_unix_component_no_escape_after_rejected_assignment",
+        "result": "passed",
+        "platform_scope": "Native local macOS Python 3.12; Unix class with isolated XDG env and temporary real filesystem; Windows class with get_win_folder mocked. Windows drive paths were skipped in native matrix."
+      },
+      "new_defect": false,
+      "technical_adoption": true,
+      "technical_adoption_reason": "Adopted as an isolated executable regression candidate for a distinct current-diff boundary; not committed to upstream. Passing validates executability and the stated output only.",
+      "human_maintainer_adoption": null,
+      "source_ids": [
+        4536421142
+      ],
+      "full_requirement_verified": false,
+      "platform_validation_pending": [
+        "Native Windows validation (including drive-letter paths)",
+        "Linux and Android host runs, where named by the proposal"
+      ]
+    },
+    {
+      "arm": "B",
+      "case_id": "TC003",
+      "title": "公开属性允许 None，Windows 保留作者目录禁用行为",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "partial",
+        "citations": [
+          {
+            "path": "tests/test_api.py",
+            "line": 228,
+            "quote": "pytest.param(\"appname\", None, (), id=\"appname-none\"),\n        pytest.param(\"appauthor\", False, (\"app\", \"1.0\"), id=\"appauthor-false\"),\n        pytest.param(\"version\", None, (\"author\", \"app\"), id=\"version-none\"),",
+            "verified_against_frozen_head": true,
+            "scope": "现有参数覆盖 Windows 上 appname=None、version=None 和 appauthor=False 的赋值情况，缺少 appauthor=None。"
+          },
+          {
+            "path": "tests/test_api.py",
+            "line": 237,
+            "quote": "mocker.patch(\"platformdirs.windows.get_win_folder\", return_value=\"C:/Local\")\n    dirs = Windows(\"app\", \"author\", \"1.0\")\n    setattr(dirs, field, value)\n    assert Path(dirs.user_data_dir) == Path(os.path.normpath(\"C:/Local\"), *parts)",
+            "verified_against_frozen_head": true,
+            "scope": "已有测试实际断言赋值后的 Windows 路径；没有覆盖这些值的构造入口、公开属性回读或文档保留。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "additional_boundary_check",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs/pyproject.toml",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/tox-dev--platformdirs/model-cases-ab.xml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/tox-dev--platformdirs/test_model_cases.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+          "exit_code": 0,
+          "seconds": 1.108,
+          "log": "native-logs/tox-dev--platformdirs/09-model-cases-ab.log",
+          "environment_overrides": {}
+        },
+        "test": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/tox-dev--platformdirs/test_model_cases.py::test_B_TC003_none_public_api_and_mock_windows",
+        "result": "passed",
+        "platform_scope": "Native local macOS Python 3.12; Unix class with isolated XDG env and temporary real filesystem; Windows class with get_win_folder mocked. Windows drive paths were skipped in native matrix."
+      },
+      "new_defect": false,
+      "technical_adoption": true,
+      "technical_adoption_reason": "Adopted as an isolated executable regression candidate for a distinct current-diff boundary; not committed to upstream. Passing validates executability and the stated output only.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": false,
+      "platform_validation_pending": [
+        "Native Windows validation (including drive-letter paths)",
+        "Linux and Android host runs, where named by the proposal"
+      ]
+    },
+    {
+      "arm": "B",
+      "case_id": "TC004",
+      "title": "三个公开属性在赋值时拒绝越界路径",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "covered",
+        "citations": [
+          {
+            "path": "tests/test_api.py",
+            "line": 216,
+            "quote": "def test_app_argument_escaping_base_is_rejected_on_assignment(field: str, value: str) -> None:\n    dirs = platformdirs.PlatformDirs(\"app\", \"author\", \"1.0\")\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        setattr(dirs, field, value)",
+            "verified_against_frozen_head": true,
+            "scope": "该测试通过 _APP_FIELDS 和 _ESCAPING_VALUES 参数化覆盖三个属性及上述非法值，并直接断言赋值抛出指定 ValueError。Windows 盘符项限定在 win32；源码不能证明平台矩阵已执行。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "reuse_native_assertions",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/tox-dev--platformdirs/pytest.xml",
+            "tests/test_api.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+          "exit_code": 0,
+          "seconds": 1.389,
+          "log": "native-logs/tox-dev--platformdirs/03-pytest.log",
+          "environment_overrides": {}
+        },
+        "result": "passed",
+        "assertion_citations": [
+          {
+            "path": "tests/test_api.py",
+            "line": 216,
+            "quote": "def test_app_argument_escaping_base_is_rejected_on_assignment(field: str, value: str) -> None:\n    dirs = platformdirs.PlatformDirs(\"app\", \"author\", \"1.0\")\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        setattr(dirs, field, value)",
+            "verified_against_frozen_head": true,
+            "scope": "该测试通过 _APP_FIELDS 和 _ESCAPING_VALUES 参数化覆盖三个属性及上述非法值，并直接断言赋值抛出指定 ValueError。Windows 盘符项限定在 win32；源码不能证明平台矩阵已执行。"
+          }
+        ],
+        "platform_scope": "Native local macOS Python 3.12; Unix class with isolated XDG env and temporary real filesystem; Windows class with get_win_folder mocked. Windows drive paths were skipped in native matrix."
+      },
+      "new_defect": false,
+      "technical_adoption": false,
+      "technical_adoption_reason": "Same trigger and output assertions already exist at the frozen head. Reused the passing native suite; no new regression candidate adopted.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": false,
+      "platform_validation_pending": [
+        "Native Windows validation (including drive-letter paths)",
+        "Linux and Android host runs, where named by the proposal"
+      ]
+    },
+    {
+      "arm": "B",
+      "case_id": "TC005",
+      "title": "构造与后续赋值对同一非法值返回相同错误",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "covered",
+        "citations": [
+          {
+            "path": "tests/test_api.py",
+            "line": 207,
+            "quote": "args = {\"appname\": \"app\", \"appauthor\": \"author\", \"version\": \"1.0\"} | {field: value}\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        platformdirs.PlatformDirs(args[\"appname\"], args[\"appauthor\"], args[\"version\"])",
+            "verified_against_frozen_head": true,
+            "scope": "构造入口使用共享属性和非法值矩阵，断言 ValueError 及完整消息。"
+          },
+          {
+            "path": "tests/test_api.py",
+            "line": 217,
+            "quote": "dirs = platformdirs.PlatformDirs(\"app\", \"author\", \"1.0\")\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        setattr(dirs, field, value)",
+            "verified_against_frozen_head": true,
+            "scope": "赋值入口使用同一矩阵和相同消息表达式，提供同等错误契约覆盖；此判断仅来自所给源码，未执行测试。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "reuse_native_assertions",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/tox-dev--platformdirs/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/tox-dev--platformdirs/pytest.xml",
+            "tests/test_api.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--platformdirs",
+          "exit_code": 0,
+          "seconds": 1.389,
+          "log": "native-logs/tox-dev--platformdirs/03-pytest.log",
+          "environment_overrides": {}
+        },
+        "result": "passed",
+        "assertion_citations": [
+          {
+            "path": "tests/test_api.py",
+            "line": 207,
+            "quote": "args = {\"appname\": \"app\", \"appauthor\": \"author\", \"version\": \"1.0\"} | {field: value}\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        platformdirs.PlatformDirs(args[\"appname\"], args[\"appauthor\"], args[\"version\"])",
+            "verified_against_frozen_head": true,
+            "scope": "构造入口使用共享属性和非法值矩阵，断言 ValueError 及完整消息。"
+          },
+          {
+            "path": "tests/test_api.py",
+            "line": 217,
+            "quote": "dirs = platformdirs.PlatformDirs(\"app\", \"author\", \"1.0\")\n    with pytest.raises(\n        ValueError, match=rf\"^{field} must stay inside the base directory, got {re.escape(repr(value))}$\"\n    ):\n        setattr(dirs, field, value)",
+            "verified_against_frozen_head": true,
+            "scope": "赋值入口使用同一矩阵和相同消息表达式，提供同等错误契约覆盖；此判断仅来自所给源码，未执行测试。"
+          }
+        ],
+        "platform_scope": "Native local macOS Python 3.12; Unix class with isolated XDG env and temporary real filesystem; Windows class with get_win_folder mocked. Windows drive paths were skipped in native matrix."
+      },
+      "new_defect": false,
+      "technical_adoption": false,
+      "technical_adoption_reason": "Same trigger and output assertions already exist at the frozen head. Reused the passing native suite; no new regression candidate adopted.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": false,
+      "platform_validation_pending": [
+        "Native Windows validation (including drive-letter paths)",
+        "Linux and Android host runs, where named by the proposal"
+      ]
+    }
+  ],
+  "human_maintainer_adoption": null,
+  "history_source_count": 1,
+  "history_source_assessment": [
+    {
+      "source_id": 4536421142,
+      "url": "https://github.com/stablyai/orca/issues/2929",
+      "relevance": "weak_analogy",
+      "shared_trigger_mechanism": false,
+      "reason": "Both concern unsafe path-derived filesystem side effects, but clone abort ownership and recursive deletion differs from assignment validation before directory creation. The target API has no abort or recursive-removal operation.",
+      "target_evidence": [
+        {
+          "path": "src/platformdirs/api.py",
+          "line": 94,
+          "quote": "_ensure_inside_base(\"appname\", value)",
+          "verified_against_frozen_head": true
+        },
+        {
+          "path": "src/platformdirs/api.py",
+          "line": 148,
+          "quote": "Path(path).mkdir(parents=True, exist_ok=True)",
+          "verified_against_frozen_head": true
+        },
+        {
+          "path": "src/platformdirs/api.py",
+          "line": 546,
+          "quote": "drive, tail = os.path.splitdrive(value)",
+          "verified_against_frozen_head": true
+        }
+      ],
+      "adoptable_transfer": "Current-diff containment checks can inspect filesystem side effects in owned temporary directories.",
+      "rejected_transfer": "Clone abort, deletion ownership tracking, git processes and new cleanup abstractions."
+    }
+  ],
+  "limitations": [
+    "Technical review is by this agent, not external maintainers.",
+    "No newly discovered product defect in executed cases.",
+    "Incremental checks passing do not prove historical retrieval improves review.",
+    "Technical review wall time was not separately timed; command durations are measured."
+  ],
+  "history_treatment": "B received retrieved history; source_ids are retained per case and no passing test is attributed causally to retrieval.",
+  "extra_check_sha256": "5e6f3228d46381b77831c55a2298f463028b8e3e66ea806082d54a5e7a1e82a9",
+  "final_clone_verification": {
+    "head_sha": "0fe7a0c57a0c8f5815eb54d7d35fd399db1d4958",
+    "git_status": ""
+  },
+  "review_seconds": null,
+  "review_time_limitation": "No independently timed technical assessment interval; execution seconds are measured in command records.",
+  "additional_check_counts": {
+    "tests": 24,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

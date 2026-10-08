@@ -1,0 +1,246 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R1",
+        "category": "缩写基础契约",
+        "title": "e.g. 的多个句点不导致提前截断",
+        "preconditions": [
+          "使用待验证版本的 Click。",
+          "文本为 \"Choose fruit e.g. apples and pears.\"，宽度设为45，足以容纳全文。"
+        ],
+        "steps": [
+          "调用 _make_default_short_help，传入上述文本和宽度。",
+          "比较返回值与完整输入。"
+        ],
+        "expected_result": "返回 \"Choose fruit e.g. apples and pears.\"，保留 e.g. 后的内容，不追加省略号。",
+        "source_ids": [],
+        "rationale": "e.g. 是 PRD 明确列出的缩写；需要直接验证，不能以 vs. 的测试替代。",
+        "coverage": "partial",
+        "incremental_value": "补充 PRD 指定的多句点缩写 e.g.；所给 T1 只提供 vs. 的同类触发与断言。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "pytest.param(\n            \"Weigh apples vs. pears.\",\n            30,\n            \"Weigh apples vs. pears.\",\n            id=\"abbreviation inside sentence\",\n        ),",
+            "reason": "已有缩写后接小写词的边界，但输入不是 e.g.。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 22
+          },
+          {
+            "test_id": "T1",
+            "quote": "out = click.utils._make_default_short_help(value, max_length)\n    assert out == expect",
+            "reason": "确认上述已有场景断言实际返回值；不能据此认定 e.g. 已有同等覆盖。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 62
+          }
+        ],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "输入预处理回归",
+        "title": "空内容及仅含 no-rewrap 标记时返回空摘要",
+        "preconditions": [
+          "使用待验证版本的 Click。",
+          "准备空字符串、仅空白字符串以及只含实际退格字符标记和空白的字符串。"
+        ],
+        "steps": [
+          "分别传入 \"\"、\" \\t\\n \" 和 \"\\n\\b\\n \"，max_length=10。",
+          "检查返回值及是否发生异常。"
+        ],
+        "expected_result": "三项均返回空字符串，不发生异常；最后一项依据补丁将空内容判断移至标记移除之后的行为。",
+        "source_ids": [],
+        "rationale": "本次 diff 调整了首段拆词、标记移除和空内容判断的顺序，标记移除后没有词是直接相关的回归边界。",
+        "coverage": "partial",
+        "incremental_value": "补充仅空白输入；空字符串及仅标记输入已由 T1 的参数组合覆盖。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "pytest.param(\"\", 10, \"\", id=\"empty\"),",
+            "reason": "空字符串的预期为空。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 9
+          },
+          {
+            "test_id": "T1",
+            "quote": "lambda text: \"\\n\\b\\n\" + \"  \".join(text.split(\" \")) + \"\\n\", id=\"no-wrap mark\"",
+            "reason": "与空字符串参数组合时生成仅含标记及换行的输入，覆盖标记移除后的空内容。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 51
+          },
+          {
+            "test_id": "T1",
+            "quote": "if alter:\n        value = alter(value)\n\n    out = click.utils._make_default_short_help(value, max_length)\n    assert out == expect",
+            "reason": "变换后的输入实际进入目标函数并断言为空；所给参数未包含仅空白字符串。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 59
+          }
+        ],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "缩写基础契约",
+        "title": "vs. 后的小写词继续保留，超长时按宽度缩短",
+        "preconditions": [
+          "使用待验证版本的 Click，直接调用 _make_default_short_help。",
+          "分别准备宽度足够及需要缩短的含 vs. 文本。"
+        ],
+        "steps": [
+          "传入 \"Weigh apples vs. pears.\"，max_length=30。",
+          "传入 \"Weigh apples vs. pears and plums.\"，max_length=20。"
+        ],
+        "expected_result": "分别返回 \"Weigh apples vs. pears.\" 和 \"Weigh apples vs....\"；第二项的缩短由宽度限制触发。",
+        "source_ids": [],
+        "rationale": "直接覆盖 PRD 指定的 vs. 提前截断问题，同时验证改用 textwrap.shorten 后缩写与省略号的交互。无历史 issue 来源。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给 T1 已包含相同输入、宽度和返回值断言，可作为优先回归项。此处仅审查源码，未执行。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "pytest.param(\n            \"Weigh apples vs. pears.\",\n            30,\n            \"Weigh apples vs. pears.\",\n            id=\"abbreviation inside sentence\",\n        ),",
+            "reason": "覆盖宽度足够时保留缩写后的词。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 22
+          },
+          {
+            "test_id": "T1",
+            "quote": "pytest.param(\n            \"Weigh apples vs. pears and plums.\",\n            20,\n            \"Weigh apples vs....\",\n            id=\"abbreviation inside truncated sentence\",\n        ),",
+            "reason": "覆盖相同超长输入及省略号结果。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 28
+          },
+          {
+            "test_id": "T1",
+            "quote": "out = click.utils._make_default_short_help(value, max_length)\n    assert out == expect",
+            "reason": "参数化输入实际进入目标函数，并逐字断言返回值。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 62
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "句末识别回归",
+        "title": "句点在文本末尾或后接大写词、数字时结束摘要",
+        "preconditions": [
+          "将 diff 和变更说明中的句末规则作为待确认的实现行为，而非 PRD 已明确的验收规则。",
+          "使用所给 T1 的三组输入及宽度。"
+        ],
+        "steps": [
+          "传入 \"123 567 9.\"，max_length=10。",
+          "传入 \"123 567 9. Aaaa bbb\"，max_length=10。",
+          "传入 \"Pick a fruit. 3 remain.\"，max_length=20。"
+        ],
+        "expected_result": "按本次 diff 的规则，前两项返回 \"123 567 9.\"，第三项返回 \"Pick a fruit.\"，均不追加省略号；产品验收口径仍需确认。",
+        "source_ids": [],
+        "rationale": "句末判断是此次直接改动；检查修复缩写时是否保留所给补丁定义的句末边界。",
+        "coverage": "covered",
+        "incremental_value": "无新增；三组边界均有同等源码断言。执行结果不能替代对规则的产品确认。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "pytest.param(\"123 567 9. Aaaa bbb\", 10, \"123 567 9.\", id=\"sentence < max\"),\n        pytest.param(\"123 567 9.\", 10, \"123 567 9.\", id=\"dot ends text\"),",
+            "reason": "覆盖后接大写词及句点结束文本。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 11
+          },
+          {
+            "test_id": "T1",
+            "quote": "pytest.param(\n            \"Pick a fruit. 3 remain.\", 20, \"Pick a fruit.\", id=\"digit after dot\"\n        ),",
+            "reason": "覆盖句点后接数字。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 35
+          },
+          {
+            "test_id": "T1",
+            "quote": "out = click.utils._make_default_short_help(value, max_length)\n    assert out == expect",
+            "reason": "对这些输入逐字断言返回结果。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 62
+          }
+        ],
+        "id": "TC004"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "缩短算法回归",
+        "title": "不可拆分词及极窄宽度遵循补丁定义的返回行为",
+        "preconditions": [
+          "将以下预期作为 textwrap.shorten 替换带来的实现回归检查；PRD 尚未明确这些边界的产品口径。",
+          "使用待验证版本的 Click。"
+        ],
+        "steps": [
+          "分别传入 \"well-behaved.\"、宽度8，以及 \"supercalifragilistic\"、宽度10。",
+          "对 \"ab cd\" 分别使用宽度3、2和-1。",
+          "传入 \"ab\"，宽度2。"
+        ],
+        "expected_result": "前五项均返回完整 \"...\"，不拆分长词或连字符词，不因极窄或负宽度抛出异常；最后一项返回 \"ab\"。宽度小于3时允许省略号长度超过指定宽度，此口径待确认。",
+        "source_ids": [],
+        "rationale": "仅检查本次替换缩短算法及新增极窄宽度分支影响的行为，不扩展到其他 CLI 功能。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给 T1 已包含这些输入和结果断言。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "pytest.param(\"well-behaved.\", 8, \"...\", id=\"never split a hyphenated word\"),\n        pytest.param(\"supercalifragilistic\", 10, \"...\", id=\"never split a long word\"),\n        pytest.param(\"ab cd\", 3, \"...\", id=\"width fits the suffix only\"),\n        pytest.param(\"ab cd\", 2, \"...\", id=\"width below the suffix\"),\n        pytest.param(\"ab\", 2, \"ab\", id=\"text shorter than the suffix\"),\n        pytest.param(\"ab cd\", -1, \"...\", id=\"negative width\"),",
+            "reason": "分别覆盖不可拆分词、极窄及负宽度，还有能直接容纳的短文本。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 38
+          },
+          {
+            "test_id": "T1",
+            "quote": "out = click.utils._make_default_short_help(value, max_length)\n    assert out == expect",
+            "reason": "逐字比较实际输出，因此不只是参数名称暗示覆盖。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 62
+          }
+        ],
+        "id": "TC005"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "句末规则仍需确认：缩写后接大写词、数字、引号或无大小写字符时，补丁可能将其视为句末。现有大写词和数字断言只证明测试采用该规则，不能证明规则满足 PRD 对缩写的完整意图。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "所给 T1 未发现 e.g. 的直接测试；本草稿补充了宽度足够的输入，尚未覆盖 e.g. 与超长缩短、首段边界的组合。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "首段及空白处理：T1 已有首段截断和 no-rewrap 参数组合，但所给材料未发现缩写跨单换行、制表符及第二段隔离的组合断言。本轮按 diff 收敛为5条优先用例，未展开这些组合。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "长词、连字符词、负宽度和省略号超出宽度已有源码断言，但 PRD 未明确对应用户可见契约；需确认后才能作为产品验收标准。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "所给测试仅直接调用工具函数，未发现命令列表实际展示自动短帮助的集成断言；无法据此判断其他文件是否已有覆盖，也未提供支持的 Python 版本矩阵。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "sources 为空，无法补充有出处的历史故障触发条件；全部用例依据 PRD、diff 和所给测试源码制定，未执行或声称通过。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 25159,
+      "cached_input_tokens": 7680,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 3067,
+      "reasoning_output_tokens": 127
+    },
+    "thread_id": "01a116b5-9c3f-78b3-910a-bff65ecf628f"
+  },
+  "input_sha256": "14af2a778c716da98a8653ec850c809807399e5a89c542351d959f49980c9a0a",
+  "common_input_sha256": "90ab994b07805fb2c231eb5a112e51024d28d3d4fd5df2ff838275bca1b276ee",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

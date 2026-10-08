@@ -1,0 +1,59 @@
+{
+  "requirements": [
+    {
+      "title": "未提供列表位置参数时正确使用默认值",
+      "quote": "Typer 0.26.0 introduced a regression with respect to using the default of a `List` argument. The only test we had related to this had an envvar setting, obscuring the bug.",
+      "queries": [
+        [
+          "argument",
+          "default"
+        ],
+        [
+          "list",
+          "default",
+          "missing"
+        ],
+        [
+          "default",
+          "regression",
+          "environment"
+        ]
+      ],
+      "id": "R1"
+    },
+    {
+      "title": "补充列表选项默认值的回归测试",
+      "quote": "For good measure, I also added a test for the default of a list option, though this was working fine on `master`. Still, can't hurt to extend the test suite a little.",
+      "queries": [
+        [
+          "option",
+          "default"
+        ],
+        [
+          "list",
+          "default",
+          "regression"
+        ]
+      ],
+      "id": "R2"
+    }
+  ],
+  "open_questions": [
+    "diff 验证显式输入列表值时不包含默认值，但 PRD 未明确说明显式输入与默认值的替换或合并规则，需澄清。",
+    "解析器改动允许空的可变长参数尝试环境变量、default map 和参数默认值解析；PRD 未明确 default map 的行为及各来源的优先级，需澄清。",
+    "列表选项默认值在 PRD 中被描述为原本正常的行为，因此这里只提取补充回归测试的质量要求，不视为新增功能。"
+  ],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 20446,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 377,
+      "reasoning_output_tokens": 89
+    },
+    "thread_id": "01a116b7-5b2f-7cb2-9f5e-b25e0695c80d"
+  },
+  "prd_sha256": "6f084b1a69b60a7f4ec8317b27ff93f880eec57a4b2c3d10aa2340e36c20c9bd"
+}

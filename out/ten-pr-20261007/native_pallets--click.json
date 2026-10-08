@@ -1,0 +1,101 @@
+{
+  "id": "pallets--click",
+  "repo": "pallets/click",
+  "pr": 3865,
+  "head_sha": "f67c2bb6c2f055c1c7a57cd46c3697fc26a7742e",
+  "native_test_files": [
+    "tests/test_utils/test_make_default_short_help.py"
+  ],
+  "commands": [
+    {
+      "command": [
+        "/Users/apple/.local/bin/python3.12",
+        "-m",
+        "venv",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/pallets--click"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pallets--click",
+      "exit_code": 0,
+      "seconds": 12.746,
+      "log": "native-logs/pallets--click/01-venv.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/pallets--click/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "-e",
+        ".",
+        "pytest"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pallets--click",
+      "exit_code": 0,
+      "seconds": 21.99,
+      "log": "native-logs/pallets--click/02-install.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/pallets--click/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "--junitxml",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/pallets--click/pytest.xml",
+        "tests/test_utils/test_make_default_short_help.py"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pallets--click",
+      "exit_code": 0,
+      "seconds": 2.029,
+      "log": "native-logs/pallets--click/03-pytest.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/pallets--click/bin/python",
+        "-m",
+        "pip",
+        "freeze"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pallets--click",
+      "exit_code": 0,
+      "seconds": 1.695,
+      "log": "native-logs/pallets--click/04-freeze.log",
+      "environment_overrides": {}
+    },
+    {
+      "command": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/pallets--click/bin/python",
+        "-c",
+        "import sys,platform;print(sys.version);print(platform.platform())"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pallets--click",
+      "exit_code": 0,
+      "seconds": 0.092,
+      "log": "native-logs/pallets--click/05-environment.log",
+      "environment_overrides": {}
+    }
+  ],
+  "environment": {
+    "python": "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/pallets--click/bin/python",
+    "python_base": "/Users/apple/.local/bin/python3.12",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+  },
+  "result": "passed",
+  "test_counts": {
+    "tests": 36,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 36
+  },
+  "initial_git_status": "",
+  "final_git_status": "",
+  "platform_limits": [
+    "Only the local macOS Python 3.12 environment was run; supported OS/Python matrices were not run."
+  ],
+  "notes": "Current diff changes first-paragraph shortening, sentence boundaries and textwrap.shorten. The selected native file is the full helper regression suite. Passing it does not establish whether abbreviations and lowercase continuation are universally semantically correct.",
+  "evidence_root": "/Users/apple/.codex/task-evidence/issue-lens-20261007"
+}

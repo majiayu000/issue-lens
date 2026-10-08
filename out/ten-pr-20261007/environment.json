@@ -1,0 +1,45 @@
+{
+  "issue_lens_commit": "cb5163970ea7d3ccc41a62207e4bbc390bb1d303",
+  "codex_cli_version": "0.160.0",
+  "engine": "codex",
+  "requested_model": "gpt-6.1-sol",
+  "model_identity": "CLI request and completion verified; underlying provider identity not independently verified",
+  "github_access": "secondary locally configured credential used in process memory; repository viewerPermission READ; no account configuration changed",
+  "initial_connectivity": [
+    {
+      "route": "existing Codex CLI",
+      "requested_model": "gpt-5.4",
+      "result": "ModelError, exit 1; no output accepted"
+    },
+    {
+      "route": "configured chat-completions API",
+      "requested_model": "gpt-5.4",
+      "result": "two HTTP 502 responses; no model output accepted"
+    },
+    {
+      "route": "existing Codex CLI",
+      "requested_model": "gpt-6.1-sol",
+      "result": "completed {ok:true}",
+      "usage": {
+        "input_tokens": 15515,
+        "cached_input_tokens": 0,
+        "output_tokens": 9
+      }
+    }
+  ],
+  "smoke_attempts_included_in_experiment_usage": false,
+  "invoice_usd": null,
+  "human_participant_ratings": null,
+  "ci_at_task_start": {
+    "sha": "cb5163970ea7d3ccc41a62207e4bbc390bb1d303",
+    "conclusion": "success",
+    "url": "https://github.com/majiayu000/issue-lens/actions/runs/37049099210"
+  },
+  "historical_rclean_result": {
+    "source": "../expansion-20261003/README.md",
+    "scenarios_passed": 5,
+    "native_boundaries_added": 3,
+    "new_defects_found": 0,
+    "not_new_experimental_data": true
+  }
+}

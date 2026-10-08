@@ -1,0 +1,11 @@
+google-re2==1.1.20251105
+hyperscan==0.9.0
+iniconfig==2.3.1
+packaging==26.3
+pathspec @ file:///Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec
+pluggy==1.6.0
+py-cpuinfo2==10.1.1
+Pygments==2.21.0
+pytest==9.1.1
+pytest-benchmark==5.3.0
+typing_extensions==4.16.0

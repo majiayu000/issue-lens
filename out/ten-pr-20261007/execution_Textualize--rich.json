@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-c",
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich/pyproject.toml",
+    "--junitxml",
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/Textualize--rich/model-cases.xml",
+    "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/Textualize--rich/test_model_cases.py"
+  ],
+  "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich",
+  "exit_code": 0,
+  "seconds": 2.212,
+  "log": "native-logs/Textualize--rich/07-model-cases.log",
+  "environment_overrides": {}
+}

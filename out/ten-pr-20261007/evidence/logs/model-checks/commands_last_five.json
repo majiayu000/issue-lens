@@ -1,0 +1,328 @@
+[
+  {
+    "slug": "tqdm--tqdm",
+    "label": "venv_py314",
+    "argv": [
+      "/opt/homebrew/bin/python3",
+      "-m",
+      "venv",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+    "exit_code": 0,
+    "elapsed_seconds": 10.864,
+    "log": "logs/model-checks/tqdm--tqdm/01_venv_py314.log"
+  },
+  {
+    "slug": "tqdm--tqdm",
+    "label": "install_py314",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+      "-m",
+      "pip",
+      "--isolated",
+      "install",
+      ".",
+      "pytest",
+      "pytest-cov",
+      "pytest-timeout",
+      "pytest-asyncio"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+    "exit_code": 0,
+    "elapsed_seconds": 23.9,
+    "log": "logs/model-checks/tqdm--tqdm/02_install_py314.log"
+  },
+  {
+    "slug": "tqdm--tqdm",
+    "label": "environment_py314",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+      "-c",
+      "import sys,platform,tqdm;print(sys.version);print(platform.platform());print(tqdm.__file__)"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+    "exit_code": 0,
+    "elapsed_seconds": 0.327,
+    "log": "logs/model-checks/tqdm--tqdm/03_environment_py314.log"
+  },
+  {
+    "slug": "tqdm--tqdm",
+    "label": "native_py314",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+      "-m",
+      "pytest",
+      "tests/tests_concurrent.py",
+      "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/native_py314.xml",
+      "-ra"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+    "exit_code": 0,
+    "elapsed_seconds": 18.925,
+    "log": "logs/model-checks/tqdm--tqdm/04_native_py314.log"
+  },
+  {
+    "slug": "cpburnz--python-pathspec",
+    "label": "optional_google-re2",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+      "-m",
+      "pip",
+      "--isolated",
+      "install",
+      "--only-binary=:all:",
+      "google-re2>=1.1"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+    "exit_code": 0,
+    "elapsed_seconds": 5.96,
+    "log": "logs/model-checks/cpburnz--python-pathspec/01_optional_google-re2.log"
+  },
+  {
+    "slug": "cpburnz--python-pathspec",
+    "label": "optional_hyperscan",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+      "-m",
+      "pip",
+      "--isolated",
+      "install",
+      "--only-binary=:all:",
+      "hyperscan>=0.7"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+    "exit_code": 0,
+    "elapsed_seconds": 6.606,
+    "log": "logs/model-checks/cpburnz--python-pathspec/02_optional_hyperscan.log"
+  },
+  {
+    "slug": "tox-dev--filelock",
+    "label": "model_checks",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+      "-m",
+      "pytest",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_filelock_cases.py",
+      "-c",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock/pyproject.toml",
+      "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tox-dev--filelock/model_checks.xml",
+      "-ra",
+      "-v"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+    "exit_code": 0,
+    "elapsed_seconds": 2.336,
+    "log": "logs/model-checks/tox-dev--filelock/01_model_checks.log"
+  },
+  {
+    "slug": "tox-dev--filelock",
+    "label": "freeze",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tox-dev--filelock/bin/python",
+      "-m",
+      "pip",
+      "--isolated",
+      "freeze"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tox-dev--filelock",
+    "exit_code": 0,
+    "elapsed_seconds": 0.362,
+    "log": "logs/model-checks/tox-dev--filelock/02_freeze.log"
+  },
+  {
+    "slug": "cpburnz--python-pathspec",
+    "label": "model_checks",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+      "-m",
+      "pytest",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_pathspec_cases.py",
+      "-c",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec/pyproject.toml",
+      "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/cpburnz--python-pathspec/model_checks.xml",
+      "-ra",
+      "-v"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+    "exit_code": 0,
+    "elapsed_seconds": 68.629,
+    "log": "logs/model-checks/cpburnz--python-pathspec/03_model_checks.log"
+  },
+  {
+    "slug": "cpburnz--python-pathspec",
+    "label": "freeze",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+      "-m",
+      "pip",
+      "--isolated",
+      "freeze"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+    "exit_code": 0,
+    "elapsed_seconds": 0.571,
+    "log": "logs/model-checks/cpburnz--python-pathspec/04_freeze.log"
+  },
+  {
+    "slug": "tqdm--tqdm",
+    "label": "model_checks",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+      "-m",
+      "pytest",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+      "-c",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm/pyproject.toml",
+      "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/model_checks.xml",
+      "-ra",
+      "-v"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+    "exit_code": 1,
+    "elapsed_seconds": 6.649,
+    "log": "logs/model-checks/tqdm--tqdm/05_model_checks.log"
+  },
+  {
+    "slug": "tqdm--tqdm",
+    "label": "freeze",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+      "-m",
+      "pip",
+      "--isolated",
+      "freeze"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+    "exit_code": 0,
+    "elapsed_seconds": 1.184,
+    "log": "logs/model-checks/tqdm--tqdm/06_freeze.log"
+  },
+  {
+    "slug": "pypa--packaging",
+    "label": "model_checks",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/pypa--packaging/bin/python",
+      "-m",
+      "pytest",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_packaging_cases.py",
+      "-c",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging/pyproject.toml",
+      "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/pypa--packaging/model_checks.xml",
+      "-ra",
+      "-v"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging",
+    "exit_code": 0,
+    "elapsed_seconds": 1.744,
+    "log": "logs/model-checks/pypa--packaging/01_model_checks.log"
+  },
+  {
+    "slug": "pypa--packaging",
+    "label": "freeze",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/pypa--packaging/bin/python",
+      "-m",
+      "pip",
+      "--isolated",
+      "freeze"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/pypa--packaging",
+    "exit_code": 0,
+    "elapsed_seconds": 2.107,
+    "log": "logs/model-checks/pypa--packaging/02_freeze.log"
+  },
+  {
+    "slug": "python-humanize--humanize",
+    "label": "model_checks",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python",
+      "-m",
+      "pytest",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_humanize_cases.py",
+      "-c",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize/pyproject.toml",
+      "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/python-humanize--humanize/model_checks.xml",
+      "-ra",
+      "-v"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+    "exit_code": 0,
+    "elapsed_seconds": 1.685,
+    "log": "logs/model-checks/python-humanize--humanize/01_model_checks.log"
+  },
+  {
+    "slug": "python-humanize--humanize",
+    "label": "freeze",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python",
+      "-m",
+      "pip",
+      "--isolated",
+      "freeze"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+    "exit_code": 0,
+    "elapsed_seconds": 1.165,
+    "log": "logs/model-checks/python-humanize--humanize/02_freeze.log"
+  },
+  {
+    "slug": "tqdm--tqdm",
+    "label": "reproduce_error_lock",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/reproduce_tqdm_error_lock.py"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+    "exit_code": 1,
+    "elapsed_seconds": 0.489,
+    "log": "logs/model-checks/tqdm--tqdm/07_reproduce_error_lock.log"
+  },
+  {
+    "slug": "tqdm--tqdm",
+    "label": "control_success",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/reproduce_tqdm_error_lock.py",
+      "success"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+    "exit_code": 0,
+    "elapsed_seconds": 3.212,
+    "log": "logs/model-checks/tqdm--tqdm/08_control_success.log"
+  },
+  {
+    "slug": "tqdm--tqdm",
+    "label": "control_known-error",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/reproduce_tqdm_error_lock.py",
+      "known-error"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+    "exit_code": 1,
+    "elapsed_seconds": 1.537,
+    "log": "logs/model-checks/tqdm--tqdm/08_control_known-error.log"
+  },
+  {
+    "slug": "tqdm--tqdm",
+    "label": "isolate_single_unknown",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python",
+      "-m",
+      "pytest",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_tqdm_cases.py",
+      "-c",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm/pyproject.toml",
+      "-k",
+      "test_single_unknown_explicit_total_zero",
+      "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/isolate_single_unknown.xml",
+      "-ra",
+      "-v"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm",
+    "exit_code": 0,
+    "elapsed_seconds": 1.353,
+    "log": "logs/model-checks/tqdm--tqdm/09_isolate_single_unknown.log"
+  }
+]

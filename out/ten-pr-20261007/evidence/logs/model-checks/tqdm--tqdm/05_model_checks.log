@@ -1,0 +1,110 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0 -- /Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm
+configfile: pyproject.toml
+plugins: cov-7.1.0, timeout-2.4.0, asyncio-1.4.0
+timeout: 30.0s
+timeout method: signal
+timeout func_only: False
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collecting ... collected 21 items
+
+::test_explicit_total[thread] <- ../../model-checks/test_tqdm_cases.py PASSED [  4%]
+::test_explicit_total[process] <- ../../model-checks/test_tqdm_cases.py PASSED [  9%]
+::test_explicit_total[interpreter] <- ../../model-checks/test_tqdm_cases.py PASSED [ 14%]
+::test_empty_unknown[thread] <- ../../model-checks/test_tqdm_cases.py PASSED [ 19%]
+::test_empty_unknown[process] <- ../../model-checks/test_tqdm_cases.py PASSED [ 23%]
+::test_empty_unknown[interpreter] <- ../../model-checks/test_tqdm_cases.py PASSED [ 28%]
+::test_multiple_unknown_a[thread] <- ../../model-checks/test_tqdm_cases.py PASSED [ 33%]
+::test_multiple_unknown_a[process] <- ../../model-checks/test_tqdm_cases.py PASSED [ 38%]
+::test_multiple_unknown_a[interpreter] <- ../../model-checks/test_tqdm_cases.py PASSED [ 42%]
+::test_multiple_unknown_b[thread] <- ../../model-checks/test_tqdm_cases.py PASSED [ 47%]
+::test_multiple_unknown_b[process] <- ../../model-checks/test_tqdm_cases.py PASSED [ 52%]
+::test_multiple_unknown_b[interpreter] <- ../../model-checks/test_tqdm_cases.py PASSED [ 57%]
+::test_mixed_lengths[thread] <- ../../model-checks/test_tqdm_cases.py PASSED [ 61%]
+::test_mixed_lengths[process] <- ../../model-checks/test_tqdm_cases.py PASSED [ 66%]
+::test_mixed_lengths[interpreter] <- ../../model-checks/test_tqdm_cases.py PASSED [ 71%]
+::test_worker_error_propagates[thread] <- ../../model-checks/test_tqdm_cases.py PASSED [ 76%]
+::test_worker_error_propagates[process] <- ../../model-checks/test_tqdm_cases.py PASSED [ 80%]
+::test_worker_error_propagates[interpreter] <- ../../model-checks/test_tqdm_cases.py PASSED [ 85%]
+::test_single_unknown_explicit_total_zero[thread] <- ../../model-checks/test_tqdm_cases.py PASSED [ 90%]
+::test_single_unknown_explicit_total_zero[process] <- ../../model-checks/test_tqdm_cases.py FAILED [ 95%]
+::test_single_unknown_explicit_total_zero[interpreter] <- ../../model-checks/test_tqdm_cases.py PASSED [100%]
+
+=================================== FAILURES ===================================
+_______________ test_single_unknown_explicit_total_zero[process] _______________
+../../model-checks/test_tqdm_cases.py:38: in test_single_unknown_explicit_total_zero
+    assert mapper(partial(operator.add,1),(i for i in range(9)),**opts())==list(range(1,10))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tqdm/contrib/concurrent.py:259: in process_map
+    return _executor_map(ProcessPoolExecutor, fn, *iterables, lock_name=lock_name, **tqdm_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tqdm/contrib/concurrent.py:163: in _executor_map
+    return list(ex.map(
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/process.py:949: in map
+    results = super().map(partial(_process_chunk, fn),
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py:624: in map
+    fs = [self.submit(fn, *args) for args in zipped_iterables]
+          ^^^^^^^^^^^^^^^^^^^^^^
+tqdm/contrib/concurrent.py:159: in patchsubmit
+    fut = orisubmit(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/process.py:914: in submit
+    self._adjust_process_count()
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/process.py:878: in _adjust_process_count
+    self._spawn_process()
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/process.py:889: in _spawn_process
+    _spawn_worker(self._mp_context, self._call_queue,
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/process.py:282: in _spawn_worker
+    p.start()
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+                  ^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/context.py:294: in _Popen
+    return Popen(process_obj)
+           ^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/popen_fork.py:20: in __init__
+    self._launch(process_obj)
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/popen_spawn_posix.py:47: in _launch
+    reduction.dump(process_obj, fp)
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/reduction.py:60: in dump
+    ForkingPickler(file, protocol).dump(obj)
+E   TypeError: cannot pickle '_thread.RLock' object
+E   when serializing dict item '_lock'
+E   when serializing tqdm.contrib.concurrent._InterpreterLock state
+E   when serializing tqdm.contrib.concurrent._InterpreterLock object
+E   when serializing tuple item 0
+E   when serializing tuple item 3
+E   when serializing dict item '_args'
+E   when serializing multiprocessing.context.SpawnProcess state
+E   when serializing multiprocessing.context.SpawnProcess object
+- generated xml file: /Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/model_checks.xml -
+============================== slowest durations ===============================
+0.62s call     ::test_worker_error_propagates[process]
+0.62s call     ::test_multiple_unknown_b[interpreter]
+0.55s call     ::test_explicit_total[interpreter]
+0.55s call     ::test_multiple_unknown_a[process]
+0.53s call     ::test_explicit_total[process]
+0.46s call     ::test_single_unknown_explicit_total_zero[interpreter]
+0.42s call     ::test_mixed_lengths[interpreter]
+0.42s call     ::test_multiple_unknown_a[interpreter]
+0.42s call     ::test_multiple_unknown_b[process]
+0.41s call     ::test_mixed_lengths[process]
+0.32s call     ::test_worker_error_propagates[interpreter]
+0.15s call     ::test_explicit_total[thread]
+
+(51 durations < 0.1s hidden.)
+=========================== short test summary info ============================
+FAILED ::test_single_unknown_explicit_total_zero[process] - TypeError: cannot pickle '_thread.RLock' object
+when serializing dict item '_lock'
+when serializing tqdm.contrib.concurrent._InterpreterLock state
+when serializing tqdm.contrib.concurrent._InterpreterLock object
+when serializing tuple item 0
+when serializing tuple item 3
+when serializing dict item '_args'
+when serializing multiprocessing.context.SpawnProcess state
+when serializing multiprocessing.context.SpawnProcess object
+========================= 1 failed, 20 passed in 5.73s =========================

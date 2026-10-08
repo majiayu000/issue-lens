@@ -1,0 +1,111 @@
+{
+  "id": "cpburnz--python-pathspec",
+  "repo": "cpburnz/python-pathspec",
+  "pr": 142,
+  "head_sha": "73120f31ad255c581f267b8515f274d7862210de",
+  "checkout": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+  "environment": {
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "base_python": "/Users/apple/.local/bin/python3.12",
+    "venv": "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec",
+    "runtime": "3.12.12 (main, Dec 17 2025, 21:07:08) [Clang 21.1.4 ]\nmacOS-26.5.2-arm64-arm-64bit"
+  },
+  "commands": [
+    {
+      "label": "venv",
+      "argv": [
+        "/Users/apple/.local/bin/python3.12",
+        "-m",
+        "venv",
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+      "exit_code": 0,
+      "elapsed_seconds": 9.318,
+      "log": "logs/native_cpburnz--python-pathspec/01_venv.log"
+    },
+    {
+      "label": "install",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        ".",
+        "pytest >=8",
+        "pytest-benchmark >=5",
+        "tomli; python_version<'3.11'",
+        "typing-extensions >=4.4"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+      "exit_code": 0,
+      "elapsed_seconds": 14.688,
+      "log": "logs/native_cpburnz--python-pathspec/02_install.log"
+    },
+    {
+      "label": "environment",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+        "-c",
+        "import platform,sys;print(sys.version);print(platform.platform())"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+      "exit_code": 0,
+      "elapsed_seconds": 0.073,
+      "log": "logs/native_cpburnz--python-pathspec/03_environment.log"
+    },
+    {
+      "label": "freeze",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+        "-m",
+        "pip",
+        "--isolated",
+        "freeze"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+      "exit_code": 0,
+      "elapsed_seconds": 0.918,
+      "log": "logs/native_cpburnz--python-pathspec/04_freeze.log"
+    },
+    {
+      "label": "tests",
+      "argv": [
+        "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-t",
+        ".",
+        "-s",
+        "tests/",
+        "-p",
+        "test_07_gitignore_trailing_space.py",
+        "-v"
+      ],
+      "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/cpburnz--python-pathspec",
+      "exit_code": 0,
+      "elapsed_seconds": 0.226,
+      "log": "logs/native_cpburnz--python-pathspec/05_tests.log"
+    }
+  ],
+  "initial_git_status": "",
+  "native_test_files": [
+    "tests/test_07_gitignore_trailing_space.py"
+  ],
+  "boundary_notes": [
+    "Native runner is unittest. Both basic/spec pattern compilers and PathSpec are covered; odd/even backslash runs must retain Git-compatible trailing-space semantics.",
+    "Optional hyperscan/re2 backends and Windows separator behavior are not established by this base-backend macOS run."
+  ],
+  "maintainer_adoption": "not evaluated by a human maintainer",
+  "historical_gain": "not established by native baseline",
+  "test_counts": {
+    "run": 6,
+    "passed": 6
+  },
+  "test_count_unit": "unittest test methods; subTests not counted as separate tests",
+  "status": "passed",
+  "final_git_status": "",
+  "final_head_sha": "73120f31ad255c581f267b8515f274d7862210de"
+}

@@ -1,0 +1,84 @@
+{
+  "requirements": [
+    {
+      "title": "偶数个连续反斜杠后的尾随空格应被裁剪，并正确匹配字面反斜杠文件名",
+      "quote": "With an even number of backslashes, Git treats that space as unescaped and trims it. This patch checks backslash parity before deciding whether to preserve the space.\n\nA pattern containing two backslashes followed by a space should match a filename ending in one literal backslash.",
+      "queries": [
+        [
+          "backslash",
+          "space"
+        ],
+        [
+          "backslash",
+          "even",
+          "trim"
+        ],
+        [
+          "filename",
+          "backslash",
+          "mismatch"
+        ]
+      ],
+      "id": "R1"
+    },
+    {
+      "title": "奇数个连续反斜杠仍应保留转义的尾随空格",
+      "quote": "The new regression module covers both pattern classes and PathSpec; odd backslash runs continue to preserve escaped spaces.",
+      "queries": [
+        [
+          "escape",
+          "space"
+        ],
+        [
+          "backslash",
+          "odd",
+          "trim"
+        ],
+        [
+          "escaped",
+          "space",
+          "missing"
+        ]
+      ],
+      "id": "R2"
+    },
+    {
+      "title": "两种模式类及 PathSpec 接口均应落实尾随空格修复",
+      "quote": "The new regression module covers both pattern classes and PathSpec; odd backslash runs continue to preserve escaped spaces.",
+      "queries": [
+        [
+          "pattern",
+          "mismatch"
+        ],
+        [
+          "backslash",
+          "space",
+          "matching"
+        ],
+        [
+          "pattern",
+          "trimming",
+          "regression"
+        ]
+      ],
+      "id": "R3"
+    }
+  ],
+  "open_questions": [
+    "PRD 的基线结果声明 failures 为 6，但 failed_cases 仅列出 4 项；其余两项是否属于预先存在的失败，还是遗漏了本次修复相关用例？",
+    "PRD 未明确多个尾随空格、转义空格后再跟未转义空格以及尾随制表符的处理规则；diff 使用 rstrip() 并声称裁剪最长未转义尾随空格段，这些边界行为需要澄清，不能直接作为新增产品要求。"
+  ],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 21385,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 449,
+      "reasoning_output_tokens": 59
+    },
+    "thread_id": "01a116c4-ea3e-71c3-a307-7e4c045c83a0"
+  },
+  "prd_sha256": "7cd3dd6d6c2a5740c418d657fc5ce694dddb34b163dce95f211b57a806b666e8"
+}

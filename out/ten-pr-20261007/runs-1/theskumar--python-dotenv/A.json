@@ -1,0 +1,168 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R1",
+        "category": "空字符串解析边界",
+        "title": "带引号的空值仍按空字符串成功返回",
+        "preconditions": [
+          "CLI 依赖已安装。",
+          "临时 .env 文件分别包含 a=\"\"\\n 和 a=''\\n，作为同一用例的两组输入。"
+        ],
+        "steps": [
+          "对每组输入调用 dotenv --file <临时文件> get a。",
+          "捕获退出码和输出。"
+        ],
+        "expected_result": "两组输入均返回退出码 0，输出恰为一个换行符，不输出引号。",
+        "source_ids": [],
+        "rationale": "PRD 明确允许带引号的值，并明确将 KEY=\"\" 视为空字符串；该边界验证不同合法写法解析后仍进入补丁的成功分支。",
+        "coverage": "not_found",
+        "incremental_value": "补充带引号空值经过解析后交给 get 的边界；所给文件中未发现同等 get 测试。",
+        "existing_tests": [],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R2",
+        "category": "缺失键失败契约",
+        "title": "可读取的非空文件中缺失目标键时返回退出码 1",
+        "preconditions": [
+          "CLI 依赖已安装。",
+          "临时 .env 文件内容为 b=value\\n，确认不含键 a。"
+        ],
+        "steps": [
+          "调用 dotenv --file <临时文件> get a。",
+          "捕获退出码和输出。"
+        ],
+        "expected_result": "退出码为 1，输出为空；不得返回其他键的值。",
+        "source_ids": [],
+        "rationale": "直接覆盖补丁新增的键不存在判断。所给 test_get_non_existent_value 有失败断言，但没有提供 dotenv_path fixture 定义，无法确认其文件初始内容；这里明确建立非空文件和缺失键条件。",
+        "coverage": "partial",
+        "incremental_value": "补充显式存在其他键的文件输入，避免依赖未提供的 fixture 初始化行为。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "def test_get_non_existent_value(cli, dotenv_path):\n    result = cli.invoke(dotenv_cli, [\"--file\", dotenv_path, \"get\", \"a\"])\n\n    assert (result.exit_code, result.output) == (1, \"\")",
+            "reason": "已有相同 get 调用和失败结果断言，但函数内没有建立文件内容，不能据此认定已覆盖非空文件中的缺失键。",
+            "path": "tests/test_cli.py",
+            "line": 88
+          }
+        ],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "空字符串成功契约",
+        "title": "未加引号的空值返回成功并输出一个空白行",
+        "preconditions": [
+          "CLI 依赖已安装。",
+          "临时 .env 文件内容为 a=\\n。"
+        ],
+        "steps": [
+          "调用 dotenv --file <临时文件> get a。",
+          "捕获退出码和输出，精确比较输出中的换行。"
+        ],
+        "expected_result": "退出码为 0，输出恰为一个换行符；不输出键名、引号或错误信息。",
+        "source_ids": [],
+        "rationale": "直接覆盖 R1 和补丁改变的空字符串判断，不依赖历史 issue。以下覆盖判断仅依据所给测试源码，未执行测试。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给测试已有相同输入及退出码、输出断言。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "dotenv_path.write_text(\"a=\\n\")\n\n    result = cli.invoke(dotenv_cli, [\"--file\", dotenv_path, \"get\", \"a\"])\n\n    assert (result.exit_code, result.output) == (0, \"\\n\")",
+            "reason": "明确以未加引号的空值触发 get，并同时断言成功退出和一个空白行。",
+            "path": "tests/test_cli.py",
+            "line": 73
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R2",
+        "category": "无值裸键失败契约",
+        "title": "存在但没有等号和值的裸键返回退出码 1",
+        "preconditions": [
+          "CLI 依赖已安装。",
+          "临时 .env 文件内容为 a，没有等号。"
+        ],
+        "steps": [
+          "调用 dotenv --file <临时文件> get a。",
+          "捕获退出码和输出。"
+        ],
+        "expected_result": "退出码为 1，输出为空；不得输出一个空白行或字符串 None。",
+        "source_ids": [],
+        "rationale": "直接覆盖 R2 的 None 分支，防止修复空字符串时将裸键一并判为成功。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给测试已有同等触发条件和断言。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "dotenv_path.write_text(\"a\")\n\n    result = cli.invoke(dotenv_cli, [\"--file\", dotenv_path, \"get\", \"a\"])\n\n    assert (result.exit_code, result.output) == (1, \"\")",
+            "reason": "输入明确为裸键，断言退出码 1 和空输出，与要求一致。",
+            "path": "tests/test_cli.py",
+            "line": 81
+          }
+        ],
+        "id": "TC004"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "成功分支回归",
+        "title": "普通非空值继续原样输出并成功退出",
+        "preconditions": [
+          "CLI 依赖已安装。",
+          "临时 .env 文件内容为 a=b。"
+        ],
+        "steps": [
+          "调用 dotenv --file <临时文件> get a。",
+          "捕获退出码和输出。"
+        ],
+        "expected_result": "退出码为 0，输出恰为 b 后接一个换行符。",
+        "source_ids": [],
+        "rationale": "补丁将成功分支统一为 click.echo(values[key])；PRD 要求既有 get 行为保持正常，因此保留非空值回归检查。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给测试已有相同输入和完整结果断言。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "dotenv_path.write_text(\"a=b\")\n\n    result = cli.invoke(dotenv_cli, [\"--file\", dotenv_path, \"get\", \"a\"])\n\n    assert (result.exit_code, result.output) == (0, \"b\\n\")",
+            "reason": "同时覆盖普通非空值的成功退出和输出格式。",
+            "path": "tests/test_cli.py",
+            "line": 64
+          }
+        ],
+        "id": "TC005"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "本轮按 diff 限制为 5 条优先用例，未展开空值后接注释、空白或 export 修饰，以及插值结果为空的解析边界。所给测试文件未发现这些条件下的 get 断言；不能将其他命令的解析或插值测试视为同等覆盖。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "空值用例尚未覆盖默认路径下的真实子进程调用。所给 test_get_default_path 仅使用非空值；CliRunner 的空值断言不能单独证明实际进程输出及退出状态一致。"
+      },
+      {
+        "requirement_id": "R2",
+        "reason": "未将文件无法打开的退出码 2 单列为优先用例。所给文件已有不存在路径和目录路径的 get 错误断言，但未提供权限拒绝场景；该边界涉及未修改的 stream_file，不扩大本轮测试范围。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 25029,
+      "cached_input_tokens": 7680,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 1935,
+      "reasoning_output_tokens": 99
+    },
+    "thread_id": "01a116b9-e050-78b1-b1c4-0cbf33617400"
+  },
+  "input_sha256": "41cadd6aad933a1df72b69eddf60b501d1f645d789c7a2a8e1e32929104be932",
+  "common_input_sha256": "726c07c9238e9efd31712e65015320912a719300b7eaf31eee2617c42a334d54",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

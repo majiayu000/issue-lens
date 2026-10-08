@@ -1,0 +1,71 @@
+before_lock_type TqdmDefaultWriteLock
+expected_worker_error ValueError invalid literal for int() with base 10: 'worker-failure-marker'
+after_lock_type _InterpreterLock same_object False
+next_process_map
+Traceback (most recent call last):
+  File "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/reproduce_tqdm_error_lock.py", line 25, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/reproduce_tqdm_error_lock.py", line 20, in main
+    result=process_map(abs,(n for n in [-1,-2]),max_workers=2,disable=True)
+  File "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/lib/python3.14/site-packages/tqdm/contrib/concurrent.py", line 259, in process_map
+    return _executor_map(ProcessPoolExecutor, fn, *iterables, lock_name=lock_name, **tqdm_kwargs)
+  File "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/lib/python3.14/site-packages/tqdm/contrib/concurrent.py", line 163, in _executor_map
+    return list(ex.map(
+                ~~~~~~^
+        fn, *iterables, timeout=timeout, chunksize=chunksize, **map_kwargs))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/process.py", line 949, in map
+    results = super().map(partial(_process_chunk, fn),
+                          itertools.batched(zip(*iterables), chunksize),
+                          timeout=timeout,
+                          buffersize=buffersize)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py", line 624, in map
+    fs = [self.submit(fn, *args) for args in zipped_iterables]
+          ~~~~~~~~~~~^^^^^^^^^^^
+  File "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/lib/python3.14/site-packages/tqdm/contrib/concurrent.py", line 159, in patchsubmit
+    fut = orisubmit(*args, **kwargs)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/process.py", line 914, in submit
+    self._adjust_process_count()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/process.py", line 878, in _adjust_process_count
+    self._spawn_process()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/process.py", line 889, in _spawn_process
+    _spawn_worker(self._mp_context, self._call_queue,
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                  self._result_queue, self._initializer,
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                  self._initargs, self._max_tasks_per_child,
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                  self._processes)
+                  ^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/process.py", line 282, in _spawn_worker
+    p.start()
+    ~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/process.py", line 121, in start
+    self._popen = self._Popen(self)
+                  ~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/context.py", line 294, in _Popen
+    return Popen(process_obj)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/popen_spawn_posix.py", line 32, in __init__
+    super().__init__(process_obj)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/popen_fork.py", line 20, in __init__
+    self._launch(process_obj)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/popen_spawn_posix.py", line 47, in _launch
+    reduction.dump(process_obj, fp)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/reduction.py", line 60, in dump
+    ForkingPickler(file, protocol).dump(obj)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+TypeError: cannot pickle '_thread.RLock' object
+when serializing dict item '_lock'
+when serializing tqdm.contrib.concurrent._InterpreterLock state
+when serializing tqdm.contrib.concurrent._InterpreterLock object
+when serializing tuple item 0
+when serializing tuple item 3
+when serializing dict item '_args'
+when serializing multiprocessing.context.SpawnProcess state
+when serializing multiprocessing.context.SpawnProcess object

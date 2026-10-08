@@ -1,0 +1,8 @@
+Collecting google-re2>=1.1
+  Downloading google_re2-1.1.20251105-1-cp312-cp312-macosx_15_0_arm64.whl.metadata (2.4 kB)
+Downloading google_re2-1.1.20251105-1-cp312-cp312-macosx_15_0_arm64.whl (482 kB)
+Installing collected packages: google-re2
+Successfully installed google-re2-1.1.20251105
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.1
+[notice] To update, run: /Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/cpburnz--python-pathspec/bin/python -m pip install --upgrade pip

@@ -1,0 +1,581 @@
+{
+  "id": "python-humanize--humanize",
+  "repo": "python-humanize/humanize",
+  "pr": 392,
+  "head_sha": "244ac0ed6baeb3d1789be61e1a0f8ef962e716f4",
+  "selected_pair_directory": "runs-1/python-humanize--humanize",
+  "reviewer": "agent technical review; no human maintainer judgment",
+  "human_maintainer_adoption": null,
+  "cases": [
+    {
+      "arm": "A",
+      "case_id": "TC001",
+      "title": "非零数字密集的大整数逐位保留",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_number.py",
+            "start_line": 86,
+            "end_line": 90,
+            "quote": "@pytest.mark.parametrize(\"sign\", [1, -1])\ndef test_intcomma_large_integer(sign: int) -> None:\n    value = sign * (10**400 + 123)\n    expected = (\"-\" if sign < 0 else \"\") + \"10\" + \",000\" * 132 + \",123\"\n    assert humanize.intcomma(value) == expected"
+          }
+        ],
+        "assessment": "已有稀疏405位左右大整数；新增405位密集数字完整输出。",
+        "model_claim": "not_found"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "python-humanize--humanize",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_humanize_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/python-humanize--humanize/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+          "exit_code": 0,
+          "elapsed_seconds": 1.685,
+          "log": "logs/model-checks/python-humanize--humanize/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/python-humanize--humanize/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_dense_405_digits",
+            "result": "passed",
+            "seconds": 0.001,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_humanize_cases.py",
+            "start_line": 20,
+            "end_line": 23,
+            "quote": "def test_dense_405_digits():\n    digits='123456789'*45;v=int(digits);result=humanize.intcomma(v)\n    assert result==grouped(v)\n    assert result.replace(',','')==digits"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "已有稀疏405位左右大整数；新增405位密集数字完整输出。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "dense-huge-integer"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC002",
+      "title": "显式 ndigits=None 与省略参数一致",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_number.py",
+            "start_line": 62,
+            "end_line": 67,
+            "quote": "        ([14308.40, None], \"14,308.4\"),\n        ([14308.40, 1], \"14,308.4\"),\n        ([14308.40, 2], \"14,308.40\"),\n        ([14308.40, 3], \"14,308.400\"),\n        ([1234.5454545], \"1,234.5454545\"),\n        ([1234.5454545, None], \"1,234.5454545\"),"
+          },
+          {
+            "path": "tests/test_number.py",
+            "start_line": 86,
+            "end_line": 90,
+            "quote": "@pytest.mark.parametrize(\"sign\", [1, -1])\ndef test_intcomma_large_integer(sign: int) -> None:\n    value = sign * (10**400 + 123)\n    expected = (\"-\" if sign < 0 else \"\") + \"10\" + \",000\" * 132 + \",123\"\n    assert humanize.intcomma(value) == expected"
+          }
+        ],
+        "assessment": "新增超大int显式None实际通过，但函数签名默认None并进入相同分支，与已测省略调用没有不同路径；低收益重复，不建议优先新增。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "python-humanize--humanize",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_humanize_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/python-humanize--humanize/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+          "exit_code": 0,
+          "elapsed_seconds": 1.685,
+          "log": "logs/model-checks/python-humanize--humanize/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/python-humanize--humanize/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_explicit_none_large_integer",
+            "result": "passed",
+            "seconds": 0.001,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_humanize_cases.py",
+            "start_line": 10,
+            "end_line": 13,
+            "quote": "def test_explicit_none_large_integer():\n    v=10**400+123;expected='10'+',000'*132+',123'\n    assert humanize.intcomma(v)==humanize.intcomma(v,ndigits=None)==expected\n"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "新增超大int显式None实际通过，但函数签名默认None并进入相同分支，与已测省略调用没有不同路径；低收益重复，不建议优先新增。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "explicit-none"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC003",
+      "title": "超出浮点范围的正负整数完整分组",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "covered",
+        "references": [
+          {
+            "path": "tests/test_number.py",
+            "start_line": 86,
+            "end_line": 90,
+            "quote": "@pytest.mark.parametrize(\"sign\", [1, -1])\ndef test_intcomma_large_integer(sign: int) -> None:\n    value = sign * (10**400 + 123)\n    expected = (\"-\" if sign < 0 else \"\") + \"10\" + \",000\" * 132 + \",123\"\n    assert humanize.intcomma(value) == expected"
+          }
+        ],
+        "assessment": "同等正负巨大整数完整断言已有native覆盖。",
+        "model_claim": "covered"
+      },
+      "execution": {
+        "kind": "native_baseline_reused",
+        "command": {
+          "label": "tests",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_number.py",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/native_python-humanize--humanize/junit.xml",
+            "-ra"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+          "exit_code": 0,
+          "elapsed_seconds": 2.147,
+          "log": "logs/native_python-humanize--humanize/05_tests.log"
+        },
+        "result": "passed",
+        "assertion_references": [
+          {
+            "path": "tests/test_number.py",
+            "start_line": 86,
+            "end_line": 90,
+            "quote": "@pytest.mark.parametrize(\"sign\", [1, -1])\ndef test_intcomma_large_integer(sign: int) -> None:\n    value = sign * (10**400 + 123)\n    expected = (\"-\" if sign < 0 else \"\") + \"10\" + \",000\" * 132 + \",123\"\n    assert humanize.intcomma(value) == expected"
+          }
+        ],
+        "native_record": "native_python-humanize--humanize.json"
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "同等正负巨大整数完整断言已有native覆盖。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "existing-huge-int"
+    },
+    {
+      "arm": "A",
+      "case_id": "TC004",
+      "title": "非整数非有限值仍保持原输出契约",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "covered",
+        "references": [
+          {
+            "path": "tests/test_number.py",
+            "start_line": 73,
+            "end_line": 83,
+            "quote": "        ([math.nan], \"NaN\"),\n        ([math.inf], \"+Inf\"),\n        ([-math.inf], \"-Inf\"),\n        ([\"nan\"], \"NaN\"),\n        ([\"-inf\"], \"-Inf\"),\n    ],\n)\ndef test_intcomma(\n    test_args: list[int] | list[float] | list[str], expected: str\n) -> None:\n    assert humanize.intcomma(*test_args) == expected"
+          }
+        ],
+        "assessment": "NaN/Inf/-Inf相同值与输出断言已有native覆盖。",
+        "model_claim": "covered"
+      },
+      "execution": {
+        "kind": "native_baseline_reused",
+        "command": {
+          "label": "tests",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_number.py",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/native_python-humanize--humanize/junit.xml",
+            "-ra"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+          "exit_code": 0,
+          "elapsed_seconds": 2.147,
+          "log": "logs/native_python-humanize--humanize/05_tests.log"
+        },
+        "result": "passed",
+        "assertion_references": [
+          {
+            "path": "tests/test_number.py",
+            "start_line": 73,
+            "end_line": 83,
+            "quote": "        ([math.nan], \"NaN\"),\n        ([math.inf], \"+Inf\"),\n        ([-math.inf], \"-Inf\"),\n        ([\"nan\"], \"NaN\"),\n        ([\"-inf\"], \"-Inf\"),\n    ],\n)\ndef test_intcomma(\n    test_args: list[int] | list[float] | list[str], expected: str\n) -> None:\n    assert humanize.intcomma(*test_args) == expected"
+          }
+        ],
+        "native_record": "native_python-humanize--humanize.json"
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "NaN/Inf/-Inf相同值与输出断言已有native覆盖。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "existing-nonfinite"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC001",
+      "title": "显式 ndigits=None 与省略参数保持一致",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_number.py",
+            "start_line": 62,
+            "end_line": 67,
+            "quote": "        ([14308.40, None], \"14,308.4\"),\n        ([14308.40, 1], \"14,308.4\"),\n        ([14308.40, 2], \"14,308.40\"),\n        ([14308.40, 3], \"14,308.400\"),\n        ([1234.5454545], \"1,234.5454545\"),\n        ([1234.5454545, None], \"1,234.5454545\"),"
+          },
+          {
+            "path": "tests/test_number.py",
+            "start_line": 86,
+            "end_line": 90,
+            "quote": "@pytest.mark.parametrize(\"sign\", [1, -1])\ndef test_intcomma_large_integer(sign: int) -> None:\n    value = sign * (10**400 + 123)\n    expected = (\"-\" if sign < 0 else \"\") + \"10\" + \",000\" * 132 + \",123\"\n    assert humanize.intcomma(value) == expected"
+          }
+        ],
+        "assessment": "显式None与省略参数同路径，实际通过但不是新的风险机制；低收益重复。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "python-humanize--humanize",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_humanize_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/python-humanize--humanize/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+          "exit_code": 0,
+          "elapsed_seconds": 1.685,
+          "log": "logs/model-checks/python-humanize--humanize/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/python-humanize--humanize/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_explicit_none_large_integer",
+            "result": "passed",
+            "seconds": 0.001,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_humanize_cases.py",
+            "start_line": 10,
+            "end_line": 13,
+            "quote": "def test_explicit_none_large_integer():\n    v=10**400+123;expected='10'+',000'*132+',123'\n    assert humanize.intcomma(v)==humanize.intcomma(v,ndigits=None)==expected\n"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "显式None与省略参数同路径，实际通过但不是新的风险机制；低收益重复。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "explicit-none"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC002",
+      "title": "密集数字的相邻超大整数保持不同且逐位准确",
+      "source_ids": [
+        3213333611
+      ],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "partial",
+        "references": [
+          {
+            "path": "tests/test_number.py",
+            "start_line": 86,
+            "end_line": 90,
+            "quote": "@pytest.mark.parametrize(\"sign\", [1, -1])\ndef test_intcomma_large_integer(sign: int) -> None:\n    value = sign * (10**400 + 123)\n    expected = (\"-\" if sign < 0 else \"\") + \"10\" + \",000\" * 132 + \",123\"\n    assert humanize.intcomma(value) == expected"
+          }
+        ],
+        "assessment": "跨产品数值转换精度风险可作为动机；本例保持Python int边界，新增密集大整数相邻值逐位完整且不同的断言，实际通过。",
+        "model_claim": "partial"
+      },
+      "execution": {
+        "kind": "new_scenario_execution",
+        "command": {
+          "slug": "python-humanize--humanize",
+          "label": "model_checks",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python",
+            "-m",
+            "pytest",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_humanize_cases.py",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize/pyproject.toml",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/python-humanize--humanize/model_checks.xml",
+            "-ra",
+            "-v"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+          "exit_code": 0,
+          "elapsed_seconds": 1.685,
+          "log": "logs/model-checks/python-humanize--humanize/01_model_checks.log"
+        },
+        "junit": "logs/model-checks/python-humanize--humanize/model_checks.xml",
+        "test_results": [
+          {
+            "name": "test_dense_adjacent_large_integers",
+            "result": "passed",
+            "seconds": 0.001,
+            "message": null
+          }
+        ],
+        "result": "passed",
+        "assertions": [
+          {
+            "path": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_humanize_cases.py",
+            "start_line": 14,
+            "end_line": 19,
+            "quote": "def test_dense_adjacent_large_integers():\n    a=123456789*10**312+9007199254740992;b=a+1\n    aa=humanize.intcomma(a);bb=humanize.intcomma(b)\n    assert aa==grouped(a);assert bb==grouped(b);assert aa!=bb\n    assert aa.endswith(',992');assert bb.endswith(',993')\n"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": true,
+        "reason": "跨产品数值转换精度风险可作为动机；本例保持Python int边界，新增密集大整数相邻值逐位完整且不同的断言，实际通过。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "dense-adjacent-integer",
+      "historical_transfer": "limited numeric-conversion risk transfer; JavaScript query string precision and Python huge-int formatting are different boundaries; no target defect assumed"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC003",
+      "title": "超出浮点范围的正负整数完整输出",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "covered",
+        "references": [
+          {
+            "path": "tests/test_number.py",
+            "start_line": 86,
+            "end_line": 90,
+            "quote": "@pytest.mark.parametrize(\"sign\", [1, -1])\ndef test_intcomma_large_integer(sign: int) -> None:\n    value = sign * (10**400 + 123)\n    expected = (\"-\" if sign < 0 else \"\") + \"10\" + \",000\" * 132 + \",123\"\n    assert humanize.intcomma(value) == expected"
+          }
+        ],
+        "assessment": "同等正负巨大整数完整断言已有native覆盖。",
+        "model_claim": "covered"
+      },
+      "execution": {
+        "kind": "native_baseline_reused",
+        "command": {
+          "label": "tests",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_number.py",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/native_python-humanize--humanize/junit.xml",
+            "-ra"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+          "exit_code": 0,
+          "elapsed_seconds": 2.147,
+          "log": "logs/native_python-humanize--humanize/05_tests.log"
+        },
+        "result": "passed",
+        "assertion_references": [
+          {
+            "path": "tests/test_number.py",
+            "start_line": 86,
+            "end_line": 90,
+            "quote": "@pytest.mark.parametrize(\"sign\", [1, -1])\ndef test_intcomma_large_integer(sign: int) -> None:\n    value = sign * (10**400 + 123)\n    expected = (\"-\" if sign < 0 else \"\") + \"10\" + \",000\" * 132 + \",123\"\n    assert humanize.intcomma(value) == expected"
+          }
+        ],
+        "native_record": "native_python-humanize--humanize.json"
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "同等正负巨大整数完整断言已有native覆盖。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "existing-huge-int"
+    },
+    {
+      "arm": "B",
+      "case_id": "TC004",
+      "title": "非整数的非有限浮点值继续使用原有输出契约",
+      "source_ids": [],
+      "applicable": true,
+      "existing_coverage": {
+        "status": "covered",
+        "references": [
+          {
+            "path": "tests/test_number.py",
+            "start_line": 73,
+            "end_line": 83,
+            "quote": "        ([math.nan], \"NaN\"),\n        ([math.inf], \"+Inf\"),\n        ([-math.inf], \"-Inf\"),\n        ([\"nan\"], \"NaN\"),\n        ([\"-inf\"], \"-Inf\"),\n    ],\n)\ndef test_intcomma(\n    test_args: list[int] | list[float] | list[str], expected: str\n) -> None:\n    assert humanize.intcomma(*test_args) == expected"
+          }
+        ],
+        "assessment": "NaN/Inf/-Inf相同值与输出断言已有native覆盖。",
+        "model_claim": "covered"
+      },
+      "execution": {
+        "kind": "native_baseline_reused",
+        "command": {
+          "label": "tests",
+          "argv": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_number.py",
+            "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/native_python-humanize--humanize/junit.xml",
+            "-ra"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+          "exit_code": 0,
+          "elapsed_seconds": 2.147,
+          "log": "logs/native_python-humanize--humanize/05_tests.log"
+        },
+        "result": "passed",
+        "assertion_references": [
+          {
+            "path": "tests/test_number.py",
+            "start_line": 73,
+            "end_line": 83,
+            "quote": "        ([math.nan], \"NaN\"),\n        ([math.inf], \"+Inf\"),\n        ([-math.inf], \"-Inf\"),\n        ([\"nan\"], \"NaN\"),\n        ([\"-inf\"], \"-Inf\"),\n    ],\n)\ndef test_intcomma(\n    test_args: list[int] | list[float] | list[str], expected: str\n) -> None:\n    assert humanize.intcomma(*test_args) == expected"
+          }
+        ],
+        "native_record": "native_python-humanize--humanize.json"
+      },
+      "new_defect": false,
+      "technical_adoption": {
+        "adopt": false,
+        "reason": "NaN/Inf/-Inf相同值与输出断言已有native覆盖。",
+        "scope": "accept proposed verification / defect for technical follow-up; no upstream code or maintainer adoption implied"
+      },
+      "human_maintainer_adoption": null,
+      "duplicate_group": "existing-nonfinite"
+    }
+  ],
+  "native_record": "native_python-humanize--humanize.json",
+  "model_check_execution": {
+    "slug": "python-humanize--humanize",
+    "label": "model_checks",
+    "argv": [
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/python-humanize--humanize/bin/python",
+      "-m",
+      "pytest",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/test_humanize_cases.py",
+      "-c",
+      "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize/pyproject.toml",
+      "--junitxml=/Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/python-humanize--humanize/model_checks.xml",
+      "-ra",
+      "-v"
+    ],
+    "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/python-humanize--humanize",
+    "exit_code": 0,
+    "elapsed_seconds": 1.685,
+    "log": "logs/model-checks/python-humanize--humanize/01_model_checks.log"
+  },
+  "model_check_junit": "logs/model-checks/python-humanize--humanize/model_checks.xml",
+  "model_check_counts": {
+    "passed": 3,
+    "failed": 0,
+    "error": 0,
+    "skipped": 0
+  },
+  "platform_gaps": [
+    "Windows/Linux and other Python versions not executed."
+  ],
+  "history_source_assessment": {
+    "source_count": 1,
+    "treatment": "historical_sources_added",
+    "sources": [
+      {
+        "id": 3213333611,
+        "url": "https://github.com/n8n-io/n8n/issues/17132",
+        "quality": "limited_relevant",
+        "reason": "n8n/Grist converts integer query strings to JS Number with reported precision loss. Huge-int formatting has a conversion hazard, but language, input type and overflow/rounding boundaries differ. Case keeps Python int and validates exact neighboring outputs; no external PR outcome imported as target proof.",
+        "external_pr_fix_verified_for_target": false,
+        "linked_pr_evidence_warning": "Provided linked PR #17136 patch names a helper isSafeInteger but compares Number.MIN_VALUE and Number.MAX_VALUE, not Number.MIN_SAFE_INTEGER/MAX_SAFE_INTEGER. Merged/closing link does not establish precision repair; external implementation was not executed.",
+        "evidence_status": {
+          "issue_report": "verified supplied snapshot",
+          "transfer_relevance": "inferred limited analogy",
+          "linked_fix_effectiveness": "unverified"
+        }
+      }
+    ]
+  },
+  "summary": {
+    "cases": 8,
+    "applicable": 8,
+    "existing_covered": 4,
+    "technically_adopted_cases": 2,
+    "new_defects": 0,
+    "human_evaluations": 0
+  },
+  "final_git_status": "",
+  "final_head_sha": "244ac0ed6baeb3d1789be61e1a0f8ef962e716f4"
+}

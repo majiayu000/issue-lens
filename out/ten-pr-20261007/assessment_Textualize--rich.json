@@ -1,0 +1,497 @@
+{
+  "id": "Textualize--rich",
+  "head_sha": "05c5dfc8fcbb1c967490540cc080c3d534a91a12",
+  "status": "technically_assessed",
+  "cases": [
+    {
+      "arm": "A",
+      "case_id": "TC001",
+      "title": "直接打印混合宽度长文本时不丢失折行边界字符",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "partial",
+        "citations": [
+          {
+            "path": "tests/test_text.py",
+            "line": 456,
+            "quote": "    text = Text(\"123ありがとうございました\")\n    console = Console(width=20)  # let's ensure the width passed to wrap() wins.\n\n    wrapped_lines = text.wrap(console, width=8)\n    with console.capture() as capture:\n        console.print(wrapped_lines)\n\n    assert capture.get() == \"123あり\\nがとうご\\nざいまし\\nた\\n\"",
+            "verified_against_frozen_head": true,
+            "scope": "已有相同文本和折行宽度的完整输出断言，但打印对象是 wrapped_lines，未覆盖本用例直接打印原始 Text 的触发路径。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "additional_boundary_check",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich/pyproject.toml",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/Textualize--rich/model-cases.xml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/Textualize--rich/test_model_cases.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich",
+          "exit_code": 0,
+          "seconds": 2.212,
+          "log": "native-logs/Textualize--rich/07-model-cases.log",
+          "environment_overrides": {}
+        },
+        "test": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/Textualize--rich/test_model_cases.py::test_A_TC001_direct_console_print",
+        "result": "passed"
+      },
+      "new_defect": false,
+      "technical_adoption": true,
+      "technical_adoption_reason": "Adopted as an isolated executable regression candidate for a distinct current-diff boundary; not committed to upstream. Passing validates executability and the stated output only.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "A",
+      "case_id": "TC002",
+      "title": "词能放入完整新行时整体换行，不占用当前行剩余空间折叠",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "partial",
+        "citations": [
+          {
+            "path": "tests/test_text.py",
+            "line": 405,
+            "quote": "    text = Text(\"foo bar baz\")\n    lines = text.wrap(Console(), 3)\n    print(repr(lines))\n    assert len(lines) == 3\n    assert lines[0] == Text(\"foo\")\n    assert lines[1] == Text(\"bar\")\n    assert lines[2] == Text(\"baz\")",
+            "verified_against_frozen_head": true,
+            "scope": "已有按词换行断言，但宽度 3 与词长 3 相等，没有本用例剩余 2 单元而下一词需要 4 单元的条件。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "additional_boundary_check",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich/pyproject.toml",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/Textualize--rich/model-cases.xml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/Textualize--rich/test_model_cases.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich",
+          "exit_code": 0,
+          "seconds": 2.212,
+          "log": "native-logs/Textualize--rich/07-model-cases.log",
+          "environment_overrides": {}
+        },
+        "test": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/Textualize--rich/test_model_cases.py::test_A_TC002_whole_ascii_word_moves_to_new_line",
+        "result": "passed"
+      },
+      "new_defect": false,
+      "technical_adoption": true,
+      "technical_adoption_reason": "Adopted as an isolated executable regression candidate for a distinct current-diff boundary; not committed to upstream. Passing validates executability and the stated output only.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "A",
+      "case_id": "TC003",
+      "title": "折行位置落在双宽字符内部时保留全部字符",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "covered",
+        "citations": [
+          {
+            "path": "tests/test_text.py",
+            "line": 443,
+            "quote": "    text = Text(\"わさび\")\n    lines = text.wrap(Console(), 3)\n    assert lines._lines == [\n        Text(\"わ\"),\n        Text(\"さ\"),\n        Text(\"び\"),\n    ]",
+            "verified_against_frozen_head": true,
+            "scope": "触发条件为宽度 3 截入双宽字符，断言逐行保留三个字符，与本用例同等覆盖；仅审查源码，未执行。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "reuse_native_assertions",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/Textualize--rich/pytest.xml",
+            "tests/test_cells.py",
+            "tests/test_text.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich",
+          "exit_code": 0,
+          "seconds": 10.447,
+          "log": "native-logs/Textualize--rich/03-pytest.log",
+          "environment_overrides": {}
+        },
+        "result": "passed",
+        "assertion_citations": [
+          {
+            "path": "tests/test_text.py",
+            "line": 443,
+            "quote": "    text = Text(\"わさび\")\n    lines = text.wrap(Console(), 3)\n    assert lines._lines == [\n        Text(\"わ\"),\n        Text(\"さ\"),\n        Text(\"び\"),\n    ]",
+            "verified_against_frozen_head": true,
+            "scope": "触发条件为宽度 3 截入双宽字符，断言逐行保留三个字符，与本用例同等覆盖；仅审查源码，未执行。"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": false,
+      "technical_adoption_reason": "Same trigger and output assertions already exist at the frozen head. Reused the passing native suite; no new regression candidate adopted.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "A",
+      "case_id": "TC004",
+      "title": "当前行放不下且整行仍容不下的长词先换行再折叠",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "covered",
+        "citations": [
+          {
+            "path": "tests/test_text.py",
+            "line": 424,
+            "quote": "    text = Text(\"1234 12345678\")\n    lines = text.wrap(Console(), 7)\n    assert lines._lines == [\n        Text(\"1234 \"),\n        Text(\"1234567\"),\n        Text(\"8\"),\n    ]",
+            "verified_against_frozen_head": true,
+            "scope": "已有测试明确断言先保留前词所在行，再将 8 单元长词拆成 7 与 1，覆盖本用例契约。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "reuse_native_assertions",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/Textualize--rich/pytest.xml",
+            "tests/test_cells.py",
+            "tests/test_text.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich",
+          "exit_code": 0,
+          "seconds": 10.447,
+          "log": "native-logs/Textualize--rich/03-pytest.log",
+          "environment_overrides": {}
+        },
+        "result": "passed",
+        "assertion_citations": [
+          {
+            "path": "tests/test_text.py",
+            "line": 424,
+            "quote": "    text = Text(\"1234 12345678\")\n    lines = text.wrap(Console(), 7)\n    assert lines._lines == [\n        Text(\"1234 \"),\n        Text(\"1234567\"),\n        Text(\"8\"),\n    ]",
+            "verified_against_frozen_head": true,
+            "scope": "已有测试明确断言先保留前词所在行，再将 8 单元长词拆成 7 与 1，覆盖本用例契约。"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": false,
+      "technical_adoption_reason": "Same trigger and output assertions already exist at the frozen head. Reused the passing native suite; no new regression candidate adopted.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "B",
+      "case_id": "TC001",
+      "title": "CJK 词容不下当前行但能放入完整新行时保持整词",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "partial",
+        "citations": [
+          {
+            "path": "tests/test_text.py",
+            "line": 405,
+            "quote": "    text = Text(\"foo bar baz\")\n    lines = text.wrap(Console(), 3)\n    print(repr(lines))\n    assert len(lines) == 3\n    assert lines[0] == Text(\"foo\")\n    assert lines[1] == Text(\"bar\")\n    assert lines[2] == Text(\"baz\")",
+            "verified_against_frozen_head": true,
+            "scope": "已有断言覆盖 ASCII 词移到新行，但单宽字符数与显示宽度相同，不能验证本用例的 CJK 宽度差异。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "additional_boundary_check",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich/pyproject.toml",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/Textualize--rich/model-cases.xml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/Textualize--rich/test_model_cases.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich",
+          "exit_code": 0,
+          "seconds": 2.212,
+          "log": "native-logs/Textualize--rich/07-model-cases.log",
+          "environment_overrides": {}
+        },
+        "test": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/Textualize--rich/test_model_cases.py::test_B_TC001_whole_cjk_word_moves_to_new_line",
+        "result": "passed"
+      },
+      "new_defect": false,
+      "technical_adoption": true,
+      "technical_adoption_reason": "Adopted as an isolated executable regression candidate for a distinct current-diff boundary; not committed to upstream. Passing validates executability and the stated output only.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "B",
+      "case_id": "TC002",
+      "title": "已有前置词时连续 CJK 长词跨多个奇数宽度行",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "partial",
+        "citations": [
+          {
+            "path": "tests/test_text.py",
+            "line": 492,
+            "quote": "    text = Text(\"XX 12345678912\")\n    lines = text.wrap(Console(), 4)\n\n    assert lines._lines == [\n        Text(\"XX \"),\n        Text(\"1234\"),\n        Text(\"5678\"),\n        Text(\"912\"),\n    ]",
+            "verified_against_frozen_head": true,
+            "scope": "验证前置词之后长词从新行开始折叠，但全部为单宽字符，未覆盖 CJK 折叠段的字符数与单元格宽度差异。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "additional_boundary_check",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "-c",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich/pyproject.toml",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/Textualize--rich/model-cases.xml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/Textualize--rich/test_model_cases.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich",
+          "exit_code": 0,
+          "seconds": 2.212,
+          "log": "native-logs/Textualize--rich/07-model-cases.log",
+          "environment_overrides": {}
+        },
+        "test": "/Users/apple/.codex/task-evidence/issue-lens-20261007/model-checks/Textualize--rich/test_model_cases.py::test_B_TC002_cjk_long_word_after_prefix",
+        "result": "passed"
+      },
+      "new_defect": false,
+      "technical_adoption": true,
+      "technical_adoption_reason": "Adopted as an isolated executable regression candidate for a distinct current-diff boundary; not committed to upstream. Passing validates executability and the stated output only.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "B",
+      "case_id": "TC003",
+      "title": "折行边界落在双宽字符内部时保留全部字符",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "covered",
+        "citations": [
+          {
+            "path": "tests/test_text.py",
+            "line": 443,
+            "quote": "    text = Text(\"わさび\")\n    lines = text.wrap(Console(), 3)\n    assert lines._lines == [\n        Text(\"わ\"),\n        Text(\"さ\"),\n        Text(\"び\"),\n    ]",
+            "verified_against_frozen_head": true,
+            "scope": "实际触发宽度落在双宽字符内部，逐行精确断言足以验证字符完整性和行宽。仅审查源码，未执行。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "reuse_native_assertions",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/Textualize--rich/pytest.xml",
+            "tests/test_cells.py",
+            "tests/test_text.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich",
+          "exit_code": 0,
+          "seconds": 10.447,
+          "log": "native-logs/Textualize--rich/03-pytest.log",
+          "environment_overrides": {}
+        },
+        "result": "passed",
+        "assertion_citations": [
+          {
+            "path": "tests/test_text.py",
+            "line": 443,
+            "quote": "    text = Text(\"わさび\")\n    lines = text.wrap(Console(), 3)\n    assert lines._lines == [\n        Text(\"わ\"),\n        Text(\"さ\"),\n        Text(\"び\"),\n    ]",
+            "verified_against_frozen_head": true,
+            "scope": "实际触发宽度落在双宽字符内部，逐行精确断言足以验证字符完整性和行宽。仅审查源码，未执行。"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": false,
+      "technical_adoption_reason": "Same trigger and output assertions already exist at the frozen head. Reused the passing native suite; no new regression candidate adopted.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "B",
+      "case_id": "TC004",
+      "title": "单宽前缀与连续 CJK 混排折叠后输出完整",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "covered",
+        "citations": [
+          {
+            "path": "tests/test_text.py",
+            "line": 456,
+            "quote": "    text = Text(\"123ありがとうございました\")\n    console = Console(width=20)  # let's ensure the width passed to wrap() wins.\n\n    wrapped_lines = text.wrap(console, width=8)\n    with console.capture() as capture:\n        console.print(wrapped_lines)\n\n    assert capture.get() == \"123あり\\nがとうご\\nざいまし\\nた\\n\"",
+            "verified_against_frozen_head": true,
+            "scope": "同一混排输入和折行宽度，且验证了 Console 捕获结果，而非仅验证底层分割函数。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "reuse_native_assertions",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/Textualize--rich/pytest.xml",
+            "tests/test_cells.py",
+            "tests/test_text.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich",
+          "exit_code": 0,
+          "seconds": 10.447,
+          "log": "native-logs/Textualize--rich/03-pytest.log",
+          "environment_overrides": {}
+        },
+        "result": "passed",
+        "assertion_citations": [
+          {
+            "path": "tests/test_text.py",
+            "line": 456,
+            "quote": "    text = Text(\"123ありがとうございました\")\n    console = Console(width=20)  # let's ensure the width passed to wrap() wins.\n\n    wrapped_lines = text.wrap(console, width=8)\n    with console.capture() as capture:\n        console.print(wrapped_lines)\n\n    assert capture.get() == \"123あり\\nがとうご\\nざいまし\\nた\\n\"",
+            "verified_against_frozen_head": true,
+            "scope": "同一混排输入和折行宽度，且验证了 Console 捕获结果，而非仅验证底层分割函数。"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": false,
+      "technical_adoption_reason": "Same trigger and output assertions already exist at the frozen head. Reused the passing native suite; no new regression candidate adopted.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    },
+    {
+      "arm": "B",
+      "case_id": "TC005",
+      "title": "当前行空间不足且完整新行也容不下长词",
+      "applicable": true,
+      "existing_coverage": {
+        "level": "covered",
+        "citations": [
+          {
+            "path": "tests/test_text.py",
+            "line": 424,
+            "quote": "    text = Text(\"1234 12345678\")\n    lines = text.wrap(Console(), 7)\n    assert lines._lines == [\n        Text(\"1234 \"),\n        Text(\"1234567\"),\n        Text(\"8\"),\n    ]",
+            "verified_against_frozen_head": true,
+            "scope": "同时验证当前行剩余空间不足、长词超过整行宽度以及从新行开始多行折叠。"
+          }
+        ],
+        "review_scope": "Frozen native test files and targeted whole-tests-directory literal search; semantic comparison of cited assertions."
+      },
+      "execution": {
+        "kind": "reuse_native_assertions",
+        "command": {
+          "command": [
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-venvs/Textualize--rich/bin/python",
+            "-m",
+            "pytest",
+            "-q",
+            "--junitxml",
+            "/Users/apple/.codex/task-evidence/issue-lens-20261007/native-logs/Textualize--rich/pytest.xml",
+            "tests/test_cells.py",
+            "tests/test_text.py"
+          ],
+          "cwd": "/Users/apple/.codex/task-evidence/issue-lens-20261007/samples/Textualize--rich",
+          "exit_code": 0,
+          "seconds": 10.447,
+          "log": "native-logs/Textualize--rich/03-pytest.log",
+          "environment_overrides": {}
+        },
+        "result": "passed",
+        "assertion_citations": [
+          {
+            "path": "tests/test_text.py",
+            "line": 424,
+            "quote": "    text = Text(\"1234 12345678\")\n    lines = text.wrap(Console(), 7)\n    assert lines._lines == [\n        Text(\"1234 \"),\n        Text(\"1234567\"),\n        Text(\"8\"),\n    ]",
+            "verified_against_frozen_head": true,
+            "scope": "同时验证当前行剩余空间不足、长词超过整行宽度以及从新行开始多行折叠。"
+          }
+        ]
+      },
+      "new_defect": false,
+      "technical_adoption": false,
+      "technical_adoption_reason": "Same trigger and output assertions already exist at the frozen head. Reused the passing native suite; no new regression candidate adopted.",
+      "human_maintainer_adoption": null,
+      "source_ids": [],
+      "full_requirement_verified": true
+    }
+  ],
+  "human_maintainer_adoption": null,
+  "history_source_count": 0,
+  "history_source_assessment": [],
+  "limitations": [
+    "Technical review is by this agent, not external maintainers.",
+    "No newly discovered product defect in executed cases.",
+    "Incremental checks passing do not prove historical retrieval improves review.",
+    "Technical review wall time was not separately timed; command durations are measured."
+  ],
+  "history_treatment": "No retrieved historical cases in either arm for this sample; A/B differences are repeated generation variability, not evidence of historical-case benefit.",
+  "extra_check_sha256": "29cc0394e462380b26307e1b16b47f43f87d80e7966a270ce86346d34db7d205",
+  "final_clone_verification": {
+    "head_sha": "05c5dfc8fcbb1c967490540cc080c3d534a91a12",
+    "git_status": ""
+  },
+  "review_seconds": null,
+  "review_time_limitation": "No independently timed technical assessment interval; execution seconds are measured in command records.",
+  "additional_check_counts": {
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

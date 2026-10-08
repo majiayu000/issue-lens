@@ -1,0 +1,198 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R1",
+        "category": "空输入语义边界",
+        "title": "显式空字符串元素不被当作未提供列表",
+        "preconditions": [
+          "使用默认值为 [\"World\"]、未声明 envvar 的 list[str] 位置参数命令。",
+          "回调记录收到的完整列表；不传 default_map。",
+          "通过 CliRunner 直接传递空字符串 token，避免 shell 引号差异。"
+        ],
+        "steps": [
+          "通过 CliRunner 调用 [\"hello-all-args\", \"\"]。",
+          "检查退出码和回调收到的列表。"
+        ],
+        "expected_result": "退出码为 0，回调收到 [\"\"]，不回退为 [\"World\"]。这是依据所给解析代码仅将空元组转换为 None 提出的边界预期。",
+        "source_ids": [
+          4560755924
+        ],
+        "rationale": "历史案例区分缺失列表与显式空列表，可迁移其区分缺失和显式输入的测试思路。目标 CLI 中这里只测试实际可传入的空字符串元素，不将其等同于空列表，也不复制来源产品的空页脚行为。",
+        "coverage": "not_found",
+        "incremental_value": "新增含一个空字符串的非空参数序列边界，检查改动不会扩大为对所有空值回退默认。",
+        "existing_tests": [],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "环境变量与默认值解析",
+        "title": "声明 envvar 后分别验证变量缺失回退和变量存在解析",
+        "preconditions": [
+          "使用所给 hello-all-envvar 命令，其默认列表为 [\"World\"]，envvar 为 NAMES。",
+          "显式控制 NAMES，避免继承执行环境中的值；不传 default_map。",
+          "命令回调可记录实际收到的 names 列表。"
+        ],
+        "steps": [
+          "移除 NAMES，调用 [\"hello-all-envvar\"]，记录退出码和实际列表。",
+          "设置 NAMES 为 \"Rick   Morty\"，再次调用同一命令，记录退出码和实际列表。"
+        ],
+        "expected_result": "两次调用退出码均为 0；NAMES 缺失时实际列表为 [\"World\"]，存在时实际列表为 [\"Rick\", \"Morty\"]。",
+        "source_ids": [],
+        "rationale": "PRD 明确指出 envvar 设置曾掩盖无 envvar 的默认值问题；补充受控的来源切换检查，并保留所给环境变量分词测试的行为。列表精确值依据现有测试意图提出加强断言，不据此断言所有来源的完整优先级。",
+        "coverage": "partial",
+        "incremental_value": "新增显式清除 NAMES 的环境隔离，以及精确列表断言，防止环境值掩盖默认回退，或额外元素被包含式输出断言漏检。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "    result = runner.invoke(app, [\"hello-all-envvar\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "reason": "已有默认回退调用及输出断言，但该测试片段未显式清除 NAMES，也未断言完整列表。",
+            "path": "tests/test_types.py",
+            "line": 142
+          },
+          {
+            "test_id": "T1",
+            "quote": "    monkeypatch.setenv(\"NAMES\", \"Rick   Morty\")\n    result = runner.invoke(app, [\"hello-all-envvar\"])\n    assert result.exit_code == 0\n    assert \"Hello Rick!\" in result.output\n    assert \"Hello Morty!\" in result.output",
+            "reason": "已有环境变量存在及多空格分词覆盖，但包含式输出断言没有排除默认元素或其他额外元素。",
+            "path": "tests/test_types.py",
+            "line": 149
+          }
+        ],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "列表位置参数默认值",
+        "title": "未提供位置参数且未配置环境变量时使用默认列表",
+        "preconditions": [
+          "使用所给 hello-all-args 命令，其默认值为 [\"World\"]，未声明 envvar。",
+          "调用时不传 default_map。"
+        ],
+        "steps": [
+          "通过 CliRunner 调用 [\"hello-all-args\"]。",
+          "检查退出码和输出。"
+        ],
+        "expected_result": "退出码为 0，输出包含 Hello World!。",
+        "source_ids": [
+          4560755924
+        ],
+        "rationale": "直接覆盖 R1。历史案例提供的相关触发条件是可选列表输入缺失时应进入默认值处理；仅迁移缺失输入这一边界，不迁移 TOML、TUI 或 serde 实现。该来源的未合并 PR 不证明目标产品存在相同根因或已被修复。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给测试已包含无 envvar 声明、无显式参数的同等调用和断言。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "def test_list_empty() -> None:\n    result = runner.invoke(app, [\"hello-all-args\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "reason": "对应命令声明没有 envvar，调用未提供列表值；断言成功退出并输出默认元素。仅依据提供的文件判断，未执行测试。",
+            "path": "tests/test_types.py",
+            "line": 133
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R2",
+        "category": "列表选项默认值",
+        "title": "未提供列表选项时使用默认列表",
+        "preconditions": [
+          "使用所给 hello-all-options 命令，其 --name 默认值为 [\"World\"]。",
+          "调用时不传 default_map 或任何 --name。"
+        ],
+        "steps": [
+          "通过 CliRunner 调用 [\"hello-all-options\"]。",
+          "检查退出码和输出。"
+        ],
+        "expected_result": "退出码为 0，输出包含 Hello World!。",
+        "source_ids": [],
+        "rationale": "直接覆盖 R2 要求补充的原有行为回归测试，不将其描述为新增功能。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给测试已有同等默认列表选项覆盖。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "    result = runner.invoke(app, [\"hello-all-options\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "reason": "调用省略 --name，并断言默认元素输出及成功退出。",
+            "path": "tests/test_types.py",
+            "line": 138
+          }
+        ],
+        "id": "TC004"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "显式输入与默认值边界",
+        "title": "显式列表值保持原有替换默认值行为",
+        "preconditions": [
+          "使用所给 hello-all-args 和 hello-all-options 命令。",
+          "两者默认值均为 [\"World\"]，均未声明 envvar；不传 default_map。",
+          "本用例的替换规则依据所给 diff 和测试断言，PRD 本身未明确该规则。"
+        ],
+        "steps": [
+          "调用 [\"hello-all-args\", \"Rick\", \"Morty\"]。",
+          "调用 [\"hello-all-options\", \"--name\", \"Rick\", \"--name\", \"Morty\"]。",
+          "分别检查退出码、显式元素输出和默认元素是否出现。"
+        ],
+        "expected_result": "两次调用退出码均为 0，输出均包含 Hello Rick! 和 Hello Morty!，均不包含 Hello World!。",
+        "source_ids": [],
+        "rationale": "检查空可变长参数处理改动没有影响非空输入；同时保留 diff 已明确断言的列表选项行为。该用例关联 R1，并兼顾 R2，不将替换规则表述为 PRD 已明确的新契约。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给测试已覆盖两种显式列表输入及排除默认元素的断言。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "    result = runner.invoke(app, [\"hello-all-args\", \"Rick\", \"Morty\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" not in result.output\n    assert \"Hello Rick!\" in result.output\n    assert \"Hello Morty!\" in result.output",
+            "reason": "位置参数的触发条件和默认值排除断言相同。",
+            "path": "tests/test_types.py",
+            "line": 126
+          },
+          {
+            "test_id": "T1",
+            "quote": "    result = runner.invoke(\n        app, [\"hello-all-options\", \"--name\", \"Rick\", \"--name\", \"Morty\"]\n    )\n    assert result.exit_code == 0\n    assert \"Hello World!\" not in result.output\n    assert \"Hello Rick!\" in result.output\n    assert \"Hello Morty!\" in result.output",
+            "reason": "重复列表选项的触发条件和默认值排除断言相同。",
+            "path": "tests/test_types.py",
+            "line": 118
+          }
+        ],
+        "id": "TC005"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "default_map：解析器新增注释提到该来源，但未提供高层默认解析实现或对应测试，PRD 也未明确其行为及来源优先级。本草稿未制定完整优先级断言，需先澄清契约。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "无默认值的必填列表及空默认列表：改动适用于所有 nargs=-1 的空输入，但所给测试未展示这两种声明的高层行为；缺少足够契约证据，未断言其应成功还是报缺失参数错误。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "可变长列表与固定长度参数组合：所给 test_list_pair 仅覆盖列表非空且二元组完整的情况，未覆盖列表为空或二元组缺值时的默认解析和错误契约；因 diff 直接改变空列表处理，该主题仍有边界缺口。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "显式输入与环境变量/default_map 冲突，以及空环境变量：所给材料没有同等测试，PRD 未明确冲突优先级和空环境变量语义。显式输入替换参数默认值已有测试证据，但不能推广为完整来源优先级。"
+      },
+      {
+        "requirement_id": "R2",
+        "reason": "列表选项的空默认列表、多元素默认值和类型转换边界未在所给文件中发现同等覆盖；当前仅有单个字符串默认元素，尚不足以覆盖列表默认值的完整形状和转换行为。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 28968,
+      "cached_input_tokens": 28672,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2539,
+      "reasoning_output_tokens": 0
+    },
+    "thread_id": "01a116ba-9f34-7763-aee8-d3a64a509c1e"
+  },
+  "input_sha256": "9051e7c40b7b876d1914196b7586b884fda02516b8342982d4cafeb901d8d323",
+  "common_input_sha256": "d765344a3fe82a9618bde4ec73cdac3a8a6cd121bf5408b8059ec2e76b93c522",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

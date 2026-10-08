@@ -1,0 +1,162 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R2",
+        "category": "单个约束异常契约",
+        "title": "Specifier 拒绝缺失版本，空白不能充当版本",
+        "preconditions": [
+          "导入目标版本的 Specifier 和 InvalidSpecifier。",
+          "以真实空格和制表符构造字符串，不把转义符当作字面文本。"
+        ],
+        "steps": [
+          "分别调用 Specifier(\"===\") 和 Specifier(\"=== \")。",
+          "补充调用 Specifier(\"===\\t\") 和 Specifier(\" \\t=== \\t\")。",
+          "逐项记录构造阶段的异常类型。"
+        ],
+        "expected_result": "所有输入均抛出 InvalidSpecifier，不生成空 version 的 Specifier 对象。",
+        "source_ids": [],
+        "rationale": "覆盖 R2 的单个入口，并验证 diff 将版本字符数量从零个或多个改为至少一个后，操作符后的空白不会被视作版本内容。",
+        "coverage": "partial",
+        "incremental_value": "新增仅制表符及前后混合水平空白的边界；所给 T2 已列出 \"===\" 和 \"=== \"，未在可见材料中发现新增两项的同等断言。",
+        "existing_tests": [
+          {
+            "test_id": "T2",
+            "quote": "    def test_specifiers_invalid(self, specifier: str) -> None:\n        with pytest.raises(InvalidSpecifier):\n            Specifier(specifier)",
+            "reason": "该唯一片段展示参数化输入进入 Specifier 构造并断言 InvalidSpecifier；其前面的参数表明确包含 \"===\" 和 \"=== \"，但未列出本方案新增的制表符组合。",
+            "path": "tests/test_specifiers.py",
+            "line": 108
+          }
+        ],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R2",
+        "category": "集合解析边界",
+        "title": "SpecifierSet 不得忽略混合约束中的空任意版本",
+        "preconditions": [
+          "导入目标版本的 SpecifierSet 和 InvalidSpecifier。",
+          "每个输入单独构造，避免前一项异常中止后续检查。"
+        ],
+        "steps": [
+          "分别调用 SpecifierSet(\"===\")、SpecifierSet(\">=1,===\") 和 SpecifierSet(\"===,===x\")。",
+          "补充调用 SpecifierSet(\">=1,===,<=2\") 和 SpecifierSet(\">=1, ===\\t ,<=2\")。",
+          "记录异常，检查构造是否错误地返回仅含有效约束的集合。"
+        ],
+        "expected_result": "每个输入都抛出 InvalidSpecifier；有效邻接约束及分段去空白不能使缺失版本的 === 被丢弃或接受。",
+        "source_ids": [],
+        "rationale": "覆盖 R2 的集合入口。所给源码先按逗号拆分并去除分段空白，再调用 Specifier；因此中间位置及去空白后的缺失版本是与改动直接相关的边界。",
+        "coverage": "partial",
+        "incremental_value": "新增空任意版本位于两个有效约束之间，以及该分段含混合水平空白的直接 SpecifierSet 检查；Requirement 的类似测试不能替代此入口的异常契约。",
+        "existing_tests": [
+          {
+            "test_id": "T2",
+            "quote": "    @pytest.mark.parametrize(\"specifier\", [\"===\", \">=1,===\", \"===,===x\"])\n    def test_empty_arbitrary_version_invalid(self, specifier: str) -> None:\n        with pytest.raises(InvalidSpecifier):\n            SpecifierSet(specifier)",
+            "reason": "已有测试覆盖独立、末尾以及另一个任意版本之前的空版本，但未覆盖本方案新增的中间位置与混合空白组合。",
+            "path": "tests/test_specifiers.py",
+            "line": 1256
+          }
+        ],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R3",
+        "category": "共享规则正向保护",
+        "title": "非空任意版本仍可解析，三个入口保持一致",
+        "preconditions": [
+          "导入目标版本的 Requirement、Specifier 和 SpecifierSet。",
+          "将此项视为 diff 明确提供的正向回归保护，不推导为接受所有非空字符串的要求。"
+        ],
+        "steps": [
+          "对 \"===bar===\" 和 \"===arbitrarystring\"，分别构造 Specifier(s)、SpecifierSet(s) 和 Requirement(\"foo\" + s)。",
+          "检查 Specifier.operator 为 \"===\"，version 分别为 \"bar===\" 和 \"arbitrarystring\"；检查集合及需求中的对应约束保持相同版本文本。",
+          "对 \"===arbitrarystring,>=1\" 和 \">=1,===arbitrarystring\"，分别构造 SpecifierSet(s) 和 Requirement(\"foo\" + s)。",
+          "通过迭代比较约束成员，确认两种顺序均保留 \"===arbitrarystring\" 与 \">=1\"；不要求字符串输出保留输入顺序。"
+        ],
+        "expected_result": "这些输入成功构造；任意版本文本不被截断，混合约束的两个成员均保留。单个 Specifier 不接收混合约束输入。",
+        "source_ids": [],
+        "rationale": "R3 的共享规则变更只收紧空版本；diff 新增的正向测试明确保护非空版本及混合约束。跨入口检查用于防止收紧规则时误拒绝已有有效输入，不扩展到版本匹配、范围运算或序列化。",
+        "coverage": "partial",
+        "incremental_value": "已有 Requirement 测试覆盖带等号的非空文本及混合顺序；新增相同输入在 Specifier 和 SpecifierSet 的直接解析与成员属性断言。所给 T2 已有其他非空任意版本测试，但不等同于这些触发条件。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "    @pytest.mark.parametrize(\n        \"specifier\", [\"===bar===\", \"===arbitrarystring,>=1\", \">=1,===arbitrarystring\"]\n    )\n    def test_nonempty_arbitrary_version(self, specifier: str) -> None:\n        req = Requirement(f\"foo{specifier}\")\n        assert req.specifier == specifier",
+            "reason": "确切覆盖 Requirement 的带等号文本和两个混合顺序，并断言解析后约束相等；未直接断言另外两个入口的对应属性。",
+            "path": "tests/test_requirements.py",
+            "line": 272
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "基础异常契约",
+        "title": "Requirement 拒绝空任意版本及其语法包装",
+        "preconditions": [
+          "在目标版本的 Python 环境中导入 Requirement 和 InvalidRequirement。",
+          "直接测试库 API；不引入安装器、网络或其他产品功能。"
+        ],
+        "steps": [
+          "分别构造 Requirement(\"foo===\")、Requirement(\"foo === \") 和 Requirement(\"foo (=== )\")。",
+          "构造 Requirement('foo=== ; python_version >= \"3\"')。",
+          "分别构造 Requirement(\"foo===,>=1\")、Requirement(\"foo>=1,===\") 和 Requirement(\"foo>=1,===,<=2\")。",
+          "分别构造 Requirement(\"foo===x,===\") 和 Requirement(\"foo===x,===,>=1\")，记录异常类型。"
+        ],
+        "expected_result": "每个输入都在构造阶段抛出 InvalidRequirement，不返回 Requirement 对象。PRD 未指定完整错误消息，本方案不新增消息文本契约。",
+        "source_ids": [],
+        "rationale": "直接覆盖 R1；括号、标记和逗号位置来自本次 diff，用于验证外围语法不能掩盖缺失版本。没有提供历史 issue，不作故障根因迁移判断。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给 T1 已对这些输入断言 InvalidRequirement，适合作为本次优先回归项。这里只比较源码，未执行测试。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "    @pytest.mark.parametrize(\n        \"requirement_string\",\n        [\n            \"foo===\",\n            \"foo === \",\n            \"foo (=== )\",\n            'foo=== ; python_version >= \"3\"',\n            \"foo===,>=1\",\n            \"foo>=1,===\",\n            \"foo>=1,===,<=2\",\n            \"foo===x,===\",\n            \"foo===x,===,>=1\",\n        ],\n    )\n    def test_error_on_missing_arbitrary_version(self, requirement_string: str) -> None:\n        with pytest.raises(InvalidRequirement, match=\"===\"):\n            Requirement(requirement_string)",
+            "reason": "参数包含全部拟测触发条件，构造调用断言指定异常；已有 match=\"===\" 比本方案的异常类型要求更严格。",
+            "path": "tests/test_requirements.py",
+            "line": 691
+          }
+        ],
+        "id": "TC004"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "PRD 未规定错误消息全文、定位符或异常链契约；已有测试的 match=\"===\" 不足以建立这些要求，本方案仅要求指定异常类型。"
+      },
+      {
+        "requirement_id": "R2",
+        "reason": "T2 内容被截断，对新增空白组合及中间位置的覆盖判断仅限所给可见片段，不能据此断言仓库没有相关测试。"
+      },
+      {
+        "requirement_id": "R3",
+        "reason": "三个入口的行为回归不能单独证明 Requirement 实际复用了共享正则；未提供需求解析器源码，共享规则的接入关系尚缺直接证据。"
+      },
+      {
+        "requirement_id": "R3",
+        "reason": "PRD 提及测试矩阵和属性测试通过，但未提供矩阵配置、属性测试源码或执行记录；本方案未核验平台与 Python 版本覆盖，也未执行任何测试。"
+      },
+      {
+        "requirement_id": "R3",
+        "reason": "sources 为空，无法补充有历史来源的故障边界；正向接受规则仅依据本次 diff 的明确样例，不将所有非空输入或未明确的组合接受行为纳入要求。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 66232,
+      "cached_input_tokens": 7680,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2611,
+      "reasoning_output_tokens": 228
+    },
+    "thread_id": "01a116c6-d330-7552-96dd-343672af6427"
+  },
+  "input_sha256": "94b1c0a08599bbb05e33af19be460942f7803b20409a66fba17a296e1b9a10c5",
+  "common_input_sha256": "6c19cd26bade8b1e70fe274d25bdf66acf73352ba22079ded3210611c9ff92ce",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

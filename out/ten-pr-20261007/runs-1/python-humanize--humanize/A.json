@@ -1,0 +1,141 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R2",
+        "category": "整数精度保持",
+        "title": "非零数字密集的大整数逐位保留",
+        "preconditions": [
+          "使用 Python 3.12，默认语言环境。",
+          "构造 digits = '123456789' * 45，再令 value = int(digits)，共 405 位。",
+          "省略 ndigits；输入传给 intcomma 时已经是 Python int。"
+        ],
+        "steps": [
+          "按原始 digits 从右向左每三位分组，构造独立的完整期望字符串。",
+          "调用 humanize.intcomma(value)，与期望字符串完整比较。",
+          "移除返回值中的逗号，再与 digits 逐字比较。"
+        ],
+        "expected_result": "返回值每三位以逗号分组，移除逗号后与原始 405 位数字完全一致；没有数字舍入、丢失、科学计数法或 OverflowError。",
+        "source_ids": [],
+        "rationale": "R2 要求完整保留数字。现有回归值主要由零组成，本例补充中间各位均有有效数字的精度边界；输入构造不属于 numeric-string 解析测试。",
+        "coverage": "not_found",
+        "incremental_value": "补充超出浮点范围且中间数字密集的完整性断言；所给测试文件未发现这一触发条件。",
+        "existing_tests": [],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "默认精度入口",
+        "title": "显式 ndigits=None 与省略参数一致",
+        "preconditions": [
+          "使用 Python 3.12，默认语言环境。",
+          "输入为 Python int：10**400 + 123。"
+        ],
+        "steps": [
+          "分别调用 humanize.intcomma(value) 和 humanize.intcomma(value, ndigits=None)。",
+          "将两个返回值分别与 '10' + ',000' * 132 + ',123' 完整比较。"
+        ],
+        "expected_result": "两种调用方式均返回相同的完整分组字符串，不抛出 OverflowError。",
+        "source_ids": [],
+        "rationale": "R1 指定默认精度 ndigits=None；显式传入 None 仍属于本次修复范围，不涉及显式小数位格式化。",
+        "coverage": "partial",
+        "incremental_value": "补充大整数显式传入 ndigits=None 的入口；现有大整数测试只省略该参数。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "    value = sign * (10**400 + 123)\n    expected = (\"-\" if sign < 0 else \"\") + \"10\" + \",000\" * 132 + \",123\"\n    assert humanize.intcomma(value) == expected",
+            "reason": "已有相同量级整数和完整输出断言，但调用未显式传入 ndigits=None，因此只构成部分覆盖。",
+            "path": "tests/test_number.py",
+            "line": 88
+          }
+        ],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R2",
+        "category": "核心回归",
+        "title": "超出浮点范围的正负整数完整分组",
+        "preconditions": [
+          "使用 Python 3.12，通过 Python 调用 humanize.intcomma。",
+          "使用默认语言环境，千位分隔符为逗号。",
+          "输入为 Python int，省略 ndigits。"
+        ],
+        "steps": [
+          "分别令 sign 为 1 和 -1，构造 value = sign * (10**400 + 123)。",
+          "调用 humanize.intcomma(value)。",
+          "将返回值与 ('-' if sign < 0 else '') + '10' + ',000' * 132 + ',123' 完整比较。"
+        ],
+        "expected_result": "两次调用均返回完整匹配的字符串，不抛出 OverflowError；负数仅有一个前导负号，所有千位分组及末尾 123 均保留。",
+        "source_ids": [],
+        "rationale": "直接覆盖 R2，同时验证 R1 的默认精度无浮点范围溢出契约。未提供历史 issue，不引入其他产品的故障推断。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给测试已对相同大整数的正负输入进行完整字符串断言。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "    value = sign * (10**400 + 123)\n    expected = (\"-\" if sign < 0 else \"\") + \"10\" + \",000\" * 132 + \",123\"\n    assert humanize.intcomma(value) == expected",
+            "reason": "该片段包含大整数构造、完整分组期望和等值断言；同一文件中该测试的 sign 参数化为 [1, -1]。这是源码覆盖判断，不表示测试已执行。",
+            "path": "tests/test_number.py",
+            "line": 88
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "受影响分支回归",
+        "title": "非整数非有限值仍保持原输出契约",
+        "preconditions": [
+          "使用 Python 3.12，默认语言环境。",
+          "准备 math.nan、math.inf 和 -math.inf，均为 float。",
+          "省略 ndigits。"
+        ],
+        "steps": [
+          "分别调用 humanize.intcomma(math.nan)、humanize.intcomma(math.inf) 和 humanize.intcomma(-math.inf)。",
+          "分别与 'NaN'、'+Inf'、'-Inf' 比较。"
+        ],
+        "expected_result": "三个返回值依次为 NaN、+Inf、-Inf，不进入普通数字千位分组。",
+        "source_ids": [],
+        "rationale": "diff 将原 else 分支收窄为非 int 输入分支；验证跳过整数浮点校验时仍保留该分支的非有限值处理，属于直接受影响契约。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给参数化测试已有相同 float 触发条件和输出断言。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "        ([math.nan], \"NaN\"),\n        ([math.inf], \"+Inf\"),\n        ([-math.inf], \"-Inf\"),\n        ([\"nan\"], \"NaN\"),\n        ([\"-inf\"], \"-Inf\"),\n    ],\n)\ndef test_intcomma(\n    test_args: list[int] | list[float] | list[str], expected: str\n) -> None:\n    assert humanize.intcomma(*test_args) == expected",
+            "reason": "片段同时包含 intcomma 的非有限 float 参数和完整返回值断言，覆盖本例三个输入；其中字符串参数不作为扩大本次范围的依据。",
+            "path": "tests/test_number.py",
+            "line": 73
+          }
+        ],
+        "id": "TC004"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "仅据所给 tests/test_number.py 判断覆盖，未执行测试。显式 ndigits=None 的大整数入口仍需补充；未提供支持版本矩阵，不能将 Python 3.12 的方案推广为所有支持平台已验证。"
+      },
+      {
+        "requirement_id": "R2",
+        "reason": "已有正负稀疏大整数断言，但数字密集输入尚未在所给测试中发现；本草稿也未穷举不同总位数对应的首组长度。非默认语言环境的大整数分隔符转换未被这些用例覆盖，所给材料未提供对应 locale 测试或分隔符定义。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 28828,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2004,
+      "reasoning_output_tokens": 222
+    },
+    "thread_id": "01a116cb-0c95-75c3-9daa-7c7065b7d7a6"
+  },
+  "input_sha256": "53e51d7cb94005b8a118851cdd38d4d5fb62f65a8cd79dfcc5fc52f00d3688d0",
+  "common_input_sha256": "130d6a8c59820a205dd3d08205d83f12ce2e28d11e4d1cc740297eb4accb918f",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

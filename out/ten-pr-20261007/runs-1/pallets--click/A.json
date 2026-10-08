@@ -1,0 +1,169 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R1",
+        "category": "受影响的空输入边界",
+        "title": "首段仅含 no rewrap 标记时返回空字符串",
+        "preconditions": [
+          "使用待验证版本的 Click；直接测试 _make_default_short_help。",
+          "输入为 \\b\\n\\nChoose fruit e.g. apples.，其中 \\b 表示实际退格控制字符，max_length=45。"
+        ],
+        "steps": [
+          "构造首段仅含退格控制字符、第二段含帮助正文的输入。",
+          "调用 _make_default_short_help，记录返回值或异常。"
+        ],
+        "expected_result": "依据所给 diff 的首段处理和移除标记后的空检查，返回空字符串；不抛出异常，不读取第二段。该预期属于改动行为回归，尚非 PRD 明确规定的产品契约。",
+        "source_ids": [],
+        "rationale": "diff 将空检查移到移除标记之后，此用例直接触发新增检查。所给测试的标记变换在标记后保留单换行，未覆盖标记独占首段的双换行条件。",
+        "coverage": "not_found",
+        "incremental_value": "补充移除首段标记后没有任何词的边界，验证空检查与首段截取共同作用。",
+        "existing_tests": [],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "缩写基础契约",
+        "title": "句内 e.g. 的多个句点不得导致提前截断",
+        "preconditions": [
+          "使用待验证版本的 Click；直接测试 _make_default_short_help。",
+          "输入为 Choose fruit e.g. apples and pears.，max_length=45。"
+        ],
+        "steps": [
+          "调用 _make_default_short_help，记录返回字符串。",
+          "检查 e.g. 及其后续词是否完整保留。"
+        ],
+        "expected_result": "返回 Choose fruit e.g. apples and pears.，不得在 e.g. 处结束。",
+        "source_ids": [],
+        "rationale": "e.g. 是 PRD 明确列出的另一种缩写，包含内部句点和词尾句点。所给测试仅以 vs. 验证句内缩写，不能据此认定已经覆盖 e.g.。",
+        "coverage": "partial",
+        "incremental_value": "补充 PRD 点名的多句点缩写，验证内部句点与词尾句点共同出现时的行为。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "pytest.param(\n            \"Weigh apples vs. pears.\",\n            30,\n            \"Weigh apples vs. pears.\",\n            id=\"abbreviation inside sentence\",\n        ),",
+            "reason": "已有单个词尾句点缩写的触发条件，但输入不是 e.g.，缺少多句点缩写边界。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 22
+          },
+          {
+            "test_id": "T1",
+            "quote": "out = click.utils._make_default_short_help(value, max_length)\n    assert out == expect",
+            "reason": "已有完整结果断言机制，但所给参数未包含本用例输入。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 62
+          }
+        ],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "缩写基础契约",
+        "title": "句内 vs. 后保留完整的小写后续词",
+        "preconditions": [
+          "使用待验证版本的 Click；直接测试 _make_default_short_help。",
+          "输入为 Weigh apples vs. pears.，max_length=30。"
+        ],
+        "steps": [
+          "调用 _make_default_short_help，记录返回字符串。",
+          "比较返回字符串与完整输入。"
+        ],
+        "expected_result": "返回 Weigh apples vs. pears.，不得在 vs. 处提前结束，不追加省略号。",
+        "source_ids": [],
+        "rationale": "直接验证 PRD 明确指出的缩写故障，未借用其他产品功能或推断根因。所给测试已经包含同等输入和结果断言。",
+        "coverage": "covered",
+        "incremental_value": "无新增边界；作为核心回归用例保留。仅比较了所给源码，未执行测试。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "pytest.param(\n            \"Weigh apples vs. pears.\",\n            30,\n            \"Weigh apples vs. pears.\",\n            id=\"abbreviation inside sentence\",\n        ),",
+            "reason": "参数逐字对应本用例的输入、长度和预期。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 22
+          },
+          {
+            "test_id": "T1",
+            "quote": "out = click.utils._make_default_short_help(value, max_length)\n    assert out == expect",
+            "reason": "实际调用目标函数并断言完整返回值，构成同等覆盖。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 62
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "缩写与长度限制",
+        "title": "缩写不结束句子，但超长文本仍按长度缩短",
+        "preconditions": [
+          "使用待验证版本的 Click；直接测试 _make_default_short_help。",
+          "输入为 Weigh apples vs. pears and plums.，max_length=20。"
+        ],
+        "steps": [
+          "调用 _make_default_short_help，记录返回字符串及长度。",
+          "核对缩写后的截断标记和总长度。"
+        ],
+        "expected_result": "返回 Weigh apples vs....，长度为19；保留 vs. 自身句点并追加三个省略号句点，不将 vs. 当作句末直接返回 Weigh apples vs.。",
+        "source_ids": [],
+        "rationale": "验证修复缩写识别后仍保持受影响的短帮助长度契约。精确输出依据所给 diff 和测试，不将其扩展成所有异常宽度的产品要求。",
+        "coverage": "covered",
+        "incremental_value": "无新增边界；已有同等缩写与长度限制组合测试，适合作为改动回归用例。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "pytest.param(\n            \"Weigh apples vs. pears and plums.\",\n            20,\n            \"Weigh apples vs....\",\n            id=\"abbreviation inside truncated sentence\",\n        ),",
+            "reason": "触发条件、宽度和精确输出均与本用例一致。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 28
+          },
+          {
+            "test_id": "T1",
+            "quote": "out = click.utils._make_default_short_help(value, max_length)\n    assert out == expect",
+            "reason": "实际断言返回值，包括缩写句点和省略号的组合。",
+            "path": "tests/test_utils/test_make_default_short_help.py",
+            "line": 62
+          }
+        ],
+        "id": "TC004"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "句末规则仍需确认：diff 和所给测试将句点后接大写词或数字视为句末，但 PRD 未明确该启发式是否适用于缩写后接专有名词、数字或中文。当前用例只对小写后续词给出确定预期，未将这些歧义行为当作已确认要求。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "替换为 textwrap.shorten 影响长词、连字符词及极窄或负宽度；T1 提供了相关参数，但 PRD 未明确这些输出契约。本轮未展开为优先用例，仍需确认接受整词丢弃和宽度不足时返回完整省略号等行为。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "缩写与制表符、换行归一化及第二段排除的组合未充分覆盖。所给测试包含普通首段截取和标记变换，但未包含 e.g. 与这些条件的组合；当前仅补充了与空检查改动直接相关的标记独占首段边界。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "所给测试仅直接调用工具函数，未发现命令组帮助输出中自动生成短帮助的集成断言；未提供相关调用链或集成测试文件，不能据此认定整个仓库没有覆盖。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "sources 为空，没有可用于补充故障边界的历史 issue 证据，因此所有 source_ids 均为空。方案仅依据 PRD、所给 diff 和 T1 源码形成，未执行任何测试。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 25647,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2144,
+      "reasoning_output_tokens": 132
+    },
+    "thread_id": "01a116b4-71b9-72f1-9bd5-642e27b575fb"
+  },
+  "input_sha256": "14af2a778c716da98a8653ec850c809807399e5a89c542351d959f49980c9a0a",
+  "common_input_sha256": "90ab994b07805fb2c231eb5a112e51024d28d3d4fd5df2ff838275bca1b276ee",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

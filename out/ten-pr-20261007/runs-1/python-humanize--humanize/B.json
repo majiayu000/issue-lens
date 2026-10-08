@@ -1,0 +1,152 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R1",
+        "category": "默认参数契约",
+        "title": "显式 ndigits=None 与省略参数保持一致",
+        "preconditions": [
+          "使用默认千位分隔符逗号。",
+          "value = 10**400 + 123，类型为 Python int。"
+        ],
+        "steps": [
+          "分别调用 humanize.intcomma(value) 和 humanize.intcomma(value, ndigits=None)。",
+          "分别将两次结果与 '10' + ',000' * 132 + ',123' 比较。"
+        ],
+        "expected_result": "两次调用均正常返回相同的完整预期字符串，不发生溢出、舍入或小数位补齐。",
+        "source_ids": [],
+        "rationale": "PRD 明确限定默认精度 ndigits=None；显式传入 None 仍属于该范围，不属于排除的显式小数位格式化。",
+        "coverage": "partial",
+        "incremental_value": "补充超大整数显式传入 ndigits=None 的调用边界；已有超大整数测试仅省略该参数。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "@pytest.mark.parametrize(\"sign\", [1, -1])\ndef test_intcomma_large_integer(sign: int) -> None:\n    value = sign * (10**400 + 123)\n    expected = (\"-\" if sign < 0 else \"\") + \"10\" + \",000\" * 132 + \",123\"\n    assert humanize.intcomma(value) == expected",
+            "reason": "已有测试验证同一超大整数的默认调用，但没有显式传入 None，不能据此认定两种调用形式均已有覆盖。",
+            "path": "tests/test_number.py",
+            "line": 86
+          }
+        ],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R2",
+        "category": "精度与分组边界",
+        "title": "密集数字的相邻超大整数保持不同且逐位准确",
+        "preconditions": [
+          "使用默认千位分隔符逗号，省略 ndigits。",
+          "通过 Python 整数运算构造 a = 123456789 * 10**312 + 9007199254740992，b = a + 1；不向 intcomma 传入字符串。"
+        ],
+        "steps": [
+          "从 str(a) 和 str(b) 分别自右向左每三位分组，用逗号连接，构造独立预期值；不经 float 转换。",
+          "分别调用 humanize.intcomma(a) 和 humanize.intcomma(b)。",
+          "比较各自完整输出与独立预期值，并比较两次输出是否不同。"
+        ],
+        "expected_result": "两次调用均正常返回各自完整分组结果，所有数字逐位一致；末组分别为 992 和 993，输出不相同。",
+        "source_ids": [
+          3213333611
+        ],
+        "rationale": "借用历史案例中数值转换可能使相邻大整数失去区分度的触发条件，迁移为目标产品范围内的 Python int 格式化断言。该 issue 的字符串查询、JavaScript 平台及 Grist 功能不迁移；其精度损失解释来自提供的描述，不据此断言目标产品存在相同根因，所附 PR 也不能证明适用于目标产品。",
+        "coverage": "partial",
+        "incremental_value": "补充密集非零数字和相邻值区分度；已有回归以大量零和固定尾数验证完整输出，未覆盖这一边界。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "    value = sign * (10**400 + 123)\n    expected = (\"-\" if sign < 0 else \"\") + \"10\" + \",000\" * 132 + \",123\"\n    assert humanize.intcomma(value) == expected",
+            "reason": "已有断言覆盖超大整数完整输出，但输入不是密集数字，也未比较相邻超大整数是否保留差异。",
+            "path": "tests/test_number.py",
+            "line": 88
+          }
+        ],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R2",
+        "category": "核心回归",
+        "title": "超出浮点范围的正负整数完整输出",
+        "preconditions": [
+          "在 Python 3.12 中调用 humanize.intcomma，使用默认千位分隔符逗号。",
+          "输入为 Python int，省略 ndigits。"
+        ],
+        "steps": [
+          "分别令 sign 为 1 和 -1，构造 value = sign * (10**400 + 123)。",
+          "调用 humanize.intcomma(value)。",
+          "将完整结果与 ('-' if sign < 0 else '') + '10' + ',000' * 132 + ',123' 比较。"
+        ],
+        "expected_result": "两种符号均返回完整预期字符串，不抛出 OverflowError；负号、全部中间分组及末尾 123 均准确保留。",
+        "source_ids": [],
+        "rationale": "直接覆盖 R1 的默认精度溢出契约和 R2 的正负号、完整数字及千位分组要求；无需历史 issue 支撑。",
+        "coverage": "covered",
+        "incremental_value": "无新增边界；提供的测试已包含同等触发条件和完整字符串断言。本方案未执行该测试。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "@pytest.mark.parametrize(\"sign\", [1, -1])\ndef test_intcomma_large_integer(sign: int) -> None:\n    value = sign * (10**400 + 123)\n    expected = (\"-\" if sign < 0 else \"\") + \"10\" + \",000\" * 132 + \",123\"\n    assert humanize.intcomma(value) == expected",
+            "reason": "参数化覆盖正负整数，省略 ndigits，并比较完整分组字符串；同时验证正常返回和末尾数字保留。",
+            "path": "tests/test_number.py",
+            "line": 86
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "受影响分支回归",
+        "title": "非整数的非有限浮点值继续使用原有输出契约",
+        "preconditions": [
+          "输入分别为 math.nan、math.inf 和 -math.inf，均为 Python float。",
+          "省略 ndigits。"
+        ],
+        "steps": [
+          "分别调用 humanize.intcomma(math.nan)、humanize.intcomma(math.inf) 和 humanize.intcomma(-math.inf)。",
+          "将返回值依次与 'NaN'、'+Inf'、'-Inf' 比较。"
+        ],
+        "expected_result": "依次返回 NaN、+Inf、-Inf，不进入普通数字分组输出。",
+        "source_ids": [],
+        "rationale": "diff 将原有 else 改为排除 int 的条件分支。非整数仍应进行非有限检查，因此这是 R1 修改直接影响的分支保全检查。",
+        "coverage": "covered",
+        "incremental_value": "无新增边界；提供的参数化测试已有相同输入和返回值断言。本方案未执行该测试。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "        ([math.nan], \"NaN\"),\n        ([math.inf], \"+Inf\"),\n        ([-math.inf], \"-Inf\"),\n        ([\"nan\"], \"NaN\"),\n        ([\"-inf\"], \"-Inf\"),\n    ],\n)\ndef test_intcomma(\n    test_args: list[int] | list[float] | list[str], expected: str\n) -> None:\n    assert humanize.intcomma(*test_args) == expected",
+            "reason": "浮点非有限值参数直接送入 intcomma，并以相等断言验证三种返回字符串；引文中的字符串参数不是本用例的扩展范围。",
+            "path": "tests/test_number.py",
+            "line": 73
+          }
+        ],
+        "id": "TC004"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "本草稿仅依据所给文件审查，未执行任何测试。PRD 中 Python 3.12 的验证记录不能替代本次验证；材料也未明确支持版本列表，无法确认所有受支持 Python 版本上的执行覆盖。"
+      },
+      {
+        "requirement_id": "R2",
+        "reason": "优先用例使用默认逗号分隔符，未覆盖已支持 locale 下超大整数的分隔符替换。提供的实现包含替换路径，但未提供 locale 分隔符定义及对应测试，不能确定具体预期字符或认定仓库缺少相关测试。"
+      },
+      {
+        "requirement_id": "R2",
+        "reason": "现有超大整数回归和新增密集数字用例尚未系统覆盖首组为一位、三位的分组边界；所给回归首组为两位。为遵守 diff 场景的优先用例数量限制，本稿未继续展开分组长度变体。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 29532,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2183,
+      "reasoning_output_tokens": 93
+    },
+    "thread_id": "01a116c9-c476-70e2-8cf9-2cbaff9c8be1"
+  },
+  "input_sha256": "89006a853119796a2a5ee44debd9e5170e8e72225a2308f5ea2edd5c63e4c673",
+  "common_input_sha256": "130d6a8c59820a205dd3d08205d83f12ce2e28d11e4d1cc740297eb4accb918f",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

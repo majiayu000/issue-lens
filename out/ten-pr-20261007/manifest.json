@@ -1,0 +1,118 @@
+{
+  "issue_lens_commit": "cb5163970ea7d3ccc41a62207e4bbc390bb1d303",
+  "corpus_sha256": "dc9003a410e1798bd1b9aa4c9db018001727c436894bfbfd709dcf4ddeb49d79",
+  "samples": [
+    {
+      "id": "Textualize--rich",
+      "repo": "Textualize/rich",
+      "number": 3180,
+      "url": "https://github.com/Textualize/rich/pull/3180",
+      "head_sha": "05c5dfc8fcbb1c967490540cc080c3d534a91a12",
+      "input": "Textualize--rich.input.json",
+      "native_test_files": [
+        "tests/test_cells.py",
+        "tests/test_text.py"
+      ]
+    },
+    {
+      "id": "pallets--click",
+      "repo": "pallets/click",
+      "number": 3865,
+      "url": "https://github.com/pallets/click/pull/3865",
+      "head_sha": "f67c2bb6c2f055c1c7a57cd46c3697fc26a7742e",
+      "input": "pallets--click.input.json",
+      "native_test_files": [
+        "tests/test_utils/test_make_default_short_help.py"
+      ]
+    },
+    {
+      "id": "fastapi--typer",
+      "repo": "fastapi/typer",
+      "number": 1821,
+      "url": "https://github.com/fastapi/typer/pull/1821",
+      "head_sha": "5bec961514de7c5da842c6e3170727022388414b",
+      "input": "fastapi--typer.input.json",
+      "native_test_files": [
+        "tests/test_types.py"
+      ]
+    },
+    {
+      "id": "theskumar--python-dotenv",
+      "repo": "theskumar/python-dotenv",
+      "number": 700,
+      "url": "https://github.com/theskumar/python-dotenv/pull/700",
+      "head_sha": "004b454e37f415ed7828ed4c9426816d8c1b608f",
+      "input": "theskumar--python-dotenv.input.json",
+      "native_test_files": [
+        "tests/test_cli.py"
+      ]
+    },
+    {
+      "id": "tox-dev--platformdirs",
+      "repo": "tox-dev/platformdirs",
+      "number": 566,
+      "url": "https://github.com/tox-dev/platformdirs/pull/566",
+      "head_sha": "0fe7a0c57a0c8f5815eb54d7d35fd399db1d4958",
+      "input": "tox-dev--platformdirs.input.json",
+      "native_test_files": [
+        "tests/test_api.py"
+      ]
+    },
+    {
+      "id": "tox-dev--filelock",
+      "repo": "tox-dev/filelock",
+      "number": 756,
+      "url": "https://github.com/tox-dev/filelock/pull/756",
+      "head_sha": "2a533f3053444b67a1764d628e0cdcf6d383cfb5",
+      "input": "tox-dev--filelock.input.json",
+      "native_test_files": [
+        "tests/test_read_write_unit.py"
+      ]
+    },
+    {
+      "id": "pypa--packaging",
+      "repo": "pypa/packaging",
+      "number": 1430,
+      "url": "https://github.com/pypa/packaging/pull/1430",
+      "head_sha": "45473a150d4181513543f16bcb23ba870fc98241",
+      "input": "pypa--packaging.input.json",
+      "native_test_files": [
+        "tests/test_requirements.py",
+        "tests/test_specifiers.py"
+      ]
+    },
+    {
+      "id": "cpburnz--python-pathspec",
+      "repo": "cpburnz/python-pathspec",
+      "number": 142,
+      "url": "https://github.com/cpburnz/python-pathspec/pull/142",
+      "head_sha": "73120f31ad255c581f267b8515f274d7862210de",
+      "input": "cpburnz--python-pathspec.input.json",
+      "native_test_files": [
+        "tests/test_07_gitignore_trailing_space.py"
+      ]
+    },
+    {
+      "id": "tqdm--tqdm",
+      "repo": "tqdm/tqdm",
+      "number": 1830,
+      "url": "https://github.com/tqdm/tqdm/pull/1830",
+      "head_sha": "24b9e1e08a097f1c30f2d235b63f9eb25ba47974",
+      "input": "tqdm--tqdm.input.json",
+      "native_test_files": [
+        "tests/tests_concurrent.py"
+      ]
+    },
+    {
+      "id": "python-humanize--humanize",
+      "repo": "python-humanize/humanize",
+      "number": 392,
+      "url": "https://github.com/python-humanize/humanize/pull/392",
+      "head_sha": "244ac0ed6baeb3d1789be61e1a0f8ef962e716f4",
+      "input": "python-humanize--humanize.input.json",
+      "native_test_files": [
+        "tests/test_number.py"
+      ]
+    }
+  ]
+}

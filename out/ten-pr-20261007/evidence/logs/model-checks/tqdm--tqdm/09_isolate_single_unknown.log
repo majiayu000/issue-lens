@@ -1,0 +1,24 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0 -- /Users/apple/.codex/task-evidence/issue-lens-20261007/venvs/tqdm--tqdm-py314/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/apple/.codex/task-evidence/issue-lens-20261007/samples/tqdm--tqdm
+configfile: pyproject.toml
+plugins: cov-7.1.0, timeout-2.4.0, asyncio-1.4.0
+timeout: 30.0s
+timeout method: signal
+timeout func_only: False
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collecting ... collected 21 items / 18 deselected / 3 selected
+
+::test_single_unknown_explicit_total_zero[thread] <- ../../model-checks/test_tqdm_cases.py PASSED [ 33%]
+::test_single_unknown_explicit_total_zero[process] <- ../../model-checks/test_tqdm_cases.py PASSED [ 66%]
+::test_single_unknown_explicit_total_zero[interpreter] <- ../../model-checks/test_tqdm_cases.py PASSED [100%]
+
+- generated xml file: /Users/apple/.codex/task-evidence/issue-lens-20261007/logs/model-checks/tqdm--tqdm/isolate_single_unknown.xml -
+============================== slowest durations ===============================
+0.24s call     ::test_single_unknown_explicit_total_zero[interpreter]
+0.23s call     ::test_single_unknown_explicit_total_zero[process]
+0.16s call     ::test_single_unknown_explicit_total_zero[thread]
+
+(6 durations < 0.1s hidden.)
+======================= 3 passed, 18 deselected in 0.70s =======================

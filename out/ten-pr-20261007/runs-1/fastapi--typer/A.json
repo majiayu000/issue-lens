@@ -1,0 +1,187 @@
+{
+  "status": "draft_not_executed",
+  "plan": {
+    "cases": [
+      {
+        "requirement_id": "R1",
+        "category": "错误契约保护",
+        "title": "必填列表位置参数缺失时仍报告用法错误",
+        "preconditions": [
+          "准备一个 Typer 命令，仅声明无默认值的必填 list[str] 位置参数。",
+          "不配置 envvar 或 default map。",
+          "命令回调设置可观察的执行标记。"
+        ],
+        "steps": [
+          "通过 CliRunner 调用该命令，不传位置参数。",
+          "检查退出码、错误输出和回调执行标记。"
+        ],
+        "expected_result": "退出码非 0，输出可识别的缺失参数提示；回调不执行，不以空列表成功运行，也不输出内部异常堆栈。",
+        "source_ids": [],
+        "rationale": "补丁将所有空的可变长位置参数转换为 None，影响范围包含没有默认值的参数。本项保护缺失参数的错误契约；这是基于改动范围提出的风险检查，不代表已发现缺陷。",
+        "coverage": "not_found",
+        "incremental_value": "补充无任何回退来源时的失败边界；所给文件中的必填枚举缺失测试及非空列表与元组组合测试不具有同等触发条件。",
+        "existing_tests": [],
+        "id": "TC001"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "环境变量回退",
+        "title": "声明 envvar 的列表参数在环境变量缺失和有值时分别解析",
+        "preconditions": [
+          "使用所给 hello-all-envvar 命令，默认值为 [\"World\"]，envvar 为 NAMES。",
+          "不提供 default map。",
+          "每次调用隔离环境，明确控制 NAMES，避免继承宿主环境。"
+        ],
+        "steps": [
+          "明确移除 NAMES，调用 hello-all-envvar，不传位置参数。",
+          "将 NAMES 设置为 Rick   Morty，再次调用同一命令，不传位置参数。",
+          "分别检查退出码和完整输出行。"
+        ],
+        "expected_result": "两次退出码均为 0；NAMES 缺失时问候行仅为 Hello World!；NAMES 有值时问候行依次为 Hello Rick!、Hello Morty!，不出现 Hello World!。",
+        "source_ids": [],
+        "rationale": "原条件包含 envvar 检查，改动后仍需保护环境变量路径。已有测试支持有值时拆分的预期，但并未完整证明各来源的一般优先级。",
+        "coverage": "partial",
+        "incremental_value": "增加显式清除环境变量的前置控制，以及环境变量有值时排除默认元素、检查顺序和额外输出的断言。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "    result = runner.invoke(app, [\"hello-all-envvar\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "reason": "覆盖默认元素出现，但该片段及所给文件未显式清除 NAMES，也未排除额外元素。",
+            "path": "tests/test_types.py",
+            "line": 142
+          },
+          {
+            "test_id": "T1",
+            "quote": "    monkeypatch.setenv(\"NAMES\", \"Rick   Morty\")\n    result = runner.invoke(app, [\"hello-all-envvar\"])\n    assert result.exit_code == 0\n    assert \"Hello Rick!\" in result.output\n    assert \"Hello Morty!\" in result.output",
+            "reason": "覆盖环境变量多空格拆分，但未断言默认元素缺席、输出顺序或无额外元素。",
+            "path": "tests/test_types.py",
+            "line": 149
+          }
+        ],
+        "id": "TC002"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "列表位置参数默认值",
+        "title": "未声明环境变量且省略列表位置参数时使用默认值",
+        "preconditions": [
+          "使用所给 hello-all-args 命令，其列表位置参数默认值为 [\"World\"]，未声明 envvar。",
+          "不提供 default map。"
+        ],
+        "steps": [
+          "通过 CliRunner 调用 hello-all-args，不传任何位置参数。",
+          "检查退出码及命令输出。"
+        ],
+        "expected_result": "退出码为 0，输出包含 Hello World!。",
+        "source_ids": [],
+        "rationale": "直接覆盖 R1 的基础契约，并隔离 PR 正文所述环境变量配置可能掩盖问题的条件。该描述是提供材料中的报告，不作为已验证根因。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给测试已有相同触发条件及断言。本项列为优先回归检查，不表示已执行。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "def test_list_empty() -> None:\n    result = runner.invoke(app, [\"hello-all-args\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "reason": "在未提供位置参数的情况下，直接断言成功退出并输出默认列表元素；对应命令声明未配置 envvar。",
+            "path": "tests/test_types.py",
+            "line": 133
+          }
+        ],
+        "id": "TC003"
+      },
+      {
+        "requirement_id": "R2",
+        "category": "列表选项默认值",
+        "title": "省略列表选项时使用默认值",
+        "preconditions": [
+          "使用所给 hello-all-options 命令，列表选项默认值为 [\"World\"]。",
+          "不提供 default map 或环境变量来源。"
+        ],
+        "steps": [
+          "通过 CliRunner 调用 hello-all-options，不传 --name。",
+          "检查退出码及命令输出。"
+        ],
+        "expected_result": "退出码为 0，输出包含 Hello World!。",
+        "source_ids": [],
+        "rationale": "覆盖 R2 要求补充的回归保护；PR 正文将此行为描述为原本正常，不能据此宣称列表选项存在同一缺陷。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给测试已覆盖省略列表选项后的默认值行为。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "    result = runner.invoke(app, [\"hello-all-options\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" in result.output",
+            "reason": "调用未提供 --name，断言成功退出并输出默认元素，与本项契约一致。",
+            "path": "tests/test_types.py",
+            "line": 138
+          }
+        ],
+        "id": "TC004"
+      },
+      {
+        "requirement_id": "R1",
+        "category": "显式输入边界",
+        "title": "提供非空列表位置参数时不混入默认值",
+        "preconditions": [
+          "使用所给 hello-all-args 命令，默认值为 [\"World\"]。",
+          "不配置其他值来源。",
+          "本项以所给 diff 和测试断言中的替换行为为预期依据；PRD 本身未明确替换或合并规则。"
+        ],
+        "steps": [
+          "通过 CliRunner 调用 hello-all-args Rick Morty。",
+          "检查退出码及输出中的显式元素和默认元素。"
+        ],
+        "expected_result": "退出码为 0，输出包含 Hello Rick! 和 Hello Morty!，不包含 Hello World!。",
+        "source_ids": [],
+        "rationale": "解析器改动针对空的可变长参数；非空输入应保留所给测试明确表达的行为，避免默认值修复干扰显式输入。",
+        "coverage": "covered",
+        "incremental_value": "无新增；所给测试已断言显式值出现且默认值不出现。",
+        "existing_tests": [
+          {
+            "test_id": "T1",
+            "quote": "    result = runner.invoke(app, [\"hello-all-args\", \"Rick\", \"Morty\"])\n    assert result.exit_code == 0\n    assert \"Hello World!\" not in result.output\n    assert \"Hello Rick!\" in result.output\n    assert \"Hello Morty!\" in result.output",
+            "reason": "触发条件为非空位置参数列表，断言明确排除了默认元素，并检查两个显式元素。",
+            "path": "tests/test_types.py",
+            "line": 126
+          }
+        ],
+        "id": "TC005"
+      }
+    ],
+    "coverage_gaps": [
+      {
+        "requirement_id": "R1",
+        "reason": "default map 回退及其与环境变量、参数默认值的优先级未覆盖。解析器补丁注释提到这些来源，但未提供高层解析实现或明确契约，不能仅凭注释确定完整预期。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "显式位置参数与环境变量同时存在、环境变量为空字符串时的行为未充分覆盖；现有案例隔离了值来源，PRD 未明确这些组合的优先级及空值语义。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "空列表默认值、多元素默认值、非字符串元素的转换，以及可变长参数为空且后接固定长度参数的组合未覆盖。所给测试主要使用单元素字符串默认值，组合测试仅提供非空列表；为遵守 diff 范围与优先数量限制，本稿未展开这些边界。"
+      },
+      {
+        "requirement_id": "R2",
+        "reason": "列表选项的空列表、多元素及非字符串默认值未充分覆盖；所给测试覆盖单元素默认值和显式重复选项，但未证明其他默认值形态的行为。"
+      },
+      {
+        "requirement_id": "R1",
+        "reason": "未提供历史 issue 提炼来源，sources 为空，因此未添加历史故障迁移案例。覆盖判断仅基于所给 T1 文件，未审查其他文件，也未执行测试。"
+      }
+    ]
+  },
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 26445,
+      "cached_input_tokens": 3456,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2459,
+      "reasoning_output_tokens": 204
+    },
+    "thread_id": "01a116b9-53fe-74a1-8e27-9b764bc69e28"
+  },
+  "input_sha256": "83ab26a15476f5dd97f1dd18c239d08ba426fedb4ce3e82651216e4f37f8e0d1",
+  "common_input_sha256": "d765344a3fe82a9618bde4ec73cdac3a8a6cd121bf5408b8059ec2e76b93c522",
+  "prompt_sha256": "a0e7c7997d996981a9b4230d7490c6f19ac2ad6fa34c774f582763da2a5a2d98"
+}

@@ -1,0 +1,58 @@
+{
+  "requirements": [
+    {
+      "title": "CLI 获取空字符串成功，输出空白行并返回退出码 0",
+      "quote": "Exit only when the key is absent or the stored value is `None` (bare key with no value). Empty strings are echoed and exit 0.\r\n\r\n## Tests\r\n\r\n- New `test_get_empty_string_value` pins exit code 0 and a blank line of output for `a=`.",
+      "queries": [
+        [
+          "empty",
+          "exit"
+        ],
+        [
+          "get",
+          "empty string",
+          "exit code"
+        ],
+        [
+          "output",
+          "blank line"
+        ]
+      ],
+      "id": "R1"
+    },
+    {
+      "title": "CLI 获取缺失键或无值裸键时返回退出码 1",
+      "quote": "Fix dotenv get exiting with code 1 for empty string values\nFixes #699.\r\n\r\n## Problem\r\n\r\n`dotenv get KEY` uses `if stored_value:` so an empty string is treated as missing and the command exits with code 1 — the same as an absent key.\r\n\r\n```python\r\n>>> from dotenv import set_key, get_key\r\n>>> set_key(\".env\", \"EMPTY\", \"\")\r\n>>> get_key(\".env\", \"EMPTY\")   # library API is fine\r\n''\r\n>>> # dotenv get EMPTY  -> exit code 1\r\n```\r\n\r\nEmpty values (`KEY=` / `KEY=\"\"`) are valid; only the CLI was wrong.\r\n\r\n## Fix\r\n\r\nExit only when the key is absent or the stored value is `None` (bare key with no value). Empty strings are echoed and exit 0.",
+      "queries": [
+        [
+          "key",
+          "missing"
+        ],
+        [
+          "get",
+          "None",
+          "exit"
+        ],
+        [
+          "bare key",
+          "exit code"
+        ]
+      ],
+      "id": "R2"
+    }
+  ],
+  "open_questions": [],
+  "generation": {
+    "engine": "codex",
+    "requested_model": "gpt-6.1-sol",
+    "usage": {
+      "input_tokens": 18874,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 365,
+      "reasoning_output_tokens": 0
+    },
+    "thread_id": "01a116b7-8b76-7a72-8daf-d354c81ca0a7"
+  },
+  "prd_sha256": "1067befc8f1f7495e4c2488b6ba9a4cc9604dc9ccf81b65fc48207261fd965e4"
+}
