@@ -110,6 +110,67 @@
     "verdict": "miss",
     "reason": "虽调用 addObjectToProperties，但测试的是 getter 异常处理，未涉及大型 TypedArray 的索引键物化。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "Promise 的未完成分支应保留属性名前缀",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试 Promise 状态格式化时的属性名前缀，与 TypedArray 枚举导致阻塞的机制无关。"
+   },
+   {
+    "title": "对象恰好达到 100 个属性时不应误报截断",
+    "source_ids": [
+     "databases-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试普通对象的截断边界，没有触发 TypedArray 在循环开始前物化全部索引键的机制。"
+   },
+   {
+    "title": "JSX 的隐藏属性不应耗尽可展示属性配额并吞掉 children",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试 JSX 隐藏属性的配额计算及 children 展示，与 TypedArray 枚举阻塞无关。"
+   },
+   {
+    "title": "数组元素在分类与格式化之间变化时不应使属性记录崩溃",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试普通数组 getter 返回值变化引发的格式化异常，与 TypedArray 索引键枚举机制不同。"
+   },
+   {
+    "title": "以自身为拒绝原因的 Promise 不应触发无限递归",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Promise 自引用拒绝原因导致的无限递归，虽也可能卡住，但并非本次修复的 TypedArray 枚举阻塞。"
+   }
   ]
  },
  {
@@ -214,6 +275,72 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试无内置解析器时跨块闭合标签的识别与重启，未涉及 gemma4 设置 think=false 后没有思考结束转换的故障。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "思考与正文在同一回调出现时，结构化重试不得丢失最后一段思考",
+    "source_ids": [
+     "consensus-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试依赖实际发生思考结束转换，检查重试时思考尾段丢失，与关闭思考后约束始终被延迟的缺陷不同。"
+   },
+   {
+    "title": "没有思考文本的合法响应也必须执行请求的结构化约束",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "mechanism",
+    "reason": "指出了没有思考转换时约束被延迟且普通文本成功返回的同一机制，但未明确使用补丁针对的 gemma4 解析器，无法确定具体触发配置。"
+   },
+   {
+    "title": "内置解析器出错后必须取消生成并终止后续回调输出",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "检查解析器报错后的取消与输出终止，不涉及 think=false 导致 Format 被延迟且未应用。"
+   },
+   {
+    "title": "客户端断开与回调发送同时发生时不得阻塞生成协程",
+    "source_ids": [
+     "databases-2",
+     "orchestration-4"
+    ],
+    "verdict": "miss",
+    "reason": "检查客户端断开时通道发送阻塞及协程泄漏，与结构化约束被忽略的机制无关。"
+   },
+   {
+    "title": "思考结束标签跨片段切分及预填充状态下解析结果保持一致",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "明确使用 Think=true 且不配置内置解析器，检查标签分片解析和正常结构化切换，不触发本次修复的条件。"
    }
   ]
  },
@@ -338,6 +465,71 @@
     "verdict": "miss",
     "reason": "测试针对 codegen 清理脚本排除列表未同步，与预编译目录替换删除 modulemap 的故障机制不同。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "同名预编译产物更新后，重复安装不能继续使用旧归档",
+    "source_ids": [
+     "orchestration-5"
+    ],
+    "verdict": "miss",
+    "reason": "测试归档因同名而未更新的问题，未触发配置切换时删除 React-Core-prebuilt 目录导致 modulemap 丢失的机制。"
+   },
+   {
+    "title": "解包失败留下半成品目录后，重试仍能恢复完整 XCFramework",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试解包失败后半成品目录阻止重试恢复的问题，与构建时替换目录销毁 modulemap 的机制不同。"
+   },
+   {
+    "title": "已有清理阶段时，预编译库集合变化必须更新 codegen 清理脚本",
+    "source_ids": [
+     "databases-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试预编译排除列表变化后 codegen 清理脚本未更新的问题，与 modulemap 被删除无关。"
+   },
+   {
+    "title": "缺少编译标志键的 xcconfig 也必须获得完整 React 模块导入配置",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "虽然调用同一配置函数，但测试的是缺少标志键导致漏注入，未涉及配置切换删除 modulemap 的故障机制。"
+   },
+   {
+    "title": "已有 YES 或注释提及设置时，仍应真正禁用 Swift 接口生成",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试 Swift 接口生成设置未被正确覆盖的问题，与 React-Core-prebuilt 目录替换导致 modulemap 丢失无关。"
+   }
   ]
  },
  {
@@ -444,6 +636,71 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试的是变体内部符号链接依赖丢失，未指出或稳定触发顶层 x86_64 MLX 库遮蔽正确变体的缺陷。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "双架构打包不能遗漏仅 arm64 存在的顶层动态库",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对遗漏 arm64 独有顶层依赖，而本缺陷是顶层残留的 x86_64 MLX 库遮蔽正确的变体库。"
+   },
+   {
+    "title": "arm64 单架构输入应能从干净目录完成应用打包",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对单架构打包读取错误的可执行文件路径，与残留 x86_64 MLX 库遮蔽变体库的机制不同。"
+   },
+   {
+    "title": "归档通配符零匹配时不能被 gzip 掩盖成成功",
+    "source_ids": [
+     "databases-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对归档通配符零匹配及管道掩盖错误，与 MLX 库架构错误和路径遮蔽无关。"
+   },
+   {
+    "title": "复制 CPU 后端发生真实 I/O 错误时必须阻止发布不完整归档",
+    "source_ids": [
+     "orchestration-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 CPU 后端复制失败被吞掉，与顶层 x86_64 MLX 库遮蔽正确变体库无关。"
+   },
+   {
+    "title": "公证提交失败后必须清理临时 zip 并允许重试",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对公证失败后的临时文件清理，与 MLX 动态库加载缺陷无关。"
    }
   ]
  },
@@ -573,6 +830,74 @@
     "verdict": "miss",
     "reason": "测试 falsy 拒绝的错误标记与恢复，与销毁分支的异步回调及瀑布警告无关。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "blocker 拒绝时应进入错误边界并释放 pending 计数",
+    "source_ids": [
+     "consensus-7",
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试有效父 effect 下 blocker 拒绝的错误处理和计数释放，未涉及已销毁分支继续执行的问题。"
+   },
+   {
+    "title": "等待 blocker 期间销毁父 effect 后不得执行延迟回调",
+    "source_ids": [
+     "consensus-2"
+    ],
+    "verdict": "hit",
+    "reason": "父 effect 销毁后再完成 blocker 会让旧代码的 finish 继续恢复上下文并执行 fn，违反销毁后不得执行回调的断言。"
+   },
+   {
+    "title": "初始 pending 期间多次重跑只能提交最新结果且不得提前结束等待",
+    "source_ids": [
+     "databases-1",
+     "consensus-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试异步派生多次重跑的结果淘汰和 pending 管理，未明确销毁所属 effect，不能对应本次故障机制。"
+   },
+   {
+    "title": "已渲染边界中新批次先完成时应释放旧批次并屏蔽迟到结果",
+    "source_ids": [
+     "databases-1",
+     "databases-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试不同 Batch 的完成顺序和旧结果屏蔽，未涉及已销毁父 effect 的异步回调继续执行。"
+   },
+   {
+    "title": "错误边界自身抛错后不得泄漏恢复的全局响应式上下文",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试错误边界抛错导致全局上下文泄漏，属于上下文清理机制，补丁未修复这一问题。"
+   }
   ]
  },
  {
@@ -687,6 +1012,69 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试针对 doMatchInner 重复前缀回溯的复杂度，与 LIKE 转正则时的字面字符转义无关。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "LIKE 字面量中的正则元字符必须保持字面匹配语义",
+    "source_ids": [
+     "databases-6"
+    ],
+    "verdict": "hit",
+    "reason": "未修复时字面正则元字符未经转义，a.b 会误匹配 axb，单个左方括号还会导致正则编译失败，直接违反断言。"
+   },
+   {
+    "title": "转换后的 LIKE 通配符应能匹配换行字符",
+    "source_ids": [
+     "databases-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对正则点号不匹配换行的问题，与字面正则元字符未转义的故障机制不同。"
+   },
+   {
+    "title": "UnquoteChar 在空输入和截断转义上返回语法错误而不崩溃",
+    "source_ids": [
+     "databases-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 UnquoteChar 的异常输入处理，不涉及 LIKE 转正则时遗漏字面字符转义。"
+   },
+   {
+    "title": "多次通配符回退及模式归一化不能改变整串匹配结果",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 LIKE 匹配回退和模式归一化，未经过 CompileLike2Regexp，也未触发正则元字符解释错误。"
+   },
+   {
+    "title": "字符版与二进制版在转义分支和多字节字符上保持各自语义",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对字符与字节匹配及自定义转义语义，不涉及将 LIKE 字面字符直接写入正则的故障机制。"
    }
   ]
  },
@@ -815,6 +1203,71 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试针对 IPv6 地址解析错误，与 QUIC 监听器无法获得 ECH 密钥的缺陷无关。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "QUIC 初始化失败后必须释放已占用的 UDP 套接字",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试关注 QUIC 初始化失败后的套接字释放，与 QUIC TLS 配置遗漏 ECH 密钥回调无关。"
+   },
+   {
+    "title": "同一 TLS 配置的两个使用者不能因其中一个取消而同时失效",
+    "source_ids": [
+     "consensus-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试关注同一配置多使用者的取消隔离，未触发或验证 ECH 密钥回调未被转发的问题。"
+   },
+   {
+    "title": "旧取消函数重复执行不能删除重新注册的同指针配置",
+    "source_ids": [
+     "consensus-5"
+    ],
+    "verdict": "miss",
+    "reason": "测试关注旧取消函数误删重新注册的配置，与 ECH 密钥回调缺失的故障机制不同。"
+   },
+   {
+    "title": "TLS 回调同步触发配置取消时不能发生锁重入死锁",
+    "source_ids": [
+     "databases-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试关注 TLS 回调内取消配置导致的锁重入死锁，与 QUIC 路径未转发 ECH 密钥回调无关。"
+   },
+   {
+    "title": "只配置静态证书而未设置 TLS 回调时握手不能空指针崩溃",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试关注 GetConfigForClient 为空时的崩溃，未配置 ECH，也未验证缺失的 ECH 密钥回调。"
    }
   ]
  },
@@ -947,6 +1400,67 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试 Ollama 损坏 JSON 行的错误处理，与显式空推理字段被静默省略无关。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "Gemini 多候选响应中的工具调用状态不能污染其他候选",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 Gemini 候选间工具调用状态污染，与显式空推理字段因 string 加 omitempty 被丢弃的机制无关。"
+   },
+   {
+    "title": "Claude 多段文本和推理转换时不能只保留最后一段",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 Claude 多块非空推理内容被覆盖，未涉及显式空串在请求反序列化后重新序列化时丢失的机制。"
+   },
+   {
+    "title": "文件内容经 JSON 解码与直接构造时必须保留相同文件名",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对文件名在不同解码路径中的保留，与空推理字段被 omitempty 省略无关。"
+   },
+   {
+    "title": "Ollama 多行响应中的损坏或截断不能被静默转成成功完成",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 Ollama 损坏响应被错误视为成功，与请求中显式空推理字段丢失无关。"
+   },
+   {
+    "title": "OpenAI 补算缺失用量时不能清空已有缓存和推理明细",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对用量补算时缓存和推理 token 明细的保留，与 reasoning_content 或 reasoning 空串序列化丢失无关。"
    }
   ]
  },
@@ -1098,6 +1612,67 @@
     "verdict": "miss",
     "reason": "测试针对 Windows 安装依赖时的命令参数转义，与模板目录未被打包的机制不同。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "读取 next-env.d.ts 权限失败时不得把原文件当作不存在而删除",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 next-env.d.ts 读取权限错误后的文件保护，与打包遗漏 prompt-templates 无关。"
+   },
+   {
+    "title": "不同 namespace 并发构建不得把共享 next-env.d.ts 留在临时状态",
+    "source_ids": [
+     "orchestration-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对并发构建恢复共享文件的竞态，与模板资源未被复制的故障机制不同。"
+   },
+   {
+    "title": "Windows 打包资源不得遗漏其他平台包含的 craft 目录",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试检查 Windows 遗漏 craft 目录，未检查 prompt-templates；补丁同时补齐 craft 不代表其命中本缺陷。"
+   },
+   {
+    "title": "构建命令大量输出时不得因 execFile 默认缓冲区限制被误判失败",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对子进程日志超出缓冲区导致构建失败，与模板资源遗漏无关。"
+   },
+   {
+    "title": "Linux 的 CommonJS 启动桩必须能加载实际打包的 ESM 入口",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 Linux 启动桩加载 ESM 的兼容性，与打包未复制模板目录的机制不同。"
+   }
   ]
  },
  {
@@ -1190,6 +1765,70 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试参数数量边界和内存分配失败后的资源清理，与回滚后准备或绑定时未推进读取序号的机制不同。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "Bind 的零个参数格式码应表示所有参数使用文本格式",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试参数格式码语义，未涉及保存点回滚后读序列号落入忽略范围的故障。"
+   },
+   {
+    "title": "Prepare 与 Bind 之间修改枚举类型后应使用最新类型信息",
+    "source_ids": [
+     "databases-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试枚举类型更新后的缓存与租约问题，未涉及保存点回滚及缺少 Step 导致的读序列号错误。"
+   },
+   {
+    "title": "SHOW COMMIT TIMESTAMP 的 Prepare 和 Bind 不应覆盖上一事务的提交信息",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试无事务状态下提交时间戳的保留，而缺陷发生在打开事务中保存点回滚后的 KV 读取。"
+   },
+   {
+    "title": "准备语句名称计费失败后应释放内存并允许同名重试",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试准备语句名称计费失败后的内存释放，与回滚后未推进读序列号的机制无关。"
+   },
+   {
+    "title": "失败的匿名 Bind 应删除旧匿名门户并能在 Sync 后恢复",
+    "source_ids": [
+     "consensus-2",
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试失败 Bind 对匿名门户的清理与协议恢复，未涉及保存点回滚后使用被忽略的读序列号。"
    }
   ]
  },
@@ -1290,6 +1929,70 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试关注 os.Stat 返回权限错误时是否终止，修复针对的是 Stat 成功后目标为非目录仍继续填充的问题。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "匿名卷创建后重标记失败时不遗留卷引用",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试重标记失败后的资源清理，未涉及文件子路径覆盖镜像已有文件时错误执行卷填充。"
+   },
+   {
+    "title": "卷创建阻塞时取消请求能够终止操作并释放资源",
+    "source_ids": [
+     "orchestration-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试卷创建过程丢失取消信号的问题，与文件挂载错误进入目录内容复制流程的机制不同。"
+   },
+   {
+    "title": "复制失败且请求已取消时仍执行全部卷挂载清理",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试目录内容复制失败后的清理行为，未覆盖文件目标应跳过卷填充的故障机制。"
+   },
+   {
+    "title": "目标路径 Stat 返回权限或 I/O 错误时不继续分配匿名卷",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试 Stat 返回错误时是否继续创建卷，而本缺陷发生在 Stat 成功且目标为文件之后。"
+   },
+   {
+    "title": "路径规范化后命中已有挂载时保留原卷及其复制策略",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试路径规范化及已有挂载复制策略的保留，未涉及文件子路径挂载到已有文件目标。"
    }
   ]
  },
@@ -1403,6 +2106,69 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试针对 SDK 查询失败被管道状态掩盖并静默跳过 v4，未触及 Metal v3 最终链接工具导致的部署目标泄漏。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "通用归档解压后保留运行时要求的库目录和双架构 CPU 库",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试归档目录与双架构库覆盖问题，未涉及 Metal v3 链接时泄漏 macOS 26 部署目标的机制。"
+   },
+   {
+    "title": "在 Intel 主机交叉构建 arm64 时所有原生后端均生成 arm64 产物",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试交叉构建的 CPU 架构选择，未检查 Metal v3 的部署目标，也未指定在低于 macOS 26 的系统上验证加载。"
+   },
+   {
+    "title": "SDK 从 26 降至 25 后重建不得把旧 Metal v4 混入新发行包",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试降级 SDK 后旧 Metal v4 产物残留，与 Metal v3 最终链接泄漏 macOS 26 部署目标的机制不同。"
+   },
+   {
+    "title": "单架构构建后的签名打包不依赖缺失架构，也不吸入旧架构产物",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试单架构打包对缺失或陈旧架构产物的处理，与 metallib 部署目标错误无关。"
+   },
+   {
+    "title": "公证失败后临时 ZIP 被清理且重试能够完成",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试公证失败后的临时 ZIP 清理与重试，与 Metal v3 链接工具及部署目标错误无关。"
    }
   ]
  },
@@ -1576,6 +2342,70 @@
     "verdict": "miss",
     "reason": "测试 Claude 的 add-dir 能力切换，与 OpenCode 误启动桌面程序的机制不同。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "Codex 超长提示词通过 stdin 完整传输并正确结束输入",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Codex 的长提示词与 stdin 传输，不涉及 OpenCode 错选桌面启动器的机制。"
+   },
+   {
+    "title": "Codex 多目录参数保留路径边界且正确过滤无效条目",
+    "source_ids": [
+     "databases-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试 Codex 目录参数的构造与过滤，不涉及 OpenCode 可执行文件的选择优先级。"
+   },
+   {
+    "title": "Codex 模型与推理强度组合不会生成 CLI 拒绝的配置",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试 Codex 模型与推理配置的兼容性，与 OpenCode 启动了 GUI 而非 CLI 的缺陷无关。"
+   },
+   {
+    "title": "Claude 缺少 add-dir 能力时不发送不支持的参数",
+    "source_ids": [
+     "orchestration-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试 Claude 的 add-dir 能力适配，不涉及 OpenCode 桌面与 CLI 二进制的区分。"
+   },
+   {
+    "title": "Devin 模型探测超时后使用回退列表且下一次探测能恢复",
+    "source_ids": [
+     "orchestration-6",
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试 Devin 模型探测的超时与恢复，故障机制并非 OpenCode 解析到错误的启动器。"
+   }
   ]
  },
  {
@@ -1670,6 +2500,65 @@
     "source_ids": [],
     "verdict": "hit",
     "reason": "探测返回A后分页返回空数组，修复前循环条件会访问空数组末项的时间字段并抛出异常，违反应返回null的断言。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "同一分钟连续轮询无新增数据后，不应再次输出已处理页面",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "查询始终返回非空页面，测试的是边界分钟去重状态清除问题，未触发空数组解引用。"
+   },
+   {
+    "title": "同一分钟陆续新增页面时，去重集合应保留之前已处理的页面",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是去重集合未累计导致重复输出，分页结果均非空，与修复的故障机制不同。"
+   },
+   {
+    "title": "同一页面在后续分钟再次编辑时，不应被旧页面 ID 永久过滤",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是旧页面 ID 过滤后续编辑的问题，没有触发正式查询为空时的数组解引用。"
+   },
+   {
+    "title": "预查询有记录而正式查询变为空时，应正常结束且允许后续恢复",
+    "source_ids": [
+     "databases-6"
+    ],
+    "verdict": "hit",
+    "reason": "明确模拟预查询非空而正式查询为空，并断言返回 null 且不抛 TypeError，修复前会在循环条件访问空数组末项时失败。"
+   },
+   {
+    "title": "分页中途失败后重试，不应因提前推进检查时间而漏掉未输出记录",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试的是分页网络失败后检查点提前推进导致漏数据，与空结果循环条件解引用无关。"
    }
   ]
  },
@@ -1791,6 +2680,65 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试针对显式密钥保存与旧自动保存交错导致元数据回退，密钥剥离本就正常，且未断言草稿单独编辑时的错误保存提示。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "自动保存请求乱序完成时，旧配置不能覆盖最新编辑",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试自动保存请求乱序覆盖问题，未触发密钥草稿被剥离后空保存仍显示 Saved 的机制。"
+   },
+   {
+    "title": "清空最后一个媒体提供商失败后，自动重试仍须强制同步空配置",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试媒体配置清空失败后的强制同步重试，与密钥草稿引发误导性保存提示无关。"
+   },
+   {
+    "title": "较旧媒体保存失败不能覆盖较新保存的成功状态",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试旧请求迟到失败污染最新成功状态，属于请求时序机制而非草稿空保存机制。"
+   },
+   {
+    "title": "关闭设置必须刷出防抖中的最新编辑，且卸载后不再重试",
+    "source_ids": [
+     "consensus-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试关闭时刷新防抖编辑及卸载后停止重试，未涉及密钥草稿或空保存的成功提示。"
+   },
+   {
+    "title": "Composio 显式保存失败时保留原状态，成功后仅持久化密钥摘要",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试显式保存失败处理和密钥剥离，而剥离本身原已正确，未验证草稿触发自动保存后错误显示 Saved。"
    }
   ]
  },
@@ -1971,6 +2919,71 @@
     "verdict": "miss",
     "reason": "测试注册文件损坏后的重新读取，虽涉及两个插件版本，但未验证最低版本要求或通知兼容性。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "更新在移除成功、重新添加失败后能够通过重试恢复",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试更新失败后的重试恢复，未触发旧插件无法发出 OSC 777 通知的缺陷。"
+   },
+   {
+    "title": "移除 marketplace 的权限错误不能被掩盖为更新成功",
+    "source_ids": [
+     "orchestration-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试 marketplace 移除失败导致更新未生效，与本次修复提高最低插件版本以恢复通知的机制不同。"
+   },
+   {
+    "title": "安装命令非零退出时停止后续步骤并保留失败上下文",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试安装命令失败时的错误传播和执行顺序，与通知事件无法发出的故障无关。"
+   },
+   {
+    "title": "合法 JSON 中的空集合和错误字段类型不会误报插件已安装",
+    "source_ids": [
+     "consensus-7",
+     "databases-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试安装记录 JSON 的类型检查和解析容错，未涉及通知故障或最低插件版本要求。"
+   },
+   {
+    "title": "自定义 PATH 含空格和 shell 元字符时仍执行正确的 claude",
+    "source_ids": [
+     "databases-6",
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试自定义 PATH 的 shell 转义和命令选择，与 Claude Code 更新后插件无法发出通知的机制不同。"
+   }
   ]
  },
  {
@@ -2149,6 +3162,74 @@
     "verdict": "miss",
     "reason": "测试插件与配额权限层级及豁免，不涉及客户端操作对 \"all\" 节点池的错误拒绝。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "NamespaceValidator 捕获的操作切片被外部修改后不得扩大授权",
+    "source_ids": [
+     "consensus-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试的是闭包捕获可变切片导致授权漂移，与客户端操作未放行请求节点池 all 的机制无关。"
+   },
+   {
+    "title": "服务发现授权严格区分普通令牌、工作负载身份和空 ACL",
+    "source_ids": [
+     "consensus-7",
+     "orchestration-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试服务发现的身份与权限分支，未涉及客户端操作对节点池 all 的错误拒绝。"
+   },
+   {
+    "title": "客户端操作在节点池不匹配、显式拒绝和空池时不能越权",
+    "source_ids": [
+     "consensus-7",
+     "orchestration-7"
+    ],
+    "verdict": "miss",
+    "reason": "虽然调用 AllowClientOp，但未请求节点池 all，也未指出该特殊池被按普通池匹配而错误拒绝的机制。"
+   },
+   {
+    "title": "领导者特例撤销后服务端操作立即恢复显式拒绝",
+    "source_ids": [
+     "orchestration-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试服务端操作的领导者特例及显式拒绝，与客户端节点池 all 的授权缺陷无关。"
+   },
+   {
+    "title": "插件 list/read 和 quota write 的权限等级及特权分支不能串权",
+    "source_ids": [
+     "consensus-7",
+     "orchestration-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试插件和配额的权限等级及特权分支，未涉及节点池 all 的客户端操作授权。"
+   }
   ]
  },
  {
@@ -2238,6 +3319,69 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试的是自定义查询哈希下批量更新的缓存定位，与 resetQueries 的状态相关筛选缺陷无关。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "批量写入应更新使用自定义哈希创建的原查询",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试自定义哈希下批量写入的查询定位问题，与重置改变状态后再次过滤漏掉查询的机制无关。"
+   },
+   {
+    "title": "连续重新拉取时取消旧请求且旧结果不能覆盖新结果",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试并发重新拉取的取消与结果覆盖，没有触发重置后状态变化导致过滤失配。"
+   },
+   {
+    "title": "离线暂停的重新拉取应立即返回并在联网后处理失败与恢复",
+    "source_ids": [
+     "databases-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试离线暂停请求的 Promise 和错误处理，与重置前后重复应用状态过滤器无关。"
+   },
+   {
+    "title": "失效和重置应分别遵守 active、disabled 与 static 查询分支",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "虽然调用 resetQueries，但未使用依赖可变状态的过滤器，无法触发或指出本缺陷的过滤失配机制。"
+   },
+   {
+    "title": "删除并重建同键查询后旧请求不得污染新实例",
+    "source_ids": [
+     "consensus-5"
+    ],
+    "verdict": "miss",
+    "reason": "测试删除重建查询后的请求隔离，与 resetQueries 重置状态后丢失原匹配查询无关。"
    }
   ]
  },
@@ -2462,6 +3606,71 @@
     "verdict": "miss",
     "reason": "测试滚轮极值导致的资源耗尽，与 Shift+Backspace 的错误字节及整词删除机制无关。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "SGR 鼠标报告必须保留 Shift、Alt、Ctrl 修饰位",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试鼠标报告修饰位，与 Windows Shift+Backspace 回退输出错误控制字节的机制无关。"
+   },
+   {
+    "title": "非法滚轮动作不能导致终端输入处理 panic",
+    "source_ids": [
+     "orchestration-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试非法滚轮动作的 panic 处理，没有触发 Backspace 的平台文本回退路径。"
+   },
+   {
+    "title": "极端滚动增量不能通过字符串重复耗尽内存",
+    "source_ids": [
+     "databases-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试滚动增量造成的内存分配风险，与 Shift+Backspace 输出 0x08 的缺陷无关。"
+   },
+   {
+    "title": "APP_CURSOR 往返切换时普通方向键与修饰方向键使用正确前缀",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试 APP_CURSOR 模式切换下方向键前缀，不涉及 Backspace 或错误的平台文本回退。"
+   },
+   {
+    "title": "Linux 的 Alt+Ctrl 字母组合不能在 C0 分支丢失 Meta 前缀",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试 Linux 组合修饰键被 C0 分支提前截断，与 Windows Shift+Backspace 未被分支处理而回退到 0x08 的机制不同。"
+   }
   ]
  },
  {
@@ -2576,6 +3785,69 @@
     "verdict": "miss",
     "reason": "测试针对 plist 写入失败时的错误传播，与 Xcode 在依赖图阶段检测到构建环无关。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "Release 清理必须精确匹配 Bonjour 服务，不能误删名称相似的自定义服务",
+    "source_ids": [
+     "databases-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试 Bonjour 服务的误删，与 Info.plist 输入依赖造成的 Xcode 构建环无关。"
+   },
+   {
+    "title": "插件接受的大小写和末尾点变体必须在 Release 中同样被清理",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试服务名称变体的添加与清理规则一致性，未涉及构建依赖环机制。"
+   },
+   {
+    "title": "包含 Expo Dev Launcher 字样的自定义权限描述不能被当作默认描述删除",
+    "source_ids": [
+     "databases-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试自定义权限描述是否被误删，与此次构建阶段依赖环缺陷无关。"
+   },
+   {
+    "title": "发布清理遇到写入失败时必须显式失败，恢复权限后可以重试成功",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试脚本写入失败时的错误处理，未触发或指出 Xcode 依赖环。"
+   },
+   {
+    "title": "真实 Xcode 构建中的清理时序必须保证最终 Release 产物已清理且 Debug 可恢复",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "虽验证真实构建中的清理时序，但未设置扩展嵌入及关联脚本依赖，也未指出 Info.plist 输入依赖闭环机制。"
+   }
   ]
  },
  {
@@ -2666,6 +3938,71 @@
     "verdict": "miss",
     "reason": "测试并发任务抢占、驱逐与容量恢复，与线程数恢复后的通知遗漏无关。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "线程累计耗时回退后，利用率不下溢且下一周期恢复正常",
+    "source_ids": [
+     "orchestration-5"
+    ],
+    "verdict": "miss",
+    "reason": "测试累计 CPU 耗时回退导致的利用率计算问题，与关闭自动调整时遗漏线程数通知无关。"
+   },
+   {
+    "title": "关闭自动调整恢复配置线程数时，同步通知线程数订阅方",
+    "source_ids": [
+     "consensus-2"
+    ],
+    "verdict": "hit",
+    "reason": "当前线程数与核心线程数不同时关闭自动调整，并断言收到恢复为 4 的通知，修复前会因缺失通知而失败。"
+   },
+   {
+    "title": "CPU 阈值从启用切到零后，不再按旧阈值缩容且能恢复核心线程数",
+    "source_ids": [
+     "consensus-7",
+     "orchestration-5"
+    ],
+    "verdict": "miss",
+    "reason": "测试禁用 CPU 阈值后的定时调整行为，未触发 AutoAdjust(false) 的通知遗漏路径。"
+   },
+   {
+    "title": "满池并发高优先级抢占后，任务和容量计数保持一致",
+    "source_ids": [
+     "consensus-3",
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试满池抢占、驱逐与容量计数一致性，与关闭自动调整恢复线程数时漏发通知无关。"
+   },
+   {
+    "title": "进程 CPU 采样失败只跳过当前调整，恢复后继续扩容",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试进程 CPU 采样失败及恢复后的扩容行为，未涉及关闭自动调整时遗漏通知的机制。"
+   }
   ]
  },
  {
@@ -2742,6 +4079,70 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试的是样式追加异常后的恢复，与临时锚点脱离导致样式注入 document.head 的机制不同。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "延迟执行的样式插入应使用锚点最终所在的 ShadowRoot",
+    "source_ids": [
+     "orchestration-5",
+     "databases-2"
+    ],
+    "verdict": "miss",
+    "reason": "刷新前锚点已插入 ShadowRoot，旧代码即可正确解析根，未触发临时锚点被丢弃后仍被用于定位的故障。"
+   },
+   {
+    "title": "相同样式应在每个文档或 ShadowRoot 内分别去重",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "所有锚点均已连接，测试的是各根内样式去重，未触发脱离锚点导致样式注入 document.head 的故障。"
+   },
+   {
+    "title": "合法但含 CSS 选择器特殊字符的样式 ID 不应导致异常或重复插入",
+    "source_ids": [
+     "databases-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试的是样式 ID 的选择器特殊字符处理，与临时锚点脱离导致根解析错误的机制不同。"
+   },
+   {
+    "title": "同 ID 的非样式节点不应被误判为已安装样式",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是同 ID 非样式节点导致误去重，与锚点脱离后的样式注入目标错误无关。"
+   },
+   {
+    "title": "组件在样式 effect 执行前销毁后不应留下延迟副作用",
+    "source_ids": [
+     "consensus-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试的是销毁时取消待执行 effect，未构造组件保留而临时锚点被丢弃的触发条件，最后重新挂载也未指定延迟分支或新增 each 项。"
    }
   ]
  },
@@ -2845,6 +4246,70 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试针对认证状态变化时旧令牌的清除，与拨号阶段等待健康检查导致阻塞无关。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "显式 Dial 的目标具有独立 TLS 身份时必须使用该目标的 authority",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对显式 Dial 的 authority 与 TLS 身份选择，与非零 DialTimeout 导致创建客户端阻塞的故障机制不同。"
+   },
+   {
+    "title": "并发更新端点与显式拨号不能读取未加锁的端点切片",
+    "source_ids": [
+     "consensus-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对端点切片的并发读写竞态，未验证 DialTimeout 引入的同步健康检查阻塞。"
+   },
+   {
+    "title": "健康检查返回 NOT_SERVING 时不能被当作连接已健康",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对健康检查忽略 NOT_SERVING 响应状态的问题，与创建客户端不应等待健康检查的缺陷不同。"
+   },
+   {
+    "title": "拨号健康检查被取消或拒绝后必须关闭连接并允许后续恢复",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试要求健康检查失败时创建客户端返回错误并释放连接，符合修复前的阻塞行为，不能检出本次非阻塞创建缺陷。"
+   },
+   {
+    "title": "认证关闭及认证失败必须正确处理已有令牌",
+    "source_ids": [
+     "consensus-2",
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对认证令牌更新及错误处理，与 DialTimeout 触发等待连接的故障无关。"
    }
   ]
  },
@@ -2968,6 +4433,69 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试检查响应式图片的资源区分与预加载路径，未涉及 referrerPolicy 的读取或保留。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "HTTP 预加载头必须保留图片的 referrerPolicy",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "hit",
+    "reason": "启用响应头时渲染带 referrerPolicy 的普通图片并断言头中保留该值，会因读取误拼的 props.refererPolicy 而失败。"
+   },
+   {
+    "title": "低优先级图片提升后不能同时从两个队列重复输出",
+    "source_ids": [
+     "consensus-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试关注禁用响应头时的预加载队列提升与重复输出，不涉及 referrerPolicy 的错误读取。"
+   },
+   {
+    "title": "响应头容量临界值不足时必须完整回退到 HTML 预加载",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注响应头容量与 HTML 回退，未设置或断言 referrerPolicy，不能暴露该属性丢失。"
+   },
+   {
+    "title": "非法 img 抛错后不能污染 Suspense 恢复阶段的图片去重状态",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试关注非法 img 抛错后的 Suspense 恢复与去重状态，与响应头读取属性名的拼写错误无关。"
+   },
+   {
+    "title": "响应式图片必须绕过响应头并按 srcSet 和 sizes 正确去重",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试要求响应式图片绕过响应头并验证 srcSet 和 sizes 去重，不触发存在缺陷的响应头属性读取路径。"
    }
   ]
  },
@@ -3106,6 +4634,71 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试递归插件过滤和服务器钩子禁用，未触及 server.watch 丢失导致忽略目录仍被监听的机制。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "服务器环境的 external 配置不得覆盖 noExternal: true",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 external 与 noExternal 的合并语义，与子编译器丢失 server.watch 配置无关。"
+   },
+   {
+    "title": "显式开启依赖发现时，服务器入口和所有路由均进入扫描范围",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对依赖扫描入口和 optimizeDeps 配置，未涉及子编译器继承文件监听配置。"
+   },
+   {
+    "title": "子编译器的 serve 初始化不得污染父构建插件状态",
+    "source_ids": [
+     "consensus-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对父子插件实例共享导致的状态污染，故障机制与覆盖 server.watch 配置不同。"
+   },
+   {
+    "title": "嵌套异步插件列表不得导致子编译器递归创建或重复安装服务器钩子",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对插件列表展开、递归创建及服务器钩子重复执行，未验证 server.watch 配置丢失。"
+   },
+   {
+    "title": "子编译器 buildStart 失败后应释放已创建的资源并允许重试",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对初始化失败后的监听器资源泄漏，与忽略配置丢失导致额外监听的机制不同。"
    }
   ]
  },
@@ -3267,6 +4860,74 @@
     "verdict": "miss",
     "reason": "测试针对子路径遍历和符号链接逃逸，与缺少挂载管理器激活导致 erofs 挂载失败的机制不同。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "并发复用同一快照时，失败请求不得卸载成功请求的挂载",
+    "source_ids": [
+     "orchestration-3",
+     "orchestration-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对并发失败回滚误卸载共享挂载，与未通过挂载管理器激活 erofs 挂载的故障机制不同。"
+   },
+   {
+    "title": "镜像标签在两次解析之间移动时，不得把新镜像挂到旧摘要的目录",
+    "source_ids": [
+     "consensus-5"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对可变标签二次解析导致摘要与内容不一致，与缺少挂载管理器激活无关。"
+   },
+   {
+    "title": "请求取消后的失败回滚必须释放已经创建的快照",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对取消 context 导致快照回滚清理失败，未覆盖 erofs 挂载参数需要激活转换的机制。"
+   },
+   {
+    "title": "清理目录被并发删除时，应按已清理处理并继续清理其他镜像",
+    "source_ids": [
+     "orchestration-3",
+     "orchestration-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对清理时 ENOENT 的识别和继续执行，与镜像卷缺少挂载管理器激活的缺陷不同。"
+   },
+   {
+    "title": "带用户命名空间映射的镜像挂载在首次创建和复用分支中语义一致",
+    "source_ids": [
+     "consensus-7",
+     "orchestration-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对首次挂载与复用分支的 idmap 语义一致性，未指定 erofs 激活条件，也未指出缺少挂载管理器的机制。"
+   }
   ]
  },
  {
@@ -3387,6 +5048,71 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试 TCP keepalive 显式零值的配置继承，与 DLB 依赖下载及构建失败无关。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "DLB 发送重试次数在零次及最后一次成功的边界上准确执行",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对发送重试边界，未执行依赖下载或构建验证，与上游返回 HTTP 202 导致 @dlb 获取失败的机制不同。"
+   },
+   {
+    "title": "不同 DLB 初始化错误都能触发配置的回退策略",
+    "source_ids": [
+     "orchestration-6",
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对运行时设备初始化失败后的回退策略，与构建阶段 @dlb 下载失败无关。"
+   },
+   {
+    "title": "省略设备 ID 时选择首个可用设备，而非强制选择设备零",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对默认设备 ID 的选择逻辑，与 Intel 镜像返回 HTTP 202 的故障机制不同。"
+   },
+   {
+    "title": "非 Linux x86_64 构建不会残留对 DLB 实现或静态库的依赖",
+    "source_ids": [
+     "consensus-7",
+     "orchestration-7"
+    ],
+    "verdict": "hit",
+    "reason": "显式构建启用 contrib 扩展集合的 Linux x86_64 二进制会拉取 @dlb，在所述镜像返回 HTTP 202 时构建失败，违反构建成功的断言。"
+   },
+   {
+    "title": "附加地址的 keepalive 显式零值覆盖继承设置且不污染其他地址",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对附加监听地址的 keepalive 零值覆盖与配置继承，与 DLB 依赖下载失败无关。"
    }
   ]
  },
@@ -3555,6 +5281,65 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试主动制造 collector.collect 异常并验证恢复，与懒加载路由缺少 path 导致的中间件异常不同。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "metrics 路由不得吞掉同名前缀的业务路径",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 metrics 前缀匹配吞掉业务路径，未构造无 path 的 _IncludedRouter，也未涉及指标中间件读取 path 导致异常的机制。"
+   },
+   {
+    "title": "两种 metrics 路径在内容协商和压缩下保持一致",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对两个指标路径的内容协商与压缩一致性，未设置触发缺陷所需的无 path 路由条件。"
+   },
+   {
+    "title": "监控排除规则只排除目标端点且覆盖尾斜杠形式",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对排除表达式误过滤和尾斜杠覆盖，与遍历 _IncludedRouter 时无条件读取 path 的故障机制不同。"
+   },
+   {
+    "title": "自定义注册表中的指标在两个暴露路径均可见",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对指标注册表的读写归属，未构造无 path 的 _IncludedRouter，无法据此确定会因该缺陷失败。"
+   },
+   {
+    "title": "并发请求中发生异常后计数准确且后续抓取可恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对业务异常下的并发计数与恢复，异常来自 handler 主动抛出，未涉及无 path 路由引发的中间件异常。"
    }
   ]
  },
@@ -3739,6 +5524,73 @@
     "verdict": "miss",
     "reason": "测试的是缓存写入与刷新失败恢复，且明确保证模型选择始终有效，没有触发未知模型 ID 被误判为不可用的条件。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "启动时缺失的路由目标在目录刷新后恢复，已保存的路由选择不应提前被清除",
+    "source_ids": [
+     "orchestration-5",
+     "databases-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对目录刷新时自定义路由的重建顺序与事件一致性，未覆盖本地未配置的自定义端点模型被误清除的机制。"
+   },
+   {
+    "title": "BYOK 密钥反复添加和撤销时，所有执行配置的模型可用性同步变化",
+    "source_ids": [
+     "consensus-2",
+     "orchestration-7"
+    ],
+    "verdict": "miss",
+    "reason": "模型已被目录识别，撤销 BYOK 后清除不可用选择是预期行为，不涉及未知模型 ID 被误判并清除。"
+   },
+   {
+    "title": "隐式默认模型发生能力变化时清理上下文限制，并保留其他配置的有效限制",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试要求清除目录中已移除的 A，而补丁会保留本地无法识别的显式模型 ID，测试预期与本次修复不符。"
+   },
+   {
+    "title": "目录缓存写入失败后仍完成运行态更新，恢复写入后能够持久化最新目录",
+    "source_ids": [
+     "orchestration-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对缓存写入失败后的运行态更新和持久化，不涉及跨设备未知自定义端点模型的误清除。"
+   },
+   {
+    "title": "移除终端模型覆盖后立即使用新配置，重复移除不产生额外保存和通知",
+    "source_ids": [
+     "consensus-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对终端模型覆盖的移除、通知和快照保存，与执行配置同步时清除未知模型 ID 无关。"
+   }
   ]
  },
  {
@@ -3902,6 +5754,73 @@
     "verdict": "miss",
     "reason": "测试关注读取请求体期间的取消行为，未涉及预览地址解析或服务器绑定地址不匹配。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "压缩响应必须解压后再写入预渲染文件",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 gzip 响应解压，与补丁修复的绑定地址选择和 IPv6 主机名方括号处理无关。"
+   },
+   {
+    "title": "HTTPS 预览地址能够完成请求",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 HTTPS 协议支持，补丁未修复固定使用 http.request 导致的协议错误。"
+   },
+   {
+    "title": "IPv6 预览地址不会因主机名方括号导致连接失败",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "hit",
+    "reason": "修复前直接将带方括号的 URL.hostname 传入 http.request，该测试会触发解析失败，正对应补丁去除 IPv6 方括号的修复。"
+   },
+   {
+    "title": "请求结束后释放共享取消信号上的监听器",
+    "source_ids": [
+     "consensus-2",
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对取消信号监听器泄漏，与本次修复的连接目标地址和 IPv6 方括号问题无关。"
+   },
+   {
+    "title": "读取尚未结束的请求体时取消也必须及时结束请求",
+    "source_ids": [
+     "consensus-2",
+     "orchestration-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对读取请求体期间的取消响应，与本次修复的地址族不匹配和 IPv6 主机名处理无关。"
+   }
   ]
  },
  {
@@ -3978,6 +5897,70 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试针对未提交成员变更期间的竞选限制与恢复，且已具备足够订阅兴趣，未触发本次缺陷的请求重发或兴趣不足重试路径。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "自投票持久化失败时，单节点不得凭内存中的自投票当选",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试自投票持久化失败后的错误当选，与首选候选者未重发投票请求或兴趣不足后重试过慢的机制无关。"
+   },
+   {
+    "title": "同一节点先后返回空票和普通票时，不得被计入两个投票集合",
+    "source_ids": [
+     "consensus-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试重复响应在两个投票集合中被重复计数，虽涉及重复投票请求，但未覆盖首选候选者缺少重发及快速重试的问题。"
+   },
+   {
+    "title": "重新当选后，旧任期的确认不得使落后副本立即被判定为追平",
+    "source_ids": [
+     "databases-1"
+    ],
+    "verdict": "miss",
+    "reason": "测试重新当选后副本追平状态使用旧任期确认的问题，与本次修复的竞选请求重试机制无关。"
+   },
+   {
+    "title": "关闭与当选并发时，不得在 Closed 状态重新设置领导者或发送初始化日志",
+    "source_ids": [
+     "consensus-1"
+    ],
+    "verdict": "miss",
+    "reason": "测试关闭与当选并发导致关闭后仍执行领导者操作的问题，与投票请求丢失后未重试的机制无关。"
+   },
+   {
+    "title": "受管理节点在成员变更提交前禁止竞选，提交后应恢复竞选能力",
+    "source_ids": [
+     "consensus-7",
+     "databases-1"
+    ],
+    "verdict": "miss",
+    "reason": "测试成员资格及成员变更提交对竞选的限制，且预设投票兴趣充足，未覆盖本次修复的首选候选者重试机制。"
    }
   ]
  },
@@ -4159,6 +6142,75 @@
     "verdict": "miss",
     "reason": "测试提前终止流后的连接释放和状态隔离，与空 thinking 块的字段丢失机制不同。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "空白文本使用字符串或字典表示时应得到一致的过滤结果",
+    "source_ids": [
+     "databases-6",
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试空白 text 块的过滤一致性，不涉及空 thinking 块仅收到 signature_delta 后缺失 thinking 字段的问题。"
+   },
+   {
+    "title": "包含工具引用的失败工具结果不能在格式化时丢失 is_error",
+    "source_ids": [
+     "consensus-7",
+     "databases-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试 tool_result 的 is_error 保留，与 thinking 字段在流式生成和回放中缺失的机制无关。"
+   },
+   {
+    "title": "关闭流式用量输出时仍应保留模型身份元数据",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试 stream_usage 对模型身份元数据的影响，事件中没有触发缺陷所需的 thinking 块和 signature_delta。"
+   },
+   {
+    "title": "工具参数全部出现在开始事件时应完整生成且只生成一次工具调用",
+    "source_ids": [
+     "consensus-7",
+     "databases-6"
+    ],
+    "verdict": "miss",
+    "reason": "虽然同样测试开始事件后没有内容增量的情况，但针对 tool_use 参数保留，不涉及 signature_delta 构造 thinking 块时遗漏必填字段的机制。"
+   },
+   {
+    "title": "流被提前终止或回调抛错时应释放底层 SDK 连接",
+    "source_ids": [
+     "orchestration-3",
+     "consensus-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试流退出时的连接释放和异常传播，与空 thinking 块缺失 thinking 字段无关。"
+   }
   ]
  },
  {
@@ -4273,6 +6325,71 @@
     ],
     "verdict": "miss",
     "reason": "测试针对保留窗口的端点计数偏差，与获取片段上界时改用 HEAD 请求的修复无关。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "不同格式在同一时间窗内不能误用彼此的分片序号缓存",
+    "source_ids": [
+     "consensus-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对不同格式误用序号缓存，修复针对序号探测请求由 GET 改为 HEAD，故障机制不同。"
+   },
+   {
+    "title": "共享序号缓存在并发清空和读取时不能抛出 KeyError",
+    "source_ids": [
+     "consensus-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对共享缓存并发清空造成的 KeyError，与补丁修复的序号探测请求方式无关。"
+   },
+   {
+    "title": "直播刷新暂时失败后应恢复获取后续分片",
+    "source_ids": [
+     "orchestration-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 url_feed 暂时失败后提前结束，补丁未修改刷新或恢复逻辑。"
+   },
+   {
+    "title": "已结束直播的首次序号探测失败后仍能重试恢复",
+    "source_ids": [
+     "orchestration-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试要求首次探测失败后重新探测，但补丁修复的是使用 HEAD 获取序号，并未增加重试，空分片结果相似不足以认定同一机制。"
+   },
+   {
+    "title": "超过120小时的直播遇到缺失或零分片时长时不能算术崩溃",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对分片时长缺失或为零导致的算术异常，与 GET 改为 HEAD 的修复机制不同。"
    }
   ]
  },
@@ -4416,6 +6533,67 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试针对取消请求后的重试与退避行为，与全 null 字段的 data 被误判为失败无关。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "Mutation 已提交但响应丢失时不得自动重复执行",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对响应丢失后重放非幂等 mutation，与全 null 字段被误判为无返回结果无关。"
+   },
+   {
+    "title": "响应体读取失败后应进入重试并恢复",
+    "source_ids": [
+     "orchestration-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对响应体读取异常的重试处理，没有触发全 null 数据的错误判定。"
+   },
+   {
+    "title": "连续瞬态 GraphQL 错误耗尽重试后应保留服务端错误原因",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对瞬态 GraphQL 错误耗尽重试后的原因保留，没有提供被误判的非 null、全 null 字段 data。"
+   },
+   {
+    "title": "被判定为无有效数据的响应不得污染缓存并阻断后续恢复",
+    "source_ids": [
+     "orchestration-5"
+    ],
+    "verdict": "mechanism",
+    "reason": "测试触及全 null 字段被判无有效数据的同一机制，但将错误抛出视为预期，实际断言针对缓存污染，不能据此判为命中。"
+   },
+   {
+    "title": "调用方修改查询结果不得改写后续缓存返回的数据",
+    "source_ids": [
+     "consensus-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对共享对象引用导致的缓存污染，与全 null 字段被误判的机制不同。"
    }
   ]
  },
@@ -4569,6 +6747,72 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试针对 UpdateAlloc 数组空指针处理及写入原子性，与该分配删除漏检缺陷无关。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "两次查询之间 GC 分配后，下一次阻塞查询必须返回删除结果",
+    "source_ids": [
+     "consensus-2"
+    ],
+    "verdict": "hit",
+    "reason": "删除发生在两次 RPC 之间且仍有 A 存活，旧代码首次计算仅得索引 100，无法超过 MinQueryIndex=200，因而超时并违反预期。"
+   },
+   {
+    "title": "迁移源节点已被 GC 时，跳过令牌不能跳过分配的响应索引",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对迁移源节点缺失导致跳过分配索引汇总的问题，与跨 RPC 删除后丢失旧分配数量的机制不同。"
+   },
+   {
+    "title": "迁移令牌依赖发生变化时，阻塞查询必须让客户端获得新令牌",
+    "source_ids": [
+     "consensus-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对迁移令牌依赖变化未推进响应索引的问题，没有触发分配删除及跨 RPC 数量信息丢失。"
+   },
+   {
+    "title": "批量更新不能借首条分配的身份校验修改其他节点的分配",
+    "source_ids": [
+     "orchestration-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 UpdateAlloc 批量授权越权，与 GetClientAllocs 删除检测和响应索引选择无关。"
+   },
+   {
+    "title": "分配批次含空指针时应返回错误并保持服务可用",
+    "source_ids": [
+     "consensus-7",
+     "orchestration-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对分配更新批次中的空指针及原子性，与本缺陷的跨 RPC 删除检测机制无关。"
    }
   ]
  },
@@ -4732,6 +6976,67 @@
     "verdict": "miss",
     "reason": "测试针对损坏 JSON 的解析与恢复，不涉及 TypeScript 7 缺失经典编译器 API 的机制。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "TypeScript 配置加载成功或抛错后均应恢复原有加载钩子",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对加载钩子的恢复与异常清理，未涉及 TypeScript 7 缺少经典编译器 API 的故障机制。"
+   },
+   {
+    "title": "同一进程重新加载配置时应读取修改后的配置及其依赖",
+    "source_ids": [
+     "databases-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对配置及传递依赖的缓存失效，未指定 TypeScript 7，也未验证编译器 API 缺失导致的加载失败。"
+   },
+   {
+    "title": "已存在但损坏的 JSON 配置不能被当作缺失配置静默忽略",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对损坏 JSON 配置的解析错误处理，与 TypeScript 配置加载时访问缺失的 ModuleKind 无关。"
+   },
+   {
+    "title": "Nx 子项目存在精简 package.json 时仍应获得工作区依赖",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 Nx 工作区与子项目依赖的合并规则，与 TypeScript 7 编译器 API 缺失无关。"
+   },
+   {
+    "title": "TypeScript 转译报告语法错误时应拒绝加载而非使用容错输出",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对转译器诊断被忽略的问题，且要求转译器能返回诊断和输出，与 TypeScript 7 根导出不提供转译 API 的机制不同。"
+   }
   ]
  },
  {
@@ -4864,6 +7169,72 @@
     "verdict": "miss",
     "reason": "测试代理头地址的信任边界与解析，不涉及网络请求头读取时限。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "Run 启动失败与首批请求并发时，路由树初始化不能发生竞态",
+    "source_ids": [
+     "consensus-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试关注启动失败时的路由初始化竞态，没有慢速发送请求头或验证请求头超时。"
+   },
+   {
+    "title": "转义冒号路由与相邻静态分支共存时，规范化不能破坏树索引",
+    "source_ids": [
+     "databases-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试关注转义冒号路由的树索引正确性，与服务器缺少请求头超时无关。"
+   },
+   {
+    "title": "编码路径参数在配置切换下保持分隔符和加号的正确语义",
+    "source_ids": [
+     "consensus-7",
+     "databases-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试关注编码路径和参数解码语义，未触发或验证请求头读取超时。"
+   },
+   {
+    "title": "代理头逆向扫描遇到不可信节点或畸形地址时不能采信左侧伪造 IP",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试关注代理头中客户端 IP 的可信性判断，与请求头读取缺少时间限制的机制不同。"
+   },
+   {
+    "title": "复用 Context 时，参数、错误和中止状态不能污染后续请求",
+    "source_ids": [
+     "consensus-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试关注 Context 复用时的状态清理，与 Run 方法创建的服务器缺少请求头超时无关。"
+   }
   ]
  },
  {
@@ -4967,6 +7338,70 @@
     "verdict": "miss",
     "reason": "测试针对路径越界校验，而路径补丁修复的是 macOS 下 rel 为空时的路径构造，触发条件与机制均不同。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "不同匹配规则引用同一 opener 时，多选交互仍应提供公共打开方式",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "两条不同规则共享 editor，旧实现按整条 OpenRuleArc 计数导致公共结果为空，交互多选会无声返回。"
+   },
+   {
+    "title": "MIME 缓存尚未填充时打开多选文件，不应静默漏掉目标",
+    "source_ids": [
+     "orchestration-5"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对非交互打开时 MIME 未就绪导致目标遗漏，与公共 opener 按规则身份求交的故障机制不同。"
+   },
+   {
+    "title": "spread 两种分支都应完整保留特殊文件名并阻止 shell 注入",
+    "source_ids": [
+     "databases-6",
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对参数展开、spread 分支和 shell 注入，未触发公共 opener 匹配错误。"
+   },
+   {
+    "title": "交互选择返回越界索引后，后台任务应安全结束并允许再次打开",
+    "source_ids": [
+     "orchestration-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对选择器返回非法索引时的边界处理，与补丁修复的公共 opener 匹配机制无关。"
+   },
+   {
+    "title": "TrashId 的 Lua 入口和 child 派生入口都应拒绝越界路径并保留合法边界值",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对路径越界校验，虽覆盖空 rel，但未断言 macOS 下 path() 返回 top 的修复行为。"
+   }
   ]
  },
  {
@@ -5054,6 +7489,71 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "虽涉及全局序列号和快照可见性，但没有导入期间的并发前台写入，不能据此认定覆盖序列号倒退机制。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "区间锁必须阻塞重叠导入，并允许相邻区间继续执行",
+    "source_ids": [
+     "orchestration-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试区间锁对重叠导入的互斥，不涉及导入与前台写竞争导致全局序列号回退。"
+   },
+   {
+    "title": "取得区间锁后发生错误必须释放锁，后续同区间导入能够恢复",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试错误路径释放区间锁，与本次修复的全局序列号回退机制无关。"
+   },
+   {
+    "title": "memtable flush 与 L0 compaction 相互等待时导入不能永久挂起",
+    "source_ids": [
+     "databases-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试导入、flush 和 compaction 的循环等待，故障机制是死锁而非全局序列号回退。"
+   },
+   {
+    "title": "range 与 force_allow_write 的四种组合必须正确传递选项并处理并发写",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "虽包含导入期间的并发写，但未控制触发序列号回退的竞争，且预期启用 allow_write 与修复方向相反。"
+   },
+   {
+    "title": "带非零全局序号的 SST 导入后不能漏读或覆盖后续更新",
+    "source_ids": [
+     "databases-4"
+    ],
+    "verdict": "miss",
+    "reason": "非零 SST 全局序列号和导入后的顺序更新不足以复现导入与前台写竞争，也未指出全局序列号回退机制。"
    }
   ]
  },
@@ -5161,6 +7661,67 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试针对消费者关闭流后的生产者退出，补丁中相关改动仅忽略关闭管道的错误日志，与本缺陷的目录解包失败无关。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "并发归档复用同一个 TarOptions 时不得串改包含文件列表",
+    "source_ids": [
+     "consensus-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试归档时共享选项的并发修改，与解包目录条目时未创建隐式父目录的机制无关。"
+   },
+   {
+    "title": "NoLchown 分支创建隐式目录时仍应恢复约定权限",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "归档只有普通文件，会进入原有的隐式父目录创建逻辑；测试针对 NoLchown 跳过 Chmod 的权限问题。"
+   },
+   {
+    "title": "同一路径先解包为目录再替换成文件时不得在末尾恢复旧目录时间而失败",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试同一路径类型替换后的时间恢复，根目录下的 x 不涉及缺失隐式父目录。"
+   },
+   {
+    "title": "压缩器关闭失败必须传递给归档流消费者",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试压缩器关闭错误向消费者传播，与目录条目缺少父目录导致解包失败无关。"
+   },
+   {
+    "title": "Windows 解包必须拒绝会被路径解析重新解释的条目并保留符号链接目标语义",
+    "source_ids": [
+     "consensus-7",
+     "databases-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试 Windows 路径校验和链接目标语义，未涉及目录条目遗漏父目录的触发条件。"
    }
   ]
  },
@@ -5281,6 +7842,70 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试错误后缓冲区复用及降序翻转，与共享源指针被可变借用失效的机制不同，且未要求 Miri 检查。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "截断输入必须返回 Io，且边界检查本身不得越界计算指针",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "长度至少为 9 的前缀包含完整非终止组，原地入口复制该组时会读取被 as_mut_ptr() 失效的源指针，触发预期禁止的 Miri UB。"
+   },
+   {
+    "title": "所有终止标记和填充位置都按升降序规则验证",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试标记和填充校验，未要求在 Miri 下执行，而该缺陷不改变普通执行中的返回值或输出。"
+   },
+   {
+    "title": "首条记录结束后不得解析或翻转拼接的下一条记录",
+    "source_ids": [
+     "consensus-7",
+     "consensus-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试记录消费边界和翻转范围，未使用 Miri，资料表明该指针来源缺陷不改变这些可观察行为。"
+   },
+   {
+    "title": "多组原地压缩不得因源目标重叠损坏尚未读取的字节",
+    "source_ids": [
+     "consensus-4"
+    ],
+    "verdict": "hit",
+    "reason": "在 Miri 下对合法多组编码调用原地入口，会在 ptr::copy 读取失效的共享来源指针时报告 UB，违反无未定义行为的断言。"
+   },
+   {
+    "title": "目标切片短一字节时必须先 panic，捕获后可复用缓冲区正确解码",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "只测试非原地入口的目标长度断言及重试，不经过有缺陷的原地源目标指针构造路径。"
    }
   ]
  },
@@ -5404,6 +8029,67 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试双栈本地地址合成的内存失败处理，不涉及回调重入、QID 复用或查询映射误删。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "污染的 hosts 记录不能覆盖 localhost 的回环地址",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 hosts 中 localhost 的回环地址处理，不涉及回调重入、QID 复用或旧查询误删新查询映射。"
+   },
+   {
+    "title": "localhost 的大小写和末尾点变体不能绕过特殊处理",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试 localhost 名称变体的特殊处理，与 QID 复用导致新查询映射被删除的机制无关。"
+   },
+   {
+    "title": "先 DNS 后 hosts 的查询顺序仍能在 DNS 失败后完成 localhost 合成",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试 DNS 失败后转入 hosts 的 localhost 合成，未设置重入查询复用 QID 的触发条件。"
+   },
+   {
+    "title": "localhost 合成持续失败时必须推进查询状态并有界结束",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试合成失败后的查询状态推进和无限递归，故障机制不同于旧查询清理误删重入查询的 QID 映射。"
+   },
+   {
+    "title": "双栈合成中途分配失败后不得泄漏或返回残缺成功结果",
+    "source_ids": [
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试双栈合成分配失败的资源清理与结果完整性，不涉及 QID 复用及其引发的 DNS 刷新停滞。"
    }
   ]
  },
@@ -5529,6 +8215,71 @@
     "verdict": "miss",
     "reason": "测试本地文件路径归一化和目录授权边界，与远程协议的 referrer 检查及错误响应数据类型无关。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "同一路径的两个授权持有者分别释放时，不能提前撤销仍有效的授权",
+    "source_ids": [
+     "consensus-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试目录授权的引用计数，与空 referrer 导致远程资源被拒绝及错误响应使用字符串的机制无关。"
+   },
+   {
+    "title": "授权目录中的符号链接不能使非授权文件通过根目录检查",
+    "source_ids": [
+     "orchestration-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试符号链接绕过文件授权根目录，与本次远程资源加载故障的触发条件和机制均不同。"
+   },
+   {
+    "title": "Webview 来源的协议大小写变化不能绕过远程资源访问限制",
+    "source_ids": [
+     "orchestration-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试 Webview scheme 大小写绕过限制，并要求拒绝空 referrer，恰好与本次修复需要允许工作台空 referrer 的行为相反。"
+   },
+   {
+    "title": "畸形协议 URL 应结束当前请求，且后续合法请求仍能处理",
+    "source_ids": [
+     "orchestration-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试畸形 URL 解析异常导致请求无法完成，补丁未修复此机制，也未验证空 referrer 或错误响应数据类型。"
+   },
+   {
+    "title": "远程 IPC 成功兑现但响应体损坏时，协议请求不能悬挂",
+    "source_ids": [
+     "orchestration-6"
+    ],
+    "verdict": "miss",
+    "reason": "主要测试损坏响应在成功分支抛异常导致悬挂，拒绝对照也未检查响应体是否为 Buffer，无法检出本次修复的错误响应类型问题。"
+   }
   ]
  },
  {
@@ -5636,6 +8387,69 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试 Cordova 间接子类的类名和构造器保留，与本次修复的反射注解类型被移除机制不同。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "开启混淆后，v3 插件注解及其配置仍可在运行时读取",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "hit",
+    "reason": "R8 优化会移除反射读取所需的注解类型，使 CapacitorPlugin 注解为 null，直接违反读取插件名和权限配置的断言。"
+   },
+   {
+    "title": "仅由名称查找的非 public 权限与 Activity 回调在混淆后仍能完成调用",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对回调成员被删除或改名，未明确配置触发该缺陷所需的插件权限注解，也未指出注解类型被移除并折叠为 null 的机制。"
+   },
+   {
+    "title": "仅使用旧版 NativePlugin 注解的插件在 release 构建中仍可调用",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "hit",
+    "reason": "补丁明确保留 NativePlugin 注解类型，修复前其运行时注解被优化掉会使旧版插件发现或注解检查失败。"
+   },
+   {
+    "title": "Cordova 多级继承插件可按配置类名实例化并保留反射访问的公开成员",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 Cordova 多级继承类及公开成员的保留，与 Capacitor 注解类型被移除的故障机制无关。"
+   },
+   {
+    "title": "下游应用仅依赖 Capacitor 发布产物时也能获得插件保留规则",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对消费者规则是否随发布产物传递，资料中的缺陷是已有规则缺少注解类型保留，且未明确触发权限注解读取路径。"
    }
   ]
  },
@@ -5745,6 +8559,71 @@
     "verdict": "miss",
     "reason": "测试的是 Cordova 类名和构造器的保留，与插件注解类型未被保留导致 R8 将注解缓存折叠为 null 的机制不同。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "压缩后 v3 插件的运行时注解及嵌套权限声明仍可读取",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "hit",
+    "reason": "压缩后的 v3 插件通过桥接查询声明的权限别名，会进入受影响的权限路径，出现崩溃或缺失权限状态，违反预期。"
+   },
+   {
+    "title": "仅被反射调用的非 public 权限和 Activity 回调在 release 中仍可执行",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对回调删除、改名或注解丢失，未明确调用受影响的基类权限路径，不能据此认定会触发注解缓存被折叠为 null 的故障。"
+   },
+   {
+    "title": "只使用旧版 NativePlugin 注解的插件在压缩后仍可注册和调用",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试只验证旧版插件注册、普通方法调用及直接反射读取，没有进入权限路径，也未指出注解缓存被优化为 null 的机制。"
+   },
+   {
+    "title": "跨包间接继承的 Cordova 插件可按配置类名反射实例化",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 Cordova 间接继承类的名称和构造器保留，与 Capacitor 注解类型未保留导致的优化错误无关。"
+   },
+   {
+    "title": "发布为 Android 库后规则仍传递给开启压缩的消费应用",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对消费者规则是否随 AAR 传递，而资料已明确规则成功合并，实际缺陷是规则未保留注解类型。"
+   }
   ]
  },
  {
@@ -5853,6 +8732,69 @@
     "verdict": "miss",
     "reason": "测试针对停止作业时取消活跃部署及重复协调，没有旧版本部署阻塞新部署创建的触发条件。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "同名作业删除重建后，旧部署不能阻止新实例创建部署",
+    "source_ids": [
+     "consensus-5"
+    ],
+    "verdict": "miss",
+    "reason": "测试使用旧成功部署，而修复前已有成功部署清理逻辑；同版本不同 CreateIndex 的创建判断不足以对应本次故障。"
+   },
+   {
+    "title": "其他任务组的更新不能把当前组的重调度误判为规格更新",
+    "source_ids": [
+     "consensus-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对跨任务组累积更新结果导致的误判，与旧非活跃部署未被移出 DeploymentCurrent 的机制不同。"
+   },
+   {
+    "title": "当前版本仅有终止分配时，跨节点重调度不能重新创建部署",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试明确没有当前或历史部署，无法触发旧失败部署阻止新部署创建的缺陷。"
+   },
+   {
+    "title": "受污染及不符合资格的节点不能进入放置结果或干扰已有分配的统计",
+    "source_ids": [
+     "consensus-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对节点资格过滤和分配统计，与本次部署状态清理缺陷无关。"
+   },
+   {
+    "title": "停止作业时，暂停部署也必须取消且不能被后续部署创建流程复活",
+    "source_ids": [
+     "consensus-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对停止作业时的部署取消，未构造旧版本或不同 CreateIndex 的非活跃部署阻塞新部署创建的条件。"
+   }
   ]
  },
  {
@@ -5956,6 +8898,76 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试针对预渲染延迟重连创建重复端口，与此次导航重挂载、后端握手及旧 Bridge 竞态均不同。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "队列发送过程中同步断连时，停止使用旧端口并在重连后按序补发",
+    "source_ids": [
+     "consensus-1",
+     "databases-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对端口断连时的队列刷新和旧连接隔离，与同文档导航误触发 DevTools 重挂载的机制不同。"
+   },
+   {
+    "title": "一个后端关闭失败不能阻止其他后端清理及 BFCache 恢复",
+    "source_ids": [
+     "consensus-2",
+     "orchestration-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试由 shutdown 抛异常引发清理中断，补丁未修复该异常隔离机制，BFCache 恢复场景的重合不足以命中。"
+   },
+   {
+    "title": "预渲染期间延迟的重连回调不能在激活时创建重复端口",
+    "source_ids": [
+     "consensus-1",
+     "consensus-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对预渲染激活时重连回调创建重复端口，与导航误重挂载及后端握手问题均不同。"
+   },
+   {
+    "title": "后端初始化中途失败后不遗留 Agent，也不提前清除录制标志",
+    "source_ids": [
+     "orchestration-3",
+     "orchestration-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 initBackend 失败后的资源回收和录制标志保留，补丁未涉及该失败路径。"
+   },
+   {
+    "title": "同窗口的空消息不能使后端管理器抛错或破坏后续握手",
+    "source_ids": [
+     "consensus-7",
+     "orchestration-6"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对空消息解引用和重复初始化，而补丁的握手修复是拒绝同 source 下缺少 hello 的前端消息，且未修复空消息访问。"
    }
   ]
  },
@@ -6096,6 +9108,75 @@
     "verdict": "miss",
     "reason": "测试关注服务导入和映射兴趣绕过权限检查，而本缺陷是本应因隔离跳过的叶节点订阅仍先执行权限检查，机制不同。"
    }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "同一账户并发初始化两条叶节点连接时，环路检测主题必须一致",
+    "source_ids": [
+     "consensus-4"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对环路检测主题并发生成与覆盖，与隔离叶节点初始化时先收集全部订阅并执行无用权限检查的机制无关。"
+   },
+   {
+    "title": "账户在线更新服务导入和映射后，已有叶节点兴趣应同步增删",
+    "source_ids": [
+     "consensus-2",
+     "databases-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对在线配置更新后的兴趣同步，与隔离叶节点初始化中过晚过滤其他叶节点订阅的机制无关。"
+   },
+   {
+    "title": "订阅快照与实时增删交错时，叶节点计数不能重复或遗漏",
+    "source_ids": [
+     "consensus-3",
+     "databases-2"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对订阅快照与实时变更交错造成的计数问题，未涉及隔离过滤过晚导致的额外收集和权限检查。"
+   },
+   {
+    "title": "初始化后立即断连并反复重连，不应泄漏网关回复订阅或定时器状态",
+    "source_ids": [
+     "consensus-2",
+     "orchestration-3"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对断连后的网关订阅及定时器清理，且使用 spoke 分支，不涉及补丁修复的隔离叶节点订阅过滤路径。"
+   },
+   {
+    "title": "不同叶节点角色下，服务导入和映射不能绕过订阅权限",
+    "source_ids": [
+     "consensus-7",
+     "orchestration-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试针对服务导入和映射是否绕过权限，未设置隔离叶节点及其他叶节点来源订阅，也未检查多余权限检查或性能退化。"
+   }
   ]
  },
  {
@@ -6229,6 +9310,69 @@
     "source_ids": [],
     "verdict": "miss",
     "reason": "测试针对构建缓存、架构及链接模式的正确性，未涉及 builtin 端口驱动的源 IP 传播机制。"
+   }
+  ],
+  "patterns": [
+   "consensus-1",
+   "consensus-2",
+   "consensus-3",
+   "consensus-4",
+   "consensus-5",
+   "consensus-6",
+   "consensus-7",
+   "databases-1",
+   "databases-2",
+   "databases-3",
+   "databases-4",
+   "databases-5",
+   "databases-6",
+   "databases-7",
+   "orchestration-1",
+   "orchestration-2",
+   "orchestration-3",
+   "orchestration-4",
+   "orchestration-5",
+   "orchestration-6",
+   "orchestration-7"
+  ],
+  "c": [
+   {
+    "title": "动态安装在 CGO_ENABLED=0 的环境下仍应启用 CGO 并成功外部链接",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试 CGO 与动态链接构建行为，未涉及 builtin 端口驱动丢失外部源 IP 的回归。"
+   },
+   {
+    "title": "同一 shell 先动态安装再静态安装不能残留动态链接参数",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试连续安装时动态链接参数残留，与端口转发的源 IP 传播故障机制不同。"
+   },
+   {
+    "title": "静态安装应像动态安装一样传递指定的 Go 构建模式",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试静态安装是否传递 Go 构建模式，未触发或验证源 IP 传播问题。"
+   },
+   {
+    "title": "非法安装模式必须返回失败且不执行构建",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试非法安装模式的退出码及构建副作用，与 builtin 端口驱动的源 IP 丢失无关。"
+   },
+   {
+    "title": "Dockerfile 跨架构静态与动态构建必须产出正确架构和链接类型",
+    "source_ids": [
+     "consensus-7"
+    ],
+    "verdict": "miss",
+    "reason": "测试跨架构构建、链接类型及缓存正确性，仅运行版本检查无法验证外部源 IP 是否保留。"
    }
   ]
  }

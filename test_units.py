@@ -22,7 +22,7 @@ from gh import GitHub
 from s02_fetch_issues import fetch_form, init_db, main as s02_main
 from s07_quality import classify_kind, grade, rebuild
 from experiments.backtest import (code_file as backtest_code_file, excerpt_file, mcnemar_p,
-                                  retrieve_history)
+                                  patterns_for, retrieve_history)
 from s06_curate import group_sources, select_issues
 from evidence import EvidenceError, attach_pr_evidence, fetch_pr_evidence, load_tests as load_test_files
 from extract import enrich, extract_batch, extract_issue, find_issues
@@ -173,6 +173,17 @@ class BacktestTests(unittest.TestCase):
         self.assertTrue(windowed)
         self.assertIn("l500", out)
         self.assertNotIn("l100\n", out)
+
+    def test_patterns_drop_same_repo_later_citations(self):
+        pats = [{"id": "x-1", "title": "t", "text": "m",
+                 "cited": [{"repo": "moby/moby", "number": 1, "created_at": "2026-06-01"},
+                           {"repo": "etcd-io/etcd", "number": 2, "created_at": "2020-01-01"}]},
+                {"id": "x-2", "title": "t", "text": "m",
+                 "cited": [{"repo": "tikv/tikv", "number": 3, "created_at": "2026-09-01"}]}]
+        task = {"repo": "moby/moby", "created_at": "2026-05-01"}
+        self.assertEqual(patterns_for(task, pats), [])           # x-1 leaks, x-2 has nothing earlier
+        other = {"repo": "pingcap/tidb", "created_at": "2026-05-01"}
+        self.assertEqual([p["id"] for p in patterns_for(other, pats)], ["x-1"])
 
     def test_mcnemar_is_symmetric_and_bounded(self):
         self.assertEqual(mcnemar_p(0, 0), 1.0)
