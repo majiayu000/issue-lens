@@ -24,6 +24,10 @@ is a separate step. For automatic extraction and planning, see
 For change-focused reviews, task-based issue grouping, explicit source expansion
 and executable acceptance checks, see [the usage workflows](docs/using-issue-lens.md).
 
+## Does it help? (backtest, 2026-10-22)
+
+On 49 real bugs fixed after 2026-04-01, a model shown only the pre-fix code proposed a test that hits the bug (or its exact failure mechanism) for 15; adding cross-project history retrieved from this corpus also gave 15 (lift 0 pp, 95% CI −8.2 to +8.2) at 2.06× the input tokens. The model cited retrieved history in only 11% of its tests. Treat the corpus as a searchable dataset, not as a proven test-generation booster. Protocol: [docs/evaluation.md](docs/evaluation.md) · results: [out/backtest-20261022](out/backtest-20261022/README.md).
+
 ## How it works
 
 ```

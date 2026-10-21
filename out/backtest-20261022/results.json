@@ -1,0 +1,6235 @@
+[
+ {
+  "id": 4196981987,
+  "repo": "react/react",
+  "form": "frontend",
+  "issue_url": "https://github.com/react/react/issues/36200",
+  "pr_url": "https://github.com/react/react/pull/36913",
+  "pre_fix_commit": "3508aee63d59b7d4eb8e82171b78ef214a2487ca",
+  "files": [
+   "packages/shared/ReactPerformanceTrackProperties.js"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 389501572,
+    "repo": "react/react-native",
+    "title": "When Hot reloading is enabled, Requiring a component fails with TypeError: Attempting to change the getter of an unconfigurable property"
+   },
+   {
+    "id": 3356334007,
+    "repo": "BerriAI/litellm",
+    "title": "[Bug]: asyncio.CancelledError during LoggingWorker cleanup at program exit (v1.76.0)"
+   },
+   {
+    "id": 3718558140,
+    "repo": "BerriAI/litellm",
+    "title": "[Bug]: asyncio.Queue is bound to a different event loop in multiprocessing for logging_worker"
+   },
+   {
+    "id": 3056498593,
+    "repo": "sgl-project/sglang",
+    "title": "[Bug] IndexError: list index out of range in move_ready_grammar_requests() causes sglang server crash during stress test with Qwen3-32B"
+   },
+   {
+    "id": 1436790028,
+    "repo": "yt-dlp/yt-dlp",
+    "title": "[TwitCasting] No longer possible to download past broadcast (live still works)"
+   },
+   {
+    "id": 2956315476,
+    "repo": "grpc/grpc-go",
+    "title": "grpc.Dial fails to connect to unix domain socket when https_proxy is set"
+   },
+   {
+    "id": 2869744958,
+    "repo": "containerd/containerd",
+    "title": "TestBinDirVerifyImage needs proper working init process (PID 1 process) to pass"
+   }
+  ],
+  "a": [
+   {
+    "title": "属性 getter 抛错时，性能属性记录仍能继续",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注 getter 抛错的异常隔离，与 TypedArray 枚举时预先生成全部索引键导致卡顿的机制不同。"
+   },
+   {
+    "title": "循环的已兑现 Promise 不应导致无限递归",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注已兑现 Promise 循环引用导致无限递归，与 TypedArray 的索引键枚举开销无关。"
+   },
+   {
+    "title": "原始值数组的自定义 toJSON 抛错时不应中断记录",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注数组 toJSON 抛错的异常隔离，未触发 TypedArray 枚举导致卡顿的机制。"
+   },
+   {
+    "title": "JSX 中被隐藏的属性不应耗尽可显示属性配额",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注 JSX 隐藏属性的配额计算，与 TypedArray 在循环开始前生成全部索引键的机制不同。"
+   },
+   {
+    "title": "JSX 不应把原型上的 children 当作自身子节点",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注 JSX 继承 children 的归属判断，与大型 TypedArray 的枚举性能缺陷无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "Promise 从 pending 转为 settled 时保持属性名前缀一致",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Promise 状态变化时的属性名前缀，与 TypedArray 枚举索引导致开发模式卡顿的机制无关。"
+   },
+   {
+    "title": "fulfilled Promise 的间接循环引用不会导致无限递归",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Promise 间接循环引用导致的递归问题，未涉及 TypedArray 索引枚举的开销。"
+   },
+   {
+    "title": "JSX 的私有属性不能耗尽可见属性预算并隐藏 children",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 JSX 私有属性占用可见属性预算的问题，与 TypedArray 在循环开始前物化全部索引键的机制不同。"
+   },
+   {
+    "title": "数组自定义 toJSON 返回 BigInt 时不会中断性能属性记录",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试普通数组自定义 toJSON 返回 BigInt 引发的序列化异常，未触发 TypedArray 枚举机制。"
+   },
+   {
+    "title": "单个可枚举 getter 抛错后仍能记录同对象的其他属性",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽调用 addObjectToProperties，但测试的是 getter 异常处理，未涉及大型 TypedArray 的索引键物化。"
+   }
+  ]
+ },
+ {
+  "id": 4198752424,
+  "repo": "ollama/ollama",
+  "form": "ai",
+  "issue_url": "https://github.com/ollama/ollama/issues/15260",
+  "pr_url": "https://github.com/ollama/ollama/pull/15678",
+  "pre_fix_commit": "8e05d734b95750d406ee753d62430891299faa86",
+  "files": [
+   "server/routes.go"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 3336014326,
+    "repo": "BerriAI/litellm",
+    "title": "[Bug]: Structured output text_format is ignored in responses API"
+   },
+   {
+    "id": 3236687775,
+    "repo": "hashicorp/nomad",
+    "title": "Failure in running exec command in rootless nomad"
+   },
+   {
+    "id": 1074090818,
+    "repo": "tikv/tikv",
+    "title": "Sysbench read and write workload hit 9007 Write conflict error"
+   },
+   {
+    "id": 2747171187,
+    "repo": "janhq/jan",
+    "title": "QA: Jan 0.5.12 Release Sign-off"
+   },
+   {
+    "id": 2622751148,
+    "repo": "janhq/jan",
+    "title": "QA: Jan 0.5.8 Release Sign-off"
+   }
+  ],
+  "a": [
+   {
+    "title": "思考与正文出现在同一分片时，重启结构化生成不得丢失思考内容",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注思考与正文同分片时的内容保留，未触发 gemma4 显式关闭思考后约束永久延迟的问题。"
+   },
+   {
+    "title": "空思考段结束后仍必须对最终正文施加结构化约束",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试显式启用思考且无内置解析器，关注空思考段的切换识别，与 gemma4 关闭思考后没有结束转换的机制不同。"
+   },
+   {
+    "title": "内置解析器报错后必须终止当前生成且不能继续返回成功结果",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注解析器报错后的取消和终止行为，与关闭思考导致 Format 未传入无关。"
+   },
+   {
+    "title": "客户端断开时，阻塞在响应通道发送的生成任务必须退出",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注客户端断开后的通道阻塞和任务退出，与结构化约束被延迟无关。"
+   },
+   {
+    "title": "结构化生成切换所产生的取消错误不得中断第二次生成",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试通过实际思考到正文的转换触发第二次生成，关注内部取消错误处理，未覆盖关闭思考后转换永不发生的问题。"
+   }
+  ],
+  "b": [
+   {
+    "title": "支持思考的模型直接输出答案时仍必须应用结构化约束",
+    "source_ids": [
+     3336014326
+    ],
+    "verdict": "mechanism",
+    "reason": "指出了等待思考结束转换导致 Format 始终未应用的同一机制，但未明确使用 gemma4 并设置 think=false，无法稳定命中该缺陷。"
+   },
+   {
+    "title": "思考与正文在同一回调出现时重启不能丢失该块思考",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试思考与正文同块时重启造成的思考丢失，而该缺陷是关闭思考后格式约束始终未启用。"
+   },
+   {
+    "title": "内置解析器报错后必须终止生成且不能继续发送成功响应",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试解析器报错后的取消与响应终止，与格式约束因等待思考结束而被跳过无关。"
+   },
+   {
+    "title": "客户端在回调发送响应时断开不能阻塞生成协程",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试客户端断开后的通道发送阻塞，与关闭思考导致格式约束未应用的机制不同。"
+   },
+   {
+    "title": "通用思考解析器在闭合标签跨块时正确切换结构化输出",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试无内置解析器时跨块闭合标签的识别与重启，未涉及 gemma4 设置 think=false 后没有思考结束转换的故障。"
+   }
+  ]
+ },
+ {
+  "id": 4207813907,
+  "repo": "expo/expo",
+  "form": "mobile",
+  "issue_url": "https://github.com/expo/expo/issues/44515",
+  "pr_url": "https://github.com/expo/expo/pull/44665",
+  "pre_fix_commit": "52d9298ccf9e5cd80c99610bc1a49a79bd02379e",
+  "files": [
+   "packages/expo-modules-autolinking/scripts/ios/precompiled_modules.rb"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 196805744,
+    "repo": "react/react-native",
+    "title": "[0.40] Warning: Swift Projects Fail"
+   },
+   {
+    "id": 1929743509,
+    "repo": "react/react-native",
+    "title": "iOS Release build from XCode fails at \"[CP-User] [Hermes] Replace Hermes for the right configuration, if needed\" step after adding a package"
+   },
+   {
+    "id": 796663124,
+    "repo": "flutter/flutter",
+    "title": "Flutter App running on M1 ARM iOS 14.3 simulator cannot paste text"
+   },
+   {
+    "id": 482178799,
+    "repo": "flutter/flutter",
+    "title": "[Camera] Audio quality very bad on android"
+   },
+   {
+    "id": 1328582504,
+    "repo": "react/react-native",
+    "title": "use_framework! + hermes enable = Undefined symbols \"vtable for facebook::react::HermesExecutorFactory\""
+   },
+   {
+    "id": 655050105,
+    "repo": "microsoft/terminal",
+    "title": "Extra IntelliSense errors caused by include paths and precompiled headers"
+   },
+   {
+    "id": 202656598,
+    "repo": "traefik/traefik",
+    "title": "Malformed/garbled HTML response when compress is enabled"
+   },
+   {
+    "id": 835692960,
+    "repo": "traefik/traefik",
+    "title": "traefik fails to use ingress/service with multiple ports defined - \"Cannot create service: cannot define a port\""
+   },
+   {
+    "id": 3880129213,
+    "repo": "tauri-apps/tauri",
+    "title": "[bug] `MetalToolchain` causing build error on iOS target"
+   }
+  ],
+  "a": [
+   {
+    "title": "同名预编译产物更新后不能继续使用旧 tarball",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对同名 tarball 缓存未更新，与配置切换时目录被删除导致 modulemap 丢失的机制不同。"
+   },
+   {
+    "title": "缓存修复解压失败时应报告失败且允许下次恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对损坏 tarball 的解压错误处理和恢复，未涉及构建时替换目录销毁 modulemap。"
+   },
+   {
+    "title": "连续安装时预编译模块集合变化应更新已有 codegen 清理脚本",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对预编译模块集合变化后 codegen 清理脚本未更新，与 modulemap 被删除无关。"
+   },
+   {
+    "title": "已有 Swift 接口生成设置为 YES 时必须被覆盖为 NO",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 Swift 接口生成设置未覆盖，与预编译目录替换导致 modulemap 丢失的机制不同。"
+   },
+   {
+    "title": "缺少 C 或 Swift 标志字段的 xcconfig 也应获得完整 React 模块参数",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽调用同一配置方法，但测试针对缺失标志字段和路径空格，未触发目录替换，也未指出 modulemap 被销毁的机制。"
+   }
+  ],
+  "b": [
+   {
+    "title": "更新预编译产物后重复安装不能保留旧 tarball",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对已有 tarball 未更新的问题，未涉及构建时替换预编译目录导致 modulemap 被删除的机制。"
+   },
+   {
+    "title": "缓存恢复解压失败后不能被残留目录阻止重试",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对解压失败后的残留目录阻止重试，未涉及 Debug/Release 切换删除 modulemap 的机制。"
+   },
+   {
+    "title": "缺少编译标志键时仍须注入完整 React 模块配置",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽然调用同一配置方法，但测试针对缺失编译标志及重复注入，未触发预编译目录替换导致 modulemap 丢失。"
+   },
+   {
+    "title": "已有 YES 或注释中的 Swift 接口设置不能阻止禁用",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 Swift 接口设置未被正确覆盖，与 modulemap 存放目录被构建脚本删除无关。"
+   },
+   {
+    "title": "重复安装时已有 codegen 清理脚本必须同步排除列表",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 codegen 清理脚本排除列表未同步，与预编译目录替换删除 modulemap 的故障机制不同。"
+   }
+  ]
+ },
+ {
+  "id": 4227950072,
+  "repo": "ollama/ollama",
+  "form": "ai",
+  "issue_url": "https://github.com/ollama/ollama/issues/15433",
+  "pr_url": "https://github.com/ollama/ollama/pull/15443",
+  "pre_fix_commit": "612f0a17d32cf7fe9bde5f31703a37b49c98ea2f",
+  "files": [
+   "scripts/build_darwin.sh"
+  ],
+  "errors": [
+   "Codex returned invalid JSON in its response at line 1, column 1914; no output was accepted."
+  ],
+  "history": [
+   {
+    "id": 1224511623,
+    "repo": "nativefier/nativefier",
+    "title": "Randomness in injected filenames prevent universal apps from building"
+   },
+   {
+    "id": 796663124,
+    "repo": "flutter/flutter",
+    "title": "Flutter App running on M1 ARM iOS 14.3 simulator cannot paste text"
+   },
+   {
+    "id": 3880129213,
+    "repo": "tauri-apps/tauri",
+    "title": "[bug] `MetalToolchain` causing build error on iOS target"
+   },
+   {
+    "id": 1929743509,
+    "repo": "react/react-native",
+    "title": "iOS Release build from XCode fails at \"[CP-User] [Hermes] Replace Hermes for the right configuration, if needed\" step after adding a package"
+   },
+   {
+    "id": 464592101,
+    "repo": "tikv/tikv",
+    "title": "libtitan_sys built failed on gcc 9.1"
+   }
+  ],
+  "a": [
+   {
+    "title": "arm64 独有的顶层动态库必须进入通用应用包",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对仅遍历 amd64 导致 arm64 独有库漏打包，与顶层 x86_64 MLX 库遮蔽变体目录的机制不同。"
+   },
+   {
+    "title": "必需后端库复制失败时构建必须失败",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对复制失败被 || true 吞掉，与多余的顶层 x86_64 MLX 库遮蔽正确库无关。"
+   },
+   {
+    "title": "缺少可选文件通配匹配时归档仍须完整成功",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对可选通配符无匹配导致归档失败，未涉及 MLX 库的架构及搜索路径遮蔽。"
+   },
+   {
+    "title": "公证明确拒绝后不得按成功结果继续打包",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对公证拒绝后的错误处理，与 MLX 动态库打包及遮蔽机制无关。"
+   },
+   {
+    "title": "双架构同路径后端文件不得在通用 tar 包中互相覆盖",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 tar 中同路径文件覆盖导致架构切片丢失，与应用 Resources 中多余的 x86_64 MLX 库遮蔽变体目录不同。"
+   }
+  ],
+  "b": [
+   {
+    "title": "通用命令行归档中同名动态库不能被另一架构覆盖",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是命令行归档中同名库被另一架构覆盖，与应用顶层残留 x86_64 MLX 库遮蔽变体目录的机制不同。"
+   },
+   {
+    "title": "通用应用必须保留仅存在于 arm64 的平铺动态库",
+    "source_ids": [
+     1224511623
+    ],
+    "verdict": "miss",
+    "reason": "测试的是遗漏 arm64 独有依赖，与多复制了顶层 x86_64 MLX 库并遮蔽正确变体的机制不同。"
+   },
+   {
+    "title": "不存在可选 metallib 或变体目录时不能静默生成不完整归档",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是可选通配符和归档失败被掩盖，且纯 CPU 前提不触发 MLX 库遮蔽缺陷。"
+   },
+   {
+    "title": "复制必需 CPU 后端失败时构建应失败且重试能够恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是 CPU 后端复制失败被静默忽略，与 MLX 顶层错误架构库遮蔽变体无关。"
+   },
+   {
+    "title": "MLX 变体内部的动态库符号链接在打包后仍可解析",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是变体内部符号链接依赖丢失，未指出或稳定触发顶层 x86_64 MLX 库遮蔽正确变体的缺陷。"
+   }
+  ]
+ },
+ {
+  "id": 4245489113,
+  "repo": "sveltejs/svelte",
+  "form": "frontend",
+  "issue_url": "https://github.com/sveltejs/svelte/issues/18097",
+  "pr_url": "https://github.com/sveltejs/svelte/pull/18118",
+  "pre_fix_commit": "91e1ead773c00eece56d49542c94670aabbc5902",
+  "files": [
+   "packages/svelte/src/internal/client/reactivity/async.js",
+   "packages/svelte/src/internal/client/reactivity/deriveds.js"
+  ],
+  "errors": [
+   "Codex returned invalid JSON in its response at line 1, column 1803; no output was accepted."
+  ],
+  "history": [
+   {
+    "id": 772963909,
+    "repo": "TanStack/query",
+    "title": "navigator is not defined (SSR)"
+   },
+   {
+    "id": 811870811,
+    "repo": "vercel/next.js",
+    "title": "Invalid Accept-Language header will crash the server"
+   },
+   {
+    "id": 602674414,
+    "repo": "vercel/next.js",
+    "title": "SSR cache example doesn't work"
+   },
+   {
+    "id": 666649426,
+    "repo": "vercel/next.js",
+    "title": "Cannot test <Link> outside of a Page on Next v9.5.0 (Enzyme + Jest)"
+   },
+   {
+    "id": 1045470931,
+    "repo": "qier222/YesPlayMusic",
+    "title": "[Bug] gpu_data_manager_impl_private.cc(415)] GPU process isn't usable. Goodbye."
+   },
+   {
+    "id": 3176489826,
+    "repo": "google-gemini/gemini-cli",
+    "title": "Unhandled Promise Rejection in ClearcutLogger causes app crash on network errors"
+   },
+   {
+    "id": 633822353,
+    "repo": "microsoft/playwright",
+    "title": "[REGRESSION]: Atomic binary install failing in CI"
+   },
+   {
+    "id": 629783485,
+    "repo": "microsoft/playwright",
+    "title": "[BUG] WebKit browser crashes on new page/context on Ubuntu"
+   },
+   {
+    "id": 743355129,
+    "repo": "microsoft/playwright",
+    "title": "[BUG] Unknown scheme for WebSocket.listenerCount"
+   }
+  ],
+  "a": [
+   {
+    "title": "初始 pending 期间连续更新，旧异步结果不得提前提交",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "仅覆盖异步结果乱序提交，未明确销毁所属分支或观察销毁后继续执行的副作用，无法对应本次缺陷。"
+   },
+   {
+    "title": "已渲染后的异步更新乱序完成，不得回滚到旧值",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试已渲染状态下的请求竞态与批次收尾，未触发已销毁 effect 的异步完成回调继续执行。"
+   },
+   {
+    "title": "blocker 拒绝时正确传播错误并释放 pending 计数",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试有效 effect 中 blocker 拒绝的错误传播，本次修复针对销毁后的成功完成路径及警告抑制。"
+   },
+   {
+    "title": "等待 blocker 时销毁 effect，后续完成不得执行已销毁组件的回调",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "明确在等待 blocker 时销毁所属 effect 后再完成请求，修复前 finish 仍执行完成回调，直接违反卸载后回调不得执行的断言。"
+   },
+   {
+    "title": "同步派生在 blocker 完成后抛错，错误必须被边界捕获且允许恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试有效 effect 中同步派生抛错的捕获与上下文清理，未涉及所属 effect 已销毁这一触发条件。"
+   }
+  ],
+  "b": [
+   {
+    "title": "阻塞 Promise 拒绝后应进入错误边界并释放 pending 状态",
+    "source_ids": [
+     3176489826
+    ],
+    "verdict": "miss",
+    "reason": "测试有效父 effect 下 blocker 拒绝的错误处理，与父 effect 销毁后仍执行异步回调的缺陷无关。"
+   },
+   {
+    "title": "等待阻塞结束后创建同步 derived 失败不应泄漏全局上下文",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试同步 derived 创建异常导致上下文泄漏，未涉及已销毁父 effect 的异步工作继续执行。"
+   },
+   {
+    "title": "父 effect 销毁后延迟完成的 flatten 不应再执行渲染回调",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "先销毁父 effect 再解决 Promise 会触发修复前 finish 继续调用 fn，直接违反销毁后 fn 不执行的断言。"
+   },
+   {
+    "title": "pending 边界内连续重跑时旧异步结果不能提前提交或覆盖新结果",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试同一 async derived 多次运行的结果竞态，未明确销毁所属 effect，不能对应本补丁阻止已销毁分支继续执行的机制。"
+   },
+   {
+    "title": "异步 derived 的 falsy 拒绝必须作为错误处理且后续成功可恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 falsy 拒绝的错误标记与恢复，与销毁分支的异步回调及瀑布警告无关。"
+   }
+  ]
+ },
+ {
+  "id": 4252749415,
+  "repo": "pingcap/tidb",
+  "form": "distributed",
+  "issue_url": "https://github.com/pingcap/tidb/issues/67727",
+  "pr_url": "https://github.com/pingcap/tidb/pull/67961",
+  "pre_fix_commit": "49c771335a67a39356352d635b55dec30b133691",
+  "files": [
+   "pkg/util/stringutil/string_util.go"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 1096673683,
+    "repo": "kubernetes/kubernetes",
+    "title": "kube-scheduler panics on malformed label"
+   },
+   {
+    "id": 1854487377,
+    "repo": "vitessio/vitess",
+    "title": "Bug Report: empty ListShardTablet result when remote cell topology is down"
+   },
+   {
+    "id": 1973178282,
+    "repo": "goccy/go-json",
+    "title": "Different behaviour from the standard library when parsing null json.Number fields"
+   },
+   {
+    "id": 1063887468,
+    "repo": "gin-gonic/gin",
+    "title": "With RedirectFixedPath enabled, the request execution panics when a 404 is expected"
+   },
+   {
+    "id": 4227089752,
+    "repo": "pola-rs/polars",
+    "title": "`scan_delta` panics with PanicException: index out of bounds when filtering an empty Delta table (regression in 1.38)"
+   },
+   {
+    "id": 3552662483,
+    "repo": "goccy/go-json",
+    "title": "Bug: Panic when marshaling recursive struct with map[string]any field"
+   },
+   {
+    "id": 3029295632,
+    "repo": "charmbracelet/bubbletea",
+    "title": "Function Keys result in empty string / KeyMsg in Windows Cmd"
+   }
+  ],
+  "a": [
+   {
+    "title": "UnquoteChar 接收空字符串时应返回语法错误而非 panic",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试空输入导致的 UnquoteChar 越界，与 LIKE 转正则时未转义字面元字符无关。"
+   },
+   {
+    "title": "UnquoteChar 应按 quote 参数拒绝不允许的引号转义",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 UnquoteChar 的引号转义限制，与本次正则元字符未转义的故障机制不同。"
+   },
+   {
+    "title": "LIKE 转正则时应转义普通字符中的正则元字符",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "修复前 a.b 会被转换为 ^a.b$ 并错误匹配 axb，单个左方括号还会导致正则编译失败，直接触发字面元字符未转义的缺陷。"
+   },
+   {
+    "title": "LIKE 通配符转换成正则后仍应匹配换行符",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是正则通配符默认不匹配换行的问题，补丁仍将通配符转换为 . 和 .*，与字面元字符未转义不同。"
+   },
+   {
+    "title": "长重复前缀失配不应使声称线性的匹配器退化为平方级扫描",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 doMatchInner 的扫描复杂度，与 CompileLike2Regexp 未转义字面元字符的缺陷无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "空字符串解码应返回语法错误而非越界崩溃",
+    "source_ids": [
+     4227089752
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 UnquoteChar 空输入越界，与 LIKE 转正则时未转义字面字符的缺陷无关。"
+   },
+   {
+    "title": "LIKE 转正则必须将正则元字符作为普通字符匹配",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "直接验证正则元字符的字面语义，修复前会出现匹配错误或非法正则，准确触发未转义缺陷。"
+   },
+   {
+    "title": "LIKE 通配符转换成正则后仍应匹配换行字符",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对正则点号默认不匹配换行的问题，补丁仍将通配符转换为点号，故障机制不同。"
+   },
+   {
+    "title": "合法 U+FFFD 字符必须一次完整解码且保持尾串边界",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 UnquoteChar 对合法 U+FFFD 的解码边界，与正则元字符未转义无关。"
+   },
+   {
+    "title": "长重复前缀匹配失败时不应出现平方级字符比较",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 doMatchInner 重复前缀回溯的复杂度，与 LIKE 转正则时的字面字符转义无关。"
+   }
+  ]
+ },
+ {
+  "id": 4310950565,
+  "repo": "caddyserver/caddy",
+  "form": "backend",
+  "issue_url": "https://github.com/caddyserver/caddy/issues/7667",
+  "pr_url": "https://github.com/caddyserver/caddy/pull/7670",
+  "pre_fix_commit": "441d5eb0628c4a9fbe74c13eca6ab255056e3e57",
+  "files": [
+   "listeners.go"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 282787237,
+    "repo": "Kong/kong",
+    "title": "kong migrations up fails when /etc/resolv.conf file is empty"
+   },
+   {
+    "id": 1417147370,
+    "repo": "Kong/kong",
+    "title": "TCP conn proxying not working - `attempt to index local 'plugins_iterator' (a nil value)`"
+   },
+   {
+    "id": 295528143,
+    "repo": "Kong/kong",
+    "title": "invalid scope string returns 500"
+   },
+   {
+    "id": 898996515,
+    "repo": "envoyproxy/envoy",
+    "title": "Transcoder triggers EOF with HTTP/2 when request body is \"google.api.HttpBody\""
+   },
+   {
+    "id": 684355099,
+    "repo": "Kong/kong",
+    "title": "Declarative config reload sometimes leaves broken workers at 100% CPU"
+   },
+   {
+    "id": 3152588348,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: Fails to load llmcompressor GPTQ Qwen2.5-VL model"
+   },
+   {
+    "id": 971208218,
+    "repo": "redis/redis",
+    "title": "`replicaof` is not present in the output of `CONFIG GET *` command"
+   },
+   {
+    "id": 938168767,
+    "repo": "hashicorp/consul",
+    "title": "Connect: Envoy sidecars enter state where they fail to receive xds updates from Consul"
+   },
+   {
+    "id": 1964903543,
+    "repo": "redis/redis",
+    "title": "[CRASH] Cluster CLUSTERMSG_EXT_TYPE_FORGOTTEN_NODE"
+   },
+   {
+    "id": 1068220442,
+    "repo": "containerd/containerd",
+    "title": "ctr: Can't use CNI on Windows: panic: invalid GUID length"
+   }
+  ],
+  "a": [
+   {
+    "title": "拒绝括号不匹配的 IPv6 地址，避免容错解析掩盖非法输入",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 IPv6 括号校验，与 QUIC TLS 配置遗漏 ECH 密钥回调无关。"
+   },
+   {
+    "title": "QUIC 初始化失败后释放已绑定的 UDP 端口",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 QUIC 初始化失败时的端口和资源释放，不涉及 ECH 密钥回调的传递。"
+   },
+   {
+    "title": "共享同一 TLS 配置的两个监听句柄关闭其一后另一个仍可接受连接",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对共享监听句柄的关闭与接收生命周期，未启用 ECH，也未验证 ECH 密钥获取。"
+   },
+   {
+    "title": "TLS 回调等待配置切换时不会与取消操作形成锁死",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对持读锁调用 GetConfigForClient 引发的取消死锁，与遗漏 GetEncryptedClientHelloKeys 回调是不同机制。"
+   },
+   {
+    "title": "热重载关闭 0-RTT 后共享监听器不能继续接受早期数据",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对热重载后 Allow0RTT 配置未更新，与 QUIC 路径无法获取 ECH 密钥无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "共享同一个 TLS 配置的两个使用者应独立取消",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对同一配置指针复用导致的提前取消，与 QUIC TLS 配置遗漏 ECH 密钥回调的故障机制不同。"
+   },
+   {
+    "title": "TLS 回调执行期间触发配置交接不应死锁",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对回调持读锁与取消等待写锁形成的死锁，未涉及 ECH 密钥回调的传递缺失。"
+   },
+   {
+    "title": "使用静态证书且未设置回调的合法 TLS 配置不应导致握手 panic",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对直接调用 nil GetConfigForClient 导致的 panic，与缺失 GetEncryptedClientHelloKeys 回调不同。"
+   },
+   {
+    "title": "QUIC 初始化失败后应释放已经取得的 UDP 监听器",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 QUIC 初始化失败后的 UDP 资源泄漏，未触发或验证 ECH 密钥回调缺失。"
+   },
+   {
+    "title": "缺失端口的容错解析不应接受括号损坏的 IPv6 地址",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 IPv6 地址解析错误，与 QUIC 监听器无法获得 ECH 密钥的缺陷无关。"
+   }
+  ]
+ },
+ {
+  "id": 4314950940,
+  "repo": "QuantumNous/new-api",
+  "form": "ai",
+  "issue_url": "https://github.com/QuantumNous/new-api/issues/4408",
+  "pr_url": "https://github.com/QuantumNous/new-api/pull/4520",
+  "pre_fix_commit": "8ca103342d5ae7bd17e0e59b728e3d0bf903e963",
+  "files": [
+   "dto/openai_request.go",
+   "relay/channel/claude/relay-claude.go",
+   "relay/channel/gemini/relay-gemini.go",
+   "relay/channel/ollama/stream.go",
+   "relay/channel/openai/relay-openai.go"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 4198752424,
+    "repo": "ollama/ollama",
+    "title": "`think=false` breaks `format` (structured output) for `gemma4` — format constraint silently ignored"
+   },
+   {
+    "id": 4214641405,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: `--reasoning-parser gemma4` silently disables structured output (xgrammar) when `enable_thinking=false`"
+   },
+   {
+    "id": 2841313053,
+    "repo": "sgl-project/sglang",
+    "title": "[Bug] Error while serving deepseek-ai/DeepSeek-V2-Lite in NVIDIA A40-48Q"
+   },
+   {
+    "id": 1431838968,
+    "repo": "caddyserver/caddy",
+    "title": "certificate_authorities/root is ignored while renewing intermediate certificate"
+   },
+   {
+    "id": 3239257634,
+    "repo": "n8n-io/n8n",
+    "title": "Something somewhere crashes when error.message is not a string"
+   },
+   {
+    "id": 3863586238,
+    "repo": "n8n-io/n8n",
+    "title": "[MCP Client] Transport selection dropdown ignored - causes 95M failed requests retry storm"
+   },
+   {
+    "id": 3896405406,
+    "repo": "google-gemini/gemini-cli",
+    "title": "`security.environmentVariableRedaction.allowed` broken"
+   },
+   {
+    "id": 2854706629,
+    "repo": "vitessio/vitess",
+    "title": "Bug Report: `vtclient` missing command flags (IE --grpc_*)"
+   },
+   {
+    "id": 3825977608,
+    "repo": "n8n-io/n8n",
+    "title": "missing required parameter 'text.format'"
+   },
+   {
+    "id": 766148668,
+    "repo": "scylladb/scylladb",
+    "title": "Wild pointer dereferenced when try_flush_memtable_to_sstable on shutdown fails to create sstable in a dropped keyspace"
+   }
+  ],
+  "a": [
+   {
+    "title": "Gemini 多候选响应中工具调用状态不能污染后续候选",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试候选间工具调用状态污染，与显式空推理字段因 string 加 omitempty 被丢弃的机制无关。"
+   },
+   {
+    "title": "Claude 多段文本和推理转换后必须完整保留且顺序正确",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试非空多段推理的拼接与保留，未涉及显式空串在反序列化再序列化时被省略的故障机制。"
+   },
+   {
+    "title": "文件内容经 JSON 解码后不能丢失标准 filename 字段",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试文件名字段映射错误，与空推理字段丢失无关。"
+   },
+   {
+    "title": "Ollama 多行响应的终止块损坏时不能伪造成功完成",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Ollama 截断响应的解析与错误处理，与空推理字段序列化丢失无关。"
+   },
+   {
+    "title": "OpenAI 上游错误对象缺少 type 时仍必须作为错误处理",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试缺少 type 的上游错误对象识别，与显式空推理字段被省略无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "文件内容经过 JSON 解码后仍保留标准 filename 字段",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试文件对象的 filename 字段读取，与显式空推理字段因 string 加 omitempty 被丢弃的机制无关。"
+   },
+   {
+    "title": "SetMediaContent 设置的文本与 JSON 解码后的文本提取结果一致",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Content 运行时类型导致文本提取不一致，未涉及空推理字段在转发序列化时丢失。"
+   },
+   {
+    "title": "Claude 非流式转换保留多个文本块和推理块的完整顺序",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽涉及 Claude 推理转换，但测试的是多个非空内容块的拼接与顺序，未触及显式空串被 omitempty 省略的机制。"
+   },
+   {
+    "title": "Gemini 多候选响应中的工具调用状态不得污染后续候选",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Gemini 候选之间工具调用状态污染，与空推理字段的序列化丢失无关。"
+   },
+   {
+    "title": "Ollama 多行响应中间损坏时不得静默返回成功的截断答案",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Ollama 损坏 JSON 行的错误处理，与显式空推理字段被静默省略无关。"
+   }
+  ]
+ },
+ {
+  "id": 4373836141,
+  "repo": "nexu-io/open-design",
+  "form": "desktop",
+  "issue_url": "https://github.com/nexu-io/open-design/issues/416",
+  "pr_url": "https://github.com/nexu-io/open-design/pull/417",
+  "pre_fix_commit": "71bf5634e838d556780b57484a5ef6e53f7173d6",
+  "files": [
+   "tools/pack/src/linux.ts",
+   "tools/pack/src/mac.ts",
+   "tools/pack/src/resources.ts",
+   "tools/pack/src/win.ts"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 1038605251,
+    "repo": "qier222/YesPlayMusic",
+    "title": "[已解明] 登陆账号后进入音乐库页面程序卡死"
+   },
+   {
+    "id": 4320724302,
+    "repo": "etcd-io/etcd",
+    "title": "EtcdManualResolver.Build() sends two resolver updates causing unnecessary gRPC balancer switch and wasted connections"
+   },
+   {
+    "id": 475174084,
+    "repo": "moby/moby",
+    "title": "Docker daemon crashes (again) with \"fatal error: concurrent map read and map write\""
+   },
+   {
+    "id": 1381438533,
+    "repo": "cockroachdb/cockroach",
+    "title": "Panic when running UNION on SHOW BACKUP queries as non-root user"
+   },
+   {
+    "id": 4366055517,
+    "repo": "stablyai/orca",
+    "title": "orca v1.3.24: missing single-instance lock corrupts orca-runtime.json + endpoint.env on every relaunch — CLI sees stale daemon metadata"
+   },
+   {
+    "id": 440535043,
+    "repo": "PowerShell/PowerShell",
+    "title": "Brackets Treated As Special Characters In Single Quotes"
+   },
+   {
+    "id": 3196183067,
+    "repo": "google-gemini/gemini-cli",
+    "title": "Failure to execute shell commands with Windows "
+   },
+   {
+    "id": 4366927282,
+    "repo": "stablyai/orca",
+    "title": "Windows: Claude managed hook command path uses backslashes that bash strips, breaking every hook"
+   },
+   {
+    "id": 702988618,
+    "repo": "PowerShell/PowerShell",
+    "title": "Bypassing translation of PSDrive-based path arguments for external (native) executables is obscure and inadequate (PSNativePSPathResolution)"
+   },
+   {
+    "id": 2548444333,
+    "repo": "langchain-ai/langchain",
+    "title": "from langchain_community.embeddings import HuggingFaceBgeEmbeddings - results warning - pydantic/_internal/_fields.py:132: UserWarning: Field \"model_name\" in HuggingFaceInferenceAPIEmbeddings has conflict with protected namespace \"model_\"."
+   },
+   {
+    "id": 3337040762,
+    "repo": "sgl-project/sglang",
+    "title": "[Bug] Can't use builtin browser tool for GPTOss"
+   },
+   {
+    "id": 3146336876,
+    "repo": "langchain-ai/langchain",
+    "title": "Same documents in different collections share same IDs and overwrite each other"
+   },
+   {
+    "id": 3090052102,
+    "repo": "langchain-ai/langchain",
+    "title": "Undefined model_id while instantiating ChatHuggingFace"
+   }
+  ],
+  "a": [
+   {
+    "title": "Windows 打包应包含与 macOS、Linux 一致的 craft 资源",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 Windows 漏拷贝 craft，与本缺陷漏拷贝 prompt-templates 的资源对象和可观察结果不同。"
+   },
+   {
+    "title": "两个命名空间并行构建后应恢复共享的 next-env.d.ts 原始内容",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对并行构建恢复 next-env.d.ts 的竞争，与模板资源未被打包无关。"
+   },
+   {
+    "title": "读取 next-env.d.ts 权限失败时不得将已有文件当作不存在而删除",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对读取权限错误导致误删 next-env.d.ts，与模板资源漏拷贝机制不同。"
+   },
+   {
+    "title": "成功构建输出超过 execFile 默认缓冲区时不应被误判失败",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对构建日志超出子进程缓冲区导致失败，未检查模板资源的打包或展示。"
+   },
+   {
+    "title": "Linux 生成的 CommonJS 启动入口应能加载仅提供 ESM 的 packaged 包",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 Linux 启动入口加载 ESM 包的兼容性，与 prompt-templates 未进入打包资源无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "读取 next-env.d.ts 被拒绝时不得误删原文件",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 next-env.d.ts 读取失败后的文件保护，与打包遗漏 prompt-templates 无关。"
+   },
+   {
+    "title": "不同命名空间并行构建不得使 next-env.d.ts 遗留中间状态",
+    "source_ids": [
+     4366055517
+    ],
+    "verdict": "miss",
+    "reason": "测试针对并行构建恢复 next-env.d.ts 的竞态，与模板资源未被复制的机制不同。"
+   },
+   {
+    "title": "构建工具输出超过 execFile 默认缓冲上限时不得中断成功构建",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 execFile 输出缓冲上限导致构建失败，与打包遗漏模板资源无关。"
+   },
+   {
+    "title": "Windows 资源包必须包含与其他平台一致的 craft 资源",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 Windows 单独遗漏 craft 的另一处缺陷，未检查 prompt-templates，不能因补丁同时补齐 craft 就认定命中本缺陷。"
+   },
+   {
+    "title": "Windows 在含空格及命令元字符的目录中安装依赖时不得破坏参数或执行额外命令",
+    "source_ids": [
+     3196183067
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 Windows 安装依赖时的命令参数转义，与模板目录未被打包的机制不同。"
+   }
+  ]
+ },
+ {
+  "id": 4382080388,
+  "repo": "cockroachdb/cockroach",
+  "form": "distributed",
+  "issue_url": "https://github.com/cockroachdb/cockroach/issues/169720",
+  "pr_url": "https://github.com/cockroachdb/cockroach/pull/169970",
+  "pre_fix_commit": "f6e7b62e56d7b9fa41187a8fa648bca2d53328ed",
+  "files": [
+   "pkg/sql/conn_executor_prepare.go"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 2365307992,
+    "repo": "vitessio/vitess",
+    "title": "Bug Report: `show vitess_migrations` not supported from inside a transaction"
+   },
+   {
+    "id": 1160620860,
+    "repo": "Textualize/rich",
+    "title": "[BUG] `rich.print_json()` produces incorrect syntax highlighting with `indent=None`"
+   },
+   {
+    "id": 775792738,
+    "repo": "redis/redis",
+    "title": "*** [err]: Active defrag in tests/unit/memefficiency.tcl"
+   }
+  ],
+  "a": [
+   {
+    "title": "Bind 省略参数格式码时应默认按文本解码",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试参数格式码默认解码，未涉及保存点回滚后读序列落入忽略范围的故障。"
+   },
+   {
+    "title": "SHOW COMMIT TIMESTAMP 的 Parse 和 Bind 不应覆盖上一事务的提交时间",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Parse 和 Bind 对提交时间的影响，没有保存点回滚或忽略范围内的 KV 读取。"
+   },
+   {
+    "title": "跨连接修改枚举后绑定旧预备语句应刷新类型信息",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽涉及 Bind 时枚举类型解析，但测试的是跨事务类型刷新，未触及保存点回滚后未推进读序列的机制。"
+   },
+   {
+    "title": "预备语句参数数量在协议上限附近不能发生 uint16 截断",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试参数数量截断及超限清理，与回滚后读序列未推进无关。"
+   },
+   {
+    "title": "替换匿名预备语句失败后旧语句不能重新出现",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试匿名预备语句替换失败后的清理语义，与保存点回滚及读序列忽略范围无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "Bind 未提供参数格式码时应默认按文本解码",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试参数格式码默认值与解码，不涉及保存点回滚后读取序号落入忽略区间的机制。"
+   },
+   {
+    "title": "Parse 与 Bind 之间变更枚举类型后应使用最新类型信息",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试枚举类型变更后的缓存刷新，未执行保存点回滚，也未指出读取序号未推进的故障机制。"
+   },
+   {
+    "title": "准备和绑定 SHOW COMMIT TIMESTAMP 不应覆盖上一事务的提交信息",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试无事务状态下准备和绑定是否保留提交时间戳，与开放事务中保存点回滚后的读取序号错误无关。"
+   },
+   {
+    "title": "匿名语句替换失败后不能执行旧语句或遗留半成品",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试匿名预备语句替换失败后的清理与恢复，不涉及保存点回滚及其忽略序号区间。"
+   },
+   {
+    "title": "参数上限及名称内存分配失败均应清理预备语句资源",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试参数数量边界和内存分配失败后的资源清理，与回滚后准备或绑定时未推进读取序号的机制不同。"
+   }
+  ]
+ },
+ {
+  "id": 4389820156,
+  "repo": "moby/moby",
+  "form": "distributed",
+  "issue_url": "https://github.com/moby/moby/issues/52546",
+  "pr_url": "https://github.com/moby/moby/pull/52584",
+  "pre_fix_commit": "0fe4a512484a8d8a156efc4fbb537ee73bb81c70",
+  "files": [
+   "daemon/create_unix.go"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 1381211799,
+    "repo": "containerd/containerd",
+    "title": "With ExecSync failures Containerd memory continuously increasing and retains, never recovers"
+   },
+   {
+    "id": 816870068,
+    "repo": "containerd/containerd",
+    "title": "image volumes have incorrect selinux labels"
+   },
+   {
+    "id": 1610816758,
+    "repo": "containerd/containerd",
+    "title": "The configured runtime path for cri is not working"
+   },
+   {
+    "id": 4366055517,
+    "repo": "stablyai/orca",
+    "title": "orca v1.3.24: missing single-instance lock corrupts orca-runtime.json + endpoint.env on every relaunch — CLI sees stale daemon metadata"
+   }
+  ],
+  "a": [
+   {
+    "title": "卷创建后 SELinux 重标记失败不得遗留匿名卷或容器引用",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 SELinux 重标记失败后的资源回滚，未涉及文件子路径覆盖镜像已有文件时错误执行目录填充。"
+   },
+   {
+    "title": "请求取消应终止正在阻塞的匿名卷创建并完成清理",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试匿名卷创建的上下文取消与清理，与文件挂载被错误当作目录填充的机制无关。"
+   },
+   {
+    "title": "卷目标目录 Stat 返回权限错误时应保留原始错误且不创建卷",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Stat 返回权限错误的处理，而本缺陷发生于 Stat 成功识别已有文件后仍继续目录填充。"
+   },
+   {
+    "title": "已有镜像数据的卷在 Setup 返回 NotFound 时不能静默跳过填充",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试目录卷 Setup 返回 NotFound 的错误传播，未触及文件子路径覆盖已有文件的触发条件或故障机制。"
+   },
+   {
+    "title": "数据复制失败且请求已取消时仍须执行全部卷清理",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试目录数据复制失败后的清理和错误保留，与已有文件目标不应执行卷填充的缺陷无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "匿名卷创建后 SELinux 重标记失败应释放卷及容器引用",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注重标记失败后的资源回滚，未涉及文件子路径挂载到镜像已有文件时错误执行目录填充。"
+   },
+   {
+    "title": "SELinux enforcing 下镜像卷填充后应允许容器读写其内容",
+    "source_ids": [
+     816870068
+    ],
+    "verdict": "miss",
+    "reason": "测试关注目录卷填充后的 SELinux 标签与读写权限，不具备文件子路径覆盖已有文件的触发条件。"
+   },
+   {
+    "title": "卷填充期间取消请求仍应完成全部挂载清理",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注复制期间取消请求后的挂载清理，与将文件挂载误按目录进行填充的故障机制不同。"
+   },
+   {
+    "title": "卷 Setup 返回 NotFound 时不得将未填充的必需卷视为创建成功",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注 Setup 返回 NotFound 时的错误处理，且目标为目录，未触及本缺陷的文件目标填充机制。"
+   },
+   {
+    "title": "检查镜像卷目标发生权限错误时应立即终止而非创建匿名卷",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注 os.Stat 返回权限错误时是否终止，修复针对的是 Stat 成功后目标为非目录仍继续填充的问题。"
+   }
+  ]
+ },
+ {
+  "id": 4391585144,
+  "repo": "ollama/ollama",
+  "form": "ai",
+  "issue_url": "https://github.com/ollama/ollama/issues/16007",
+  "pr_url": "https://github.com/ollama/ollama/pull/16053",
+  "pre_fix_commit": "206b04950821e7741ad4dd441f5e569d7ea53b4c",
+  "files": [
+   "scripts/build_darwin.sh"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 2541055361,
+    "repo": "vllm-project/vllm",
+    "title": "[Installation]: vllm CPU mode build failed"
+   },
+   {
+    "id": 2399066797,
+    "repo": "vllm-project/vllm",
+    "title": "f[Bug]: TypeError: Can't instantiate abstract class NeuronWorker with abstract method execute_worker"
+   },
+   {
+    "id": 2242907492,
+    "repo": "vllm-project/vllm",
+    "title": "[Usage]: How do we add model hooks? "
+   },
+   {
+    "id": 2449113864,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: vLLM latest version on Inf2 fails"
+   },
+   {
+    "id": 3625758344,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: Unbounded CPU Memory Growth When Using Prefix Caching"
+   },
+   {
+    "id": 3800481660,
+    "repo": "OpenHands/OpenHands",
+    "title": "[Bug]: 500 Internal Server Error with self-hosted Gitea (HTTP) - Sandbox forces HTTPS causing GnuTLS handshake failure"
+   },
+   {
+    "id": 3045982641,
+    "repo": "vitessio/vitess",
+    "title": "Bug Report: Source table not found when create LookupVindex on Kubernetes cluster"
+   }
+  ],
+  "a": [
+   {
+    "title": "Intel Mac 交叉构建 arm64 时所有原生库必须包含 arm64 架构",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对交叉编译的架构错误，未指定 SDK 26 构建及旧版 macOS 运行，无法稳定触发 Metal v3 部署目标泄漏。"
+   },
+   {
+    "title": "双架构打包不能因同名动态库覆盖而损坏其中一种架构",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对打包时同名动态库覆盖，与 Metal v3 被标记为 macOS 26 部署目标的故障机制不同。"
+   },
+   {
+    "title": "从新 SDK 切换到旧 SDK 后重建不能携带上次的 Metal v4 产物",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对切换 SDK 后遗留 Metal v4 产物，重建使用旧 SDK，不能据此触发 SDK 26 导致的 Metal v3 部署目标泄漏。"
+   },
+   {
+    "title": "仅构建一种架构后的打包必须明确处理另一种架构缺失",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对缺失另一架构时的打包行为，与 metallib 链接工具导致的部署目标泄漏无关。"
+   },
+   {
+    "title": "Metal v4 首次构建应正确复用 Metal v3 的依赖源码",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 Metal v4 依赖源码复用和路径解析，未检查 Metal v3 部署目标或在旧版 macOS 上运行。"
+   }
+  ],
+  "b": [
+   {
+    "title": "Intel 主机交叉构建 arm64 时，原生库必须与 Go 二进制架构一致",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对交叉编译产物架构不一致，与 Metal v3 库被写入 macOS 26 部署目标的故障机制不同。"
+   },
+   {
+    "title": "双架构归档不得因同名动态库覆盖而破坏其中一种架构",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对归档中同名动态库覆盖导致架构丢失，与 Metal v3 部署目标泄漏无关。"
+   },
+   {
+    "title": "单架构构建后的打包不能依赖另一架构目录",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对单架构打包依赖不存在的另一架构目录，未涉及 Metal v3 链接时的部署目标错误。"
+   },
+   {
+    "title": "从新 SDK 切换到旧 SDK 后，打包不能混入上次构建的 Metal v4",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对增量构建遗留 Metal v4 混入安装包，与新 SDK 下 Metal v3 链接泄漏 macOS 26 部署目标是不同机制。"
+   },
+   {
+    "title": "SDK 版本查询失败时必须报告错误，不能伪装成旧工具链而继续发布",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 SDK 查询失败被管道状态掩盖并静默跳过 v4，未触及 Metal v3 最终链接工具导致的部署目标泄漏。"
+   }
+  ]
+ },
+ {
+  "id": 4398450277,
+  "repo": "nexu-io/open-design",
+  "form": "desktop",
+  "issue_url": "https://github.com/nexu-io/open-design/issues/814",
+  "pr_url": "https://github.com/nexu-io/open-design/pull/818",
+  "pre_fix_commit": "d30cf18941ef0015193afba26a8effd0f7d95edb",
+  "files": [
+   "apps/daemon/src/agents.ts"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 3792287613,
+    "repo": "DevToys-app/DevToys",
+    "title": "Critical Path Traversal (Zip Slip) Vulnerability in DevToys Extension Installation."
+   },
+   {
+    "id": 4039913142,
+    "repo": "janhq/jan",
+    "title": "bug: Claude Error 400"
+   },
+   {
+    "id": 3339938359,
+    "repo": "google-gemini/gemini-cli",
+    "title": "hangs indefinitely when executed from Node.js `child_process` (subprocess)"
+   },
+   {
+    "id": 4006116191,
+    "repo": "google-gemini/gemini-cli",
+    "title": "Not able to use nano banana skill. Getting errors related to API keys not being set even though they are. Confirmed API key is good using curl commands. Seems to be a problem with this CLI or MCP server."
+   },
+   {
+    "id": 3511028402,
+    "repo": "google-gemini/gemini-cli",
+    "title": "Output redirection allows writing to arbitrary directories without a warning"
+   },
+   {
+    "id": 4095126137,
+    "repo": "google-gemini/gemini-cli",
+    "title": "Fix the loop problem"
+   },
+   {
+    "id": 1610816758,
+    "repo": "containerd/containerd",
+    "title": "The configured runtime path for cri is not working"
+   },
+   {
+    "id": 659844969,
+    "repo": "moby/moby",
+    "title": "Rootless mode doesn't start on Fedora 32 with SELinux enabled (but works on CentOS 8.2): \"can't open lock file /run/xtables.lock: Permission denied\""
+   },
+   {
+    "id": 3142749799,
+    "repo": "BerriAI/litellm",
+    "title": "[Bug]: The model gemini-2.5-flash with the merge_reasoning_content_in_choices parameter does not work in version v1.72.2-stable"
+   },
+   {
+    "id": 3335567108,
+    "repo": "BerriAI/litellm",
+    "title": "[Bug]: OpenAI GPT-5 Chat model does not support \"temperature\" parameter"
+   },
+   {
+    "id": 2821902014,
+    "repo": "langchain-ai/langchain",
+    "title": "Cannot retrieve reasoning_content while streaming"
+   },
+   {
+    "id": 3432416749,
+    "repo": "BerriAI/litellm",
+    "title": "[Bug]: `tool_choice` rejected when calling Azure GPT-5 models"
+   },
+   {
+    "id": 4132658993,
+    "repo": "langchain-ai/langchain",
+    "title": "[langchain-openai] `{'type': 'computer'}` tool raises ValueError:  Unsupported function when using GPT-5.4 computer use tool"
+   },
+   {
+    "id": 3028772335,
+    "repo": "BerriAI/litellm",
+    "title": "JSON Parse Error in Streaming Handler"
+   },
+   {
+    "id": 2521486994,
+    "repo": "BerriAI/litellm",
+    "title": "[Bug]: Error parsing chunk: Expecting property name enclosed in double quotes"
+   },
+   {
+    "id": 819790166,
+    "repo": "scylladb/scylladb",
+    "title": "Alternator fails to reject oversized requests if not using Content-Length"
+   },
+   {
+    "id": 4282279152,
+    "repo": "sgl-project/sglang",
+    "title": "[Bug] MiniMax-M2 streaming tool_calls: malformed response with name=null and duplicated arguments"
+   },
+   {
+    "id": 870952783,
+    "repo": "goccy/go-json",
+    "title": "High memory consumption when reading from \"slow\" io.Reader"
+   }
+  ],
+  "a": [
+   {
+    "title": "超长 Unicode 提示词经 stdin 完整送达，且子进程能收到 EOF",
+    "source_ids": [
+     237
+    ],
+    "verdict": "miss",
+    "reason": "测试 Codex 的 stdin 完整性与 EOF，不涉及 OpenCode 错选桌面启动器的机制。"
+   },
+   {
+    "title": "Codex 图片附件在提示词走 stdin 时仍实际传入模型",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Codex 图片附件传递，不涉及 OpenCode 二进制选择错误。"
+   },
+   {
+    "title": "工作目录与多个额外目录包含空格时仍获得正确访问范围",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Codex 目录参数与空格路径处理，不涉及优先解析 opencode-cli 的机制。"
+   },
+   {
+    "title": "切换模型后旧 reasoning 设置不会导致 Codex 启动失败",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Codex 模型与 reasoning 配置兼容性，与误启动 OpenCode 桌面程序无关。"
+   },
+   {
+    "title": "同一 daemon 内切换插件禁用开关不会残留到后续任务",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Codex 插件禁用参数的跨任务状态残留，与 OpenCode 启动器选择无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "超长提示词经 stdin 完整传输并关闭管道，子进程能够结束",
+    "source_ids": [
+     3339938359
+    ],
+    "verdict": "miss",
+    "reason": "测试 Codex 的 stdin 传输与关闭，不涉及 OpenCode 双二进制环境下误选桌面启动器。"
+   },
+   {
+    "title": "Codex 图片附件不能在参数构造时被静默丢弃",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Codex 图片附件传递，与 OpenCode 可执行文件选择错误无关。"
+   },
+   {
+    "title": "切换模型和默认推理选项后，不残留或发送不兼容的推理配置",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Codex 模型和推理参数配置，不涉及优先解析 opencode-cli 的故障机制。"
+   },
+   {
+    "title": "工作目录和额外授权目录含空格、Unicode 时仍保持正确的参数边界",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Codex 路径参数边界和授权目录，不涉及 OpenCode 桌面与 CLI 二进制的选择。"
+   },
+   {
+    "title": "Claude 的 add-dir 能力从支持切换为不支持后，必须停止发送该选项",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Claude 的 add-dir 能力切换，与 OpenCode 误启动桌面程序的机制不同。"
+   }
+  ]
+ },
+ {
+  "id": 4400113079,
+  "repo": "n8n-io/n8n",
+  "form": "cli",
+  "issue_url": "https://github.com/n8n-io/n8n/issues/30034",
+  "pr_url": "https://github.com/n8n-io/n8n/pull/31739",
+  "pre_fix_commit": "22167a9eb6521728c6cc81dee547b6c07be1a8b3",
+  "files": [
+   "packages/nodes-base/nodes/Notion/NotionTrigger.node.ts"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 4181504467,
+    "repo": "open-webui/open-webui",
+    "title": "bug: Migration 8452d01d26d7 fails on large PostgreSQL datasets due to single-transaction backfill with FK/index maintenance"
+   },
+   {
+    "id": 4331417587,
+    "repo": "farion1231/cc-switch",
+    "title": "🐛 Duplicate message_delta causes connection error with OpenRouter Chat Completions"
+   },
+   {
+    "id": 4085403837,
+    "repo": "open-webui/open-webui",
+    "title": "issue: `each_key_duplicate` Error and Broken Infinite Scroll on Notes Page"
+   }
+  ],
+  "a": [
+   {
+    "title": "同一分钟连续轮询不应清空去重状态并重复触发",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "分页始终返回页面A，不会触发空数组末项解引用，测试针对去重状态保留问题。"
+   },
+   {
+    "title": "同一分钟分批出现的新页面不应挤掉旧页面的去重记录",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "分页始终返回非空数据，测试针对去重记录覆盖不全，与本次空分页崩溃机制不同。"
+   },
+   {
+    "title": "分页中途失败后重试应补回失败轮询窗口内的事件",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对分页请求失败后时间窗口提前推进导致漏事件，不涉及空分页末项解引用。"
+   },
+   {
+    "title": "探测后页面被移除导致分页为空时应正常结束",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "探测返回A后分页返回空数组，准确触发修复前读取空数组末项时间字段的TypeError，返回null的断言会失败。"
+   },
+   {
+    "title": "同一页面在同一分钟再次编辑仍应触发更新事件",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对时间精度及同一页面再次编辑的去重识别，未触发空分页崩溃机制。"
+   }
+  ],
+  "b": [
+   {
+    "title": "同一分钟连续轮询三次时，已处理页面不应再次输出",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对跨轮询去重记录被清除导致重发，分页始终非空，不触发空数组末项访问。"
+   },
+   {
+    "title": "同一页面在下一分钟再次编辑时，应产生新的更新事件",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对按页面id去重导致新编辑被丢弃，分页非空，与本次空数组解引用机制不同。"
+   },
+   {
+    "title": "分页请求失败后重试，不应因提前推进检查时间而漏掉事件",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对请求失败后检查时间提前推进导致漏事件，HTTP 503并非空分页引发的TypeError。"
+   },
+   {
+    "title": "分页之间出现重叠页面时，同一轮输出应按事件去重",
+    "source_ids": [
+     4085403837
+    ],
+    "verdict": "miss",
+    "reason": "测试针对分页重叠导致同轮重复输出，两页均非空，不涉及空数组末项访问。"
+   },
+   {
+    "title": "探测成功后页面被删除导致分页为空时，应正常结束并可恢复",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "探测返回A后分页返回空数组，修复前循环条件会访问空数组末项的时间字段并抛出异常，违反应返回null的断言。"
+   }
+  ]
+ },
+ {
+  "id": 4417498663,
+  "repo": "nexu-io/open-design",
+  "form": "desktop",
+  "issue_url": "https://github.com/nexu-io/open-design/issues/1187",
+  "pr_url": "https://github.com/nexu-io/open-design/pull/1232",
+  "pre_fix_commit": "19f1ff799582d804e0eb3563db9cce799744f776",
+  "files": [
+   "apps/web/src/App.tsx",
+   "apps/web/src/components/SettingsDialog.tsx"
+  ],
+  "errors": [
+   "Codex returned invalid JSON in its response at line 1, column 1599; no output was accepted."
+  ],
+  "history": [
+   {
+    "id": 2747171187,
+    "repo": "janhq/jan",
+    "title": "QA: Jan 0.5.12 Release Sign-off"
+   },
+   {
+    "id": 2622751148,
+    "repo": "janhq/jan",
+    "title": "QA: Jan 0.5.8 Release Sign-off"
+   },
+   {
+    "id": 918811147,
+    "repo": "tikv/tikv",
+    "title": "response from raftstore is not deterministic"
+   },
+   {
+    "id": 3095459000,
+    "repo": "OpenHands/OpenHands",
+    "title": "[Bug]: Initial LLM settings UI resets when switching window/tab during initial setup (Alt+Tab / Ctrl+Tab)"
+   },
+   {
+    "id": 3841030978,
+    "repo": "n8n-io/n8n",
+    "title": "Project Variables Intermittently Disappear from UI in Queue Mode"
+   },
+   {
+    "id": 1162315710,
+    "repo": "etcd-io/etcd",
+    "title": "Inconsistent revision and data occurs"
+   },
+   {
+    "id": 907457214,
+    "repo": "Kong/kong",
+    "title": "Patching an upstream results in an ever increasing number of `healthcheck` events"
+   },
+   {
+    "id": 3794561814,
+    "repo": "OpenHands/OpenHands",
+    "title": "[Bug]: ErrorMessageBanner component lacks dismiss functionality and truncation for long error messages"
+   }
+  ],
+  "a": [
+   {
+    "title": "两次自动保存乱序完成后仍保留最后一次编辑",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对自动保存请求乱序覆盖，与密钥草稿被剥离后空写入仍显示保存成功的机制不同。"
+   },
+   {
+    "title": "清空最后一个媒体提供商后同步失败仍会重试删除",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对媒体提供商删除失败后的强制同步重试，不涉及密钥草稿导致的虚假保存成功提示。"
+   },
+   {
+    "title": "媒体配置保存失败后立即关闭不会丢失待重试修改",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对保存失败后关闭导致修改丢失或被旧值覆盖，与草稿空写入成功引发的状态误报不同。"
+   },
+   {
+    "title": "防抖期间关闭设置仍保存最后修改并保留引导完成状态",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对关闭时补交普通设置及引导状态保留，不触发仅修改密钥草稿的故障条件。"
+   },
+   {
+    "title": "显式保存 Composio 密钥与普通自动保存交错时不丢失凭据状态",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对显式密钥保存与旧自动保存交错覆盖，输入不触发密钥同步原本就成立，也未检查草稿导致的虚假保存成功提示。"
+   }
+  ],
+  "b": [
+   {
+    "title": "两次自动保存逆序完成时，旧配置不得覆盖最新编辑",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对自动保存逆序完成导致旧配置覆盖的竞态，未涉及密钥草稿被剥离后仍显示保存成功的机制。"
+   },
+   {
+    "title": "清空最后一个媒体提供商失败后，重试必须真正删除远端配置",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对媒体提供商清空失败后的强制同步重试，与密钥草稿引发无效保存成功提示无关。"
+   },
+   {
+    "title": "媒体保存失败进入重试等待后立即关闭，最后一次清空操作不能丢失",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对关闭对话框时媒体配置删除与重试丢失，未触发密钥草稿的错误保存提示。"
+   },
+   {
+    "title": "防抖期间快速编辑并关闭，关闭处理不得回写旧配置",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对防抖期间关闭导致旧配置回写和初始化状态回退，与草稿字段被剥离后的无效自动保存机制不同。"
+   },
+   {
+    "title": "Composio 显式保存与普通自动保存交错时，密钥状态不得被旧快照回退",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对显式密钥保存与旧自动保存交错导致元数据回退，密钥剥离本就正常，且未断言草稿单独编辑时的错误保存提示。"
+   }
+  ]
+ },
+ {
+  "id": 4428067838,
+  "repo": "warpdotdev/warp",
+  "form": "cli",
+  "issue_url": "https://github.com/warpdotdev/warp/issues/10715",
+  "pr_url": "https://github.com/warpdotdev/warp/pull/11204",
+  "pre_fix_commit": "23c908949da726c4917b90bad82320b47a641cbc",
+  "files": [
+   "app/src/terminal/cli_agent_sessions/plugin_manager/claude_tests.rs",
+   "app/src/terminal/cli_agent_sessions/plugin_manager/claude.rs"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 4253846237,
+    "repo": "tw93/Mole",
+    "title": "[BUG] Chrome MV3 extension service workers break after mo clean"
+   },
+   {
+    "id": 138348017,
+    "repo": "PowerShell/PowerShell",
+    "title": "Fix Remove-Item <symbolic link to directory>"
+   },
+   {
+    "id": 4384566141,
+    "repo": "Hmbown/Codewhale",
+    "title": "TUI gets stuck on `working...` while `/task` reports `No tasks found`"
+   },
+   {
+    "id": 4006116191,
+    "repo": "google-gemini/gemini-cli",
+    "title": "Not able to use nano banana skill. Getting errors related to API keys not being set even though they are. Confirmed API key is good using curl commands. Seems to be a problem with this CLI or MCP server."
+   },
+   {
+    "id": 4366055517,
+    "repo": "stablyai/orca",
+    "title": "orca v1.3.24: missing single-instance lock corrupts orca-runtime.json + endpoint.env on every relaunch — CLI sees stale daemon metadata"
+   },
+   {
+    "id": 2249934274,
+    "repo": "OpenHands/OpenHands",
+    "title": "Network in docker (NoneType has no attribute 'request')"
+   },
+   {
+    "id": 3011564870,
+    "repo": "yt-dlp/yt-dlp",
+    "title": "[vimeo] An extractor error has occurred. (caused by KeyError('config_url'))"
+   },
+   {
+    "id": 1419171469,
+    "repo": "yt-dlp/yt-dlp",
+    "title": "Funimation not working on certain new releases."
+   },
+   {
+    "id": 1718734564,
+    "repo": "yt-dlp/yt-dlp",
+    "title": "[Crunchyroll] SSL: SSLV3_ALERT_HANDSHAKE_FAILURE"
+   },
+   {
+    "id": 4402449734,
+    "repo": "n8n-io/n8n",
+    "title": "Git clone not working"
+   },
+   {
+    "id": 3751141245,
+    "repo": "yt-dlp/yt-dlp",
+    "title": "[ie/Mxplayer] Failed to Download `/seasons/` `400 bad request`"
+   },
+   {
+    "id": 2205226278,
+    "repo": "hashicorp/nomad",
+    "title": "read init-p: connection reset by peer"
+   },
+   {
+    "id": 906872799,
+    "repo": "microsoft/playwright",
+    "title": "WaitForSelector throws protocol error: Cannot find context with specified id"
+   },
+   {
+    "id": 3811340922,
+    "repo": "etcd-io/etcd",
+    "title": "`make test` fails with \"unbound variable\" error on bash 3.2"
+   },
+   {
+    "id": 2631619911,
+    "repo": "tauri-apps/tauri",
+    "title": "[bug] Tauri unilaterally overrides MACOSX_DEPLOYMENT_TARGET, causes sys crates to spuriously rebuild"
+   },
+   {
+    "id": 1716163986,
+    "repo": "vitessio/vitess",
+    "title": "Bug Report: vtcombo's DBDDL plugin has a problematic race condition when creating databases"
+   },
+   {
+    "id": 3155957482,
+    "repo": "open-webui/open-webui",
+    "title": "issue: OAuth mismatching_state CSRF Error on Second Login Attempt Due to Incomplete Session Logout"
+   },
+   {
+    "id": 3898010035,
+    "repo": "remix-run/react-router",
+    "title": "Manifest version mismatch reload loses query parameters and hash"
+   },
+   {
+    "id": 1664743630,
+    "repo": "axios/axios",
+    "title": "axios.get(\"file://path/to/file\") fails with AssertionError actual: 'file:', expected: 'http:'"
+   },
+   {
+    "id": 2506439383,
+    "repo": "BerriAI/litellm",
+    "title": "[Bug]: k8s dual stack IPv4/6 helm chart v0.1.413 and later readiness probe"
+   }
+  ],
+  "a": [
+   {
+    "title": "插件记录为空或类型错误时不得误判为已安装",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试安装记录解析和缓存行为，未涉及最低插件版本过低导致无法发送 OSC 777 通知的问题。"
+   },
+   {
+    "title": "更新必须在移除市场后重新安装插件",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试更新命令的执行顺序，未验证要求升级至 2.1.0 或通知恢复，与所修复机制不同。"
+   },
+   {
+    "title": "更新时市场移除失败仍能继续完成安装",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试市场移除失败后的容错行为，与旧版插件无法发送 OSC 777 通知的机制无关。"
+   },
+   {
+    "title": "更新移除成功但重新添加失败后可再次恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试重新添加市场失败后的重试恢复，未覆盖最低版本要求或通知故障。"
+   },
+   {
+    "title": "安装命令使用指定 PATH 且第二阶段失败可重试",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 PATH 选择、路径空格和安装失败重试，与此次插件版本升级修复的通知故障无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "更新删除市场后遇到网络故障，重试能恢复安装",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试市场更新的网络故障恢复，与旧版插件无法发出 OSC 777 通知事件的缺陷无关。"
+   },
+   {
+    "title": "市场删除失败时不能把未刷新的旧插件报告为更新成功",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试市场缓存及更新结果校验，未覆盖最低版本从 2.0.0 提升至 2.1.0 或通知事件失效的机制。"
+   },
+   {
+    "title": "两个更新交错执行时不能在成功返回后留下未安装状态",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试并发更新造成的安装状态竞争，与本次插件通知兼容性缺陷不同。"
+   },
+   {
+    "title": "自定义 PATH 和带空格的 CLAUDE_HOME 必须一致传递到所有子命令",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试子命令的环境变量传递和路径处理，未触发或验证通知事件失效。"
+   },
+   {
+    "title": "安装注册文件暂时损坏后必须能重新读取恢复状态",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试注册文件损坏后的重新读取，虽涉及两个插件版本，但未验证最低版本要求或通知兼容性。"
+   }
+  ]
+ },
+ {
+  "id": 4439035892,
+  "repo": "hashicorp/nomad",
+  "form": "distributed",
+  "issue_url": "https://github.com/hashicorp/nomad/issues/27961",
+  "pr_url": "https://github.com/hashicorp/nomad/pull/27973",
+  "pre_fix_commit": "25c2050ecd3267ce0f97057202c778dcc4012475",
+  "files": [
+   "acl/acl.go"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 3286205185,
+    "repo": "nats-io/nats-server",
+    "title": "User token from a scoped issuer can't be used as `default_sentinel` value"
+   },
+   {
+    "id": 1504397481,
+    "repo": "kubernetes/kubernetes",
+    "title": "Garbage collector deletes DaemonSet after updating ownerReference and deleting previous owner"
+   },
+   {
+    "id": 261839805,
+    "repo": "kubernetes/kubernetes",
+    "title": "TLS-bootstrapped kubelet loses client certs after reboot, node stays on NotReady status"
+   },
+   {
+    "id": 287714733,
+    "repo": "kubernetes/kubernetes",
+    "title": " kubelet fails when cloudprovider openstack is used and should manage loadbalancer security group"
+   },
+   {
+    "id": 1493294649,
+    "repo": "containerd/containerd",
+    "title": "Containerd v1.6.12 slow memory leak when pod readiness probe gets stuck forever "
+   },
+   {
+    "id": 1491488703,
+    "repo": "scylladb/scylladb",
+    "title": "[index cache] Multiple 800ms+ reactor stalls during nodetool cleanup (with index cache disabled)"
+   },
+   {
+    "id": 510729692,
+    "repo": "scylladb/scylladb",
+    "title": "replicate permission on index"
+   },
+   {
+    "id": 4323630739,
+    "repo": "etcd-io/etcd",
+    "title": "Allow Maintenance.Status for authenticated non-admin users (parity with MemberList / AlarmList)"
+   },
+   {
+    "id": 2053993627,
+    "repo": "scylladb/scylladb",
+    "title": "System functions like count() don't work anymore for custom role after upgrade to 5.4.0"
+   },
+   {
+    "id": 4128012303,
+    "repo": "etcd-io/etcd",
+    "title": "Regression with etcd and etcdctl 3.6.9 when auth enabled"
+   },
+   {
+    "id": 604455538,
+    "repo": "pingcap/tidb",
+    "title": "When using TempDir, it does not deal with multi-user permissions and the folders used may not be unique"
+   },
+   {
+    "id": 4426166851,
+    "repo": "nexu-io/open-design",
+    "title": "Composio connector stays stuck in loading after auth is cancelled instead of recovering to the default state"
+   },
+   {
+    "id": 1747873853,
+    "repo": "envoyproxy/envoy",
+    "title": "oauth2 filter: browser blocks BearerToken cookie because its size too large"
+   },
+   {
+    "id": 2037139797,
+    "repo": "Portkey-AI/gateway",
+    "title": "Implement new routes and config structure"
+   },
+   {
+    "id": 4191294952,
+    "repo": "farion1231/cc-switch",
+    "title": "[Security] CORS Misconfiguration in Local Proxy Enables 1-Click API Key Abuse"
+   },
+   {
+    "id": 4404608450,
+    "repo": "n8n-io/n8n",
+    "title": "Bug: Bitbucket Trigger credential validation fails with Atlassian scoped API tokens"
+   },
+   {
+    "id": 2327835816,
+    "repo": "cli/cli",
+    "title": "`gh run view 9313418737 --log-failed` gives no output for a failed run"
+   },
+   {
+    "id": 624138669,
+    "repo": "Kong/kong",
+    "title": "Kong PDK kong.service.set_target() not properly setting the \"Host\" header"
+   },
+   {
+    "id": 398562631,
+    "repo": "Kong/kong",
+    "title": "Kong plugins doesn't get executed unless kong reloaded or restarted"
+   },
+   {
+    "id": 2292549492,
+    "repo": "electron/electron",
+    "title": "[Bug]: On macOS, desktopCapturer.getSources promise does not resolve nor reject unless user grants permissions"
+   }
+  ],
+  "a": [
+   {
+    "title": "服务注册读取不能仅凭工作负载身份跨命名空间授权",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试工作负载身份的跨命名空间服务访问，与客户端 ACL 未允许目标节点池 all 的机制无关。"
+   },
+   {
+    "title": "客户端权限拒绝错误节点池及空节点池",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽调用 AllowClientOp，但未测试目标节点池 all，所列节点池匹配和拒绝断言不触发本次缺陷。"
+   },
+   {
+    "title": "领导者失去身份后不能继续绕过服务器操作拒绝策略",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试领导者身份对服务器操作权限的影响，与客户端节点池 all 被错误拒绝无关。"
+   },
+   {
+    "title": "命名空间验证器按任一能力授权且不缓存其他命名空间的结果",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试命名空间能力授权和验证器复用，与客户端节点池 all 的匹配缺失无关。"
+   },
+   {
+    "title": "插件列表权限不能升级为插件详情读取权限",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试插件列表和详情权限边界，与客户端 RPC 对节点池 all 的错误拒绝无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "客户端操作必须同时满足非拒绝策略与节点池精确匹配，禁用 ACL 也不能放行空池",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽调用 AllowClientOp，但未测试请求池为 \"all\" 的情况，精确匹配与空池断言不涉及此次缺陷机制。"
+   },
+   {
+    "title": "服务器领导者豁免必须在失去领导者身份后立即失效",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试服务器领导者豁免的撤销，与客户端操作未识别 \"all\" 节点池无关。"
+   },
+   {
+    "title": "服务注册读取的工作负载豁免不能越过 nil 身份检查或污染后续普通请求",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试服务注册读取的工作负载豁免，与客户端节点池匹配缺陷无关。"
+   },
+   {
+    "title": "NamespaceValidator 必须按任一能力授权，并隔离命名空间与空操作列表",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试命名空间能力组合与空操作列表，不涉及 \"all\" 节点池的客户端授权。"
+   },
+   {
+    "title": "插件读取与列举的权限层级必须区分，配额读取不能提升为写入",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试插件与配额权限层级及豁免，不涉及客户端操作对 \"all\" 节点池的错误拒绝。"
+   }
+  ]
+ },
+ {
+  "id": 4440497591,
+  "repo": "TanStack/query",
+  "form": "frontend",
+  "issue_url": "https://github.com/TanStack/query/issues/10705",
+  "pr_url": "https://github.com/TanStack/query/pull/11211",
+  "pre_fix_commit": "c6fc17cfad6e452261c585fabfb8c210e60531ed",
+  "files": [
+   "packages/query-core/src/queryClient.ts"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 3763885023,
+    "repo": "OpenHands/OpenHands",
+    "title": "Conversation panel shows stale status (green dot) after stopping runtime"
+   },
+   {
+    "id": 2760319171,
+    "repo": "pingcap/tidb",
+    "title": "Hash join statistic is incorrect when spill is triggered"
+   }
+  ],
+  "a": [
+   {
+    "title": "批量更新应沿用查询自身的自定义哈希，避免创建重复缓存",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试涉及 setQueriesData 的自定义哈希，与重置改变状态后再次筛选导致漏刷新的机制无关。"
+   },
+   {
+    "title": "取消刷新后迟到的旧请求不得覆盖后续写入的数据",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试涉及取消请求后旧结果的隔离，未触发重置状态后重新应用筛选条件的问题。"
+   },
+   {
+    "title": "离线暂停的批量刷新应立即返回，并在恢复联网后完成请求",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试涉及离线暂停与联网恢复，未涉及 resetQueries 或依赖可变状态的筛选。"
+   },
+   {
+    "title": "重置查询应恢复初始状态并只重新请求活跃查询",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽然调用 resetQueries，但 queryKey 筛选不受重置影响，修复前也能选中活跃查询并刷新，未指出该缺陷机制。"
+   },
+   {
+    "title": "批量刷新中的失败应按 throwOnError 传播且不阻断其他查询完成",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试涉及批量刷新错误传播，与 resetQueries 重置后使原筛选条件失效的机制无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "连续失效触发重新请求时，已取消的旧响应不得覆盖新响应",
+    "source_ids": [
+     3763885023
+    ],
+    "verdict": "miss",
+    "reason": "测试的是连续失效请求的取消与迟到响应覆盖，不涉及重置后状态变化导致过滤条件失配。"
+   },
+   {
+    "title": "取消进行中的刷新后恢复缓存状态，并允许下一次刷新成功",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是取消刷新后的状态恢复，不涉及 resetQueries 对状态相关过滤条件的重复应用。"
+   },
+   {
+    "title": "重置混合活跃状态的查询时，只重新请求活动查询且丢弃重置前响应",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽调用 resetQueries，但查询键前缀不会因重置而改变，无法触发原先匹配的查询在重新筛选时被排除的缺陷。"
+   },
+   {
+    "title": "离线刷新立即返回后，恢复联网仍应正确处理失败并继续支持刷新",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是离线暂停请求恢复后的错误处理，与重置改变状态后过滤失配的机制无关。"
+   },
+   {
+    "title": "使用单查询自定义哈希时，批量更新应写回原查询而非创建另一条缓存",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是自定义查询哈希下批量更新的缓存定位，与 resetQueries 的状态相关筛选缺陷无关。"
+   }
+  ]
+ },
+ {
+  "id": 4454970881,
+  "repo": "yt-dlp/yt-dlp",
+  "form": "cli",
+  "issue_url": "https://github.com/yt-dlp/yt-dlp/issues/16729",
+  "pr_url": "https://github.com/yt-dlp/yt-dlp/pull/16794",
+  "pre_fix_commit": "618b5e446c4379c9d95fe7b30fd6a0fc6af19a70",
+  "files": [
+   "yt_dlp/extractor/pornhub.py"
+  ],
+  "errors": [
+   "Codex returned invalid JSON in its response at line 1, column 2110; no output was accepted.",
+   "Codex returned invalid JSON in its response at line 1, column 2211; no output was accepted."
+  ],
+  "history": [
+   {
+    "id": 3483923727,
+    "repo": "n8n-io/n8n",
+    "title": "Digest Auth doesn't auth in HTTP Request node"
+   },
+   {
+    "id": 3658225972,
+    "repo": "open-webui/open-webui",
+    "title": "issue: v0.6.37 breaks Okta OAuth: \"Cannot supply multiple client credentials\" error"
+   },
+   {
+    "id": 4435382510,
+    "repo": "nexu-io/open-design",
+    "title": "Remove duplicate select-all entry in the file list toolbar"
+   },
+   {
+    "id": 4085403837,
+    "repo": "open-webui/open-webui",
+    "title": "issue: `each_key_duplicate` Error and Broken Infinite Scroll on Notes Page"
+   },
+   {
+    "id": 4349509183,
+    "repo": "nexu-io/open-design",
+    "title": "Deck preview pagination controls route both previous and next actions to page 2"
+   }
+  ]
+ },
+ {
+  "id": 4480498043,
+  "repo": "warpdotdev/warp",
+  "form": "cli",
+  "issue_url": "https://github.com/warpdotdev/warp/issues/11342",
+  "pr_url": "https://github.com/warpdotdev/warp/pull/11563",
+  "pre_fix_commit": "fde172a2916bb0878681e426d53b105ebcbffc11",
+  "files": [
+   "crates/warp_terminal/src/model/escape_sequences_tests.rs",
+   "crates/warp_terminal/src/model/escape_sequences.rs"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 545165104,
+    "repo": "microsoft/terminal",
+    "title": "When changing cursor shape using DECSCUSR escape sequences, the cursor shape doesn't change until the cursor is moved"
+   },
+   {
+    "id": 633732823,
+    "repo": "microsoft/terminal",
+    "title": "[VT Mouse Mode] Release is not fired when a drag begins inside and exits the terminal window"
+   },
+   {
+    "id": 595420390,
+    "repo": "PowerShell/PowerShell",
+    "title": "Linux pwsh enables DECCKM, but Windows pwsh cannot handle it; arrow keys stop working after exiting linux powershell"
+   },
+   {
+    "id": 633803756,
+    "repo": "microsoft/terminal",
+    "title": "Narrator scan mode crashes terminal"
+   },
+   {
+    "id": 2025245221,
+    "repo": "alacritty/alacritty",
+    "title": "toml bindings documentation not possible to understand "
+   },
+   {
+    "id": 4006116191,
+    "repo": "google-gemini/gemini-cli",
+    "title": "Not able to use nano banana skill. Getting errors related to API keys not being set even though they are. Confirmed API key is good using curl commands. Seems to be a problem with this CLI or MCP server."
+   },
+   {
+    "id": 694031472,
+    "repo": "microsoft/terminal",
+    "title": "Default bound key combinations are not working as expected on international keyboard layouts"
+   },
+   {
+    "id": 4076295704,
+    "repo": "microsoft/terminal",
+    "title": "Broken input in fish shell"
+   },
+   {
+    "id": 2045412947,
+    "repo": "alacritty/alacritty",
+    "title": "Alt + 4 wrongly sends escape sequence inside Alacritty+Neovim (Swedish/Nordic kb layout!)"
+   },
+   {
+    "id": 1088730201,
+    "repo": "marktext/marktext",
+    "title": "`<pre>test</pre>` in typewriter mode breaks input"
+   },
+   {
+    "id": 1050925637,
+    "repo": "laurent22/joplin",
+    "title": "Desktop: Scroll position is not remembered/preserved in Markdown Editor and Viewer"
+   },
+   {
+    "id": 1571051133,
+    "repo": "marktext/marktext",
+    "title": "Using Right/Left Keys in RTL Mode at End/Beginning of Lines Moves Cursor Wierdly"
+   },
+   {
+    "id": 865710341,
+    "repo": "marktext/marktext",
+    "title": "Typing underscore (\"_\") adds additional underscore after cursor"
+   },
+   {
+    "id": 1463457154,
+    "repo": "marktext/marktext",
+    "title": "MarkText can add new paragraphs endlessly when using a \"DOWN\" arrow key to move the cursor"
+   },
+   {
+    "id": 641907712,
+    "repo": "marktext/marktext",
+    "title": "Can't type the at sign (@) with Spanish keyboard layout"
+   },
+   {
+    "id": 827179308,
+    "repo": "electron/electron",
+    "title": "[Bug]: Linux Electron 12 always unnecessary opens BrowserWindow menu on every keyboard layout switch via Alt+Shift & Alt+Ctrl hotkeys"
+   },
+   {
+    "id": 1015137614,
+    "repo": "marktext/marktext",
+    "title": "Right Alt/\"Alt gr\" doesn't work on macOS"
+   },
+   {
+    "id": 186800260,
+    "repo": "atom/atom",
+    "title": "Keybindings with [ or ] do not work as expected on azerty layout"
+   },
+   {
+    "id": 248770980,
+    "repo": "atom/atom",
+    "title": "key-mappings with `alt` don't suppress Mac OS composition characters anymore (atom-1.19)"
+   }
+  ],
+  "a": [
+   {
+    "title": "应用光标模式切换后立即使用新模式，并保留修饰键的 CSI 编码",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试光标模式切换和方向键编码，未涉及 Shift+Backspace 回退到 Windows 提供的 0x08 的机制。"
+   },
+   {
+    "title": "Kitty 协议关闭后同一个组合键恢复传统控制字符编码",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Kitty 协议切换下 ctrl-a 的编码，不涉及 Backspace 缺少 DEL 回退的故障机制。"
+   },
+   {
+    "title": "平台 Meta 特殊键输出实际控制字节而非键名",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 macOS/Linux 的 Meta 或 Alt 组合键，修复明确不处理这些修饰键，无法触发 Windows Shift+Backspace 的缺陷。"
+   },
+   {
+    "title": "缺失坐标的滚轮事件应被忽略且不因异常动作崩溃",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试鼠标事件缺少坐标及异常动作导致的 panic，与 Shift+Backspace 的错误字符编码无关。"
+   },
+   {
+    "title": "滚轮跨零反向时次数、方向和坐标不能串用",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试滚轮增量、方向和坐标编码，与 Backspace 回退到错误控制字符的机制无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "APP_CURSOR 开关切换后立即使用新编码，修饰方向键始终使用 CSI",
+    "source_ids": [
+     595420390
+    ],
+    "verdict": "miss",
+    "reason": "测试光标模式切换和方向键编码，未涉及 Backspace 的错误字节回退机制。"
+   },
+   {
+    "title": "macOS Option 输入布局字符时不误加 Meta 前缀或丢失实际文本",
+    "source_ids": [
+     641907712,
+     2045412947
+    ],
+    "verdict": "miss",
+    "reason": "虽然涉及编码器返回 None 后的文本回退，但测试的是 macOS Option 字符处理，未指出 Windows Shift+Backspace 回退为 0x08 的故障机制。"
+   },
+   {
+    "title": "Kitty 关联文本包含多码点时完整编码，关闭协议后立即恢复传统编码",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Kitty 关联文本及协议切换，未触发或识别 Shift+Backspace 被编码为 0x08 的问题。"
+   },
+   {
+    "title": "拖拽出窗口后释放仍向应用交付释放事件",
+    "source_ids": [
+     633732823
+    ],
+    "verdict": "miss",
+    "reason": "测试窗口外鼠标释放事件丢失，与 Backspace 键盘编码缺陷无关。"
+   },
+   {
+    "title": "滚轮极值不会因逐行复制报告而耗尽内存或终止终端",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试滚轮极值导致的资源耗尽，与 Shift+Backspace 的错误字节及整词删除机制无关。"
+   }
+  ]
+ },
+ {
+  "id": 4509101744,
+  "repo": "expo/expo",
+  "form": "mobile",
+  "issue_url": "https://github.com/expo/expo/issues/46204",
+  "pr_url": "https://github.com/expo/expo/pull/46224",
+  "pre_fix_commit": "cfe8a3c902059d2650140494bb6f24a8be1e3b13",
+  "files": [
+   "packages/expo-dev-launcher/plugin/build/withDevLauncher.js",
+   "packages/expo-dev-launcher/plugin/src/withDevLauncher.ts"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 3561149078,
+    "repo": "open-webui/open-webui",
+    "title": "issue: Knowledge file access inconsistency — some files not accessible due to mismatched collection_name"
+   },
+   {
+    "id": 2475614887,
+    "repo": "kubernetes/kubernetes",
+    "title": "CVE-2021-25742: Ingress-nginx custom snippets allows retrieval of ingress-nginx serviceaccount token and secrets across all namespaces"
+   },
+   {
+    "id": 3129661943,
+    "repo": "open-webui/open-webui",
+    "title": "issue: chat load only repairs the latest unfinished assistant message, earlier ones stay stuck loading"
+   },
+   {
+    "id": 4051517750,
+    "repo": "open-webui/open-webui",
+    "title": "bug: Group membership is not updated for admin users"
+   },
+   {
+    "id": 2756503461,
+    "repo": "sxyazi/yazi",
+    "title": "ui.Text doesn't style the area it occupies"
+   },
+   {
+    "id": 3949762998,
+    "repo": "vllm-project/vllm",
+    "title": "Bug: Speculative Decoding (MTP) Causes </think> Detection Failure in Structured Output + Reasoning Mode"
+   },
+   {
+    "id": 109104835,
+    "repo": "ohmyzsh/ohmyzsh",
+    "title": "Keyboard input disabled after paste"
+   }
+  ],
+  "a": [
+   {
+    "title": "干净构建及 Debug→Release 切换时正确清理最终产物",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "未设置嵌入 app extension 和关联 Info.plist 的额外脚本，且关注脚本过早执行导致漏清理，与本次依赖环机制不同。"
+   },
+   {
+    "title": "Release 清理与添加阶段采用一致的服务名称归一化规则",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试服务名称归一化与清理匹配的一致性，不涉及构建阶段的 Info.plist 依赖环。"
+   },
+   {
+    "title": "清理 Expo 服务时保留名称中包含相同子串的其他服务",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试清理脚本是否因正则匹配误删其他服务，与构建阶段依赖环无关。"
+   },
+   {
+    "title": "包含 Expo Dev Launcher 字样的自定义权限说明不能被删除",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试自定义权限说明的保留规则，与 inputPaths 引发的构建依赖环无关。"
+   },
+   {
+    "title": "删除权限键失败时构建必须显式失败并允许修复后重试",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试删除权限键失败时的错误传播及重试，与 Xcode 依赖图中的循环无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "Release 清理应保留名称相近的业务 Bonjour 服务和自定义权限说明",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对清理脚本误删业务服务或自定义说明，与构建阶段依赖环机制无关。"
+   },
+   {
+    "title": "添加与清理应采用一致的 Bonjour 服务大小写和尾点规则",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 Bonjour 服务匹配规则的一致性，与 Info.plist 输入依赖造成的构建环无关。"
+   },
+   {
+    "title": "已有原生配置从 launcher 和嵌入包切换后应清除旧状态",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对连续 prebuild 后原生配置残留，与清理阶段的 Xcode 依赖关系无关。"
+   },
+   {
+    "title": "真实 Xcode Release 构建应在签名前完成 plist 清理并支持增量重建",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽断言无依赖环，但未设置嵌入扩展及额外脚本依赖链，也未指出 inputPaths 引入环的机制，无法据此认定触发该缺陷。"
+   },
+   {
+    "title": "plist 删除失败必须暴露错误且修复权限后能够恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 plist 写入失败时的错误传播，与 Xcode 在依赖图阶段检测到构建环无关。"
+   }
+  ]
+ },
+ {
+  "id": 4517012553,
+  "repo": "tikv/tikv",
+  "form": "distributed",
+  "issue_url": "https://github.com/tikv/tikv/issues/19632",
+  "pr_url": "https://github.com/tikv/tikv/pull/19633",
+  "pre_fix_commit": "d0234c8361d9c08b11127dd32955d066dbe3c13e",
+  "files": [
+   "src/read_pool.rs"
+  ],
+  "errors": [
+   "Codex returned invalid JSON in its response at line 1, column 1824; no output was accepted."
+  ],
+  "history": [
+   {
+    "id": 3736997090,
+    "repo": "vuejs/core",
+    "title": "updating keepalive include will cause asyn loaded components to not be cached."
+   },
+   {
+    "id": 3991062641,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: Multi-Node inference with PP > 1 crashes after processing completions request with non-None `logprobs` parameter."
+   }
+  ],
+  "a": [
+   {
+    "title": "自动缩容后关闭自动调整，应同步恢复线程数及容量通知",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "先使当前线程数低于核心线程数再关闭自动调整，会恢复到4但缺少容量通知，导致通知断言失败。"
+   },
+   {
+    "title": "累计线程耗时计数器回退后，采样不应溢出或触发错误扩容",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试累计耗时计数器回退导致的溢出，与关闭自动调整时遗漏容量通知的机制无关。"
+   },
+   {
+    "title": "CPU采样失败期间保持容量，并在采样恢复后继续调整",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试CPU采样失败及恢复后的调整行为，未触发关闭自动调整时遗漏通知的路径。"
+   },
+   {
+    "title": "高优先级任务并发驱逐满队列时，任务与容量计数应保持一致",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试并发任务驱逐与容量计数一致性，与线程数恢复时遗漏通知的机制无关。"
+   },
+   {
+    "title": "CPU阈值低于一个核时，过载缩容应守住最小线程数并能恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试CPU过载时的缩容下限及恢复扩容，未涉及关闭自动调整时遗漏通知。"
+   }
+  ],
+  "b": [
+   {
+    "title": "关闭自动调节后，线程数恢复必须同步通知订阅方",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "当前线程数不同于核心线程数时关闭自动调节会恢复线程数，但修复前缺少通知，导致收到线程数为4的通知这一断言失败。"
+   },
+   {
+    "title": "线程累计耗时计数回退后，不得产生负利用率或错误缩容",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试累计耗时计数回退时的采样与缩容处理，与关闭自动调节后遗漏线程数通知的机制不同。"
+   },
+   {
+    "title": "进程CPU采样失败后跳过调节，并在采样恢复后继续扩容",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试CPU采样失败及恢复后的自动扩容，没有触发关闭自动调节时恢复核心线程数却遗漏通知的路径。"
+   },
+   {
+    "title": "CPU限流缩容与繁忙扩容同时成立时，缩容优先且不突破最小线程数",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试自动调节中的缩容优先级和最小线程数边界，与关闭自动调节时遗漏通知无关。"
+   },
+   {
+    "title": "满队列下并发高优先级抢占不重复驱逐、不泄漏任务容量",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试并发任务抢占、驱逐与容量恢复，与线程数恢复后的通知遗漏无关。"
+   }
+  ]
+ },
+ {
+  "id": 4517453773,
+  "repo": "sveltejs/svelte",
+  "form": "frontend",
+  "issue_url": "https://github.com/sveltejs/svelte/issues/18288",
+  "pr_url": "https://github.com/sveltejs/svelte/pull/18614",
+  "pre_fix_commit": "ee1249b43cb702d1ea97274ba7849fb8153bd4e2",
+  "files": [
+   "packages/svelte/src/internal/client/dom/css.js"
+  ],
+  "errors": [],
+  "history": [],
+  "a": [
+   {
+    "title": "首次挂载到 ShadowRoot 时样式应进入影子根",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "涉及未连接 anchor 导致根解析错误的机制，但在 effect 执行前已将 anchor 插入 ShadowRoot，未复现临时 anchor 被丢弃后仍脱离 DOM 的触发条件。"
+   },
+   {
+    "title": "同一批次重复挂载应按根去重且保持根之间隔离",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "所有 anchor 均已位于连接的 ShadowRoot 中，测试的是样式去重和根间隔离，不涉及脱离 DOM 的临时 anchor。"
+   },
+   {
+    "title": "包含 CSS 选择器特殊字符的 hash 应能插入并去重",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是 hash 特殊字符引发的选择器和去重问题，与临时 anchor 导致样式根解析错误无关。"
+   },
+   {
+    "title": "挂载到没有 head 的 HTML 文档时应能添加样式",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是目标文档缺少 head 时的容错，与 ShadowRoot 中临时 anchor 脱离 DOM 的故障机制不同。"
+   },
+   {
+    "title": "开发模式下重复插入已移除样式后应恢复热更新注册",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是样式移除重建后的开发模式热更新注册，anchor 始终连接，不触发本次修复的根解析错误。"
+   }
+  ],
+  "b": [
+   {
+    "title": "同一轮挂载到不同 ShadowRoot 的组件应各自获得样式",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "两个实例直接挂载到已连接的 ShadowRoot，未触发延迟渲染后临时锚点被丢弃的问题。"
+   },
+   {
+    "title": "延迟插入 ShadowRoot 时应根据最终根节点放置样式",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "效果执行前已转移全部节点，未指出临时锚点被丢弃并保持脱离的机制，最初未连接不足以触发该缺陷。"
+   },
+   {
+    "title": "同根中已有同 ID 的普通元素不应导致组件样式被跳过",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是同 ID 普通元素造成的样式去重误判，与脱离锚点导致根节点解析错误不同。"
+   },
+   {
+    "title": "挂载到其他 Document 时样式应归属目标文档",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是跨文档样式归属，直接挂载到 iframe 文档未触发临时锚点脱离的问题。"
+   },
+   {
+    "title": "样式首次插入失败后重新挂载应能够恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是样式追加异常后的恢复，与临时锚点脱离导致样式注入 document.head 的机制不同。"
+   }
+  ]
+ },
+ {
+  "id": 4539345127,
+  "repo": "etcd-io/etcd",
+  "form": "distributed",
+  "issue_url": "https://github.com/etcd-io/etcd/issues/21830",
+  "pr_url": "https://github.com/etcd-io/etcd/pull/21832",
+  "pre_fix_commit": "b86055a95db2900ea4609a848167dc5ed4885055",
+  "files": [
+   "client/v3/client.go"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 2918520239,
+    "repo": "BerriAI/litellm",
+    "title": "[Bug]: Watsonx embeddings `authentication_token_expired`"
+   },
+   {
+    "id": 4238526971,
+    "repo": "n8n-io/n8n",
+    "title": "Environments: expired Git HTTPS token prevents n8n startup after restart"
+   },
+   {
+    "id": 4484101158,
+    "repo": "nexu-io/open-design",
+    "title": "Memory connected-app scan treats stale GitHub auth as connected and fails with Bad credentials"
+   },
+   {
+    "id": 3267951984,
+    "repo": "google-gemini/gemini-cli",
+    "title": "/mcp auth github fails to discover OAuth configuration from MCP server"
+   },
+   {
+    "id": 2018694209,
+    "repo": "langchain-ai/langchain",
+    "title": "AzureOpenAI azure_ad_token_provider Keyerror"
+   }
+  ],
+  "a": [
+   {
+    "title": "Dial 指定的 TLS 端点与客户端首端点不同时，使用正确的服务器名称",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是目标端点与 TLS 服务器名称不一致的问题，与非零 DialTimeout 导致创建客户端阻塞的机制不同。"
+   },
+   {
+    "title": "连接等待超时和父上下文取消时保留可识别的错误并释放连接",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试要求创建客户端等待健康检查后超时或取消，正是修复前的预期行为，不能揭示本缺陷。"
+   },
+   {
+    "title": "健康检查兼容错误不重试，其他错误不得被当作连接成功",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是健康检查错误分类与重试行为，并要求部分错误阻止客户端创建，没有识别本缺陷中的错误阻塞。"
+   },
+   {
+    "title": "健康服务返回 NOT_SERVING 时不得误报连接就绪",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽然可能在修复前失败，但原因是忽略健康响应的 NOT_SERVING 状态，属于不同缺陷。"
+   },
+   {
+    "title": "认证关闭后清除旧令牌，重新开启后能够获取新令牌",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是认证关闭后的旧令牌清理，与客户端创建时的健康检查阻塞无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "显式 Dial 的 TLS authority 应取自目标端点",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对目标端点的 TLS 身份选择错误，与正数 DialTimeout 导致连接创建阻塞的缺陷不同。"
+   },
+   {
+    "title": "健康接口返回 NOT_SERVING 时不能误报连接健康",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对健康响应状态未被检查，且要求创建连接时检查就绪状态，与本次修复的非阻塞行为不同。"
+   },
+   {
+    "title": "健康检查兼容错误与真实失败应正确区分且不重试",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对健康检查错误分类和重试策略，没有断言正数 DialTimeout 下创建连接应立即成功返回。"
+   },
+   {
+    "title": "健康检查挂起期间取消上下文应及时关闭连接",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试要求健康检查阻塞至取消或超时后返回错误，认可了本次缺陷中的阻塞行为，不能检出该回归。"
+   },
+   {
+    "title": "认证关闭后应清除旧令牌并在恢复后重新获取",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对认证状态变化时旧令牌的清除，与拨号阶段等待健康检查导致阻塞无关。"
+   }
+  ]
+ },
+ {
+  "id": 4539768508,
+  "repo": "react/react",
+  "form": "frontend",
+  "issue_url": "https://github.com/react/react/issues/36563",
+  "pr_url": "https://github.com/react/react/pull/36803",
+  "pre_fix_commit": "ad78e251e2f64638a326c038fe130b5ed00a2726",
+  "files": [
+   "packages/react-dom-bindings/src/server/ReactFizzConfigDOM.js"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 1767224883,
+    "repo": "vercel/next.js",
+    "title": "[Error 500] \"Socket Hang Up\" Randomly Occurring on any Routes in Production Mode"
+   },
+   {
+    "id": 4449614734,
+    "repo": "OpenHands/OpenHands",
+    "title": "[Bug]: OpenRouter configuration still appears to consume OpenHands credits"
+   },
+   {
+    "id": 565630261,
+    "repo": "envoyproxy/envoy",
+    "title": "Envoy doesn't output valid prometheus metrics"
+   },
+   {
+    "id": 482178799,
+    "repo": "flutter/flutter",
+    "title": "[Camera] Audio quality very bad on android"
+   },
+   {
+    "id": 2664053644,
+    "repo": "cli/cli",
+    "title": "unexpected end of JSON input when sending a HEAD request with gh api"
+   },
+   {
+    "id": 704693882,
+    "repo": "cli/cli",
+    "title": "PR Create - GraphQL error due to wrong head branch detected"
+   },
+   {
+    "id": 392991411,
+    "repo": "caddyserver/caddy",
+    "title": "Caddy produces account rate limit errors when compiled with latest certmagic package"
+   },
+   {
+    "id": 3209960119,
+    "repo": "cli/cli",
+    "title": "`gh pr edit --add-reviewer` fails when called before Copilot has completed a review"
+   },
+   {
+    "id": 4058743689,
+    "repo": "cli/cli",
+    "title": "Spurious missing read:project scope warnings"
+   }
+  ],
+  "a": [
+   {
+    "title": "图片预加载 Link 响应头保留 referrerPolicy",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "明确在容量充足的响应头路径渲染带 referrerPolicy 的图片并断言策略保留，修复前拼错属性名会使该断言失败。"
+   },
+   {
+    "title": "低优先级图片提升后不得重复输出预加载",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试禁用了响应头预加载，检查的是优先级提升后的队列去重，与读取 referrerPolicy 时属性名拼错无关。"
+   },
+   {
+    "title": "响应头容量不足时完整回退且不丢失图片预加载",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试检查响应头容量边界与回退完整性，未设置或断言 referrerPolicy，无法暴露该属性丢失。"
+   },
+   {
+    "title": "响应式图片按 srcSet 和 sizes 去重并避免错误 href",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试检查响应式图片的去重和 HTML 预加载属性，明确不进入存在缺陷的 Link 响应头路径。"
+   },
+   {
+    "title": "非法自闭合图片触发错误后新请求仍能正常预加载",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试检查非法 img 的错误处理及请求间资源状态隔离，与响应头生成时读取错误属性名的机制不同。"
+   }
+  ],
+  "b": [
+   {
+    "title": "响应头与 HTML 两条预加载路径都应保留 referrerPolicy",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "测试明确进入图片预加载响应头路径并断言保留 referrerpolicy，修复前属性名拼写错误会导致该断言失败。"
+   },
+   {
+    "title": "低优先级图片重复出现并升级后只能输出一次预加载",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关闭响应头预加载并检查队列升级与去重，与 referrerPolicy 读取错误无关。"
+   },
+   {
+    "title": "响应头容量恰好不足时应完整回退且后续资源不丢失",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试检查响应头容量边界和 HTML 回退，未设置或断言 referrerPolicy，无法暴露该缺陷。"
+   },
+   {
+    "title": "非法 img 渲染失败后重试不能留下损坏输出或抑制合法预加载",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试检查非法 img 的错误处理与重试，且关闭响应头预加载，与该属性丢失机制无关。"
+   },
+   {
+    "title": "响应式图片应按 srcSet 和 sizes 区分资源并避免错误 href",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试检查响应式图片的资源区分与预加载路径，未涉及 referrerPolicy 的读取或保留。"
+   }
+  ]
+ },
+ {
+  "id": 4587733478,
+  "repo": "remix-run/react-router",
+  "form": "frontend",
+  "issue_url": "https://github.com/remix-run/react-router/issues/15144",
+  "pr_url": "https://github.com/remix-run/react-router/pull/14298",
+  "pre_fix_commit": "4ce8ff72737bcf43afc7e9f5705c9214a19ec9f6",
+  "files": [
+   "packages/react-router-dev/vite/plugin.ts"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 2850601272,
+    "repo": "sveltejs/svelte",
+    "title": "Build error / TypeError: [vite-plugin-svelte-module] Cannot read properties of undefined (reading 'some')"
+   },
+   {
+    "id": 4324237784,
+    "repo": "open-webui/open-webui",
+    "title": "Bug: Task endpoints (title/tags/follow-up generation) return 404 when chat model is from a direct connection"
+   },
+   {
+    "id": 3663953705,
+    "repo": "moby/moby",
+    "title": "After update (29.0.x) networking fails with rootless Docker (`DOCKERD_ROOTLESS_ROOTLESSKIT_PORT_DRIVER=slirp4netns`)"
+   },
+   {
+    "id": 4367273305,
+    "repo": "Hmbown/Codewhale",
+    "title": "macOS Seatbelt sandbox blocks outbound DNS resolution in Agent mode"
+   },
+   {
+    "id": 1589223289,
+    "repo": "hashicorp/nomad",
+    "title": "Nomad client tries to connect to serf IP address, not to RPC"
+   },
+   {
+    "id": 870133141,
+    "repo": "cockroachdb/cockroach",
+    "title": "build/bazel:  build chokes when `make` doesn't point to GNU make"
+   },
+   {
+    "id": 3062910465,
+    "repo": "tauri-apps/tauri",
+    "title": "[bug] native window bar's buttons not working (on wayland)"
+   },
+   {
+    "id": 2581832840,
+    "repo": "sxyazi/yazi",
+    "title": "`ya pack -a` creates extra dir for author/repo:plugin typo"
+   },
+   {
+    "id": 3236687775,
+    "repo": "hashicorp/nomad",
+    "title": "Failure in running exec command in rootless nomad"
+   },
+   {
+    "id": 548552996,
+    "repo": "flutter/flutter",
+    "title": "Flutter video_player unable to play HLS live video on iOS device"
+   },
+   {
+    "id": 918216371,
+    "repo": "containerd/containerd",
+    "title": "Containerd takes hours to startup after node reboot"
+   },
+   {
+    "id": 482178799,
+    "repo": "flutter/flutter",
+    "title": "[Camera] Audio quality very bad on android"
+   }
+  ],
+  "a": [
+   {
+    "title": "父子编译器加载条件配置时保持插件状态隔离",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注构建时父子插件状态隔离，未涉及开发模式子编译器丢失 server.watch 配置。"
+   },
+   {
+    "title": "noExternal 为 true 时服务器依赖保持内联",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注服务端依赖内联与 external 配置冲突，与子编译器丢失监听配置的机制无关。"
+   },
+   {
+    "title": "服务端依赖扫描正确处理含空格和非 ASCII 字符的路由路径",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注特殊字符路径的依赖扫描，未配置监听忽略规则或验证子编译器是否遵守规则。"
+   },
+   {
+    "title": "子编译器 buildStart 失败后释放资源并允许重启",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注 buildStart 失败后的资源释放，监听器泄漏与本缺陷中忽略配置被覆盖是不同机制。"
+   },
+   {
+    "title": "子编译器保留转换钩子但不重复执行服务器配置钩子",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注插件展开和服务器钩子重复执行，重复监听断言不能检出子编译器丢失 server.watch 配置。"
+   }
+  ],
+  "b": [
+   {
+    "title": "子编译器重新加载配置后应使用同一批次的插件与配套配置",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试配置求值后插件与 define 的代数一致性，未涉及开发模式子编译器丢失 server.watch 配置。"
+   },
+   {
+    "title": "子编译器进入 serve 状态不得污染父构建插件状态",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试父子插件实例的状态隔离与插件展开，故障机制与 watch 配置被覆盖无关。"
+   },
+   {
+    "title": "Cloudflare 的 noExternal:true 应在配置合并后仍阻止服务端依赖外置",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试服务端依赖外置配置合并，与子编译器未保留文件监听选项无关。"
+   },
+   {
+    "title": "子编译器 buildStart 失败后应释放资源并允许重试",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 buildStart 失败后的资源清理，虽监测监听器，但未配置忽略规则或检验其被子编译器丢失。"
+   },
+   {
+    "title": "子编译器必须过滤递归插件并禁用第三方服务器钩子",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试递归插件过滤和服务器钩子禁用，未触及 server.watch 丢失导致忽略目录仍被监听的机制。"
+   }
+  ]
+ },
+ {
+  "id": 4589864512,
+  "repo": "containerd/containerd",
+  "form": "distributed",
+  "issue_url": "https://github.com/containerd/containerd/issues/13534",
+  "pr_url": "https://github.com/containerd/containerd/pull/13542",
+  "pre_fix_commit": "1d2dd9eb5f60fc036927304f034dccb784de09dc",
+  "files": [
+   "internal/cri/server/container_image_mount.go"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 2617975225,
+    "repo": "moby/moby",
+    "title": "Create service fail / starting container failed: unable to remount [secrets] dir as readonly"
+   },
+   {
+    "id": 1857511307,
+    "repo": "kubernetes/kubernetes",
+    "title": "CSINode object is not recreated after Node object is recreated"
+   },
+   {
+    "id": 2247968148,
+    "repo": "hashicorp/nomad",
+    "title": "Race condition when a CSI volume with staging gets unmounted from one alloc and mounted to another alloc"
+   },
+   {
+    "id": 2114303874,
+    "repo": "vitessio/vitess",
+    "title": "Bug Report: vttestserver shows no vtcombo logs on stdout/stderr"
+   },
+   {
+    "id": 3430871626,
+    "repo": "sveltejs/svelte",
+    "title": "Reseting state during on mount will cause a race condition inside key/each block"
+   },
+   {
+    "id": 4462643002,
+    "repo": "nexu-io/open-design",
+    "title": "HTML preview goes blank when switching between open HTML file tabs in workspace"
+   },
+   {
+    "id": 4366055517,
+    "repo": "stablyai/orca",
+    "title": "orca v1.3.24: missing single-instance lock corrupts orca-runtime.json + endpoint.env on every relaunch — CLI sees stale daemon metadata"
+   },
+   {
+    "id": 1158857310,
+    "repo": "vuejs/core",
+    "title": "Nested components in detached branch render while being detached"
+   },
+   {
+    "id": 1339654326,
+    "repo": "caddyserver/caddy",
+    "title": "Race condition with file server"
+   },
+   {
+    "id": 775792738,
+    "repo": "redis/redis",
+    "title": "*** [err]: Active defrag in tests/unit/memefficiency.tcl"
+   },
+   {
+    "id": 2850601272,
+    "repo": "sveltejs/svelte",
+    "title": "Build error / TypeError: [vite-plugin-svelte-module] Cannot read properties of undefined (reading 'some')"
+   },
+   {
+    "id": 4112899325,
+    "repo": "n8n-io/n8n",
+    "title": "Google Gemini Node: Mismatch between mimeType (image/jpeg) and fileExtension (png)"
+   },
+   {
+    "id": 4450494943,
+    "repo": "nexu-io/open-design",
+    "title": "macOS 15: Open Design icon appears oversized in Launchpad and Dock"
+   },
+   {
+    "id": 4538312035,
+    "repo": "nexu-io/open-design",
+    "title": "[Bug]: Xiaomi MiMo API base URL change breaks image recognition via Anthropic BYOK proxy"
+   },
+   {
+    "id": 4455640800,
+    "repo": "n8n-io/n8n",
+    "title": "Node panel layout proportions break after browser zoom-in reset"
+   },
+   {
+    "id": 4476305675,
+    "repo": "n8n-io/n8n",
+    "title": "Salesforce Create Contact Node Account ID Field Not Loading"
+   }
+  ],
+  "a": [
+   {
+    "title": "同一 Pod 并发挂载相同镜像时，一个请求失败不得卸载另一个请求的卷",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对并发请求失败回滚破坏成功挂载的问题，与缺少挂载管理器导致 erofs 挂载配置无法转换的机制不同。"
+   },
+   {
+    "title": "已挂载镜像卷不能静默复用不兼容的 UID/GID 映射",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对复用镜像卷时 UID/GID 映射不兼容的问题，未触及 erofs 挂载需要挂载管理器激活的机制。"
+   },
+   {
+    "title": "镜像引用发生重定向时，目标目录标识必须与实际挂载内容一致",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对镜像引用变化导致目录标识与内容不一致的问题，与本次挂载管理器缺失无关。"
+   },
+   {
+    "title": "镜像子路径通过父目录或符号链接逃逸时必须拒绝并完整回滚",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对子路径逃逸及失败回滚的问题，未覆盖 erofs 特殊挂载配置未经激活便直接挂载的故障。"
+   },
+   {
+    "title": "取消上下文后的失败回滚不能泄漏快照，并应支持重新挂载和重复清理",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对上下文取消后的快照清理及清理幂等性问题，与本次修复的挂载激活机制不同。"
+   }
+  ],
+  "b": [
+   {
+    "title": "并发挂载中失败请求的回滚不得卸载另一请求已成功使用的共享卷",
+    "source_ids": [
+     2247968148
+    ],
+    "verdict": "miss",
+    "reason": "测试针对并发请求回滚误删共享挂载，与缺少挂载管理器激活导致 erofs 挂载失败的机制不同。"
+   },
+   {
+    "title": "共享镜像卷遇到不同 UID/GID 映射时不得静默复用错误映射",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对共享卷复用时 UID/GID 映射冲突，未涉及 erofs 挂载信息未经挂载管理器激活的问题。"
+   },
+   {
+    "title": "镜像标签在两次解析之间变化时不得将新镜像挂到旧摘要目录",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对镜像标签变化导致摘要与挂载内容不一致，与本次修复的挂载激活机制无关。"
+   },
+   {
+    "title": "请求取消后仍须回收已创建的快照并允许重试",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对请求取消后清理上下文失效造成快照泄漏，主动注入的取消错误并非本缺陷导致的挂载失败。"
+   },
+   {
+    "title": "镜像子路径不得通过父目录或符号链接逃逸到宿主文件",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对子路径遍历和符号链接逃逸，与缺少挂载管理器激活导致 erofs 挂载失败的机制不同。"
+   }
+  ]
+ },
+ {
+  "id": 4602224974,
+  "repo": "envoyproxy/envoy",
+  "form": "backend",
+  "issue_url": "https://github.com/envoyproxy/envoy/issues/45491",
+  "pr_url": "https://github.com/envoyproxy/envoy/pull/45568",
+  "pre_fix_commit": "f3ad7169047ab95a576fe577b549c1dc7e316531",
+  "files": [
+   "api/contrib/envoy/extensions/network/connection_balance/dlb/v3alpha/dlb.proto",
+   "api/envoy/config/listener/v3/listener.proto",
+   "contrib/contrib_build_config.bzl",
+   "contrib/dlb/source/BUILD"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 4463460300,
+    "repo": "tinyhumansai/openhuman",
+    "title": "[Bug] AppImage launch failure on Arch Linux/Hyprland: NSS version mismatch and X11   BadWindow errors"
+   },
+   {
+    "id": 4200600278,
+    "repo": "siddharthvaddem/openscreen",
+    "title": "[Windows][Bug]: Camera briefly starts then stops when clicking video button on panel"
+   },
+   {
+    "id": 4526643417,
+    "repo": "warpdotdev/warp",
+    "title": "Crash on launch in Renderer::new (Metal) — regression between 0.2026.05.06 and 0.2026.05.20 on Intel Mac w/ Bronze-tier GPU"
+   },
+   {
+    "id": 3794561814,
+    "repo": "OpenHands/OpenHands",
+    "title": "[Bug]: ErrorMessageBanner component lacks dismiss functionality and truncation for long error messages"
+   },
+   {
+    "id": 4533484197,
+    "repo": "tinyhumansai/openhuman",
+    "title": "Local AI inference completely broken: bootstrap reports \"cannot execute models\" while diagnostics report \"all checks passed\" — Rust core silently drops requests"
+   },
+   {
+    "id": 4568064715,
+    "repo": "Hmbown/Codewhale",
+    "title": "Bug Report: Tool Executor Deadlock After Long-Running exec_shell in Durable Task"
+   },
+   {
+    "id": 2233592610,
+    "repo": "OpenHands/OpenHands",
+    "title": "Always hitting request limit for OpenAI embeddings"
+   },
+   {
+    "id": 4006116191,
+    "repo": "google-gemini/gemini-cli",
+    "title": "Not able to use nano banana skill. Getting errors related to API keys not being set even though they are. Confirmed API key is good using curl commands. Seems to be a problem with this CLI or MCP server."
+   }
+  ],
+  "a": [
+   {
+    "title": "省略设备 ID 时应选择首个可用设备，而非固定使用设备 0",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试设备选择逻辑且前提是已链接扩展，未触发 Intel 下载返回 HTTP 202 导致的 Bazel 依赖获取失败。"
+   },
+   {
+    "title": "发送失败重试次数在零次和耗尽边界上准确且不重复交付",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试运行时发送重试与连接交付，和构建阶段因上游归档下载返回 HTTP 202 而失败的机制不同。"
+   },
+   {
+    "title": "DLB 初始化失败时两种回退策略均能实际接管连接",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试资源创建失败后的运行时回退，未涉及 @dlb 源码归档下载失败及其阻断构建的机制。"
+   },
+   {
+    "title": "DLB 排队连接与 listener 更新并发时不得访问已销毁的 worker",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 listener 更新时的并发资源生命周期，与上游下载返回 HTTP 202 导致构建失败无关。"
+   },
+   {
+    "title": "未知扩展类型应按声明退化为不均衡处理并允许后续配置恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试未知扩展类型的配置处理与恢复，与 @dlb 下载失败导致 contrib 构建中止的机制不同。"
+   }
+  ],
+  "b": [
+   {
+    "title": "DLB 初始化失败时按配置回退，并清理部分初始化资源",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试设备初始化失败后的运行时回退和资源清理，与源归档下载返回 HTTP 202 导致构建失败的机制不同。"
+   },
+   {
+    "title": "发送重试严格遵守次数上限，瞬时失败恢复后连接只交付一次",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试连接发送接口的重试次数和交付语义，未涉及 Bazel 获取 @dlb 归档失败。"
+   },
+   {
+    "title": "监听器移除与 DLB 在途连接交付竞争时不访问已销毁的 worker",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试监听器销毁与在途连接交付的生命周期竞争，与上游归档下载失败无关。"
+   },
+   {
+    "title": "非 Linux x86_64 构建排除 DLB 实现后，扩展配置仍能被明确处理",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽包含 contrib 构建，但未明确触发 @dlb 下载或 HTTP 202，所检查的平台排除和扩展加载机制也不同。"
+   },
+   {
+    "title": "附加地址的 TCP keepalive 显式零值覆盖监听器继承配置",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 TCP keepalive 显式零值的配置继承，与 DLB 依赖下载及构建失败无关。"
+   }
+  ]
+ },
+ {
+  "id": 4660054203,
+  "repo": "vllm-project/vllm",
+  "form": "ai",
+  "issue_url": "https://github.com/vllm-project/vllm/issues/45596",
+  "pr_url": "https://github.com/vllm-project/vllm/pull/45629",
+  "pre_fix_commit": "c4a3f9d137099023a93fbb2299f3c52477751176",
+  "files": [
+   "vllm/entrypoints/serve/instrumentator/metrics.py"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 4620778039,
+    "repo": "sgl-project/sglang",
+    "title": "[Bug] PD Decode worker crashes after request completion with decode radix cache and decode kvcache offload enabled"
+   },
+   {
+    "id": 2841313053,
+    "repo": "sgl-project/sglang",
+    "title": "[Bug] Error while serving deepseek-ai/DeepSeek-V2-Lite in NVIDIA A40-48Q"
+   },
+   {
+    "id": 3726941363,
+    "repo": "sgl-project/sglang",
+    "title": "SMG Metrics Design"
+   },
+   {
+    "id": 3674794004,
+    "repo": "traefik/traefik",
+    "title": "KubernetesIngressNGINX: getting http error 418 with force-ssl-redirect"
+   },
+   {
+    "id": 299974073,
+    "repo": "traefik/traefik",
+    "title": "Redirect to another entryPoint gives \"Too many redirects\" error"
+   },
+   {
+    "id": 1899610854,
+    "repo": "cockroachdb/cockroach",
+    "title": "CockroachDB Grafana Dashboards not showing any metrics"
+   },
+   {
+    "id": 1292299410,
+    "repo": "traefik/traefik",
+    "title": "Traefik (Gateway API) breaks if a route points to a missing service (as seen with cert-manager)"
+   },
+   {
+    "id": 2379314438,
+    "repo": "traefik/traefik",
+    "title": "Increased memory usage and memory leak in Traefik v3"
+   },
+   {
+    "id": 485572258,
+    "repo": "tikv/tikv",
+    "title": "Metrics page not using HTTPS after TLS enabled"
+   },
+   {
+    "id": 704693882,
+    "repo": "cli/cli",
+    "title": "PR Create - GraphQL error due to wrong head branch detected"
+   },
+   {
+    "id": 3763430642,
+    "repo": "google-gemini/gemini-cli",
+    "title": "OTLP HTTP Exporter sends to `/` instead of `/v1/{signal}` paths"
+   },
+   {
+    "id": 499804068,
+    "repo": "traefik/traefik",
+    "title": "Multiple middlewares of the same type overwrite each other in unexpected ways"
+   },
+   {
+    "id": 2348133277,
+    "repo": "traefik/traefik",
+    "title": "DownstreamStatus is 0 in v3 when server-sent event response is aborted from client"
+   },
+   {
+    "id": 503474599,
+    "repo": "ionic-team/capacitor",
+    "title": "bug: The system was unable to find the specified registry key or value."
+   },
+   {
+    "id": 876221670,
+    "repo": "containerd/containerd",
+    "title": "Error messages returned from registries should hide sensitive information"
+   },
+   {
+    "id": 693786861,
+    "repo": "containerd/containerd",
+    "title": "Registry mirror fallbacks immediately errors if response code is 5xx instead of connection timeout/fail"
+   },
+   {
+    "id": 430863665,
+    "repo": "alacritty/alacritty",
+    "title": "Panic due to error in config"
+   },
+   {
+    "id": 822925206,
+    "repo": "containerd/containerd",
+    "title": "MatchLocalhost should match 127.12.34.56"
+   }
+  ],
+  "a": [
+   {
+    "title": "指标路由不能吞掉以 /metrics 开头的未知路径",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对指标路径匹配过宽，未涉及无 path 的 _IncludedRouter 导致指标中间件异常的机制。"
+   },
+   {
+    "title": "两种指标路径均无需重定向且遵守 Prometheus 内容协商",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对双路径重定向和内容协商，未设置产生无 path 路由的条件，也未指出该故障机制。"
+   },
+   {
+    "title": "指标抓取与健康检查不能污染业务请求计数且排除规则不能误伤业务路由",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对请求计数排除规则和自我计数，与路由遍历无条件读取 path 的故障机制不同。"
+   },
+   {
+    "title": "指标编码失败后恢复采集器应能恢复两种抓取路径",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试主动触发采集器 collect() 异常，属于指标编码与恢复问题，并非无 path 路由引起的 AttributeError。"
+   },
+   {
+    "title": "并发业务请求与双路径指标抓取不应丢失或重复统计",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对并发统计正确性，未指定 FastAPI 新版懒加载路由条件，也未涉及缺失 path 的故障机制。"
+   }
+  ],
+  "b": [
+   {
+    "title": "指标挂载不能吞掉以 /metrics 开头的其他路径",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对指标挂载的路径前缀误匹配，未构造无 path 的懒加载路由，与本缺陷机制不同。"
+   },
+   {
+    "title": "两种尾斜杠形式应提供一致的指标格式与内容协商",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对尾斜杠和指标内容协商，未指定会引入无 path 路由的条件，不能稳定触发本缺陷。"
+   },
+   {
+    "title": "排除健康检查时不能同时排除名称具有相同前缀的业务接口",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对指标排除正则误伤业务路径，直接注册的路径不足以触发无 path 路由访问异常。"
+   },
+   {
+    "title": "共享 registry 的第二个应用仍应记录自身请求",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对共享 registry 下的 collector 注册和计数丢失，与路由遍历无条件读取 path 的机制不同。"
+   },
+   {
+    "title": "collector 单次异常后指标端点应能恢复且不影响业务请求",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试主动制造 collector.collect 异常并验证恢复，与懒加载路由缺少 path 导致的中间件异常不同。"
+   }
+  ]
+ },
+ {
+  "id": 4761458684,
+  "repo": "warpdotdev/warp",
+  "form": "cli",
+  "issue_url": "https://github.com/warpdotdev/warp/issues/13136",
+  "pr_url": "https://github.com/warpdotdev/warp/pull/13574",
+  "pre_fix_commit": "64ddc5f5c00b96291e427d0f82fb679e75a7e281",
+  "files": [
+   "app/src/ai/llms_tests.rs",
+   "app/src/ai/llms.rs"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 4669024637,
+    "repo": "Panniantong/Agent-Reach",
+    "title": "Audit report"
+   },
+   {
+    "id": 4103595779,
+    "repo": "google-gemini/gemini-cli",
+    "title": "settings.json reset to defaults when system theme changes, deleting custom hooks"
+   },
+   {
+    "id": 2543596613,
+    "repo": "OpenHands/OpenHands",
+    "title": "[Bug]: Base URL does not reset to empty after setting it once"
+   },
+   {
+    "id": 4006116191,
+    "repo": "google-gemini/gemini-cli",
+    "title": "Not able to use nano banana skill. Getting errors related to API keys not being set even though they are. Confirmed API key is good using curl commands. Seems to be a problem with this CLI or MCP server."
+   },
+   {
+    "id": 3550258961,
+    "repo": "google-gemini/gemini-cli",
+    "title": "CLI shows `gemini-2.5-pro (x% context left)` even after a flash fallback"
+   },
+   {
+    "id": 4729668848,
+    "repo": "n8n-io/n8n",
+    "title": "MCP webhook (queue mode): SessionManager retains Streamable HTTP sessions indefinitely causing progressive heap leak and OOM crash"
+   },
+   {
+    "id": 2906187799,
+    "repo": "OpenHands/OpenHands",
+    "title": "[Bug]: Tool descriptions too long for OpenAI's models"
+   },
+   {
+    "id": 4718231330,
+    "repo": "Panniantong/Agent-Reach",
+    "title": "[BUG] `transcribe()` temp directory never cleaned up — leaked 100MB+ audio files accumulate on disk after every transcription call"
+   },
+   {
+    "id": 1065268673,
+    "repo": "facebook/rocksdb",
+    "title": "IO error: While pread offset 18446744073709547520 len 8192: /000227.sst: Invalid argument @newest version when using those table options"
+   },
+   {
+    "id": 1798326948,
+    "repo": "scylladb/scylladb",
+    "title": "memory corruption - \"Segmentation fault on shard 2\" on 4 nodes after nodetool refresh"
+   },
+   {
+    "id": 2240570198,
+    "repo": "laurent22/joplin",
+    "title": "Build fails because of git commit invocations"
+   },
+   {
+    "id": 1242910127,
+    "repo": "scylladb/scylladb",
+    "title": "failure to read index lead to sstables::partition_index_cache::entry::~entry(): Assertion `!is_referenced()' failed"
+   },
+   {
+    "id": 998769845,
+    "repo": "Kong/kong",
+    "title": "upstream deletion can break service proxying"
+   },
+   {
+    "id": 4486481776,
+    "repo": "tinyhumansai/openhuman",
+    "title": "Add Persona Pack v1 for SOUL, voice, and custom GIF mascot"
+   },
+   {
+    "id": 4532586936,
+    "repo": "tinyhumansai/openhuman",
+    "title": "Disabling a cloud provider leaves workloads routed to its removed model after update"
+   },
+   {
+    "id": 2747171187,
+    "repo": "janhq/jan",
+    "title": "QA: Jan 0.5.12 Release Sign-off"
+   },
+   {
+    "id": 4450812451,
+    "repo": "open-webui/open-webui",
+    "title": "issue: PersistentConfig Duplicate Inserts Cause External Connections and Model Parameters to be Lost After Restart"
+   },
+   {
+    "id": 2622751148,
+    "repo": "janhq/jan",
+    "title": "QA: Jan 0.5.8 Release Sign-off"
+   },
+   {
+    "id": 1716163986,
+    "repo": "vitessio/vitess",
+    "title": "Bug Report: vtcombo's DBDDL plugin has a problematic race condition when creating databases"
+   },
+   {
+    "id": 4084577605,
+    "repo": "open-webui/open-webui",
+    "title": "issue: Intermittent model lookup failures due to RedisDict.set() race condition"
+   }
+  ],
+  "a": [
+   {
+    "title": "自定义路由目标首次出现在服务器目录时保留已保存的选择",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "指出了模型尚未加载、ID 无法识别时协调过程误清空选择的机制，但资料不足以确认路由 R 的识别状态及重建顺序能稳定触发。"
+   },
+   {
+    "title": "并发刷新响应逆序返回时旧目录不能覆盖新目录",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对并发响应乱序导致旧目录覆盖新目录，补丁未修复请求时序或目录覆盖机制。"
+   },
+   {
+    "title": "BYOK 密钥撤销只清理失效模型并在重新添加后恢复可用性",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对已识别模型因 BYOK 密钥撤销而失效后的正常清理，不涉及未识别模型被误清空。"
+   },
+   {
+    "title": "目录刷新失败及缓存写入失败后能够继续刷新和持久化",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对刷新错误和缓存写入故障后的恢复能力，与未识别模型选择被协调清空无关。"
+   },
+   {
+    "title": "移除终端模型覆盖后立即采用新配置且重复移除无副作用",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对终端模型覆盖移除后的继承、事件和持久化行为，与跨设备未知模型 ID 被误清空无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "新目录恢复自定义路由时，不应提前清除已保存的路由选择",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "指出了刷新时将暂时无法解析的模型 ID 当作不可用并清除偏好的机制，但资料未证明自定义路由重建流程会稳定触发该缺陷。"
+   },
+   {
+    "title": "移除自定义端点后，终端覆盖和执行配置均应回退到可用模型",
+    "source_ids": [
+     4532586936
+    ],
+    "verdict": "miss",
+    "reason": "测试要求删除端点后清除选择，而本次修复会保留本地无法识别的端点模型 ID，预期行为与修复方向相反。"
+   },
+   {
+    "title": "BYOK 密钥撤销应清除失效选择，重新添加后应恢复模型可选性",
+    "source_ids": [
+     4532586936
+    ],
+    "verdict": "miss",
+    "reason": "测试的是已识别服务端模型因 BYOK 密钥撤销而不可用，不涉及未知自定义端点 ID 被误清除。"
+   },
+   {
+    "title": "基础模型保持同一 ID 但失去上下文配置能力时，应清除所有配置的旧上限",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是已识别模型失去上下文配置能力后清除上限，不涉及未知模型 ID 的错误清理。"
+   },
+   {
+    "title": "缓存写入失败和刷新失败后，下一次成功更新应恢复持久化",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是缓存写入与刷新失败恢复，且明确保证模型选择始终有效，没有触发未知模型 ID 被误判为不可用的条件。"
+   }
+  ]
+ },
+ {
+  "id": 4771865055,
+  "repo": "remix-run/react-router",
+  "form": "frontend",
+  "issue_url": "https://github.com/remix-run/react-router/issues/15255",
+  "pr_url": "https://github.com/remix-run/react-router/pull/15325",
+  "pre_fix_commit": "5e9405326ff4d7aea9d0780010b1efd686a8885f",
+  "files": [
+   "packages/react-router-dev/vite/plugins/prerender.ts"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 2506537847,
+    "repo": "google/zx",
+    "title": "leaks signal listeners in Node.js"
+   },
+   {
+    "id": 1215916753,
+    "repo": "axios/axios",
+    "title": "Unexpected 'Unsupported protocol' error for relative URLs containing colon (:) character"
+   },
+   {
+    "id": 1148215510,
+    "repo": "microsoft/playwright",
+    "title": "[BUG] Error [ERR_UNSUPPORTED_ESM_URL_SCHEME]: Only file and data URLs are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'c:'"
+   },
+   {
+    "id": 1226161885,
+    "repo": "axios/axios",
+    "title": "blob: urls rejected"
+   },
+   {
+    "id": 435200250,
+    "repo": "Kludex/starlette",
+    "title": "Error in app startup event is not logged and does not prevent startup"
+   },
+   {
+    "id": 2988713758,
+    "repo": "electron/electron",
+    "title": "ESM Modules loading in main crash with unsupported url scheme"
+   },
+   {
+    "id": 1687035967,
+    "repo": "n8n-io/n8n",
+    "title": "AWS S3 - Performance Impact on Large Files"
+   },
+   {
+    "id": 2952645429,
+    "repo": "microsoft/terminal",
+    "title": "Clear buffer clears the prompt"
+   },
+   {
+    "id": 2490144818,
+    "repo": "langchain-ai/langchain",
+    "title": "\"expected string or buffer\" error thrown when an openai_functions_agent uses a tool and the response is streamed using .astream()"
+   },
+   {
+    "id": 2338549595,
+    "repo": "ollama/ollama",
+    "title": "Jetson - \"ollama run\" command loads until timeout"
+   },
+   {
+    "id": 2459105492,
+    "repo": "microsoft/terminal",
+    "title": "Potential crash when calling ITerminalConnection::WriteInput"
+   },
+   {
+    "id": 990422040,
+    "repo": "Kong/kong",
+    "title": "kong.response.exit : can not use customized \"Content-Length\" header"
+   },
+   {
+    "id": 623821062,
+    "repo": "encode/httpx",
+    "title": "Content-Length header is missing in POST/DELETE/PUT/PATCH requests without body"
+   },
+   {
+    "id": 853546409,
+    "repo": "PowerShell/PowerShell",
+    "title": "Invoke-WebRequest/Invoke-RestMethod: PR #10034 violates RFC7230 and therefore breaks HTTP Desync Mitigation modes"
+   },
+   {
+    "id": 3360322542,
+    "repo": "Portkey-AI/gateway",
+    "title": "Exception if Running with Nginx"
+   },
+   {
+    "id": 748608450,
+    "repo": "Kludex/starlette",
+    "title": "Missing content-length header field in some responses"
+   }
+  ],
+  "a": [
+   {
+    "title": "共享取消信号的并发请求完成后应移除监听器",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试取消监听器清理，未涉及预览服务器绑定地址与请求地址族不一致。"
+   },
+   {
+    "title": "读取请求体期间取消应及时结束且不发送网络请求",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试读取请求体时的取消处理，未触发 localhost 解析到错误地址族导致连接被拒绝的机制。"
+   },
+   {
+    "title": "HEAD 响应应保留头部并使用空响应体",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 HEAD 响应体和头部语义，与预览服务器请求使用错误地址的缺陷无关。"
+   },
+   {
+    "title": "响应正文传输中断后应拒绝并允许下一次请求成功",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试已连接后的响应传输中断，与地址族不匹配导致建立连接时被拒绝的机制不同。"
+   },
+   {
+    "title": "101 协议升级响应应明确失败并释放连接",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试协议升级响应的错误处理和连接释放，未涉及预览服务器实际绑定地址的选择。"
+   }
+  ],
+  "b": [
+   {
+    "title": "请求结束后释放共享 AbortSignal 上的监听器",
+    "source_ids": [
+     2506537847
+    ],
+    "verdict": "miss",
+    "reason": "测试关注 AbortSignal 监听器清理，与预览地址重新解析导致连接到错误地址族的机制无关。"
+   },
+   {
+    "title": "HTTPS 预览地址可以完成预渲染请求",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注 node:http 请求 HTTPS 时的协议错误，未触发预览服务器绑定地址与请求地址族不一致的问题。"
+   },
+   {
+    "title": "压缩 HTML 在写入预渲染文件前正确解压",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注 gzip 响应解压，与预览服务器绑定地址的选择无关。"
+   },
+   {
+    "title": "HEAD 响应保留实体长度且不创建响应体",
+    "source_ids": [
+     990422040,
+     748608450
+    ],
+    "verdict": "miss",
+    "reason": "测试关注 HEAD 响应体及实体长度处理，与 localhost 解析到错误地址族的故障机制无关。"
+   },
+   {
+    "title": "读取尚未结束的请求体时取消也能及时终止",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注读取请求体期间的取消行为，未涉及预览地址解析或服务器绑定地址不匹配。"
+   }
+  ]
+ },
+ {
+  "id": 4794397557,
+  "repo": "nats-io/nats-server",
+  "form": "distributed",
+  "issue_url": "https://github.com/nats-io/nats-server/issues/8350",
+  "pr_url": "https://github.com/nats-io/nats-server/pull/8734",
+  "pre_fix_commit": "67af1000ea8ef8842963f70a39ee82e65e69c032",
+  "files": [
+   "server/raft.go"
+  ],
+  "errors": [],
+  "history": [],
+  "a": [
+   {
+    "title": "自投票持久化失败时，单节点候选人不得当选",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试自投票持久化失败后错误当选，与首选候选人未重发投票请求或兴趣不足后重试过慢的机制无关。"
+   },
+   {
+    "title": "投票落盘失败与重启不得导致同任期重复授票",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试授票持久化与重启后的同任期投票一致性，未覆盖首选候选人的请求重发或快速重试。"
+   },
+   {
+    "title": "空日志选票只能在满足完整集群或救援条件时促成当选",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试空日志选票的当选门槛与去重，且关闭 maybeLeader，与本次修复的首选候选人重试机制不同。"
+   },
+   {
+    "title": "重新当选后不得沿用上一任期的追赶确认",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试重新当选后追赶确认状态的清理和有效性，与投票请求遗漏及选举重试延迟无关。"
+   },
+   {
+    "title": "未提交的成员加入和网络分区应阻止竞选，并在条件恢复后解除",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽涉及 SufficientInterest，但测试的是成员资格及分区时阻止竞选，未指定首选候选人或断言兴趣恢复后的快速重试，也未指出该延迟机制。"
+   }
+  ],
+  "b": [
+   {
+    "title": "自投票持久化失败时，单节点不得凭内存自票成为 Leader",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对自投票持久化失败后错误当选，与首选候选者未重发投票请求或兴趣不足后重试过慢无关。"
+   },
+   {
+    "title": "同一节点先后携带不同 empty 标志的选票不能被重复计入全员投票",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对重复选票跨 empty 分类重复计数，未覆盖首选候选者投票请求丢失后的重发或快速重试机制。"
+   },
+   {
+    "title": "授票落盘失败和成功后的重启均不得造成同任期双重授票",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对授票持久化及重启后的同任期双重授票，重复请求本身不足以对应本次修复的重发和选举计时问题。"
+   },
+   {
+    "title": "重新当选后不能将上一任期的复制确认当作当前追赶完成证明",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对跨任期复制确认导致追赶状态误判，与本次修复的首选候选者选举请求重试机制不同。"
+   },
+   {
+    "title": "未提交自身成员变更期间禁止竞选，提交后应恢复选举",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对未提交成员变更期间的竞选限制与恢复，且已具备足够订阅兴趣，未触发本次缺陷的请求重发或兴趣不足重试路径。"
+   }
+  ]
+ },
+ {
+  "id": 4802853239,
+  "repo": "langchain-ai/langchain",
+  "form": "ai",
+  "issue_url": "https://github.com/langchain-ai/langchain/issues/38639",
+  "pr_url": "https://github.com/langchain-ai/langchain/pull/38765",
+  "pre_fix_commit": "b3a6d9a012681df8a8e33345c8255ca69ec0e437",
+  "files": [
+   "libs/partners/anthropic/langchain_anthropic/chat_models.py"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 3461042089,
+    "repo": "BerriAI/litellm",
+    "title": "[Bug]:  LiteLLM proxy makes malformed request to OpenAI when using gpt-5 models with Codex CLI"
+   },
+   {
+    "id": 3839274488,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: chat.completions returns content: null for GPT-OSS multi-turn with json_object"
+   },
+   {
+    "id": 3482660582,
+    "repo": "BerriAI/litellm",
+    "title": "[Bug]: /responses API: Bedrock tool calls duplicated when caller includes the tool-call definition"
+   },
+   {
+    "id": 4302383583,
+    "repo": "BerriAI/litellm",
+    "title": "[Bug]: Responses API bridged backend (Anthropic) multi-turn tool calls fail"
+   },
+   {
+    "id": 3726941363,
+    "repo": "sgl-project/sglang",
+    "title": "SMG Metrics Design"
+   },
+   {
+    "id": 4222278992,
+    "repo": "BerriAI/litellm",
+    "title": "[Bug]: Gemini models degenerate in multi-turn tool-calling via /v1/messages — thoughtSignature not propagated from thought parts"
+   },
+   {
+    "id": 3888173999,
+    "repo": "BerriAI/litellm",
+    "title": "[Bug]: Empty guardrails/policies arrays in UI payload trigger false enterprise license check"
+   },
+   {
+    "id": 4418623340,
+    "repo": "open-webui/open-webui",
+    "title": "issue: edit_image with ComfyUI no longer returns images in 0.9.5"
+   },
+   {
+    "id": 3099474795,
+    "repo": "open-webui/open-webui",
+    "title": "issue: When system-prompt in OpenAI model is set, there will be an error 400"
+   },
+   {
+    "id": 3078991298,
+    "repo": "open-webui/open-webui",
+    "title": "issue: Native Tool Calling with OpenAPI Spec with Array Query Parameter Generates Invalid AI Functions for OpenAI (OpenAI returns 400)"
+   },
+   {
+    "id": 2888812439,
+    "repo": "langgenius/dify",
+    "title": "[PANIC]failed to init dify plugin db: failed to connect to `host=db user=postgres database=postgres`: dial error (dial tcp 172.19.0.3:5432: connect: connection refused) in docker 1.0"
+   },
+   {
+    "id": 4723866674,
+    "repo": "Hmbown/Codewhale",
+    "title": "v0.8.65: MCP duplicate server instance lifecycle and doctor coverage"
+   },
+   {
+    "id": 4605810404,
+    "repo": "nexu-io/open-design",
+    "title": "[Bug]: Claude Code runner does not wait for AskUserQuestion — agent continues without an answer"
+   },
+   {
+    "id": 3134869150,
+    "repo": "n8n-io/n8n",
+    "title": "OpenAPI spec is missing path parameters"
+   },
+   {
+    "id": 2149171238,
+    "repo": "chroma-core/chroma",
+    "title": "[Bug]: The Write-ahead Log (embeddings_queue) doesn't get cleaned up"
+   },
+   {
+    "id": 652604102,
+    "repo": "hashicorp/consul",
+    "title": "[connect] race-condition registering multiple proxies, duplicate public_listener ports are assigned"
+   },
+   {
+    "id": 4390996456,
+    "repo": "Hmbown/Codewhale",
+    "title": "bug: thinking collapse - multiple root causes causing thinking blocks to freeze, truncate silently, or drop reasoning_content"
+   },
+   {
+    "id": 804965997,
+    "repo": "encode/httpx",
+    "title": "`response.aclose()` raises httpcore errors, not HTTPError"
+   },
+   {
+    "id": 3828315178,
+    "repo": "OpenHands/OpenHands",
+    "title": "Not able to use openhands chat"
+   },
+   {
+    "id": 963438812,
+    "repo": "axios/axios",
+    "title": "uncaughtException from steam's end callback"
+   }
+  ],
+  "a": [
+   {
+    "title": "列表中的空白字符串与 text 字典应采用一致的过滤规则",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试文本块的空白过滤，不涉及空 thinking 块仅收到 signature_delta 时丢失 thinking 字段的机制。"
+   },
+   {
+    "title": "显式空工具参数不应被残留 partial_json 覆盖",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试工具参数 input 与 partial_json 的优先级，与 thinking 字段缺失无关。"
+   },
+   {
+    "title": "工具搜索结果中的错误标志和混合内容在格式化后保持完整",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试工具结果中错误标志和引用内容的保留，不涉及 thinking 块的流式重建或回放。"
+   },
+   {
+    "title": "连续工具调用的流式参数不能串入前一个工具块",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试连续工具调用的参数隔离，事件流不包含 thinking 块或 signature_delta，无法触发该缺陷。"
+   },
+   {
+    "title": "提前停止或取消流式消费时应释放连接且后续请求可恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试流式连接清理和取消传播，与 signature_delta 缺少 thinking 字段的故障机制不同。"
+   }
+  ],
+  "b": [
+   {
+    "title": "同一工具调用同时出现在内容块和 tool_calls 中时不得重复发送",
+    "source_ids": [
+     3482660582
+    ],
+    "verdict": "miss",
+    "reason": "测试工具调用去重和 caller 保留，不涉及空 thinking 块仅有签名增量时丢失 thinking 字段。"
+   },
+   {
+    "title": "列表中的空白字符串应与 text 字典采用一致的过滤规则",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试空白文本过滤，不涉及 thinking 字段缺失及回放失败的机制。"
+   },
+   {
+    "title": "已解析的空工具参数不得被遗留 partial_json 覆盖",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试工具参数 input 与 partial_json 的优先级，与签名增量缺失 thinking 字段无关。"
+   },
+   {
+    "title": "结构化流中的文本增量仍应触发 token 回调",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试文本增量的 token 回调，未构造空 thinking 块或 signature_delta，也未检查必需字段。"
+   },
+   {
+    "title": "流消费提前终止后应释放连接并允许下一次请求正常执行",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试提前终止流后的连接释放和状态隔离，与空 thinking 块的字段丢失机制不同。"
+   }
+  ]
+ },
+ {
+  "id": 4868950336,
+  "repo": "yt-dlp/yt-dlp",
+  "form": "cli",
+  "issue_url": "https://github.com/yt-dlp/yt-dlp/issues/17208",
+  "pr_url": "https://github.com/yt-dlp/yt-dlp/pull/17262",
+  "pre_fix_commit": "aefce1eea4d0b6bab1ec2bd3beff09bff91a39c8",
+  "files": [
+   "yt_dlp/extractor/youtube/_video.py"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 4454187023,
+    "repo": "n8n-io/n8n",
+    "title": "Community packages reinstall race on cold boot leaves stale missingPackages cache and breaks UI status (queue mode, ephemeral storage)"
+   },
+   {
+    "id": 475229465,
+    "repo": "microsoft/terminal",
+    "title": "The ScrollRegion clip rect is almost always wrong"
+   },
+   {
+    "id": 3625758344,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: Unbounded CPU Memory Growth When Using Prefix Caching"
+   },
+   {
+    "id": 2449113864,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: vLLM latest version on Inf2 fails"
+   },
+   {
+    "id": 2870555955,
+    "repo": "vllm-project/vllm",
+    "title": "[Installation]: sccache/ccache is not effective"
+   },
+   {
+    "id": 2975830824,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: --enable-prompt-tokens-details not working in V1"
+   },
+   {
+    "id": 2349502516,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug][v0.5.0]: Benign error reported by Python multiprocessing resource_tracker"
+   }
+  ],
+  "a": [
+   {
+    "title": "不同格式共享序号缓存时不能截断较长的音视频轨道",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对不同格式复用序号缓存导致截断，未涉及补丁修复的分片探测请求需使用 HEAD 的机制。"
+   },
+   {
+    "title": "直播刷新暂时失败后应恢复生成分片",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 URL 刷新失败后的恢复，模拟有效请求直接返回序号，未触发 GET 探测失败导致零分片的问题。"
+   },
+   {
+    "title": "直播结束后的最终刷新仍应补齐尚未下载的分片",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对直播结束时补齐尾部分片，与补丁修复的 HEAD 探测请求机制不同。"
+   },
+   {
+    "title": "超过120小时的直播缺少分片时长时应给出明确错误",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对缺少分片时长时的窗口计算错误，与请求方法导致无法取得头部序号无关。"
+   },
+   {
+    "title": "回放头部读取瞬时失败后应重试并关闭响应",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试要求缺少序号头后重试及关闭响应，但补丁修复的是使用 HEAD 探测，未实现该测试要求的重试机制。"
+   }
+  ],
+  "b": [
+   {
+    "title": "共享序号缓存不能串用不同格式或客户端的片段上界",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对不同格式或客户端的缓存串用，补丁修复的是获取片段上界时的请求方式及错误处理。"
+   },
+   {
+    "title": "直播 URL 刷新短暂失败后应能恢复下载",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 url_feed 刷新失败后的重试与恢复，未涉及补丁修复的片段上界请求机制。"
+   },
+   {
+    "title": "直播结束时最终序号查询短暂失败不能导致尾部片段丢失",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试要求最终序号查询失败后重试，但补丁未增加重试，也未提供 GET 失败而 HEAD 成功的触发条件。"
+   },
+   {
+    "title": "超过 120 小时的直播在片段时长缺失或为零时不能崩溃",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对保留窗口计算中片段时长缺失或为零的算术异常，与补丁修复机制无关。"
+   },
+   {
+    "title": "120 小时保留窗口的片段数量不能因包含端点而多出一片",
+    "source_ids": [
+     475229465
+    ],
+    "verdict": "miss",
+    "reason": "测试针对保留窗口的端点计数偏差，与获取片段上界时改用 HEAD 请求的修复无关。"
+   }
+  ]
+ },
+ {
+  "id": 4869431419,
+  "repo": "expo/expo",
+  "form": "mobile",
+  "issue_url": "https://github.com/expo/expo/issues/47731",
+  "pr_url": "https://github.com/expo/expo/pull/47860",
+  "pre_fix_commit": "3a7e74a39be91934199fc87fc9ebe8d9001f6a84",
+  "files": [
+   "packages/@expo/cli/src/api/graphql/client.ts"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 703285455,
+    "repo": "TanStack/query",
+    "title": "Mutation cache invalidation is broken in typescript"
+   },
+   {
+    "id": 3763885023,
+    "repo": "OpenHands/OpenHands",
+    "title": "Conversation panel shows stale status (green dot) after stopping runtime"
+   },
+   {
+    "id": 4084577605,
+    "repo": "open-webui/open-webui",
+    "title": "issue: Intermittent model lookup failures due to RedisDict.set() race condition"
+   },
+   {
+    "id": 4669024637,
+    "repo": "Panniantong/Agent-Reach",
+    "title": "Audit report"
+   },
+   {
+    "id": 4121314039,
+    "repo": "n8n-io/n8n",
+    "title": "HTTP Request retries on HTTP 200 when response body contains top-level \"error\" field and Retry On Fail is enabled"
+   },
+   {
+    "id": 1435635939,
+    "repo": "axios/axios",
+    "title": "Interceptors have unparsable headers by axios"
+   },
+   {
+    "id": 2141049539,
+    "repo": "axios/axios",
+    "title": "Form-data resubmitting is broken"
+   },
+   {
+    "id": 2858964781,
+    "repo": "OpenHands/OpenHands",
+    "title": "[Bug]: Docker compose env var is not recognized (Azure Resource Not Found Error with GPT4o)"
+   },
+   {
+    "id": 2469116899,
+    "repo": "grpc/grpc-go",
+    "title": "Update Retry backoff to follow changes made to gRFC A6"
+   },
+   {
+    "id": 4535958705,
+    "repo": "gofiber/fiber",
+    "title": "🧹 chore: minor performance findings (P2 cleanup pass)"
+   },
+   {
+    "id": 3606686538,
+    "repo": "chroma-core/chroma",
+    "title": "[Bug]: Memory is not freed when using PersistentClient"
+   },
+   {
+    "id": 4792375296,
+    "repo": "career-ops-hq/career-ops",
+    "title": "web: `next dev` on Windows OOMs the machine — Turbopack spawns hundreds of postcss workers (workspace-root/cache mismatch)"
+   },
+   {
+    "id": 3625758344,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: Unbounded CPU Memory Growth When Using Prefix Caching"
+   }
+  ],
+  "a": [
+   {
+    "title": "连续三次瞬态 GraphQL 错误应保留服务端错误信息",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对瞬态服务端错误的重试与异常保留，没有触发非空 data 对象的字段全为 null 时被误拒绝的机制。"
+   },
+   {
+    "title": "网关返回非 JSON 错误页后应重试并恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对非 JSON 响应的解析异常恢复，成功响应包含非空字段，与本次修复机制无关。"
+   },
+   {
+    "title": "全空查询结果失败后不得污染缓存并阻止恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽然使用了全 null 字段响应，但将首次拒绝视为正确行为并测试缓存恢复，而本次缺陷正是首次响应被错误拒绝。"
+   },
+   {
+    "title": "重试间隔内取消请求应立即停止后续尝试",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对重试等待期间的取消处理，与全 null 字段的 GraphQL data 被误判失败无关。"
+   },
+   {
+    "title": "mutation 已提交但响应丢失时不得自动重复产生副作用",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 mutation 网络失败后重放产生重复副作用，与本次 data 有效性判断缺陷无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "首次响应 JSON 解析失败后应重试并恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 JSON 解析异常后的重试恢复，与全 null 字段的 data 被误判为失败无关。"
+   },
+   {
+    "title": "连续瞬态 GraphQL 错误耗尽重试后应保留服务端错误原因",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试返回 data:null，补丁前后都会进入错误处理分支，未触发非空 data 对象中字段全部为 null 的误判。"
+   },
+   {
+    "title": "全部字段为 null 的失败结果不能污染缓存并阻断后续恢复",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "触及全 null 字段被判为失败并写入缓存的机制，但错误地要求首次查询抛错，且补丁仍允许缓存该合法结果，其恢复断言不能作为此缺陷的命中测试。"
+   },
+   {
+    "title": "非幂等 mutation 在服务端已提交但响应丢失时不能自动重复执行",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对非幂等 mutation 在响应丢失后的自动重放，与 data 字段全 null 的结果判断无关。"
+   },
+   {
+    "title": "请求取消后应立即停止重试和退避等待",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对取消请求后的重试与退避行为，与全 null 字段的 data 被误判为失败无关。"
+   }
+  ]
+ },
+ {
+  "id": 4877136782,
+  "repo": "hashicorp/nomad",
+  "form": "distributed",
+  "issue_url": "https://github.com/hashicorp/nomad/issues/28242",
+  "pr_url": "https://github.com/hashicorp/nomad/pull/28394",
+  "pre_fix_commit": "341b0bde8b8ae299ae793eb46ea4761a6c5f70dd",
+  "files": [
+   "nomad/node_endpoint.go"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 895161551,
+    "repo": "vitessio/vitess",
+    "title": "vtgate - possible query parsing regression using index hints"
+   },
+   {
+    "id": 1618171233,
+    "repo": "tikv/tikv",
+    "title": "Enabling resource control by default results in 6%- 8% performance regression"
+   },
+   {
+    "id": 1428713431,
+    "repo": "tikv/tikv",
+    "title": "commit a4dc37b causes 2%~4% performance regression in different workloads"
+   },
+   {
+    "id": 1902143787,
+    "repo": "tikv/tikv",
+    "title": "[Dynamic Regions] Compared with 7.3.0, write-heavy workloads have 7.6% - 31% performance regression"
+   },
+   {
+    "id": 1552083830,
+    "repo": "scylladb/scylladb",
+    "title": "test_remove_node_during_mv_insert_4_nodes: sstable - failed reading index: seastar::named_semaphore_timed_out (Semaphore timed out: _read_concurrency_sem)"
+   },
+   {
+    "id": 1504397481,
+    "repo": "kubernetes/kubernetes",
+    "title": "Garbage collector deletes DaemonSet after updating ownerReference and deleting previous owner"
+   },
+   {
+    "id": 2869744958,
+    "repo": "containerd/containerd",
+    "title": "TestBinDirVerifyImage needs proper working init process (PID 1 process) to pass"
+   },
+   {
+    "id": 486234898,
+    "repo": "kubernetes/kubernetes",
+    "title": "Unable to perform initial IP allocation check: unable to refresh the service IP block"
+   },
+   {
+    "id": 775792738,
+    "repo": "redis/redis",
+    "title": "*** [err]: Active defrag in tests/unit/memefficiency.tcl"
+   },
+   {
+    "id": 4523980823,
+    "repo": "warpdotdev/warp",
+    "title": "Crash ~10s after launch: slice_index_fail in warp::ai::blocklist render_text_sections (AIBlock) via build_scene/CALayer — macOS 26.4.1 ARM64, regression starting v0.2026.04.27"
+   },
+   {
+    "id": 821873050,
+    "repo": "vuejs/core",
+    "title": "Regression: union typed prop has wrong type in setup"
+   },
+   {
+    "id": 2512684723,
+    "repo": "BurntSushi/ripgrep",
+    "title": "Alternation match regression"
+   },
+   {
+    "id": 4697659425,
+    "repo": "warpdotdev/warp",
+    "title": "OSC 1337 without a second parameter panics (index out of bounds), crashing terminal output processing"
+   },
+   {
+    "id": 2764922373,
+    "repo": "caddyserver/caddy",
+    "title": "Regression: Caddy 2.9.0 returns 411 Length Required for some sites"
+   },
+   {
+    "id": 3792287613,
+    "repo": "DevToys-app/DevToys",
+    "title": "Critical Path Traversal (Zip Slip) Vulnerability in DevToys Extension Installation."
+   }
+  ],
+  "a": [
+   {
+    "title": "批量更新中混入其他节点的 allocation 必须被拒绝",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 UpdateAlloc 的跨节点授权校验，与 GetClientAllocs 在新 RPC 中漏检删除并返回旧索引的机制无关。"
+   },
+   {
+    "title": "两次长轮询之间发生 GC 后应立即返回新的 allocation 集合",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "删除发生在新 RPC 开始前且仍有旧索引的 allocation 存活，修复前会因 numOldAllocs 重置为零而使用索引 100，无法满足 MinQueryIndex=110 并阻塞至超时。"
+   },
+   {
+    "title": "迁移源节点已被 GC 时仍应推进目标 allocation 的响应索引",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对迁移令牌分支跳过 ModifyIndex 汇总的问题，没有涉及两次 RPC 之间删除 allocation 导致计数信息丢失的机制。"
+   },
+   {
+    "title": "长轮询期间删除节点必须使客户端获知 allocation 集合清空",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对仅删除节点记录时的唤醒和索引来源，allocs 表未变化，与本次修复的 allocation 删除漏检机制不同。"
+   },
+   {
+    "title": "节点从断连恢复后应能重试此前被拒绝的 allocation 更新",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对节点恢复后 UpdateAlloc 的失败状态与重试行为，与 GetClientAllocs 的初始计数和响应索引选择无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "两次查询之间发生分配 GC 时，新的阻塞查询必须返回删除结果",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "删除发生于两次 RPC 之间且仍有旧索引分配存活，新请求无法识别数量减少，修复前会阻塞至超时而无法及时返回表索引 120。"
+   },
+   {
+    "title": "迁移来源节点已被 GC 时，跳过令牌不能跳过响应索引更新",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对迁移令牌分支的 continue 跳过索引更新，与新 RPC 丢失旧分配数量导致漏检删除的机制不同。"
+   },
+   {
+    "title": "仅迁移令牌依赖发生变化时，阻塞查询必须交付新的令牌状态",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对迁移来源节点删除后令牌依赖变化未推进响应索引，没有触发目标节点分配在两次 RPC 之间被删除的机制。"
+   },
+   {
+    "title": "批量更新不能借首条分配的节点身份修改其他节点的分配",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 UpdateAlloc 的跨节点授权校验，与 GetClientAllocs 的删除检测和响应索引缺陷无关。"
+   },
+   {
+    "title": "分配更新数组中的空指针应返回错误且不影响后续请求",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 UpdateAlloc 数组空指针处理及写入原子性，与该分配删除漏检缺陷无关。"
+   }
+  ]
+ },
+ {
+  "id": 4887057987,
+  "repo": "ionic-team/capacitor",
+  "form": "mobile",
+  "issue_url": "https://github.com/ionic-team/capacitor/issues/8531",
+  "pr_url": "https://github.com/ionic-team/capacitor/pull/8534",
+  "pre_fix_commit": "f368a1b1ec90394ff44dd3b9ecea9ea6dfb225c1",
+  "files": [
+   "cli/src/config.ts",
+   "cli/src/util/node.ts"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 4640771324,
+    "repo": "expo/expo",
+    "title": "SDK 56: dynamic import() throws \"Requiring unknown module\" on native in dev since expo 56.0.10 (PR #46539)"
+   },
+   {
+    "id": 346683568,
+    "repo": "flutter/flutter",
+    "title": "Flutter create template crashes when run in Android Emulator SDK v19"
+   },
+   {
+    "id": 1436785719,
+    "repo": "react/react-native",
+    "title": "[FIXED] Android build failures `No matching variant of com.facebook.react:react-native:0.71.0-rc.0 was found.`"
+   },
+   {
+    "id": 4249826310,
+    "repo": "tw93/Mole",
+    "title": "[BUG] Fails to execute periodic maintenance"
+   },
+   {
+    "id": 2399066797,
+    "repo": "vllm-project/vllm",
+    "title": "f[Bug]: TypeError: Can't instantiate abstract class NeuronWorker with abstract method execute_worker"
+   },
+   {
+    "id": 3625758344,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: Unbounded CPU Memory Growth When Using Prefix Caching"
+   },
+   {
+    "id": 2449113864,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: vLLM latest version on Inf2 fails"
+   },
+   {
+    "id": 4434800496,
+    "repo": "farion1231/cc-switch",
+    "title": "[Bug] Hermes model.base_url not updated when switching providers (HTTP 404 on auxiliary services)"
+   },
+   {
+    "id": 4694789045,
+    "repo": "remix-run/react-router",
+    "title": "`react-router typegen` (and `dev`/`build`) crash with `generate is not a function` when run under the Bun runtime (`bun --bun` / `bunx --bun`)"
+   },
+   {
+    "id": 1139763910,
+    "repo": "vercel/next.js",
+    "title": "When using \"type\": \"module\" `import` does not interop the `default` export for commonjs modules"
+   },
+   {
+    "id": 3124017247,
+    "repo": "axios/axios",
+    "title": "remove prepare script using husky and deprecated husky set from npm package"
+   },
+   {
+    "id": 4557096291,
+    "repo": "nexu-io/open-design",
+    "title": "Switched to BYOK on Safari Browser and it would not allow a switch back to CLI"
+   },
+   {
+    "id": 983225981,
+    "repo": "hashicorp/nomad",
+    "title": "CNI DNS config ignored for Docker task"
+   },
+   {
+    "id": 4417749402,
+    "repo": "nexu-io/open-design",
+    "title": "[Bug]  model selection uses removed `session/set_model` instead of stable `session/set_config_option'"
+   },
+   {
+    "id": 3327950541,
+    "repo": "google-gemini/gemini-cli",
+    "title": "Enhancement: Support dynamic resolution of environment variables from secure stores"
+   },
+   {
+    "id": 4719414345,
+    "repo": "Hmbown/Codewhale",
+    "title": "v0.8.65: Provider-owned live catalogs and secret-free model cache"
+   }
+  ],
+  "a": [
+   {
+    "title": "TypeScript 配置加载失败后恢复原有 .ts 加载钩子",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注配置加载后恢复 .ts 钩子，未设置 TypeScript 7 缺失经典编译器 API 的触发条件，故障机制不同。"
+   },
+   {
+    "title": "重复加载 TypeScript 配置时读取已修改的本地依赖",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注重复加载时本地依赖缓存过期，与 TypeScript 7 缺失编译器 API 导致首次加载失败的机制不同。"
+   },
+   {
+    "title": "损坏的 JSON 配置应报告解析失败而非采用空配置",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试仅涉及损坏 JSON 的解析错误，不经过 TypeScript 配置加载及缺失编译器 API 的故障路径。"
+   },
+   {
+    "title": "写入 JavaScript 配置不能静默成功却未保存",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注 JavaScript 配置写入是否持久化，与 TypeScript 7 配置加载失败无关。"
+   },
+   {
+    "title": "Nx 子项目存在 package.json 时仍能发现根目录平台依赖",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注 Nx 工作区根目录依赖发现，未涉及 TypeScript 7 缺失经典编译器 API 的故障机制。"
+   }
+  ],
+  "b": [
+   {
+    "title": "TypeScript 配置加载成功或失败后均恢复原有模块加载钩子",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注模块加载钩子的恢复，未设置 TypeScript 7 编译器 API 缺失条件，故障机制不同。"
+   },
+   {
+    "title": "同一进程重新加载 TypeScript 配置时刷新其本地依赖",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注本地依赖缓存刷新，未指定 TypeScript 7，且断言针对旧依赖值而非编译器 API 缺失。"
+   },
+   {
+    "title": "JavaScript 配置的 default 导出包装不会导致配置字段丢失",
+    "source_ids": [
+     4694789045,
+     1139763910
+    ],
+    "verdict": "miss",
+    "reason": "测试仅加载 JavaScript 配置的 default 包装，不触发 TypeScript 编译器 API 调用。"
+   },
+   {
+    "title": "写入已支持读取的 JavaScript 配置不能静默成功却不修改文件",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 JavaScript 配置写入静默成功，与 TypeScript 7 配置加载失败无关。"
+   },
+   {
+    "title": "损坏的 JSON 配置应明确报错并能在修复后恢复加载",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对损坏 JSON 的解析与恢复，不涉及 TypeScript 7 缺失经典编译器 API 的机制。"
+   }
+  ]
+ },
+ {
+  "id": 4975045996,
+  "repo": "gin-gonic/gin",
+  "form": "backend",
+  "issue_url": "https://github.com/gin-gonic/gin/issues/4760",
+  "pr_url": "https://github.com/gin-gonic/gin/pull/4800",
+  "pre_fix_commit": "8ad9f9cbeab45887327608f393bb614187e06099",
+  "files": [
+   "gin.go"
+  ],
+  "errors": [
+   "Codex returned invalid JSON in its response at line 1, column 2360; no output was accepted."
+  ],
+  "history": [
+   {
+    "id": 1015781251,
+    "repo": "Kong/kong",
+    "title": "Timer exhaustion from repeated posts to /config admin endpoint"
+   },
+   {
+    "id": 498303889,
+    "repo": "hashicorp/consul",
+    "title": "Mesh Gateway starts \"unhealthy\" when no other service is registered in local Consul DC"
+   },
+   {
+    "id": 4370759549,
+    "repo": "google-gemini/gemini-cli",
+    "title": "Multiple reliability issues on Windows and subagent execution loops"
+   },
+   {
+    "id": 380820077,
+    "repo": "redis/redis",
+    "title": "a RESET command for reseting client state ?"
+   },
+   {
+    "id": 746735104,
+    "repo": "encode/httpx",
+    "title": "SyncHTTP11Connection ImportError on Python 3.9 when using ThreadPoolExecutor"
+   },
+   {
+    "id": 2294632251,
+    "repo": "containerd/containerd",
+    "title": "When the overlay volatile feature is enabled, creating a pod with an image configured with anonymous volumes will fail"
+   },
+   {
+    "id": 3741569914,
+    "repo": "n8n-io/n8n",
+    "title": "[MCP] Critical Memory Leak: Client connection is never closed (Zombie Sessions)"
+   },
+   {
+    "id": 4068044872,
+    "repo": "n8n-io/n8n",
+    "title": "S3 binary data: socket pool exhaustion causes workflow hangs after N iterations"
+   },
+   {
+    "id": 4227184635,
+    "repo": "n8n-io/n8n",
+    "title": "[Bug] Parent Workflow Intermittently Stuck in \"Waiting\" State After Sub-Workflow Completes in Queue/Scaling Mode"
+   },
+   {
+    "id": 4669024637,
+    "repo": "Panniantong/Agent-Reach",
+    "title": "Audit report"
+   }
+  ],
+  "a": [
+   {
+    "title": "并发首请求时，转义冒号路由只初始化一次且分支匹配正确",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试路由并发初始化与匹配，不涉及服务器读取请求头的超时缺失。"
+   },
+   {
+    "title": "路径参数解码保留加号且只进行一次百分号解码",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试路径参数解码规则，与默认服务器未设置 ReadHeaderTimeout 的机制无关。"
+   },
+   {
+    "title": "UseEscapedPath 覆盖 UseRawPath，并拒绝使用与 Path 不一致的 RawPath",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 EscapedPath 与 RawPath 的路由选择，直接调用 ServeHTTP 无法触发服务器请求头读取超时问题。"
+   },
+   {
+    "title": "代理链遇到不可信节点或非法地址时不能采信左侧伪造地址",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试代理地址信任边界与头字段解析，不涉及慢速发送请求头或服务器超时配置。"
+   },
+   {
+    "title": "内部重路由结束后正确恢复外层处理链，目标路由中止不污染后续请求",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试内部重路由的处理链恢复与 Context 复用，与请求头读取无超时的缺陷无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "并发首请求触发路由树初始化时，转义冒号路由不得错配或产生数据竞争",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试路由初始化并发与匹配，未通过网络慢速发送请求头，与缺少请求头超时的机制无关。"
+   },
+   {
+    "title": "Run 监听失败后再次使用 Engine，路由树重复更新不得破坏静态冒号分支",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽调用 Run，但监听失败后测试的是路由重复更新，没有建立连接或验证请求头超时。"
+   },
+   {
+    "title": "池化 Context 在异常请求后复用时不得泄漏上一请求的状态",
+    "source_ids": [
+     380820077
+    ],
+    "verdict": "miss",
+    "reason": "测试池化 Context 的状态清理，与 http.Server 未配置 ReadHeaderTimeout 无关。"
+   },
+   {
+    "title": "HandleContext 内层处理器 panic 被捕获后，外层中间件链仍可正确继续",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 HandleContext 在 panic 后恢复外层处理链，与请求头读取超时机制无关。"
+   },
+   {
+    "title": "代理头逆向解析必须在首个不可信地址处停止，且拒绝可信后缀中的非法地址",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试代理头地址的信任边界与解析，不涉及网络请求头读取时限。"
+   }
+  ]
+ },
+ {
+  "id": 4984378457,
+  "repo": "sxyazi/yazi",
+  "form": "cli",
+  "issue_url": "https://github.com/sxyazi/yazi/issues/4170",
+  "pr_url": "https://github.com/sxyazi/yazi/pull/4172",
+  "pre_fix_commit": "cd6e61666d14d49b12a112d78f1b6b260c29d73a",
+  "files": [
+   "yazi-actor/src/mgr/open_do.rs",
+   "yazi-config/src/open/open.rs",
+   "yazi-config/src/opener/opener.rs",
+   "yazi-fs/src/trash/trash_id.rs"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 3285751527,
+    "repo": "yt-dlp/yt-dlp",
+    "title": "[YouTube/DASH] 'AttributeError' when downloading a YouTube live stream using '--load-info-json' due to incorrect 'fragments' parsing"
+   },
+   {
+    "id": 3164383761,
+    "repo": "yt-dlp/yt-dlp",
+    "title": "[YouTube] \"HTTP Error 403: Forbidden\" for `ios` m3u8 formats"
+   },
+   {
+    "id": 3196183067,
+    "repo": "google-gemini/gemini-cli",
+    "title": "Failure to execute shell commands with Windows "
+   },
+   {
+    "id": 464592101,
+    "repo": "tikv/tikv",
+    "title": "libtitan_sys built failed on gcc 9.1"
+   }
+  ],
+  "a": [
+   {
+    "title": "不同匹配规则共享同一 opener 时，多选交互打开仍能提供共同选项",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "不同 OpenRule 共享 shared 时，旧实现按规则整体计数导致共同选项为空，测试会直接观察到选择器缺失。"
+   },
+   {
+    "title": "MIME 缓存尚未填充时，打开操作不能静默丢失部分选中文件",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 MIME 查询未完成导致文件遗漏，未涉及按规则整体匹配而非求 opener 名称交集的故障机制。"
+   },
+   {
+    "title": "批量打开包含 shell 特殊字符的文件时，参数边界正确且不会执行文件名内容",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 shell 参数转义和进程启动行为，与共同 opener 匹配及补丁中的路径修正无关。"
+   },
+   {
+    "title": "交互选择等待期间修改 opener 配置和当前目录，不得改变已显示选项的含义",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对选择器等待期间配置和目录变更的一致性，与补丁修复的共同 opener 匹配机制不同。"
+   },
+   {
+    "title": "回收站条目的路径校验在构造和追加子路径时均阻止越界，并可在失败后继续使用",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对路径越界校验，虽检查空 rel 的 has_rel()，但未调用 macOS 的 path() 或断言其返回路径，无法覆盖该路径修正。"
+   }
+  ],
+  "b": [
+   {
+    "title": "不同匹配规则共享同一 opener 时，交互打开仍提供共同选项",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "旧实现按同一 OpenRule 的命中次数筛选，多文件命中不同规则时会丢失共享的 edit，导致选择器断言失败。"
+   },
+   {
+    "title": "多选中一个文件缺失 MIME 时不能静默漏开",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 MIME 缺失造成的漏开，未触发不同规则之间共同 opener 的匹配缺陷。"
+   },
+   {
+    "title": "Windows 特殊字符路径展开后保持完整参数且不执行文件名内容",
+    "source_ids": [
+     3196183067
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 Windows Shell 参数转义，与共同 opener 匹配及补丁中的垃圾桶路径修复均无关。"
+   },
+   {
+    "title": "选择器等待期间替换 opener 不得改变已展示选项的执行对象",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对选择器等待期间配置变更的快照一致性，单文件场景未触发共同 opener 匹配缺陷。"
+   },
+   {
+    "title": "垃圾桶路径构造和子项追加均拒绝越界路径且错误后可继续使用",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对路径越界校验，而路径补丁修复的是 macOS 下 rel 为空时的路径构造，触发条件与机制均不同。"
+   }
+  ]
+ },
+ {
+  "id": 4987024401,
+  "repo": "tikv/tikv",
+  "form": "distributed",
+  "issue_url": "https://github.com/tikv/tikv/issues/19891",
+  "pr_url": "https://github.com/tikv/tikv/pull/19906",
+  "pre_fix_commit": "b45aa9b93c114a8c91122babb78dbe244bf6da32",
+  "files": [
+   "components/engine_rocks/src/import.rs"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 4913730580,
+    "repo": "readest/readest",
+    "title": "Slide/Curl page turns can duplicate, flash, or incorrectly toggle the toolbar on touch devices"
+   },
+   {
+    "id": 482178799,
+    "repo": "flutter/flutter",
+    "title": "[Camera] Audio quality very bad on android"
+   }
+  ],
+  "a": [
+   {
+    "title": "导入持有范围锁时，重叠操作阻塞且不相交操作继续",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "验证范围锁的互斥和边界行为，未涉及导入与前台写入竞争导致全局序列号倒退。"
+   },
+   {
+    "title": "获取范围锁后发生错误，锁必须释放并允许原范围重试",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "验证错误路径释放范围锁，与全局序列号倒退的故障机制无关。"
+   },
+   {
+    "title": "重叠 memtable 触发手动 flush 时，并发写入不丢失且 flush 不长期阻塞写线程",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "覆盖允许写入的 SST 导入与前台写入竞争及数据丢失，但暂停 flush 的时序不足以稳定触发全局序列号倒退。"
+   },
+   {
+    "title": "带非零全局序列号的 SST 导入后，快照隔离和后续覆盖保持正确",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "验证非零序列号文件的导入和快照语义，后续写入发生在导入结束后，未覆盖导致序列号倒退的并发竞争。"
+   },
+   {
+    "title": "多个 SST 一次导入并移动源文件后，数据在重启和再次导入中保持一致",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "验证多文件移动、重启及重复导入的一致性，未涉及导入期间的并发前台写入。"
+   }
+  ],
+  "b": [
+   {
+    "title": "重叠范围的导入必须等待锁释放，且失败后不遗留范围锁",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对范围锁互斥和错误后的锁释放，未涉及导入与前台写入竞争导致全局序列号倒退。"
+   },
+   {
+    "title": "强制允许写入但未传范围时验证与压缩过滤操作的并发安全",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对缺少范围锁时导入与压缩过滤交错造成误删，与补丁说明的全局序列号倒退机制不同。"
+   },
+   {
+    "title": "需要刷新 memtable 的导入期间并发写入不能丢失或被旧 SST 覆盖",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "覆盖了 SST 导入与前台写入竞争及数据可见性异常，但未控制导致全局序列号倒退的具体时序，不能保证修复前稳定失败。"
+   },
+   {
+    "title": "多文件导入遇到损坏文件后保持原子性并可修复重试",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对多文件导入失败的原子性和重试，未触及导入与前台写入竞争的故障机制。"
+   },
+   {
+    "title": "含非零全局序列号的 SST 在已有快照和重启场景下保持可见性正确",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽涉及全局序列号和快照可见性，但没有导入期间的并发前台写入，不能据此认定覆盖序列号倒退机制。"
+   }
+  ]
+ },
+ {
+  "id": 5026894129,
+  "repo": "moby/moby",
+  "form": "distributed",
+  "issue_url": "https://github.com/moby/moby/issues/53257",
+  "pr_url": "https://github.com/moby/moby/pull/53260",
+  "pre_fix_commit": "3757c6fa007172a7414045d2f5a722ce6e5d2b11",
+  "files": [
+   "go.mod",
+   "go.sum",
+   "vendor/github.com/moby/go-archive/archive.go"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 4925733363,
+    "repo": "Hmbown/Codewhale",
+    "title": "write_file ignores system umask, creates files with 600 in shared dev environments"
+   },
+   {
+    "id": 789899110,
+    "repo": "redis/redis",
+    "title": "[BUG] security: config rewrites of sentinel.conf set insecure file permissions"
+   },
+   {
+    "id": 4404851290,
+    "repo": "rtk-ai/rtk",
+    "title": "Harden permissions for local history DB and tee logs"
+   },
+   {
+    "id": 803197457,
+    "repo": "atom/atom",
+    "title": "Unable to create Atom RPM package on Fedora 33"
+   },
+   {
+    "id": 3145628044,
+    "repo": "sxyazi/yazi",
+    "title": "Inaccessible directories/files with special names"
+   }
+  ],
+  "a": [
+   {
+    "title": "NoLchown 开启时隐式目录权限仍应不受 umask 影响",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 NoLchown 跳过权限恢复的问题，普通文件的隐式父目录创建不受本次目录类型判断缺陷影响。"
+   },
+   {
+    "title": "目录被后续同名文件替换后不得被延迟恢复目录时间戳",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对覆盖目录后延迟恢复时间戳的问题，没有触发目录条目缺失父目录的条件。"
+   },
+   {
+    "title": "解包遇到指向目标目录外的父目录符号链接时不得越界写入",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对父目录符号链接越界防护，归档仅含普通文件，与目录条目被跳过父目录创建的机制不同。"
+   },
+   {
+    "title": "Windows 拒绝无法忠实表示的条目名与硬链接目标但保留符号链接目标原文",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 Windows 名称及链接目标的表示限制，没有涉及缺失父目录的目录条目。"
+   },
+   {
+    "title": "提前关闭归档读取端后压缩归档 goroutine 必须退出",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对归档读取端关闭后的 goroutine 退出，补丁中的关闭错误日志调整不能证明存在该阻塞问题，且与解包目录缺失父目录无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "NoLchown 不应导致隐式目录权限受 umask 影响",
+    "source_ids": [
+     4925733363
+    ],
+    "verdict": "miss",
+    "reason": "测试针对 NoLchown 跳过 Chmod 导致权限受 umask 影响，未涉及目录条目缺少显式父目录的故障机制。"
+   },
+   {
+    "title": "目录被后续文件条目替换后不应再套用旧目录时间戳",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对目录被文件替换后的时间戳处理，与目录条目未创建隐式父目录无关。"
+   },
+   {
+    "title": "隐式目录创建期间切换父目录为外部符号链接不得越界",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对隐式目录创建过程中的符号链接竞态与越界防护，普通文件条目不会触发本缺陷的目录类型跳过逻辑。"
+   },
+   {
+    "title": "Windows 应拒绝会被重新解释的归档路径但保留符号链接目标原文",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 Windows 路径校验及符号链接目标保留，与缺少父目录时目录条目解包失败的机制不同。"
+   },
+   {
+    "title": "消费者提前关闭压缩归档流后生产者必须退出",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对消费者关闭流后的生产者退出，补丁中相关改动仅忽略关闭管道的错误日志，与本缺陷的目录解包失败无关。"
+   }
+  ]
+ },
+ {
+  "id": 5078610058,
+  "repo": "tikv/tikv",
+  "form": "distributed",
+  "issue_url": "https://github.com/tikv/tikv/issues/19943",
+  "pr_url": "https://github.com/tikv/tikv/pull/19939",
+  "pre_fix_commit": "ffef2fd761bd3ad170aa32e7d2aad101eaa003a4",
+  "files": [
+   "components/codec/src/byte.rs"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 4598140969,
+    "repo": "nats-io/nats-server",
+    "title": "Malformed JetStream message-schedule restore state can panic the server"
+   },
+   {
+    "id": 691818566,
+    "repo": "quasarframework/quasar",
+    "title": "q-input validation adds unnecessary spacing at bottom"
+   },
+   {
+    "id": 3580448998,
+    "repo": "expo/expo",
+    "title": "[expo-router] header missing horizontal padding on Expo SDK 55 canary"
+   },
+   {
+    "id": 1065435004,
+    "repo": "quasarframework/quasar",
+    "title": "The prop 'hasError' generates a TS error, types that are generated based on the docs are incorrect"
+   },
+   {
+    "id": 1523252788,
+    "repo": "yt-dlp/yt-dlp",
+    "title": "[CDA] Unable to download age restricted videos"
+   },
+   {
+    "id": 4181504467,
+    "repo": "open-webui/open-webui",
+    "title": "bug: Migration 8452d01d26d7 fails on large PostgreSQL datasets due to single-transaction backfill with FK/index maintenance"
+   },
+   {
+    "id": 663850131,
+    "repo": "alacritty/alacritty",
+    "title": "Limit the maximum length of the title"
+   },
+   {
+    "id": 3726306078,
+    "repo": "ollama/ollama",
+    "title": "Metal library compilation error after macOS 26.2 / Xcode CLT update: bfloat/half type mismatch"
+   }
+  ],
+  "a": [
+   {
+    "title": "截断输入必须返回 Io，且指针运算不能越过分配边界",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "在 Miri 下对包含完整非终止组的前缀调用原地接口，会读取被 as_mut_ptr() 作废的源指针，违反无未定义行为的预期。"
+   },
+   {
+    "title": "穷举终止标记与填充位置，区分坏填充和缺少终止组",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注标记与填充校验，未指定 Miri，也未指出指针来源失效机制，所述分类与长度不会因此缺陷稳定出错。"
+   },
+   {
+    "title": "降序解码只反转有效输出，正确处理跨组二进制数据",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注降序输出、长度和哨兵，未使用 Miri，而资料明确该缺陷不改变当前普通执行的可观察结果。"
+   },
+   {
+    "title": "原地解码第一条记录后，第二条记录仍可按返回偏移解码",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注连续记录的偏移与尾部保护，未使用 Miri，也未指出共享源指针被唯一重借用作废的机制。"
+   },
+   {
+    "title": "目标缓冲区不足时先 panic，捕获后仍能正常解码",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试只调用非原地接口检查目标容量断言与恢复行为，不涉及存在缺陷的原地指针构造路径。"
+   }
+  ],
+  "b": [
+   {
+    "title": "截断分组必须返回 Io，且不得先构造越界指针",
+    "source_ids": [
+     4598140969
+    ],
+    "verdict": "hit",
+    "reason": "在 Miri 下对含完整非终止组的输入执行原地解码，会在处理完整组的 ptr::copy 时读取已失效的源指针，提前触发本缺陷的 UB。"
+   },
+   {
+    "title": "逐一损坏末组填充字节，升降序及原地解码均须拒绝",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试填充校验及正常输出，未要求 Miri 检查，也未指出指针借用标签失效机制，现有资料不支持其断言因本缺陷失败。"
+   },
+   {
+    "title": "穷举非法标记，验证填充长度解析不会溢出或误接受",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试非法标记解析、算术溢出和边界保护，debug/release 与哨兵检查无法据此观察本缺陷的指针来源 UB。"
+   },
+   {
+    "title": "完整数据组后的空终止组必须精确停止，保留后续编码",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试停止位置及后续编码保留，未使用 Miri，资料明确本次修复不改变这些可观察行为。"
+   },
+   {
+    "title": "降序解码失败后复用目标缓冲区，不得污染下一次成功结果",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试错误后缓冲区复用及降序翻转，与共享源指针被可变借用失效的机制不同，且未要求 Miri 检查。"
+   }
+  ]
+ },
+ {
+  "id": 5217682637,
+  "repo": "envoyproxy/envoy",
+  "form": "backend",
+  "issue_url": "https://github.com/envoyproxy/envoy/issues/46877",
+  "pr_url": "https://github.com/envoyproxy/envoy/pull/46880",
+  "pre_fix_commit": "48abd7b9ce5b7831a42fc49b4151a3c17d5e08ba",
+  "files": [
+   "bazel/c-ares.patch"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 4399425176,
+    "repo": "Hmbown/Codewhale",
+    "title": "fetch_url blocks all requests when DNS resolves to private IPs (fakeip proxy incompatible)"
+   },
+   {
+    "id": 4881303588,
+    "repo": "stablyai/orca",
+    "title": "[Bug]: SSH relay can't detect Node.js on csh/tcsh login shells"
+   },
+   {
+    "id": 829730360,
+    "repo": "containerd/containerd",
+    "title": "runtime: leaking shim socket files"
+   },
+   {
+    "id": 4771865055,
+    "repo": "remix-run/react-router",
+    "title": "[Bug]: v8 preview-server prerendering intermittently fails with `Prerender: Request failed for /_.data: connect ECONNREFUSED 127.0.0.1:<port>` (cold-start race against the preview server)"
+   },
+   {
+    "id": 2048621371,
+    "repo": "electron-react-boilerplate/electron-react-boilerplate",
+    "title": "Electron 28 breaks build: ERR_UNKNOWN_FILE_EXTENSION – Unknown file extension \".ts\" for …"
+   },
+   {
+    "id": 3872720726,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: Serving model in 0.15.0 Docker container hangs - 0.14.1 worked fine"
+   },
+   {
+    "id": 3949762998,
+    "repo": "vllm-project/vllm",
+    "title": "Bug: Speculative Decoding (MTP) Causes </think> Detection Failure in Structured Output + Reasoning Mode"
+   },
+   {
+    "id": 3152588348,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: Fails to load llmcompressor GPTQ Qwen2.5-VL model"
+   },
+   {
+    "id": 2922787469,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: Gemma3 Batch Offline Inference Error: Cascade attention does not support sliding window"
+   }
+  ],
+  "a": [
+   {
+    "title": "localhost 忽略 hosts 中的非回环地址并保留端口",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 hosts 中 localhost 的回环地址与端口处理，未涉及回调重入后复用 QID 导致新查询映射被删除。"
+   },
+   {
+    "title": "localhost 名称变体不会落入恶意 hosts 映射",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 localhost 名称变体和 hosts 映射处理，且预期不发起 DNS 查询，无法触发该 QID 复用缺陷。"
+   },
+   {
+    "title": "localhost 合成结果严格遵守 IPv4 和 IPv6 地址族限制",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 localhost 合成结果的地址族和端口限制，与旧查询清理误删重入查询 QID 映射的机制无关。"
+   },
+   {
+    "title": "localhost 地址合成内存分配失败后能够结束并恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试地址合成分配失败及恢复，未指出或构造重入查询复用完成查询 QID 的故障机制。"
+   },
+   {
+    "title": "合成失败后的 DNS 回退支持取消且不会产生迟到回调",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 DNS 回退取消及迟到响应处理，未涉及完成回调内复用 QID 后被旧查询二次清理误删映射的机制。"
+   }
+  ],
+  "b": [
+   {
+    "title": "localhost 忽略 hosts 中的非回环地址并连接到本地监听端口",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 localhost 的 hosts 覆盖与回环地址行为，未涉及回调内重入查询复用 QID 后被旧查询删除映射。"
+   },
+   {
+    "title": "localhost 名称边界不会将普通域名误判为本地主机",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 localhost 名称边界识别，与重入查询复用 QID 导致映射被删除的机制无关。"
+   },
+   {
+    "title": "合成本地地址时保留地址族约束及端口边界",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试本地地址合成的地址族和端口正确性，不触发 DNS 查询 QID 复用及清理冲突。"
+   },
+   {
+    "title": "本地地址合成失败后能够耗尽查找链并结束请求",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "请求挂起的假设来自本地地址合成失败后的查找链处理，与旧查询清理误删重入查询 QID 映射不同。"
+   },
+   {
+    "title": "合成双栈地址中途内存分配失败不会留下半成品或破坏后续请求",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试双栈本地地址合成的内存失败处理，不涉及回调重入、QID 复用或查询映射误删。"
+   }
+  ]
+ },
+ {
+  "id": 5330196191,
+  "repo": "microsoft/vscode",
+  "form": "desktop",
+  "issue_url": "https://github.com/microsoft/vscode/issues/334144",
+  "pr_url": "https://github.com/microsoft/vscode/pull/335241",
+  "pre_fix_commit": "d9c91244e7e87e6a4a9d36902a704bbdc0e33aed",
+  "files": [
+   "src/vs/code/electron-main/app.ts",
+   "src/vs/platform/protocol/electron-main/protocol.ts",
+   "src/vs/platform/protocol/electron-main/protocolMainService.ts"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 4465071621,
+    "repo": "nexu-io/open-design",
+    "title": "Plugin asset endpoint should reject symlinks like preview/install paths do"
+   },
+   {
+    "id": 4502858606,
+    "repo": "debpalash/VoiceStudio",
+    "title": "[Bug] Model installation fails with [Errno 22] Invalid argument and scan_cache_dir [WinError 448] on Windows"
+   },
+   {
+    "id": 4599634473,
+    "repo": "debpalash/VoiceStudio",
+    "title": "[Bug] OSError: [Errno 22] Invalid argument on model load (Windows) — tqdm terminal write fails"
+   },
+   {
+    "id": 4241790684,
+    "repo": "warpdotdev/warp",
+    "title": "(Windows 11) OS Error 448: All symlink/junction traversal fails inside Warp"
+   },
+   {
+    "id": 5026947719,
+    "repo": "moby/moby",
+    "title": "`CopyToContainer` regression in 29.7.0: \"path escapes from parent\" when copying into paths that traverse `/var/run → /run` symlink"
+   },
+   {
+    "id": 4230062730,
+    "repo": "career-ops-hq/career-ops",
+    "title": "security checks: fix injection vectors, SSRF, path traversal, and unsafe permissions in batch/update/PDF/liveness scripts"
+   },
+   {
+    "id": 4866656583,
+    "repo": "stablyai/orca",
+    "title": "[Bug]: Grok terminal shows literal [13;2u (Shift+Enter CSI-u leak) and long-output garble"
+   },
+   {
+    "id": 1964903543,
+    "repo": "redis/redis",
+    "title": "[CRASH] Cluster CLUSTERMSG_EXT_TYPE_FORGOTTEN_NODE"
+   }
+  ],
+  "a": [
+   {
+    "title": "重复注册同一文件根目录后，释放一个注册不应撤销另一个",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试文件根注册的引用计数，与远程资源的 referrer 误拒绝及错误响应使用字符串无关。"
+   },
+   {
+    "title": "根目录边界与编码路径穿越不能放行目录外脚本",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 vscode-file 的目录边界和路径穿越，与本次远程资源加载故障机制无关。"
+   },
+   {
+    "title": "大小写混合的 Webview referrer 不能绕过远程资源访问限制",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Webview referrer 大小写绕过，并将合法空 referrer 被拒绝视为预期，与本次修复的误拒绝机制不符。"
+   },
+   {
+    "title": "远程资源响应损坏或 IPC 失败后，请求应结束且后续请求可恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试未检查错误响应必须使用 Buffer，也未通过 Electron 观察 net::ERR_FAILED，而损坏 body 导致的异常属于另一机制。"
+   },
+   {
+    "title": "开发模式工作台响应应同时保留隔离、禁缓存和文档策略头",
+    "source_ids": [
+     148541
+    ],
+    "verdict": "miss",
+    "reason": "测试工作台响应头的合并与开发模式缓存策略，与远程资源协议的 referrer 检查及响应体类型无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "允许目录中的符号链接不能绕过文件访问边界",
+    "source_ids": [
+     4465071621
+    ],
+    "verdict": "miss",
+    "reason": "测试符号链接导致的本地文件授权逃逸，与远程资源因空 referrer 被拒绝及错误响应使用字符串的机制无关。"
+   },
+   {
+    "title": "同一允许目录被重复注册后，释放一个注册不能撤销另一个注册",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试允许目录重复注册的释放语义，与本次远程资源加载缺陷无关。"
+   },
+   {
+    "title": "大小写不同的 Webview referrer 不能绕过远程资源拦截",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Webview referrer 大小写绕过拦截，且要求拒绝空 referrer，与修复所解决的合法工作台空 referrer 被误拒绝机制不同。"
+   },
+   {
+    "title": "远程 IPC 返回损坏响应时必须结束请求并能处理后续请求",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 IPC 成功返回畸形数据后的异常处理，未触发空 referrer 误拒绝或断言错误响应必须使用 Buffer，补丁也未修复该畸形数据路径。"
+   },
+   {
+    "title": "路径归一化后必须按目录边界判断授权，不能匹配同名前缀目录",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试本地文件路径归一化和目录授权边界，与远程协议的 referrer 检查及错误响应数据类型无关。"
+   }
+  ]
+ },
+ {
+  "id": 5341747173,
+  "repo": "ionic-team/capacitor",
+  "form": "mobile",
+  "issue_url": "https://github.com/ionic-team/capacitor/issues/8587",
+  "pr_url": "https://github.com/ionic-team/capacitor/pull/8646",
+  "pre_fix_commit": "175c93398b1bb4de34c55386e18aaee2e5551c83",
+  "files": [
+   "android/capacitor/proguard-rules.pro"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 346683568,
+    "repo": "flutter/flutter",
+    "title": "Flutter create template crashes when run in Android Emulator SDK v19"
+   },
+   {
+    "id": 2249371414,
+    "repo": "containerd/containerd",
+    "title": "NRI plugin registration can trigger a deadlock"
+   },
+   {
+    "id": 731852304,
+    "repo": "hashicorp/nomad",
+    "title": "Nomad CSI volume status UI page never shows allocations depending on the volume"
+   },
+   {
+    "id": 1009098957,
+    "repo": "hashicorp/nomad",
+    "title": "server: Logs are not always output as json when configured to do so"
+   },
+   {
+    "id": 2362438712,
+    "repo": "containerd/containerd",
+    "title": "[v2.0.0] No CNI info for pod sandbox after containerd restart when using user namespaces"
+   },
+   {
+    "id": 3236687775,
+    "repo": "hashicorp/nomad",
+    "title": "Failure in running exec command in rootless nomad"
+   }
+  ],
+  "a": [
+   {
+    "title": "压缩后仅通过注解注册的 v3 插件仍可由 JavaScript 调用",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "涉及运行时反射读取插件注解元数据，但未明确启用 R8 full mode，无法稳定触发注解被优化为 null 的缺陷。"
+   },
+   {
+    "title": "压缩后权限回调在首次拒绝及后续授权时都能完成调用",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "权限声明和 PermissionCallback 注解均涉及本次保留的注解类型，但未明确 R8 full mode，且断言主要针对回调方法失效，不能确定复现该缺陷。"
+   },
+   {
+    "title": "压缩后 Activity 回调在取消及返回数据后仍能重复使用",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "ActivityCallback 属于补丁保留的反射注解类型，但未明确 R8 full mode，取消和重复调用本身也不能保证触发注解类型被移除的问题。"
+   },
+   {
+    "title": "旧版 NativePlugin 在 release 压缩后保留注册元数据和桥接方法",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "明确检查 NativePlugin 和 PluginMethod 的运行时注解元数据，符合补丁修复的机制，但未指定 R8 full mode，触发条件不足。"
+   },
+   {
+    "title": "通过配置类名加载的 Cordova 间接子类在压缩后仍能实例化",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是 Cordova 间接子类按配置类名加载时的类保留问题，与 Capacitor 注解类型被 R8 优化导致缓存为 null 的机制不同。"
+   }
+  ],
+  "b": [
+   {
+    "title": "压缩后的 v3 插件仍保留运行时注解及权限配置",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "直接检查运行时注解及权限配置，符合注解被优化掉的机制，但未明确启用 R8 full mode，不能保证稳定触发。"
+   },
+   {
+    "title": "权限拒绝后再次请求时，私有权限回调在压缩构建中仍可反射调用",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "涉及反射读取权限回调注解及权限请求，但未明确启用 R8 full mode，且私有方法删除或改名不是本补丁修复的机制。"
+   },
+   {
+    "title": "压缩构建中的私有 Activity 回调能分别处理取消和成功结果",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "回调注解丢失属于补丁覆盖的同类反射机制，但未明确启用 R8 full mode，所给资料也未证明该流程必然因注解丢失而失败。"
+   },
+   {
+    "title": "仅使用旧版 NativePlugin 注解的插件在压缩后仍可注册和调用",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "明确检查补丁保留的 NativePlugin 和 PluginMethod 注解，但未明确启用 R8 full mode，无法保证修复前注解不可读。"
+   },
+   {
+    "title": "配置中按类名加载的 Cordova 间接子类在压缩后仍能实例化并执行",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试 Cordova 间接子类的类名和构造器保留，与本次修复的反射注解类型被移除机制不同。"
+   }
+  ]
+ },
+ {
+  "id": 5352147368,
+  "repo": "ionic-team/capacitor",
+  "form": "mobile",
+  "issue_url": "https://github.com/ionic-team/capacitor/issues/8589",
+  "pr_url": "https://github.com/ionic-team/capacitor/pull/8646",
+  "pre_fix_commit": "175c93398b1bb4de34c55386e18aaee2e5551c83",
+  "files": [
+   "android/capacitor/proguard-rules.pro"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 346683568,
+    "repo": "flutter/flutter",
+    "title": "Flutter create template crashes when run in Android Emulator SDK v19"
+   },
+   {
+    "id": 2249371414,
+    "repo": "containerd/containerd",
+    "title": "NRI plugin registration can trigger a deadlock"
+   },
+   {
+    "id": 731852304,
+    "repo": "hashicorp/nomad",
+    "title": "Nomad CSI volume status UI page never shows allocations depending on the volume"
+   },
+   {
+    "id": 1009098957,
+    "repo": "hashicorp/nomad",
+    "title": "server: Logs are not always output as json when configured to do so"
+   },
+   {
+    "id": 2362438712,
+    "repo": "containerd/containerd",
+    "title": "[v2.0.0] No CNI info for pod sandbox after containerd restart when using user namespaces"
+   },
+   {
+    "id": 3236687775,
+    "repo": "hashicorp/nomad",
+    "title": "Failure in running exec command in rootless nomad"
+   }
+  ],
+  "a": [
+   {
+    "title": "开启混淆后仍可发现并调用 v3 插件方法",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "仅验证插件注册和普通方法调用，未进入权限路径，也未指出注解类型未保留导致缓存被折叠为 null 的机制。"
+   },
+   {
+    "title": "混淆后的权限回调在拒绝后重新授权时仍能完成调用",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "混淆构建中请求插件声明的运行时权限会触发注解缓存为 null 的权限路径，在显示对话框或完成授权前失败。"
+   },
+   {
+    "title": "混淆后的 Activity 回调能处理取消并恢复下一次成功调用",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试聚焦 Activity 回调保留与调用恢复，给定资料不足以证明该流程会因本缺陷失败，也未指出相同优化机制。"
+   },
+   {
+    "title": "仅使用旧版 NativePlugin 注解的插件在混淆后仍可注册",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽涉及补丁保留的 NativePlugin 注解，但仅测试注册和普通方法调用，无法据给定资料确定会触发注解缓存折叠造成的故障。"
+   },
+   {
+    "title": "经自定义中间基类继承的 Cordova 插件在混淆后仍能由类名加载",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是 Cordova 插件类名及构造器保留，与 Capacitor 反射注解类型未保留的故障机制无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "开启压缩后仍能通过运行时注解发现并调用 v3 插件方法",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "涉及 R8 对反射注解类型的保留问题，但未调用权限路径，且资料明确说明注解仍可反射读取，普通方法调用不足以稳定暴露缓存被折叠为 null。"
+   },
+   {
+    "title": "压缩后非公开权限回调在拒绝再授权过程中仍可调用",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "压缩后的 v3 插件请求实际运行时权限会进入依赖插件注解的权限路径，注解缓存被折叠为 null 将导致崩溃，无法得到预期回调和 Promise 结果。"
+   },
+   {
+    "title": "压缩后 Activity 回调支持取消及再次启动成功",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "涉及补丁保护的反射回调注解类型，但资料未证明启动 Activity 的步骤会触发同样的注解空值折叠，无法稳定判定失败。"
+   },
+   {
+    "title": "压缩后仅使用旧版 NativePlugin 注解的插件仍可发现",
+    "source_ids": [],
+    "verdict": "mechanism",
+    "reason": "覆盖补丁明确保护的 NativePlugin 反射注解及其缓存问题，但仅注册和调用固定返回值方法，未进入资料证实会失败的权限路径。"
+   },
+   {
+    "title": "Cordova 插件通过配置类名加载时其公开构造器不会被移除",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试的是 Cordova 类名和构造器的保留，与插件注解类型未被保留导致 R8 将注解缓存折叠为 null 的机制不同。"
+   }
+  ]
+ },
+ {
+  "id": 5410964489,
+  "repo": "hashicorp/nomad",
+  "form": "distributed",
+  "issue_url": "https://github.com/hashicorp/nomad/issues/28538",
+  "pr_url": "https://github.com/hashicorp/nomad/pull/28545",
+  "pre_fix_commit": "72bd1d107f23d5265dc605cb997621feeeb7a1d4",
+  "files": [
+   "scheduler/reconciler/reconcile_node.go"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 1736226534,
+    "repo": "kubernetes/kubernetes",
+    "title": "EndpointSlice object is not removed when service selector is made to be empty"
+   },
+   {
+    "id": 4574770314,
+    "repo": "stablyai/orca",
+    "title": "[Bug]: Terminal input silently locks after a mobile \"driver\" disconnects ungracefully (~30s, or permanently behind a reverse proxy)"
+   },
+   {
+    "id": 5329040645,
+    "repo": "agalwood/Motrix",
+    "title": "[Bug]: Headless Docker Server cannot enable remote Extension pairing with the documented direct-LAN configuration"
+   },
+   {
+    "id": 787793494,
+    "repo": "redis/redis",
+    "title": "[BUG] redis pod does not work on arm64 kube worker node"
+   },
+   {
+    "id": 3911615907,
+    "repo": "n8n-io/n8n",
+    "title": "Workflow node notes (version metadata) updated via API are not reflected in open editor until manual refresh/reopen"
+   },
+   {
+    "id": 5036783087,
+    "repo": "stablyai/orca",
+    "title": "[Bug]: duplicate headless orca serve crash-loop leaks AppImage FUSE mounts until mount_max"
+   }
+  ],
+  "a": [
+   {
+    "title": "相同版本号但不同 CreateIndex 的重建作业仍应创建部署",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "直接以 DeploymentCurrent=nil 调用 createDeployment，绕过了旧终态部署未被清除的故障路径。"
+   },
+   {
+    "title": "终态分配属于同版本其他节点时，重调度不应新建部署",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "场景没有旧部署，检查的是终态分配归属与节点遍历顺序，与旧失败部署阻止新部署的机制不同。"
+   },
+   {
+    "title": "多个任务组的更新数量不能相互污染并导致重调度组加入部署",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "检查跨任务组更新计数污染，且没有旧部署，不涉及本次修复的状态清理机制。"
+   },
+   {
+    "title": "取消旧版本部署后，新部署必须从暂停或失败状态中恢复",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "failed 分支通过完整协调处理旧版本失败部署，修复前该部署仍占据 DeploymentCurrent，导致无法创建预期的新版本 running 部署。"
+   },
+   {
+    "title": "被污染或不再符合条件的节点不能消耗放置名额或成为前驱分配",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "检查节点资格过滤及前驱分配选择，与过期非活跃部署未被清除无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "删除并重建同名同版本作业后，旧部署不得阻止新部署创建",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "旧部署为 active，修复前已会取消并清空；测试针对同版本不同 CreateIndex 时的创建判断，与旧失败部署被保留的机制不同。"
+   },
+   {
+    "title": "单纯重调度时，不同节点终止记录的遍历顺序不得导致额外部署",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对终止分配遍历顺序影响部署创建，没有旧的非活跃部署，不触发本缺陷。"
+   },
+   {
+    "title": "多任务组中只有部分组需要部署时，任务组顺序不得造成部署状态遗漏",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对任务组处理顺序导致部署内容遗漏，没有旧部署，故障机制不同。"
+   },
+   {
+    "title": "节点过滤与前驱分配绑定必须同时正确处理失格节点和跨节点终止记录",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对节点过滤和前驱分配绑定，与旧失败部署未被清空无关。"
+   },
+   {
+    "title": "停止作业时取消所有 active 部署状态，并在重复协调后保持终态稳定",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对停止作业时取消活跃部署及重复协调，没有旧版本部署阻塞新部署创建的触发条件。"
+   }
+  ]
+ },
+ {
+  "id": 5561008622,
+  "repo": "react/react",
+  "form": "frontend",
+  "issue_url": "https://github.com/react/react/issues/37681",
+  "pr_url": "https://github.com/react/react/pull/37780",
+  "pre_fix_commit": "d75b0697a605e874fc1af56d7e1bf6c4b41a4f78",
+  "files": [
+   "packages/react-devtools-extensions/src/contentScripts/backendManager.js",
+   "packages/react-devtools-extensions/src/contentScripts/proxy.js",
+   "packages/react-devtools-extensions/src/evalScripts.js",
+   "packages/react-devtools-extensions/src/main/elementSelection.js",
+   "packages/react-devtools-extensions/src/main/index.js"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 4454187023,
+    "repo": "n8n-io/n8n",
+    "title": "Community packages reinstall race on cold boot leaves stale missingPackages cache and breaks UI status (queue mode, ephemeral storage)"
+   },
+   {
+    "id": 4252000090,
+    "repo": "janhq/jan",
+    "title": "bug: `yarn dev:web` doesn't have access to threads"
+   },
+   {
+    "id": 482178799,
+    "repo": "flutter/flutter",
+    "title": "[Camera] Audio quality very bad on android"
+   },
+   {
+    "id": 4366055517,
+    "repo": "stablyai/orca",
+    "title": "orca v1.3.24: missing single-instance lock corrupts orca-runtime.json + endpoint.env on every relaunch — CLI sees stale daemon metadata"
+   }
+  ],
+  "a": [
+   {
+    "title": "消息队列发送中途断线后，只重发未成功发送的消息并保持握手顺序",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对端口断线后的队列重发和握手顺序，未触及同文档导航误重挂载或补丁修复的其他故障机制。"
+   },
+   {
+    "title": "BFCache 恢复后重新挂载多个 backend，组件树不得重复或停止更新",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "补丁保留 BFCache 恢复时的重挂载行为，资料不足以证明原代码会出现测试断言的多 backend 重复或停止更新问题。"
+   },
+   {
+    "title": "预渲染期间端口被替换，不应触发重连循环或激活时重复连接",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对预渲染期间端口替换引发的重连循环，与所给导航误重挂载及相关修复机制不同。"
+   },
+   {
+    "title": "畸形 welcome 消息不能阻断初始化，重复合法消息不能重复挂载",
+    "source_ids": [
+     24162
+    ],
+    "verdict": "miss",
+    "reason": "测试针对空消息访问和重复 welcome 回调，未测试前端 shutdown 被误当作 hello 而提前初始化 backend 的机制。"
+   },
+   {
+    "title": "快速跨页导航必须隔离旧页面的排队命令、轮询结果和延迟回调",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "清理后释放旧元素选择 eval 且返回 didSelectionChange=true，会使修复前的回调向已关闭 Bridge 发送同步命令，触发补丁明确修复的异常。"
+   }
+  ],
+  "b": [
+   {
+    "title": "发送队列期间同步断线后，剩余消息应在新连接上按序恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对发送队列遇到同步断线时的消息丢失，与同文档导航误重挂载及补丁修复的机制不同。"
+   },
+   {
+    "title": "一个后端关闭抛错时，pagehide 仍应完成其他后端及管理器的清理",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对 shutdown 抛错导致清理中断，资料未显示该异常处理机制属于此次缺陷或修复。"
+   },
+   {
+    "title": "空 message 数据不应使 welcome 监听器抛错或阻断后续握手",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对空消息数据解引用异常，补丁只限制 hello 消息触发初始化，未修复空数据访问。"
+   },
+   {
+    "title": "浏览器选中节点的异步求值在导航后返回时，不应污染新页面的同步状态",
+    "source_ids": [],
+    "verdict": "hit",
+    "reason": "延迟的选中求值在旧实例关闭后返回 true，会向已关闭的旧 Bridge 发送消息并抛错，直接命中补丁修复的异步选择同步竞态。"
+   },
+   {
+    "title": "预渲染期间延迟重连遇到已有连接时，不应创建第二个有效端口",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对预渲染延迟重连创建重复端口，与此次导航重挂载、后端握手及旧 Bridge 竞态均不同。"
+   }
+  ]
+ },
+ {
+  "id": 5688633615,
+  "repo": "nats-io/nats-server",
+  "form": "distributed",
+  "issue_url": "https://github.com/nats-io/nats-server/issues/8705",
+  "pr_url": "https://github.com/nats-io/nats-server/pull/8727",
+  "pre_fix_commit": "89832812804a7b27d8e4a3c5f9a58c6a6b15ffb0",
+  "files": [
+   "server/leafnode.go",
+   "server/sublist.go"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 652604102,
+    "repo": "hashicorp/consul",
+    "title": "[connect] race-condition registering multiple proxies, duplicate public_listener ports are assigned"
+   },
+   {
+    "id": 2658360671,
+    "repo": "vitessio/vitess",
+    "title": "Bug Report: Deadlock in messager engine"
+   },
+   {
+    "id": 4834489177,
+    "repo": "containerd/containerd",
+    "title": "NRI deadlock between plugin-initiated Runtime.UpdateContainers and CRI lifecycle/update events"
+   },
+   {
+    "id": 2249371414,
+    "repo": "containerd/containerd",
+    "title": "NRI plugin registration can trigger a deadlock"
+   },
+   {
+    "id": 3405993318,
+    "repo": "pola-rs/polars",
+    "title": "Deadlock observed when scanning pyarrow dataset inside threadpool - Rayon worker parks while holding GIL"
+   },
+   {
+    "id": 4257647239,
+    "repo": "vllm-project/vllm",
+    "title": "[Bug]: Scheduler deadlocks when request exceeds KV cache capacity but is within max_model_len"
+   },
+   {
+    "id": 4591428914,
+    "repo": "tinyhumansai/openhuman",
+    "title": "Budget-exhausted on main chat surfaces as 'empty response' instead of typed budget error"
+   },
+   {
+    "id": 4181615465,
+    "repo": "tinyhumansai/openhuman",
+    "title": "[Bug] macOS permissions show DENIED after granting in System Settings"
+   },
+   {
+    "id": 4194042455,
+    "repo": "tinyhumansai/openhuman",
+    "title": "[Bug] \"Restart & Refresh Permissions\" fails with \"Command restart_core_process not found\""
+   },
+   {
+    "id": 4249826310,
+    "repo": "tw93/Mole",
+    "title": "[BUG] Fails to execute periodic maintenance"
+   },
+   {
+    "id": 5290674108,
+    "repo": "debpalash/VoiceStudio",
+    "title": "Dictation never starts on macOS: `tray-dictate` is emitted but the frontend never responds (no pill, no capture); backend also reports \"no ASR model installed\" despite models being installed"
+   },
+   {
+    "id": 5329040645,
+    "repo": "agalwood/Motrix",
+    "title": "[Bug]: Headless Docker Server cannot enable remote Extension pairing with the documented direct-LAN configuration"
+   }
+  ],
+  "a": [
+   {
+    "title": "并发初始化叶节点连接时，账户环路检测 subject 必须唯一且一致",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对环路检测 subject 的并发初始化一致性，与隔离叶节点初始化时先做权限检查再过滤订阅的开销无关。"
+   },
+   {
+    "title": "订阅快照与实时增删交错时，叶节点兴趣计数不能丢失或重复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对订阅快照与实时更新交错导致的兴趣计数错误，未触发或验证隔离叶节点对无须传播订阅进行权限检查的问题。"
+   },
+   {
+    "title": "账户 claims 热更新后，服务导入与映射兴趣必须同步撤销和恢复",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对账户 claims 热更新后的兴趣同步，与隔离叶节点初始化中过晚过滤订阅的故障机制不同。"
+   },
+   {
+    "title": "普通订阅跨越 plist 阈值后，快照枚举不能保留已删除订阅",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "虽然涉及补丁修改的 Sublist 枚举区域，但测试检查删除后的集合准确性，未涉及隔离过滤及多余权限检查。"
+   },
+   {
+    "title": "叶节点断线期间镜像同步消费者创建失败后，重连必须恢复同步",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对断线重连后同步消费者创建失败的恢复机制，与叶节点初始化时无效订阅检查引发的高 CPU 无关。"
+   }
+  ],
+  "b": [
+   {
+    "title": "空订阅树及末级节点的订阅遍历不得触发空指针崩溃",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注遍历空节点时的空指针与结果完整性，与隔离叶节点初始化时过晚过滤订阅导致多余权限检查的机制不同。"
+   },
+   {
+    "title": "同一账户并发初始化叶节点时必须共用一个环路检测主题",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注账户环路检测主题的并发初始化竞争，补丁未涉及该竞争机制。"
+   },
+   {
+    "title": "叶节点快照与订阅增删交错时不能遗漏或重复累计兴趣",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注订阅快照与增量更新交错造成的兴趣计数错误，与隔离订阅过滤过晚导致的性能问题不同。"
+   },
+   {
+    "title": "账户声明更新后服务导入和映射兴趣应在现有叶连接上收敛",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注账户声明更新后现有叶连接的兴趣收敛，未触及初始化时对隔离叶节点订阅进行多余权限检查的机制。"
+   },
+   {
+    "title": "服务导入和映射生成的兴趣不得绕过叶节点订阅权限",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注服务导入和映射兴趣绕过权限检查，而本缺陷是本应因隔离跳过的叶节点订阅仍先执行权限检查，机制不同。"
+   }
+  ]
+ },
+ {
+  "id": 5781405055,
+  "repo": "moby/moby",
+  "form": "distributed",
+  "issue_url": "https://github.com/moby/moby/issues/53905",
+  "pr_url": "https://github.com/moby/moby/pull/53942",
+  "pre_fix_commit": "e019081e3edfb32e500b6151bfd9f073a2a4b128",
+  "files": [
+   "Dockerfile",
+   "hack/dockerfile/install/rootlesskit.installer"
+  ],
+  "errors": [],
+  "history": [
+   {
+    "id": 2891460682,
+    "repo": "hashicorp/nomad",
+    "title": "Memory leak when using batch jobs"
+   },
+   {
+    "id": 4469984036,
+    "repo": "Hmbown/Codewhale",
+    "title": "Windows: RUST_LOG leaks tracing into TUI alt-screen"
+   },
+   {
+    "id": 4281365370,
+    "repo": "sgl-project/sglang",
+    "title": "[Bug] Dynamic chunking profiling crashes on GLM-5 model   (AttributeError: _is_extend_in_batch)"
+   },
+   {
+    "id": 3606686538,
+    "repo": "chroma-core/chroma",
+    "title": "[Bug]: Memory is not freed when using PersistentClient"
+   },
+   {
+    "id": 875719175,
+    "repo": "axios/axios",
+    "title": "Axios freezes or does not clean connection properly when is input stream destroyed or throws error"
+   },
+   {
+    "id": 773306359,
+    "repo": "BurntSushi/ripgrep",
+    "title": "Resource leak on Linux"
+   },
+   {
+    "id": 2243140354,
+    "repo": "ollama/ollama",
+    "title": "verifying github.com/google/flatbuffers@v1.12.0: checksum mismatch"
+   },
+   {
+    "id": 2245276700,
+    "repo": "TanStack/query",
+    "title": "eslint-plugin-query is incompatible with Eslint 9.x"
+   },
+   {
+    "id": 5342394856,
+    "repo": "beekeeper-studio/beekeeper-studio",
+    "title": "Node 22 pin plus Yarn 1 makes engines fields from dependencies a hard failure"
+   },
+   {
+    "id": 5159727351,
+    "repo": "career-ops-hq/career-ops",
+    "title": "Web CI has been red on main since #2903 — the new tracker-lock test imports a root module the web job never installs"
+   },
+   {
+    "id": 4668205121,
+    "repo": "nexu-io/open-design",
+    "title": "[Bug]: BYOK on Ollama.com model mismatch errors"
+   }
+  ],
+  "a": [
+   {
+    "title": "动态安装应覆盖外部禁用 CGO 的环境",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注动态安装继承 CGO_ENABLED=0 导致的编译失败，与 builtin 端口驱动丢失外部源 IP 的故障机制不同。"
+   },
+   {
+    "title": "同一 shell 先静态安装再动态安装不能残留静态构建状态",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注静态安装残留环境变量导致后续动态构建失败，未触发或验证源 IP 传播缺陷。"
+   },
+   {
+    "title": "非法安装参数必须返回失败且不产生安装副作用",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注非法安装参数的退出码和安装副作用，与端口转发时源 IP 丢失无关。"
+   },
+   {
+    "title": "动态安装模式不能污染后续静态安装的链接参数",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试关注动态链接参数污染后续静态安装，与 builtin 端口驱动的源 IP 传播回归不同。"
+   },
+   {
+    "title": "共享构建缓存切换目标架构和链接模式后产物必须仍匹配目标",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试验证构建缓存切换后的架构和链接模式正确性，未涉及外部请求转发或容器观察到的源 IP。"
+   }
+  ],
+  "b": [
+   {
+    "title": "动态安装必须覆盖继承的 CGO_ENABLED=0",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对动态安装时 CGO 环境变量的处理，未触发 builtin 端口驱动丢失外部源 IP 的故障。"
+   },
+   {
+    "title": "同一 shell 中动态安装后静态安装不得沿用外部链接参数",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对连续安装时链接参数残留，与 builtin 端口驱动的源 IP 传播回归机制不同。"
+   },
+   {
+    "title": "无效安装参数必须返回失败且不执行构建",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对无效安装参数的错误处理，与外部源 IP 被替换为内部 IP 的缺陷无关。"
+   },
+   {
+    "title": "Go 安装失败后必须传播错误并允许重新安装",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对构建失败的错误传播和重试，仅检查版本而未验证端口转发中的源 IP。"
+   },
+   {
+    "title": "共享构建缓存切换架构及链接模式时必须生成正确产物",
+    "source_ids": [],
+    "verdict": "miss",
+    "reason": "测试针对构建缓存、架构及链接模式的正确性，未涉及 builtin 端口驱动的源 IP 传播机制。"
+   }
+  ]
+ }
+]

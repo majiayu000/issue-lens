@@ -21,6 +21,8 @@ from config import FORMS
 from gh import GitHub
 from s02_fetch_issues import fetch_form, init_db, main as s02_main
 from s07_quality import classify_kind, grade, rebuild
+from experiments.backtest import (code_file as backtest_code_file, excerpt_file, mcnemar_p,
+                                  retrieve_history)
 from s06_curate import group_sources, select_issues
 from evidence import EvidenceError, attach_pr_evidence, fetch_pr_evidence, load_tests as load_test_files
 from extract import enrich, extract_batch, extract_issue, find_issues
@@ -148,6 +150,34 @@ class QualityTests(unittest.TestCase):
         db.execute("UPDATE issue_quality SET tier='low' WHERE issue_id=2")
         rows = search(db, ["desktop"], [], True, "reactions", 10, 0, "low")
         self.assertEqual([r[1] for r in rows], ["Window flashes when opening menu"])
+
+
+class BacktestTests(unittest.TestCase):
+    def test_history_excludes_later_issues_and_same_repo(self):
+        db = memory_db()
+        init_db(db)
+        rebuild(db)
+        db.execute("UPDATE issue_quality SET tier='core'")
+        db.execute("UPDATE issues SET created_at='2026-01-01'")
+        db.execute("UPDATE issues SET created_at='2026-09-01' WHERE id=1")
+        task = {"repo": "yt-dlp", "form": "desktop", "created_at": "2026-05-01"}
+        found = retrieve_history(db, task, [["crash"], ["window"], ["utf"]])
+        self.assertEqual([h["id"] for h in found], [2])   # 1 is later; 3 is the same repo
+
+    def test_code_filter_and_windows(self):
+        self.assertFalse(backtest_code_file("pkg/raft/raft_test.go"))
+        self.assertFalse(backtest_code_file("src/app.css"))
+        self.assertTrue(backtest_code_file("server/raft/node.go"))
+        text = "\n".join(f"l{i}" for i in range(1, 1001))
+        out, windowed = excerpt_file(text, [500])
+        self.assertTrue(windowed)
+        self.assertIn("l500", out)
+        self.assertNotIn("l100\n", out)
+
+    def test_mcnemar_is_symmetric_and_bounded(self):
+        self.assertEqual(mcnemar_p(0, 0), 1.0)
+        self.assertAlmostEqual(mcnemar_p(8, 1), mcnemar_p(1, 8))
+        self.assertLess(mcnemar_p(10, 0), 0.01)
 
 
 class ExplicitSourceTests(unittest.TestCase):
