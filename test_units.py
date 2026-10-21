@@ -19,7 +19,7 @@ import urllib.error
 
 from config import FORMS
 from gh import GitHub
-from s02_fetch_issues import fetch_form
+from s02_fetch_issues import fetch_form, main as s02_main
 from s06_curate import group_sources, select_issues
 from evidence import EvidenceError, attach_pr_evidence, fetch_pr_evidence, load_tests as load_test_files
 from extract import enrich, extract_batch, extract_issue, find_issues
@@ -108,6 +108,21 @@ class ConfigTests(unittest.TestCase):
                 self.assertTrue(cfg["topics"])
                 self.assertTrue(cfg["taxonomy"])
                 self.assertGreater(cfg["min_stars"], 0)
+
+
+class ExplicitSourceTests(unittest.TestCase):
+    def test_explicit_repos_create_missing_form_list(self):
+        repo = {"full_name": "encode/httpx", "stargazers_count": 1, "language": "Python",
+                "description": "d", "topics": ["http-client"]}
+        with tempfile.TemporaryDirectory() as tmp, \
+                patch("config.DATA_DIR", tmp), patch("config.DB_PATH", os.path.join(tmp, "x.db")), \
+                patch("s02_fetch_issues.GitHub") as github, patch("s02_fetch_issues.fetch_form") as fetch, \
+                patch.object(sys, "argv", ["s02", "--forms", "library", "--repos", "encode/httpx"]):
+            github.return_value.get.return_value = repo
+            s02_main()
+            fetch.assert_called_once()
+            with open(os.path.join(tmp, "repos_library.json"), encoding="utf-8") as f:
+                self.assertEqual([r["full_name"] for r in json.load(f)], ["encode/httpx"])
 
 
 def extraction(iid=3, quote="UnicodeDecodeError on UTF-8 filenames"):

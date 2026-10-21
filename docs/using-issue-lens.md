@@ -56,6 +56,29 @@ python3 s02_fetch_issues.py --forms desktop \
 
 本次补充 restic 的恢复案例、rclone 的文件操作案例，以及 electron-builder 的安装和更新案例，每个来源先取 100 条。它们与功能相关，但不表示其中每条都适用于 rclean 或你的桌面应用。
 
+## 六类显式来源
+
+2026-10-18 新增 `backend`、`frontend`、`mobile`、`library`、`data`、`ai` 六种形态。名单按功能挑选，没有经过 `s01_pick_repos.py` 的 topic 筛选；每个仓库最多取 reaction 最高的 400 条：
+
+| 形态 | 仓库 | 本地入库 |
+|---|---:|---:|
+| ai | 10 | 3,501 |
+| backend | 8 | 2,469 |
+| frontend | 6 | 2,400 |
+| mobile | 6 | 2,147 |
+| library | 8 | 1,612 |
+| data | 6 | 2,171 |
+
+完整名单见 `data/repos_{form}.json`。按同样方式重建某一类：
+
+```bash
+python3 s02_fetch_issues.py --forms library --max-issues 400 \
+  --repos axios/axios encode/httpx psf/requests serde-rs/json \
+  bytedance/sonic goccy/go-json gorilla/websocket grpc/grpc-go
+```
+
+这六类的分类法是待数据验证的种子，尚未进入公开语料快照和 top-50 报告。对它们运行 `s01_pick_repos.py` 会用 topic 结果覆盖显式名单，需要时先备份对应 JSON。
+
 ## 发布前：运行已采纳的测试
 
 [本次 rclean 实测](../out/expansion-20261003/README.md)展示了从历史建议到执行结果的完整记录。可对自己构建的 rclean 重跑：

@@ -120,8 +120,10 @@ def main() -> None:
                                      "topics": repo["topics"]})
             fetch_form(gh, db, form, args.limit_repos, args.max_issues, args.refresh, selected)
             if selected:
-                with open(config.repos_path(form), encoding="utf-8") as f:
-                    saved = {repo["full_name"]: repo for repo in json.load(f)}
+                saved = {}
+                if os.path.exists(config.repos_path(form)):
+                    with open(config.repos_path(form), encoding="utf-8") as f:
+                        saved = {repo["full_name"]: repo for repo in json.load(f)}
                 saved.update((repo["full_name"], repo) for repo in selected)
                 with open(config.repos_path(form), "w", encoding="utf-8") as f:
                     json.dump(list(saved.values()), f, ensure_ascii=False, indent=2)

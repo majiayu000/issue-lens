@@ -1,0 +1,116 @@
+[
+  {
+    "full_name": "duckdb/duckdb",
+    "stars": 42218,
+    "language": "C++",
+    "description": "DuckDB is an analytical in-process SQL database management system",
+    "topics": [
+      "analytics",
+      "database",
+      "embedded-database",
+      "olap",
+      "sql"
+    ]
+  },
+  {
+    "full_name": "redis/redis",
+    "stars": 76921,
+    "language": "C",
+    "description": "For developers, who are building real-time data-driven applications, Redis is the preferred, fastest, and most feature-rich cache, data structure server, and document and vector query engine.",
+    "topics": [
+      "cache",
+      "caching",
+      "database",
+      "distributed-systems",
+      "in-memory",
+      "in-memory-database",
+      "json",
+      "key-value",
+      "key-value-store",
+      "message-broker",
+      "message-queue",
+      "no-sql",
+      "nosql",
+      "open-source",
+      "real-time",
+      "realtime",
+      "redis",
+      "time-series",
+      "vector-databases",
+      "vector-search"
+    ]
+  },
+  {
+    "full_name": "etcd-io/etcd",
+    "stars": 52371,
+    "language": "Go",
+    "description": "Distributed reliable key-value store for the most critical data of a distributed system",
+    "topics": [
+      "cncf",
+      "consensus",
+      "database",
+      "distributed-database",
+      "distributed-systems",
+      "etcd",
+      "go",
+      "key-value",
+      "kubernetes",
+      "raft"
+    ]
+  },
+  {
+    "full_name": "pola-rs/polars",
+    "stars": 40106,
+    "language": "Rust",
+    "description": "Extremely fast Query Engine for DataFrames, written in Rust",
+    "topics": [
+      "arrow",
+      "dataframe",
+      "dataframe-library",
+      "dataframes",
+      "out-of-core",
+      "polars",
+      "python",
+      "rust"
+    ]
+  },
+  {
+    "full_name": "ClickHouse/ClickHouse",
+    "stars": 50458,
+    "language": "C++",
+    "description": "ClickHouse® is a real-time analytics database management system",
+    "topics": [
+      "ai",
+      "analytics",
+      "big-data",
+      "clickhouse",
+      "cloud-native",
+      "cpp",
+      "database",
+      "dbms",
+      "distributed",
+      "embedded",
+      "hacktoberfest",
+      "lakehouse",
+      "mpp",
+      "olap",
+      "rust",
+      "self-hosted",
+      "sql"
+    ]
+  },
+  {
+    "full_name": "chroma-core/chroma",
+    "stars": 29519,
+    "language": "Rust",
+    "description": "Search infrastructure for AI",
+    "topics": [
+      "agents",
+      "ai",
+      "ai-agents",
+      "database",
+      "rust",
+      "rust-lang"
+    ]
+  }
+]

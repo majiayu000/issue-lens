@@ -1,0 +1,87 @@
+[
+  {
+    "full_name": "react/react",
+    "stars": 251208,
+    "language": "JavaScript",
+    "description": "The library for web and native user interfaces.",
+    "topics": [
+      "declarative",
+      "frontend",
+      "javascript",
+      "library",
+      "react",
+      "ui"
+    ]
+  },
+  {
+    "full_name": "vuejs/core",
+    "stars": 54655,
+    "language": "TypeScript",
+    "description": "🖖 Vue.js is a progressive, incrementally-adoptable JavaScript framework for building UI on the web.",
+    "topics": []
+  },
+  {
+    "full_name": "sveltejs/svelte",
+    "stars": 88390,
+    "language": "JavaScript",
+    "description": "web development for the rest of us",
+    "topics": [
+      "compiler",
+      "template",
+      "ui"
+    ]
+  },
+  {
+    "full_name": "vercel/next.js",
+    "stars": 143053,
+    "language": "JavaScript",
+    "description": "The React Framework",
+    "topics": [
+      "blog",
+      "browser",
+      "compiler",
+      "components",
+      "hybrid",
+      "nextjs",
+      "node",
+      "react",
+      "server-rendering",
+      "ssg",
+      "static",
+      "static-site-generator",
+      "universal",
+      "vercel"
+    ]
+  },
+  {
+    "full_name": "TanStack/query",
+    "stars": 50449,
+    "language": "TypeScript",
+    "description": "🤖 Powerful asynchronous state management, server-state utilities and data fetching for the web. TS/JS, React Query, Solid Query, Svelte Query and Vue Query.",
+    "topics": [
+      "async",
+      "cache",
+      "data",
+      "fetch",
+      "graphql",
+      "hooks",
+      "query",
+      "react",
+      "rest",
+      "solid",
+      "stale",
+      "stale-while-revalidate",
+      "svelte",
+      "typescript",
+      "update",
+      "vue"
+    ]
+  },
+  {
+    "full_name": "remix-run/react-router",
+    "stars": 56612,
+    "language": "TypeScript",
+    "description": "Declarative routing for React",
+    "topics": []
+  }
+]
