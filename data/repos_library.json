@@ -1,0 +1,110 @@
+[
+  {
+    "full_name": "axios/axios",
+    "stars": 109300,
+    "language": "JavaScript",
+    "description": "Promise based HTTP client for the browser and node.js",
+    "topics": [
+      "hacktoberfest",
+      "http-client",
+      "javascript",
+      "nodejs",
+      "promise"
+    ]
+  },
+  {
+    "full_name": "encode/httpx",
+    "stars": 15610,
+    "language": "Python",
+    "description": "A next generation HTTP client for Python. 🦋",
+    "topics": [
+      "asyncio",
+      "http",
+      "python",
+      "trio"
+    ]
+  },
+  {
+    "full_name": "psf/requests",
+    "stars": 54472,
+    "language": "Python",
+    "description": "A simple, yet elegant, HTTP library.",
+    "topics": [
+      "client",
+      "cookies",
+      "forhumans",
+      "http",
+      "humans",
+      "python",
+      "python-requests",
+      "requests"
+    ]
+  },
+  {
+    "full_name": "serde-rs/json",
+    "stars": 5651,
+    "language": "Rust",
+    "description": "Strongly typed JSON library for Rust",
+    "topics": [
+      "json",
+      "rust",
+      "serde"
+    ]
+  },
+  {
+    "full_name": "bytedance/sonic",
+    "stars": 9629,
+    "language": "Go",
+    "description": "A blazingly fast JSON serializing & deserializing library",
+    "topics": [
+      "high-performance",
+      "jit",
+      "json",
+      "simd"
+    ]
+  },
+  {
+    "full_name": "goccy/go-json",
+    "stars": 3752,
+    "language": "Go",
+    "description": "Fast JSON encoder/decoder compatible with encoding/json for Go",
+    "topics": [
+      "go",
+      "golang",
+      "golang-library",
+      "json"
+    ]
+  },
+  {
+    "full_name": "gorilla/websocket",
+    "stars": 24874,
+    "language": "Go",
+    "description": "Package gorilla/websocket is a fast, well-tested and widely used WebSocket implementation for Go.",
+    "topics": [
+      "go",
+      "golang",
+      "gorilla",
+      "gorilla-web-toolkit",
+      "websocket",
+      "websockets"
+    ]
+  },
+  {
+    "full_name": "grpc/grpc-go",
+    "stars": 23092,
+    "language": "Go",
+    "description": "The Go language implementation of gRPC. HTTP/2 based RPC",
+    "topics": [
+      "dogs-over-cats",
+      "giant-robots",
+      "go",
+      "golang",
+      "grpc",
+      "hacktoberfest",
+      "microservices",
+      "not-nanoservices",
+      "proto",
+      "rpc"
+    ]
+  }
+]

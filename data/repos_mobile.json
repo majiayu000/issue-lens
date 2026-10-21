@@ -1,0 +1,108 @@
+[
+  {
+    "full_name": "flutter/flutter",
+    "stars": 180249,
+    "language": "Dart",
+    "description": "Flutter makes it easy and fast to build beautiful apps for mobile and beyond",
+    "topics": [
+      "android",
+      "app-framework",
+      "cross-platform",
+      "dart",
+      "dart-platform",
+      "desktop",
+      "flutter",
+      "flutter-package",
+      "fuchsia",
+      "ios",
+      "linux-desktop",
+      "macos",
+      "material-design",
+      "mobile",
+      "mobile-development",
+      "skia",
+      "web",
+      "web-framework",
+      "windows"
+    ]
+  },
+  {
+    "full_name": "react/react-native",
+    "stars": 126695,
+    "language": "C++",
+    "description": "A framework for building native applications using React",
+    "topics": [
+      "android",
+      "app-framework",
+      "cross-platform",
+      "ios",
+      "mobile",
+      "mobile-development",
+      "react",
+      "react-native"
+    ]
+  },
+  {
+    "full_name": "ionic-team/capacitor",
+    "stars": 16886,
+    "language": "TypeScript",
+    "description": "Build cross-platform Native Progressive Web Apps for iOS, Android, and the Web ⚡️",
+    "topics": [
+      "android",
+      "capacitor",
+      "cordova",
+      "cross-platform",
+      "css",
+      "html",
+      "ionic",
+      "ios",
+      "java",
+      "javascript",
+      "pwa",
+      "swift"
+    ]
+  },
+  {
+    "full_name": "expo/expo",
+    "stars": 52789,
+    "language": "TypeScript",
+    "description": "An open-source framework for making universal native apps with React. Expo runs on Android, iOS, and the web.",
+    "topics": [
+      "android",
+      "app-framework",
+      "expo",
+      "framework",
+      "frontend",
+      "ios",
+      "javascript",
+      "mobile",
+      "native",
+      "native-apps",
+      "react",
+      "react-native",
+      "typescript",
+      "universal",
+      "web",
+      "web-framework"
+    ]
+  },
+  {
+    "full_name": "android/nowinandroid",
+    "stars": 21935,
+    "language": "Kotlin",
+    "description": "A fully functional Android app built entirely with Kotlin and Jetpack Compose",
+    "topics": [
+      "android",
+      "jetpack-compose",
+      "kotlin",
+      "sample"
+    ]
+  },
+  {
+    "full_name": "signalapp/Signal-Android",
+    "stars": 29483,
+    "language": "Kotlin",
+    "description": "A private messenger for Android.",
+    "topics": []
+  }
+]

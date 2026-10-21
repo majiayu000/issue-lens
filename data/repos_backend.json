@@ -1,0 +1,163 @@
+[
+  {
+    "full_name": "caddyserver/caddy",
+    "stars": 78072,
+    "language": "Go",
+    "description": "Fast and extensible multi-platform HTTP/1-2-3 web server with automatic HTTPS",
+    "topics": [
+      "acme",
+      "automatic-https",
+      "caddy",
+      "caddyfile",
+      "go",
+      "golang",
+      "http",
+      "http-server",
+      "http3",
+      "https",
+      "privacy",
+      "reverse-proxy",
+      "security",
+      "tls",
+      "web-server"
+    ]
+  },
+  {
+    "full_name": "traefik/traefik",
+    "stars": 65263,
+    "language": "Go",
+    "description": "The Cloud Native Application Proxy",
+    "topics": [
+      "consul",
+      "docker",
+      "gateway",
+      "gatewayapi",
+      "go",
+      "golang",
+      "ingress-nginx",
+      "kubernetes",
+      "letsencrypt",
+      "load-balancer",
+      "microservice",
+      "opentelemetry",
+      "reverse-proxy",
+      "traefik"
+    ]
+  },
+  {
+    "full_name": "gin-gonic/gin",
+    "stars": 89367,
+    "language": "Go",
+    "description": "Gin is a high-performance HTTP web framework written in Go. It provides a Martini-like API but with significantly better performance—up to 40 times faster—thanks to httprouter. Gin is designed for building REST APIs, web applications, and microservices.",
+    "topics": [
+      "framework",
+      "gin",
+      "go",
+      "middleware",
+      "performance",
+      "router",
+      "server"
+    ]
+  },
+  {
+    "full_name": "labstack/echo",
+    "stars": 32773,
+    "language": "Go",
+    "description": "High performance, minimalist Go web framework",
+    "topics": [
+      "echo",
+      "go",
+      "http2",
+      "https",
+      "labstack-echo",
+      "letsencrypt",
+      "micro-framework",
+      "microservice",
+      "middleware",
+      "ssl",
+      "web",
+      "web-framework",
+      "websocket"
+    ]
+  },
+  {
+    "full_name": "gofiber/fiber",
+    "stars": 40216,
+    "language": "Go",
+    "description": "⚡️ Express inspired web framework written in Go",
+    "topics": [
+      "express",
+      "expressjs",
+      "fast",
+      "fiber",
+      "flexible",
+      "framework",
+      "friendly",
+      "go",
+      "golang",
+      "hacktoberfest",
+      "hacktoberfest2020",
+      "nodejs",
+      "performance",
+      "rest-api",
+      "web"
+    ]
+  },
+  {
+    "full_name": "Kong/kong",
+    "stars": 44277,
+    "language": "Lua",
+    "description": "🦍 The API and AI Gateway",
+    "topics": [
+      "ai",
+      "ai-gateway",
+      "api-gateway",
+      "api-management",
+      "apis",
+      "artificial-intelligence",
+      "cloud-native",
+      "devops",
+      "kubernetes",
+      "kubernetes-ingress",
+      "kubernetes-ingress-controller",
+      "llm-gateway",
+      "llm-ops",
+      "mcp",
+      "mcp-gateway",
+      "microservice",
+      "microservices",
+      "openai-proxy",
+      "reverse-proxy",
+      "serverless"
+    ]
+  },
+  {
+    "full_name": "envoyproxy/envoy",
+    "stars": 29082,
+    "language": "C++",
+    "description": "Cloud-native high-performance edge/middle/service proxy",
+    "topics": [
+      "cars",
+      "cats",
+      "cats-over-dogs",
+      "cncf",
+      "corgis",
+      "more-cats",
+      "nanoservices",
+      "rocket-ships"
+    ]
+  },
+  {
+    "full_name": "Kludex/starlette",
+    "stars": 12672,
+    "language": "Python",
+    "description": "The little ASGI framework that shines. 🌟",
+    "topics": [
+      "asgi",
+      "async",
+      "http",
+      "python",
+      "websockets"
+    ]
+  }
+]

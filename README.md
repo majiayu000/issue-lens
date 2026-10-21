@@ -45,7 +45,8 @@ Quality bar for an issue to enter the corpus (see research §4.4):
 Current corpus snapshot (updated 2026-10-03): **82 repos, 31,084 issues** — desktop:
 41 repos / 14,830 issues; CLI: 41 repos / 16,254 issues. The original 79 repositories
 retain their 2026-09-23 snapshot; restic, rclone and electron-builder add 100 issues
-each. The top-50 sample reports still show the original snapshot:
+each. The six explicit-source forms added on 2026-10-18 (44 repos, 14,300 issues locally)
+are not yet in the published snapshot, directory or reports. The top-50 sample reports still show the original snapshot:
 [desktop](out/report_desktop.md) · [CLI](out/report_cli.md).
 
 ## Quick start
@@ -56,8 +57,8 @@ Zero third-party dependencies: Python 3.12 standard library + an authenticated `
 git clone https://github.com/majiayu000/issue-lens.git
 cd issue-lens
 gh auth login                          # or: export GITHUB_TOKEN=...
-python3 s01_pick_repos.py              # 1. pick repos for every form in config.py
-python3 s02_fetch_issues.py            # 2. fetch issues (~80 repos, throttled by Search API 30 req/min)
+python3 s01_pick_repos.py --forms desktop cli  # 1. pick topic-based repos (other forms use explicit lists)
+python3 s02_fetch_issues.py            # 2. fetch issues (~126 repos, throttled by Search API 30 req/min)
 python3 s03_report.py                  # 3. value-check reports -> out/report_{form}.md
 python3 s04_search.py --form desktop --q "crash startup"
 python3 s04_search.py --form cli --q "utf-8 encoding" --sort relevance
@@ -159,7 +160,7 @@ The [updated five-product samples](out/five-products-20261002/README.md) contain
 | `ISSUE_LENS_LLM_ENGINE` | `codex` enables extraction and planning; default `none` keeps `extract_issue()` disabled |
 | `ISSUE_LENS_MODEL` | optional Codex model override; unset uses the CLI default |
 
-Product forms, topic seeds and the initial bug taxonomies live in `config.py`. Current forms: `desktop` (Electron/Tauri/desktop-app) and `cli` (cli/command-line/terminal) — adding a form is one dict entry.
+Product forms, topic seeds and the initial bug taxonomies live in `config.py`. Current forms: `desktop` (Electron/Tauri/desktop-app) and `cli` (cli/command-line/terminal), selected by topic; plus `backend`, `frontend`, `mobile`, `library`, `data` and `ai`, whose repository lists were picked explicitly with `s02_fetch_issues.py --repos` (see [the usage workflows](docs/using-issue-lens.md#六类显式来源)). Adding a form is one dict entry.
 
 ## Known limitations
 
@@ -174,7 +175,7 @@ Product forms, topic seeds and the initial bug taxonomies live in `config.py`. C
 
 1. Extend the same-model comparison beyond rclean and measure which suggestions survive review and actual execution
 2. Measure the relevance of closing-PR and comment evidence through further reviewed examples
-3. More forms: web frontend, backend, mobile (mobile already has a ready-made taxonomy: DroidDefects, see research §2.1)
+3. Validate the six explicit-source forms (backend, frontend, mobile, library, data, ai) against real use, then publish them in the corpus snapshot
 
 ## Contributing
 
