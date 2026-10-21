@@ -1,5 +1,7 @@
 # issue-lens
 
+> **Status: archived experiment (2026-10-22).** Backtests on 49 real bugs found no measurable gain from feeding issue history to a model writing tests — cross-project issues +0.0 pp, curated failure patterns −2.0 pp, the repository's own earlier issues +4.1 pp (95% CI −6.1 to +14.3). The corpus remains useful as a searchable dataset, and [`experiments/backtest.py`](experiments/backtest.py) as a benchmark for test-generation approaches. See [the results](out/backtest-20261022/README.md).
+
 [![CI](https://github.com/majiayu000/issue-lens/actions/workflows/ci.yml/badge.svg)](https://github.com/majiayu000/issue-lens/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -23,6 +25,10 @@ is a separate step. For automatic extraction and planning, see
 
 For change-focused reviews, task-based issue grouping, explicit source expansion
 and executable acceptance checks, see [the usage workflows](docs/using-issue-lens.md).
+
+## Does it help? (backtest, 2026-10-22)
+
+On 49 real bugs fixed after 2026-04-01, a model shown only the pre-fix code proposed a test that hits the bug (or its exact failure mechanism) for 15; adding cross-project history retrieved from this corpus also gave 15 (lift 0 pp, 95% CI −8.2 to +8.2) at 2.06× the input tokens. The model cited retrieved history in only 11% of its tests. Giving 21 curated failure patterns instead (arm C) scored 14 (−2.0 pp, CI −14.3 to +10.2): the model cited patterns in 83% of tests, but mostly a catch-all one, and did worse on the distributed-systems subset. The repository's own earlier issues (arm D) scored 17 (+4.1 pp, CI −6.1 to +14.3); only one of D's four extra hits cited that history. Treat the corpus as a searchable dataset, not as a proven test-generation booster. Protocol: [docs/evaluation.md](docs/evaluation.md) · results: [out/backtest-20261022](out/backtest-20261022/README.md).
 
 ## How it works
 
@@ -174,9 +180,7 @@ Product forms, topic seeds and the initial bug taxonomies live in `config.py`. C
 
 ## Roadmap
 
-1. Extend the same-model comparison beyond rclean and measure which suggestions survive review and actual execution
-2. Measure the relevance of closing-PR and comment evidence through further reviewed examples
-3. Validate the six explicit-source forms (backend, frontend, mobile, library, data, ai) against real use, then publish them in the corpus snapshot
+Not planned: the test-generation hypothesis was rejected by the backtest. Untested directions that would need a new question set: executable (fail-before/pass-after) scoring, other models, and whole-repository review without the bug's file location.
 
 ## Contributing
 
