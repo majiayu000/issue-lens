@@ -1,0 +1,17 @@
+[distributed] 1/1 etcd-io/etcd: 入库 243 条
+[distributed] 1/1 hashicorp/consul: 入库 216 条
+[distributed] 1/1 hashicorp/nomad: 入库 400 条,截断(共 1174,仅取 reaction 最高的 400)
+[distributed] 1/1 cockroachdb/cockroach: 入库 400 条,截断(共 6871,仅取 reaction 最高的 400)
+[distributed] 1/1 tikv/tikv: 入库 400 条,截断(共 1072,仅取 reaction 最高的 400)
+[distributed] 1/1 pingcap/tidb: 入库 400 条,截断(共 6888,仅取 reaction 最高的 400)
+[distributed] 1/1 facebook/rocksdb: 入库 49 条
+[distributed] 1/1 vitessio/vitess: 入库 400 条,截断(共 1072,仅取 comments 最高的 400)
+[distributed] 1/1 yugabyte/yugabyte-db: 入库 93 条
+[distributed] 1/1 scylladb/scylladb: 入库 400 条,截断(共 613,仅取 comments 最高的 400)
+[distributed] 1/1 kubernetes/kubernetes: 入库 400 条,截断(共 5122,仅取 comments 最高的 400)
+[distributed] 1/1 containerd/containerd: 入库 341 条
+[distributed] 1/1 moby/moby: 入库 400 条,截断(共 986,仅取 comments 最高的 400)
+[distributed] 1/1 nats-io/nats-server: 入库 224 条
+[distributed] 1/1 temporalio/temporal: 入库 24 条
+[distributed] 1/1 hashicorp/raft: 入库 4 条
+[distributed] 1/1 databendlabs/openraft: 入库 6 条

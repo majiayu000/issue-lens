@@ -1,0 +1,62 @@
+{
+  "seed": 20261021,
+  "db": "data/issues.db",
+  "samples": {
+    "baseline_random": {
+      "where": "i.form <> 'distributed'",
+      "params": [],
+      "population": 45384,
+      "n": 30
+    },
+    "baseline_core": {
+      "where": "i.form <> 'distributed' AND q.tier='core'",
+      "params": [],
+      "population": 3269,
+      "n": 30
+    },
+    "baseline_excluded": {
+      "where": "i.form <> 'distributed' AND q.tier='excluded'",
+      "params": [],
+      "population": 13566,
+      "n": 30
+    },
+    "distributed_consensus": {
+      "where": "i.form='distributed' AND q.tier IN ('core','usable') AND i.repo_full_name IN (?,?,?,?,?,?)",
+      "params": [
+        "etcd-io/etcd",
+        "hashicorp/consul",
+        "hashicorp/nomad",
+        "hashicorp/raft",
+        "databendlabs/openraft",
+        "nats-io/nats-server"
+      ],
+      "population": 724,
+      "n": 30
+    },
+    "distributed_databases": {
+      "where": "i.form='distributed' AND q.tier IN ('core','usable') AND i.repo_full_name IN (?,?,?,?,?,?,?)",
+      "params": [
+        "cockroachdb/cockroach",
+        "tikv/tikv",
+        "pingcap/tidb",
+        "facebook/rocksdb",
+        "vitessio/vitess",
+        "yugabyte/yugabyte-db",
+        "scylladb/scylladb"
+      ],
+      "population": 1707,
+      "n": 30
+    },
+    "distributed_orchestration": {
+      "where": "i.form='distributed' AND q.tier IN ('core','usable') AND i.repo_full_name IN (?,?,?,?)",
+      "params": [
+        "kubernetes/kubernetes",
+        "containerd/containerd",
+        "moby/moby",
+        "temporalio/temporal"
+      ],
+      "population": 992,
+      "n": 30
+    }
+  }
+}

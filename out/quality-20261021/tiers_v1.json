@@ -1,0 +1,67 @@
+{
+  "by_form": {
+    "ai": {
+      "core": 332,
+      "usable": 1568,
+      "low": 567,
+      "excluded": 1034
+    },
+    "backend": {
+      "core": 159,
+      "usable": 901,
+      "low": 447,
+      "excluded": 962
+    },
+    "cli": {
+      "core": 905,
+      "usable": 5584,
+      "low": 4276,
+      "excluded": 5489
+    },
+    "data": {
+      "core": 77,
+      "usable": 1020,
+      "low": 432,
+      "excluded": 642
+    },
+    "desktop": {
+      "core": 1141,
+      "usable": 4668,
+      "low": 4596,
+      "excluded": 4425
+    },
+    "distributed": {
+      "core": 1686,
+      "usable": 1737,
+      "low": 808,
+      "excluded": 50
+    },
+    "frontend": {
+      "core": 382,
+      "usable": 1556,
+      "low": 174,
+      "excluded": 288
+    },
+    "library": {
+      "core": 49,
+      "usable": 756,
+      "low": 492,
+      "excluded": 315
+    },
+    "mobile": {
+      "core": 224,
+      "usable": 1203,
+      "low": 309,
+      "excluded": 411
+    }
+  },
+  "excluded_reasons": {
+    "feature": 9299,
+    "question": 1650,
+    "solo_no_discussion": 1129,
+    "short_body": 1029,
+    "task": 1014,
+    "bot": 191,
+    "duplicate_title": 171
+  }
+}

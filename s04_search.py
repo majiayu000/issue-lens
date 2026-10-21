@@ -4,6 +4,7 @@
   python3 s04_search.py --form desktop --q "crash startup"
   python3 s04_search.py --form cli --q "encoding utf-8" --sort relevance
   python3 s04_search.py --form all --top 30
+  python3 s04_search.py --form distributed --q "leader election" --tier usable   # 只看 core+usable(先跑 s07)
 """
 import argparse
 import sqlite3
@@ -12,14 +13,20 @@ import config
 from s03_report import excerpt, md_escape
 
 
+TIER_ORDER = ["core", "usable", "low"]
+
+
 def search(db: sqlite3.Connection, forms: list[str], terms: list[str], top: bool,
-           sort: str, limit: int, min_reactions: int) -> list:
+           sort: str, limit: int, min_reactions: int, tier: str | None = None) -> list:
+    tiers = TIER_ORDER[:TIER_ORDER.index(tier) + 1] if tier else []
+    tier_sql = (" AND i.id IN (SELECT issue_id FROM issue_quality WHERE tier IN ({}))".format(
+        ",".join("?" * len(tiers)))) if tiers else ""
     if top or not terms:
         sql = """SELECT i.reactions, i.title, i.url, i.repo_full_name, i.labels, i.body
                  FROM issues i WHERE i.form IN ({})
-                 AND i.reactions >= ? ORDER BY i.reactions DESC LIMIT ?""".format(
-            ",".join("?" * len(forms)))
-        return db.execute(sql, (*forms, min_reactions, limit)).fetchall()
+                 AND i.reactions >= ?{} ORDER BY i.reactions DESC LIMIT ?""".format(
+            ",".join("?" * len(forms)), tier_sql)
+        return db.execute(sql, (*forms, min_reactions, *tiers, limit)).fetchall()
 
     fts_q = " OR ".join(f'"{t.replace(chr(34), "")}"' for t in terms if t)
     inner_order = "ORDER BY rank" if sort == "relevance" else "ORDER BY i.reactions DESC"
@@ -27,21 +34,23 @@ def search(db: sqlite3.Connection, forms: list[str], terms: list[str], top: bool
               FROM issues_fts f JOIN issues i ON i.id = f.issue_id
               WHERE issues_fts MATCH ?
                 AND i.form IN ({",".join("?" * len(forms))})
-                AND i.reactions >= ?
+                AND i.reactions >= ?{tier_sql}
               {inner_order} LIMIT ?"""
-    return db.execute(sql, (fts_q, *forms, min_reactions, limit)).fetchall()
+    return db.execute(sql, (fts_q, *forms, min_reactions, *tiers, limit)).fetchall()
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--form", default="all",
-                    help="desktop / cli / all(默认 all)")
+                    help="config.FORMS 中的形态或 all(默认 all)")
     ap.add_argument("--q", default="", help="关键词,空格分隔多个词(OR 语义)")
     ap.add_argument("--top", nargs="?", const=20, type=int, default=None,
                     help="忽略关键词按 reaction 排,可带数量(如 --top 30,默认 20)")
     ap.add_argument("--sort", choices=["reactions", "relevance"], default="reactions")
     ap.add_argument("--limit", type=int, default=20)
     ap.add_argument("--min-reactions", type=int, default=0)
+    ap.add_argument("--tier", choices=TIER_ORDER,
+                    help="只返回该层及以上(core > usable > low);需先运行 s07_quality.py")
     args = ap.parse_args()
 
     forms = list(config.FORMS) if args.form == "all" else [args.form]
@@ -56,7 +65,7 @@ def main() -> None:
     db = sqlite3.connect(config.DB_PATH)
     try:
         rows = search(db, forms, args.q.split(), top_mode, args.sort,
-                      args.limit, args.min_reactions)
+                      args.limit, args.min_reactions, args.tier)
     finally:
         db.close()
 

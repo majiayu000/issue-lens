@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS issues (
     comments        INTEGER,
     labels          TEXT,
     author          TEXT,
+    author_association TEXT,  -- OWNER/MEMBER/CONTRIBUTOR/NONE…；2026-10-21 前抓取的记录为空
     created_at      TEXT,
     closed_at       TEXT,
     url             TEXT,
@@ -35,4 +36,12 @@ CREATE INDEX IF NOT EXISTS idx_issues_repo ON issues(repo_full_name);
 CREATE VIRTUAL TABLE IF NOT EXISTS issues_fts USING fts5(
     title, body,
     issue_id UNINDEXED
+);
+
+-- s07_quality.py 的分层结果,全量重算;原始 issues 不删除
+CREATE TABLE IF NOT EXISTS issue_quality (
+    issue_id  INTEGER PRIMARY KEY REFERENCES issues(id),
+    kind      TEXT NOT NULL,   -- bug / feature / question / task / unknown
+    tier      TEXT NOT NULL,   -- core / usable / low / excluded
+    reasons   TEXT NOT NULL    -- 逗号分隔的排除原因,未排除为空
 );

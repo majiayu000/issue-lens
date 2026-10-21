@@ -34,6 +34,7 @@ s04_search.py         query the corpus: keyword (FTS) or popularity ranking
 extract.py            Codex CLI extraction (symptom → supported cause → test ideas), cached in SQLite
 s05_plan.py           PRD → conjunctive FTS + relevance review → test plan + existing-test comparison
 s06_curate.py         task query → issue classification → scenario groups with every source retained
+s07_quality.py        rule-based tiers (core / usable / low / excluded) for search filtering; raw rows are kept
 ```
 
 Quality bar for an issue to enter the corpus (see research §4.4):

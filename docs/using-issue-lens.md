@@ -79,6 +79,19 @@ python3 s02_fetch_issues.py --forms library --max-issues 400 \
 
 这六类的分类法是待数据验证的种子，尚未进入公开语料快照和 top-50 报告。对它们运行 `s01_pick_repos.py` 会用 topic 结果覆盖显式名单，需要时先备份对应 JSON。
 
+## 分层过滤与状态机类来源
+
+`python3 s07_quality.py` 会把每条 issue 分成 core / usable / low / excluded，写入 `issue_quality` 表。检索时加 `--tier usable` 只看 core 和 usable：
+
+```bash
+python3 s07_quality.py
+python3 s04_search.py --form distributed --q "leader lease" --tier usable
+```
+
+分层只看标签、正文模板、👍、评论数和作者占比，没有读关闭它的 PR。抽样核对中，core 层约四分之三是真实已修复的缺陷；excluded 层 30 条里误杀 1 条。
+
+`distributed` 形态收录 etcd、cockroach、tikv、kubernetes 等 17 个系统，只取带 bug 标签的 issue，并按讨论数而不是点赞排序（基础设施 bug 点赞少、讨论多）。抽样真实缺陷率 83%，写明根因的有 78%。各仓库的 bug 标签名不同，采集命令见 `out/quality-20261021/collect.sh`；抽样结果和故障模式总结见 [out/quality-20261021](../out/quality-20261021/README.md)。
+
 ## 发布前：运行已采纳的测试
 
 [本次 rclean 实测](../out/expansion-20261003/README.md)展示了从历史建议到执行结果的完整记录。可对自己构建的 rclean 重跑：

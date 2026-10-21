@@ -1,0 +1,265 @@
+[
+  {
+    "full_name": "etcd-io/etcd",
+    "stars": 52409,
+    "language": "Go",
+    "description": "Distributed reliable key-value store for the most critical data of a distributed system",
+    "topics": [
+      "cncf",
+      "consensus",
+      "database",
+      "distributed-database",
+      "distributed-systems",
+      "etcd",
+      "go",
+      "key-value",
+      "kubernetes",
+      "raft"
+    ]
+  },
+  {
+    "full_name": "hashicorp/consul",
+    "stars": 30089,
+    "language": "Go",
+    "description": "Consul is a distributed, highly available, and data center aware solution to connect and configure applications across dynamic, distributed infrastructure.",
+    "topics": [
+      "api-gateway",
+      "consul",
+      "ecs",
+      "kubernetes",
+      "service-discovery",
+      "service-mesh",
+      "vault"
+    ]
+  },
+  {
+    "full_name": "hashicorp/nomad",
+    "stars": 17022,
+    "language": "Go",
+    "description": "Nomad is an easy-to-use, flexible, and performant workload orchestrator that can deploy a mix of microservice, batch, containerized, and non-containerized applications. Nomad is easy to operate and scale and has native Consul and Vault integrations.",
+    "topics": []
+  },
+  {
+    "full_name": "cockroachdb/cockroach",
+    "stars": 32576,
+    "language": "Go",
+    "description": "CockroachDB — the cloud native, distributed SQL database designed for high availability, effortless scale, and control over data placement.",
+    "topics": [
+      "cockroachdb",
+      "database",
+      "distributed-database",
+      "go",
+      "hacktoberfest",
+      "sql"
+    ]
+  },
+  {
+    "full_name": "tikv/tikv",
+    "stars": 16918,
+    "language": "Rust",
+    "description": "Distributed transactional key-value database, originally created to complement TiDB",
+    "topics": [
+      "cncf",
+      "consensus",
+      "distributed-transactions",
+      "hacktoberfest",
+      "key-value",
+      "raft",
+      "rocksdb",
+      "rust",
+      "tidb",
+      "tikv"
+    ]
+  },
+  {
+    "full_name": "pingcap/tidb",
+    "stars": 40666,
+    "language": "Go",
+    "description": "TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.",
+    "topics": [
+      "agent",
+      "agent-context",
+      "agent-memory",
+      "agentic",
+      "ai",
+      "cloud-native",
+      "database",
+      "distributed-database",
+      "distributed-transactions",
+      "go",
+      "hacktoberfest",
+      "htap",
+      "memory",
+      "mysql",
+      "mysql-compatibility",
+      "scale",
+      "serverless",
+      "sql",
+      "tidb"
+    ]
+  },
+  {
+    "full_name": "facebook/rocksdb",
+    "stars": 32209,
+    "language": "C++",
+    "description": "A library that provides an embeddable, persistent key-value store for fast storage.",
+    "topics": [
+      "database",
+      "storage-engine"
+    ]
+  },
+  {
+    "full_name": "vitessio/vitess",
+    "stars": 21389,
+    "language": "Go",
+    "description": "Vitess is a database clustering system for horizontal scaling of MySQL.",
+    "topics": [
+      "cncf",
+      "database-cluster",
+      "kubernetes",
+      "mysql",
+      "shard",
+      "vitess"
+    ]
+  },
+  {
+    "full_name": "yugabyte/yugabyte-db",
+    "stars": 10613,
+    "language": "C",
+    "description": "YugabyteDB - the cloud native distributed SQL database for mission-critical applications.",
+    "topics": [
+      "cloud-native",
+      "cpp",
+      "database",
+      "distributed-database",
+      "distributed-sql",
+      "distributed-sql-database",
+      "high-performance",
+      "kubernetes",
+      "multi-cloud",
+      "multi-region",
+      "scale-out",
+      "sql"
+    ]
+  },
+  {
+    "full_name": "scylladb/scylladb",
+    "stars": 15794,
+    "language": "C++",
+    "description": "NoSQL data store using the Seastar framework, compatible with Apache Cassandra and Amazon DynamoDB",
+    "topics": [
+      "c-plus-plus",
+      "cassandra",
+      "cpp",
+      "database",
+      "nosql",
+      "scylla",
+      "seastar"
+    ]
+  },
+  {
+    "full_name": "kubernetes/kubernetes",
+    "stars": 128459,
+    "language": "Go",
+    "description": "Production-Grade Container Scheduling and Management",
+    "topics": [
+      "cncf",
+      "containers",
+      "go",
+      "kubernetes"
+    ]
+  },
+  {
+    "full_name": "containerd/containerd",
+    "stars": 21436,
+    "language": "Go",
+    "description": "An open and reliable container runtime",
+    "topics": [
+      "cncf",
+      "containerd",
+      "containers",
+      "cri",
+      "docker",
+      "hacktoberfest",
+      "kubernetes",
+      "oci"
+    ]
+  },
+  {
+    "full_name": "moby/moby",
+    "stars": 72194,
+    "language": "Go",
+    "description": "The Moby Project - a collaborative project for the container ecosystem to assemble container-based systems",
+    "topics": [
+      "containers",
+      "docker",
+      "go",
+      "golang"
+    ]
+  },
+  {
+    "full_name": "nats-io/nats-server",
+    "stars": 20910,
+    "language": "Go",
+    "description": "High-Performance server for NATS.io, the cloud and edge native messaging system.",
+    "topics": [
+      "cloud",
+      "cloud-computing",
+      "cloud-native",
+      "connected-vehicle",
+      "distributed-systems",
+      "edge",
+      "edge-ai",
+      "edge-computing",
+      "go",
+      "golang",
+      "message-bus",
+      "message-queue",
+      "messaging",
+      "microservices-architecture",
+      "nats-server"
+    ]
+  },
+  {
+    "full_name": "temporalio/temporal",
+    "stars": 23885,
+    "language": "Go",
+    "description": "Temporal service",
+    "topics": [
+      "cronjob-scheduler",
+      "distributed-cron",
+      "distributed-systems",
+      "durable-execution",
+      "golang",
+      "microservice-framework",
+      "microservice-orchestration",
+      "microservices-architecture",
+      "orchestrator",
+      "service-bus",
+      "service-fabric",
+      "workflow-automation",
+      "workflow-engine",
+      "workflow-management",
+      "workflow-management-system",
+      "workflows"
+    ]
+  },
+  {
+    "full_name": "hashicorp/raft",
+    "stars": 9150,
+    "language": "Go",
+    "description": "Golang implementation of the Raft consensus protocol",
+    "topics": []
+  },
+  {
+    "full_name": "databendlabs/openraft",
+    "stars": 2098,
+    "language": "Rust",
+    "description": "rust raft with improvements",
+    "topics": [
+      "consensus",
+      "distributed-systems",
+      "raft"
+    ]
+  }
+]
