@@ -22,7 +22,7 @@ from gh import GitHub
 from s02_fetch_issues import fetch_form, init_db, main as s02_main
 from s07_quality import classify_kind, grade, rebuild
 from experiments.backtest import (code_file as backtest_code_file, excerpt_file, mcnemar_p,
-                                  patterns_for, retrieve_history)
+                                  patterns_for, retrieve_history, retrieve_same_repo)
 from s06_curate import group_sources, select_issues
 from evidence import EvidenceError, attach_pr_evidence, fetch_pr_evidence, load_tests as load_test_files
 from extract import enrich, extract_batch, extract_issue, find_issues
@@ -173,6 +173,17 @@ class BacktestTests(unittest.TestCase):
         self.assertTrue(windowed)
         self.assertIn("l500", out)
         self.assertNotIn("l100\n", out)
+
+    def test_same_repo_history_requires_closed_before_bug(self):
+        db = memory_db()
+        init_db(db)
+        rebuild(db)
+        db.execute("UPDATE issue_quality SET tier='core'")
+        db.execute("UPDATE issues SET created_at='2026-01-01', closed_at='2026-02-01'")
+        db.execute("UPDATE issues SET closed_at='2026-06-01' WHERE id=2")   # closed after the bug
+        task = {"repo": "vscode", "form": "desktop", "created_at": "2026-05-01"}
+        found = retrieve_same_repo(db, task, [["crash"], ["window"], ["utf"]])
+        self.assertEqual([h["id"] for h in found], [1])   # 2 closed later; 3 is another repo
 
     def test_patterns_drop_same_repo_later_citations(self):
         pats = [{"id": "x-1", "title": "t", "text": "m",

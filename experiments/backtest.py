@@ -51,11 +51,17 @@ HISTORY_NOTE = """另外给出若干其他项目的历史 issue（history）。�
 并在 source_ids 写出引用的 id；词面相似但机制不同的不要用。"""
 PATTERN_NOTE = """另外给出若干故障模式（patterns），是从其他系统的真实缺陷中整理出的机制和测试思路。
 只在模式描述的机制确实可能出现在这段代码里时借鉴，并在 source_ids 写出引用的模式 id（字符串）；不相关的不要用。"""
+SAME_REPO_NOTE = """另外给出本项目自己更早的 issue（history），都在这个 bug 出现之前就已关闭。
+只在故障机制确实可能出现在这段代码里时借鉴，并在 source_ids 写出引用的 id；词面相似但机制不同的不要用。"""
 LESSONS = sorted((ROOT / "out" / "quality-20261021").glob("lessons_*.md"))
 ISSUE_URL = re.compile(r"https://github\.com/([\w.-]+/[\w.-]+)/issues/(\d+)")
 QUERY_PROMPT = """下面是某个开源项目的一部分源码和项目简介。为了从其他项目的历史 bug 中找可借鉴的故障，
 提出 6 组英文检索词。每组 1-3 个词，组内是 AND 关系，描述这段代码可能出现的故障机制或场景
 （例如 ["lease","expire"]、["retry","duplicate"]），不要用本项目特有的类名或函数名。
+返回 JSON：{"queries":[["word","word"]]}。"""
+OWN_QUERY_PROMPT = """下面是某个开源项目的一部分源码和项目简介。为了在**本项目自己**更早的 issue 里找相关的历史故障，
+提出 6 组英文检索词。每组 1-3 个词，组内是 AND 关系；可以用本项目的模块名、函数名、配置名、命令名，
+也可以用故障机制（例如 ["reconcile","deployment"]、["ingest","flush"]）。
 返回 JSON：{"queries":[["word","word"]]}。"""
 JUDGE_PROMPT = """你是严格的评审。bug 是真实已修复的缺陷，下面给出它的 issue 和修复补丁，以及别人在修复前提出的 5 条测试。
 逐条判断：
@@ -201,6 +207,29 @@ def retrieve_history(db: sqlite3.Connection, task: dict, queries: list[list[str]
     return (same + [h for h in other if h["id"] not in {x["id"] for x in same}])[:limit]
 
 
+def retrieve_same_repo(db: sqlite3.Connection, task: dict, queries: list[list[str]], limit: int = 20) -> list[dict]:
+    """Arm D: the same repository's own earlier issues, created and closed before the bug was reported."""
+    found = {}
+    for terms in queries[:6]:
+        terms = [t for t in terms if isinstance(t, str) and t.strip()][:3]
+        if not terms:
+            continue
+        query = " AND ".join('"' + t.replace('"', '""') + '"' for t in terms)
+        rows = db.execute(
+            """SELECT i.id, i.repo_full_name, i.title, i.labels,
+                      snippet(issues_fts, 1, '', '', ' … ', 48) AS excerpt
+               FROM issues_fts JOIN issues i ON i.id=issues_fts.issue_id
+               JOIN issue_quality q ON q.issue_id=i.id
+               WHERE issues_fts MATCH ? AND lower(i.repo_full_name) = lower(?)
+                 AND i.created_at < ? AND i.closed_at < ? AND q.tier IN ('core','usable')
+               ORDER BY rank LIMIT 5""",
+            (query, task["repo"], task["created_at"], task["created_at"])).fetchall()
+        for iid, repo, title, labels, excerpt in rows:
+            found.setdefault(iid, {"id": iid, "repo": repo, "title": title, "labels": labels,
+                                   "excerpt": excerpt})
+    return list(found.values())[:limit]
+
+
 def _retrieve(db: sqlite3.Connection, task: dict, queries: list[list[str]], form_op: str) -> list[dict]:
     found = {}
     for terms in queries[:6]:
@@ -314,7 +343,26 @@ def run_task(path: Path, out: Path) -> str:
         c = step("c", lambda: dict(zip(("result", "provenance"), generate_json(
             GEN_PROMPT.format(history_note=PATTERN_NOTE), {**task["visible"], "patterns": pats}))))
         tests_of(c["result"])
-        for arm in ("a", "b", "c"):
+        oq = step("queries_d", lambda: dict(zip(("result", "provenance"), generate_json(
+            OWN_QUERY_PROMPT, task["visible"]))))
+        def own_history():
+            db = sqlite3.connect(config.DB_PATH)
+            try:
+                queries = oq["result"].get("queries") or []
+                queries = queries if isinstance(queries, list) else []
+                found = retrieve_same_repo(db, task, queries)
+                if not found:   # fall back to the changed files' base names, e.g. "reconciler"
+                    names = [[re.sub(r"[^A-Za-z0-9]+", " ", Path(c["path"]).stem).strip()]
+                             for c in task["visible"]["code"]]
+                    found = retrieve_same_repo(db, task, [n for n in names if n[0]])
+                return found
+            finally:
+                db.close()
+        own = step("history_d", own_history)
+        d = step("d", lambda: dict(zip(("result", "provenance"), generate_json(
+            GEN_PROMPT.format(history_note=SAME_REPO_NOTE), {**task["visible"], "history": own}))))
+        tests_of(d["result"])
+        for arm in ("a", "b", "c", "d"):
             step(f"judge_{arm}", lambda arm=arm: dict(zip(("result", "provenance"), judge(
                 task, tests_of(record[arm]["result"])))))
     except ModelError as error:
@@ -401,6 +449,15 @@ def report(out: Path) -> dict:
                 "c_hit_cites_pattern": any(bool(c_tests[j["index"]].get("source_ids"))
                                            for j in r["judge_c"]["result"]["judgments"] if j["verdict"] != "miss"),
                 "c_input_tokens": usage("c"), "c_seconds": r["seconds"].get("c")})
+        if "judge_d" in r:
+            d_tests = r["d"]["result"]["tests"]
+            rows[-1].update({
+                "d": verdict(r["judge_d"]), "own_history_count": len(r["history_d"]),
+                "d_tests_citing": sum(bool(t.get("source_ids")) for t in d_tests),
+                "d_hit_cites_history": any(bool(d_tests[j["index"]].get("source_ids"))
+                                           for j in r["judge_d"]["result"]["judgments"] if j["verdict"] != "miss"),
+                "d_input_tokens": usage("queries_d") + usage("d"),
+                "d_seconds": (r["seconds"].get("queries_d") or 0) + (r["seconds"].get("d") or 0)})
     n = len(rows)
     if not n:
         return {"n": 0}
@@ -432,6 +489,18 @@ def report(out: Path) -> dict:
             "tests_citing_pattern": [sum(x["c_tests_citing"] for x in with_c), K * len(with_c)],
             "tasks_with_no_pattern": sum(1 for x in with_c if not x["pattern_count"]),
             "input_tokens": sum(x["c_input_tokens"] for x in with_c)}
+    with_d = [x for x in rows if "d" in x]
+    if with_d:
+        has_own = [x for x in with_d if x["own_history_count"]]
+        summary["d"] = {
+            "vs_a": compare(with_d, "a", "d"), "vs_b": compare(with_d, "b", "d"),
+            "with_own_history_vs_a": compare(has_own, "a", "d"),
+            "d_strict_hit": sum(x["d"] == "hit" for x in with_d),
+            "d_only_citing_history": sum(1 for x in with_d if x["d"] != "miss" and x["a"] == "miss"
+                                         and x["d_hit_cites_history"]),
+            "tests_citing_history": [sum(x["d_tests_citing"] for x in with_d), K * len(with_d)],
+            "tasks_with_no_own_history": len(with_d) - len(has_own),
+            "input_tokens": sum(x["d_input_tokens"] for x in with_d)}
     (out / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1) + "\n")
     print(json.dumps({k: v for k, v in summary.items() if k != "rows"}, ensure_ascii=False, indent=1))
     return summary
