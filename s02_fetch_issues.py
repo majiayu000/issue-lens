@@ -6,6 +6,8 @@ truncated=1(不静默丢弃)。已抓过的仓库默认跳过(--refresh 重抓)�
 用法:
   python3 s02_fetch_issues.py                          # 全部形态
   python3 s02_fetch_issues.py --forms cli --limit-repos 2 --max-issues 100   # 冒烟
+  python3 s02_fetch_issues.py --forms distributed --repos etcd-io/etcd \
+      --label type/bug --sort comments --max-issues 400   # 只取带 bug 标签、讨论最多的
 """
 import argparse
 import datetime
@@ -23,11 +25,15 @@ SCHEMA_PATH = os.path.join(config.BASE, "schema.sql")
 def init_db(db: sqlite3.Connection) -> None:
     with open(SCHEMA_PATH, encoding="utf-8") as f:
         db.executescript(f.read())
+    # 旧库没有 author_association 列;CREATE TABLE IF NOT EXISTS 不会补列
+    if "author_association" not in {row[1] for row in db.execute("PRAGMA table_info(issues)")}:
+        db.execute("ALTER TABLE issues ADD COLUMN author_association TEXT")
 
 
 def fetch_form(gh: GitHub, db: sqlite3.Connection, form: str,
                limit_repos: int | None, max_issues: int | None, refresh: bool,
-               repos: list[dict] | None = None) -> None:
+               repos: list[dict] | None = None, label: str | None = None,
+               sort: str = "reactions") -> None:
     if repos is None:
         with open(config.repos_path(form), encoding="utf-8") as f:
             repos = json.load(f)
@@ -45,7 +51,9 @@ def fetch_form(gh: GitHub, db: sqlite3.Connection, form: str,
             print(f"[{form}] {i}/{len(repos)} {name}: 已抓过,跳过(--refresh 重抓)", flush=True)
             continue
         query = f"repo:{name} {config.ISSUE_QUERY}"
-        items, total = gh.search_issues(query, max_results=cap)
+        if label:
+            query += f' label:"{label}"'
+        items, total = gh.search_issues(query, max_results=cap, sort=sort)
         truncated = 1 if total > len(items) else 0
         for it in items:
             # 先查再插:FTS5 虚拟表不支持 OR IGNORE 去重,重复抓取会让 issues_fts 出现重复行
@@ -54,15 +62,15 @@ def fetch_form(gh: GitHub, db: sqlite3.Connection, form: str,
             db.execute(
                 """INSERT INTO issues
                    (id, repo_full_name, number, form, title, body, reactions, comments,
-                    labels, author, created_at, closed_at, url)
-                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                    labels, author, author_association, created_at, closed_at, url)
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                 (
                     it["id"], name, it["number"], form,
                     it.get("title") or "", it.get("body") or "",
                     it.get("reactions", {}).get("total_count", 0),
                     it.get("comments", 0),
                     ",".join(l.get("name", "") for l in it.get("labels", [])),
-                    (it.get("user") or {}).get("login"),
+                    (it.get("user") or {}).get("login"), it.get("author_association"),
                     it.get("created_at"), it.get("closed_at"), it.get("html_url"),
                 ))
             db.execute(
@@ -85,7 +93,7 @@ def fetch_form(gh: GitHub, db: sqlite3.Connection, form: str,
                 datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
             ))
         db.commit()
-        note = f",截断(共 {total},仅取 reaction 最高的 {len(items)})" if truncated else ""
+        note = f",截断(共 {total},仅取 {sort} 最高的 {len(items)})" if truncated else ""
         print(f"[{form}] {i}/{len(repos)} {name}: 入库 {len(items)} 条{note}", flush=True)
 
 
@@ -96,6 +104,9 @@ def main() -> None:
     ap.add_argument("--max-issues", type=int, default=None)
     ap.add_argument("--refresh", action="store_true", help="重抓已完成的仓库")
     ap.add_argument("--repos", nargs="+", help="显式补充 owner/repo；须指定一种 --forms")
+    ap.add_argument("--label", help="只取带该标签的 issue(如 type/bug);各仓库标签名不同,需配合 --repos")
+    ap.add_argument("--sort", default="reactions", choices=["reactions", "comments"],
+                    help="取样排序:reactions(默认)或 comments(基础设施类 bug 点赞少、讨论多)")
     args = ap.parse_args()
     if args.repos and (len(args.forms) != 1 or any(
             not re.fullmatch(r"[A-Za-z0-9_-]+/[A-Za-z0-9_.-]+", name)
@@ -103,6 +114,8 @@ def main() -> None:
         ap.error("--repos requires valid owner/repo names and exactly one --forms value")
     if args.max_issues is not None and not 1 <= args.max_issues <= 1000:
         ap.error("--max-issues must be between 1 and 1000")
+    if args.label and not args.repos:
+        ap.error("--label requires --repos")
 
     os.makedirs(config.DATA_DIR, exist_ok=True)
     db = sqlite3.connect(config.DB_PATH)
@@ -118,7 +131,8 @@ def main() -> None:
                     selected.append({"full_name": repo["full_name"], "stars": repo["stargazers_count"],
                                      "language": repo["language"], "description": repo["description"],
                                      "topics": repo["topics"]})
-            fetch_form(gh, db, form, args.limit_repos, args.max_issues, args.refresh, selected)
+            fetch_form(gh, db, form, args.limit_repos, args.max_issues, args.refresh, selected,
+                       args.label, args.sort)
             if selected:
                 saved = {}
                 if os.path.exists(config.repos_path(form)):

@@ -19,7 +19,8 @@ import urllib.error
 
 from config import FORMS
 from gh import GitHub
-from s02_fetch_issues import fetch_form, main as s02_main
+from s02_fetch_issues import fetch_form, init_db, main as s02_main
+from s07_quality import classify_kind, grade, rebuild
 from s06_curate import group_sources, select_issues
 from evidence import EvidenceError, attach_pr_evidence, fetch_pr_evidence, load_tests as load_test_files
 from extract import enrich, extract_batch, extract_issue, find_issues
@@ -108,6 +109,45 @@ class ConfigTests(unittest.TestCase):
                 self.assertTrue(cfg["topics"])
                 self.assertTrue(cfg["taxonomy"])
                 self.assertGreater(cfg["min_stars"], 0)
+
+
+class QualityTests(unittest.TestCase):
+    @staticmethod
+    def issue(**kw):
+        base = {"labels": "kind/bug", "title": "Leader lost after partition",
+                "body": "x" * 300, "reactions": 0, "comments": 12, "author": "alice"}
+        return {**base, **kw}
+
+    def test_kind_uses_label_words_not_substrings(self):
+        self.assertEqual(classify_kind("area/debug", "Panic in logger"), "unknown")
+        self.assertEqual(classify_kind("C-bug,A-kv", "x"), "bug")
+        self.assertEqual(classify_kind("", "[Feature]: export"), "feature")
+        self.assertEqual(classify_kind("", "Zoom", "### Feature Request\nAdd zoom"), "feature")
+        self.assertEqual(classify_kind("docs", "Camera", "## Bug Report\nSteps to reproduce"), "bug")
+        ci = self.issue(labels="C-bug,C-test-failure,O-roachtest", comments=40)
+        self.assertEqual(grade(ci, 0.5, False)[1:], ("low", []))
+
+    def test_dependency_bug_is_not_core_and_repro_lifts_low(self):
+        self.assertEqual(grade(self.issue(labels="bug,dependencies"), 0.0, False)[1], "usable")
+        quiet = self.issue(comments=0, body="Steps to reproduce: run x" + " " * 200)
+        self.assertEqual(grade(quiet, 0.0, False)[1], "usable")
+
+    def test_discussed_bug_is_core_even_without_reactions(self):
+        self.assertEqual(grade(self.issue(), 0.5, False)[1], "core")
+
+    def test_undiscussed_solo_list_and_duplicates_are_excluded(self):
+        kind, tier, reasons = grade(self.issue(labels="", comments=0), 0.5, True)
+        self.assertEqual(tier, "excluded")
+        self.assertEqual(set(reasons), {"duplicate_title", "solo_no_discussion"})
+
+    def test_search_tier_filter_keeps_higher_tiers(self):
+        db = memory_db()
+        init_db(db)
+        rebuild(db)
+        db.execute("UPDATE issue_quality SET tier='excluded' WHERE issue_id=1")
+        db.execute("UPDATE issue_quality SET tier='low' WHERE issue_id=2")
+        rows = search(db, ["desktop"], [], True, "reactions", 10, 0, "low")
+        self.assertEqual([r[1] for r in rows], ["Window flashes when opening menu"])
 
 
 class ExplicitSourceTests(unittest.TestCase):
